@@ -1,32 +1,24 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_memcpy.c                                        :+:      :+:    :+:   */
+/*   ft_lstadd_front.c                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: sungwook <sungwook@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2022/11/07 10:59:34 by sungwook          #+#    #+#             */
-/*   Updated: 2022/11/14 17:49:01 by sungwook         ###   ########.fr       */
+/*   Created: 2022/11/15 10:57:14 by sungwook          #+#    #+#             */
+/*   Updated: 2022/11/16 20:27:30 by sungwook         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libft.h"
 
-void	*ft_memcpy(void *dest, const void *src, size_t len)
+void	ft_lstadd_front(t_list **lst, t_list *new)
 {
-	unsigned char	*return_dest;
-	unsigned char	*return_src;
-	size_t			i;
-
-	i = 0;
-	return_dest = (unsigned char *)dest;
-	return_src = (unsigned char *)src;
-	if (!dest && !src)
-		return (0);
-	while (i < len)
-	{
-		return_dest[i] = return_src[i];
-		i++;
-	}
-	return (dest);
+	if (!lst || !new)
+		return ;
+	if (*lst)
+		(*new).next = *lst;
+	else
+		(*new).next = 0;
+	*lst = new;
 }
