@@ -6,7 +6,7 @@
 /*   By: sungwook <sungwook@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/10 10:42:35 by sungwook          #+#    #+#             */
-/*   Updated: 2022/11/13 22:20:13 by sungwook         ###   ########.fr       */
+/*   Updated: 2022/11/18 17:42:53 by sungwook         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,7 +48,7 @@ char	*ft_negative_itoa(int n)
 		long_n /= 10;
 		i++;
 	}
-	num_str[len] = '\0';
+	num_str[len] = 0;
 	return (num_str);
 }
 
@@ -75,6 +75,6 @@ char	*ft_itoa(int n)
 		n /= 10;
 		i++;
 	}
-	num_str[len] = '\0';
+	num_str[len] = 0;
 	return (num_str);
 }

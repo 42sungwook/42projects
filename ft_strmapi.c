@@ -6,7 +6,7 @@
 /*   By: sungwook <sungwook@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/10 10:42:46 by sungwook          #+#    #+#             */
-/*   Updated: 2022/11/11 16:52:44 by sungwook         ###   ########.fr       */
+/*   Updated: 2022/11/18 17:43:04 by sungwook         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,6 +26,6 @@ char	*ft_strmapi(char const *s, char (*f)(unsigned int, char))
 		return_s[i] = f(i, s[i]);
 		i++;
 	}
-	return_s[i] = '\0';
+	return_s[i] = 0;
 	return (return_s);
 }

@@ -6,24 +6,51 @@
 /*   By: sungwook <sungwook@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/15 11:03:17 by sungwook          #+#    #+#             */
-/*   Updated: 2022/11/16 20:27:56 by sungwook         ###   ########.fr       */
+/*   Updated: 2022/11/18 20:37:58 by sungwook         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libft.h"
 
-t_list	*ft_lstmap(t_list *lst, void *(*f)(void *), void (*del)(void *))
+void	ft_reset(t_list *lst, void (*del)(void *))
 {
-	t_list	*new_lst;
+	t_list	*temp;
 
+	temp = lst;
 	while (lst)
 	{
-		new_lst = f((*lst).content);
+		temp = (*lst).next;
 		del((*lst).content);
-		lst = (*lst).next;
-		new_lst = (*new_lst).next;
-		if (!lst)
-			return (0);
+		free (lst);
+		lst = temp;
 	}
-	return (lst);
+}
+
+t_list	*ft_lstmap(t_list *lst, void *(*f)(void *), void (*del)(void *))
+{
+	t_list	*new_start;
+	t_list	*new_lst;
+
+	if (!lst || !f || !del)
+		return (0);
+	new_start = (t_list *)malloc(sizeof(t_list));
+	if (new_start == 0)
+		return (0);
+	(*new_start).content = f((*lst).content);
+	lst = (*lst).next;
+	new_lst = new_start;
+	while (lst != 0)
+	{
+		(*new_lst).next = (t_list *)malloc(sizeof(t_list));
+		if ((*new_lst).next == 0)
+		{
+			ft_reset(new_start, del);
+			return (0);
+		}
+		new_lst = (*new_lst).next;
+		(*new_lst).content = f((*lst).content);
+		lst = (*lst).next;
+	}
+	(*new_lst).next = 0;
+	return (new_start);
 }

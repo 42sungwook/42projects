@@ -6,7 +6,7 @@
 /*   By: sungwook <sungwook@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/10 10:41:39 by sungwook          #+#    #+#             */
-/*   Updated: 2022/11/14 20:38:08 by sungwook         ###   ########.fr       */
+/*   Updated: 2022/11/18 17:41:55 by sungwook         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,6 +32,6 @@ char	*ft_substr(char const *s, unsigned int start, size_t len)
 		sub[i] = s[start + i];
 		i++;
 	}
-	sub[i] = '\0';
+	sub[i] = 0;
 	return (sub);
 }

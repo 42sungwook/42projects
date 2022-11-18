@@ -6,7 +6,7 @@
 /*   By: sungwook <sungwook@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/13 21:21:34 by sungwook          #+#    #+#             */
-/*   Updated: 2022/11/13 21:28:22 by sungwook         ###   ########.fr       */
+/*   Updated: 2022/11/18 17:40:28 by sungwook         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,6 +28,6 @@ char	*ft_strdup(const char *s1)
 		new_str[i] = s1[i];
 		i++;
 	}
-	new_str[i] = '\0';
+	new_str[i] = 0;
 	return (new_str);
 }

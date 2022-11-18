@@ -6,7 +6,7 @@
 /*   By: sungwook <sungwook@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/10 10:41:59 by sungwook          #+#    #+#             */
-/*   Updated: 2022/11/13 20:03:10 by sungwook         ###   ########.fr       */
+/*   Updated: 2022/11/18 17:42:08 by sungwook         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,6 +35,6 @@ char	*ft_strjoin(char const *s1, char const *s2)
 		join[i + j] = s2[j];
 		j++;
 	}
-	join[i + j] = '\0';
+	join[i + j] = 0;
 	return (join);
 }
