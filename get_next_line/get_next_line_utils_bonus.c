@@ -1,16 +1,16 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   get_next_line_utils.c                              :+:      :+:    :+:   */
+/*   get_next_line_utils_bonus.c                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: sungwook <sungwook@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2022/11/27 16:43:59 by sungwook          #+#    #+#             */
-/*   Updated: 2022/11/27 20:29:42 by sungwook         ###   ########.fr       */
+/*   Created: 2022/11/27 21:03:41 by sungwook          #+#    #+#             */
+/*   Updated: 2022/11/27 21:05:21 by sungwook         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "get_next_line.h"
+#include "get_next_line_bonus.h"
 
 size_t	find_nl(char *buff)
 {

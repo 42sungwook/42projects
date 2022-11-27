@@ -1,16 +1,16 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   get_next_line.c                                    :+:      :+:    :+:   */
+/*   get_next_line_bonus.c                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: sungwook <sungwook@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2022/11/27 16:44:30 by sungwook          #+#    #+#             */
-/*   Updated: 2022/11/27 20:36:17 by sungwook         ###   ########.fr       */
+/*   Created: 2022/11/27 20:43:53 by sungwook          #+#    #+#             */
+/*   Updated: 2022/11/27 21:22:14 by sungwook         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "get_next_line.h"
+#include "get_next_line_bonus.h"
 
 char	*ft_make_remain(char *temp)
 {
@@ -92,11 +92,14 @@ char	*ft_get_line(int fd, char *temp)
 	return (temp);
 }
 
-char	*get_next_line(int fd)
+char	*get_next_line2(t_list *list)
 {
 	static char	*temp;
 	char		*line;
+	int			fd;
 
+	fd = list->fd;
+	temp = list->temp;
 	if (find_nl(temp) == 0)
 		temp = ft_get_line(fd, temp);
 	if (!temp || temp[0] == 0)
@@ -109,20 +112,30 @@ char	*get_next_line(int fd)
 	return (line);
 }
 
-/*
-int	main(void)
+char	*get_next_line(int fd)
 {
-	int		fd;
+	t_list	*list;
+	t_list	*start;
 	char	*line;
 
-	if (0 < (fd = open("./test.txt", O_RDONLY)))
-	{
-		line = get_next_line(fd);
-		printf("%s", line);
-	}
+	list = 0;
+	start = 0;
+	if (start == 0)
+		start = list;
 	else
 	{
-		printf("파일 열기에 실패했습니다.\n");
+		list = start;
+		while (list->fd != fd && list)
+			list = list->next;
+		if (list != 0)
+		{
+			line = get_next_line2(list);
+			return (line);
+		}
 	}
-	return (0);
-}*/
+	list->fd = fd;
+	list->temp = 0;
+	list->next = 0;
+	line = get_next_line2(list);
+	return (line);
+}
