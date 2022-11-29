@@ -6,7 +6,7 @@
 /*   By: sungwook <sungwook@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/27 20:44:08 by sungwook          #+#    #+#             */
-/*   Updated: 2022/11/27 21:22:50 by sungwook         ###   ########.fr       */
+/*   Updated: 2022/11/28 16:31:21 by sungwook         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,12 +15,14 @@
 
 # include <unistd.h>
 # include <stdlib.h>
+# include <stdio.h>
+# include <fcntl.h>
 
 typedef struct s_list
 {
 	char			*temp;
-	struct s_list	*next;
 	int				fd;
+	struct s_list	*next;
 }					t_list;
 
 size_t		find_nl(char *buff);

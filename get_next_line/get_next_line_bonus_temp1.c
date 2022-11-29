@@ -6,7 +6,7 @@
 /*   By: sungwook <sungwook@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/27 20:43:53 by sungwook          #+#    #+#             */
-/*   Updated: 2022/11/28 16:43:33 by sungwook         ###   ########.fr       */
+/*   Updated: 2022/11/28 16:16:09 by sungwook         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -99,11 +99,9 @@ char	*get_next_line2(t_list *list)
 	int		fd;
 
 	fd = list->fd;
-	if (!temp)
-		temp = list->temp;
+	temp = list->temp;
 	if (find_nl(temp) == 0)
 		temp = ft_get_line(fd, temp);
-	printf("%s", temp);
 	if (!temp || temp[0] == 0)
 	{
 		free(temp);
@@ -117,65 +115,26 @@ char	*get_next_line2(t_list *list)
 
 char	*get_next_line(int fd)
 {
-	static t_list	*head;
-	t_list			*list;
+	static t_list	*list;
 	t_list			*temp;
 	char			*line;
 
-	if (!head)
+	if (!(list->temp))
+		list = (t_list *)malloc(sizeof(t_list));
+	else
 	{
-		head = (t_list *)malloc(sizeof(t_list));
-		head->fd = 0;
-		head->next = 0;
-		head->temp = 0;
-	}
-	printf("head :: %p\n", head);
-	if (head->next)
-		printf("head n :: %p\n", head->next);
-	temp = head;
-	while (temp)
-	{
-		if (temp->fd == fd)
-			break ;
-		temp = temp->next;
-		if (!temp)
+		temp = list;
+		while (temp->fd != fd && temp)
+			temp = temp->next;
+		if (temp != 0)
 		{
-			list = (t_list *)malloc(sizeof(t_list));
-			list->fd = fd;
-			list->temp = 0;
-			list->next = 0;
+			line = get_next_line2(temp);
+			return (line);
 		}
 	}
-	temp = head;
-	while (temp && temp->fd != fd)
-	{
-		if (temp->next == 0)
-			temp->next = list;
-		temp = temp->next;
-	}
-	if (temp != 0)
-	{
-		line = get_next_line2(temp);
-		return (line);
-	}
+	temp->fd = fd;
+	temp->temp = 0;
+	temp->next = 0;
 	line = get_next_line2(temp);
 	return (line);
-}
-
-int	main(void)
-{
-	int		fd1;
-	int		fd2;
-	char	*line;
-	fd1 = open("./test.txt", O_RDONLY);
-	fd2 = open("./test2.txt", O_RDONLY);
-	line = get_next_line(fd1);
-	printf("%s", line);
-	line = get_next_line(fd2);
-	printf("%s", line);
-	line = get_next_line(fd1);
-	printf("%s", line);
-	
-
-	return (0);
 }
