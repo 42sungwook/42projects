@@ -5,14 +5,14 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: sungwook <sungwook@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2022/11/10 10:42:35 by sungwook          #+#    #+#             */
-/*   Updated: 2022/11/29 20:27:01 by sungwook         ###   ########.fr       */
+/*   Created: 2022/11/30 17:34:27 by sungwook          #+#    #+#             */
+/*   Updated: 2022/12/01 19:41:08 by sungwook         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "ft_printf.h"
 
-int	ft_len_n(int n)
+int	ft_len_n(unsigned long long n)
 {
 	int	i;
 	int	len;
@@ -28,7 +28,7 @@ int	ft_len_n(int n)
 	return (len);
 }
 
-char	*ft_negative_itoa(int n)
+static char	*ft_negative_itoa(int n)
 {
 	int		i;
 	int		len;

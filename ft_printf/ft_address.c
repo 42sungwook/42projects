@@ -1,41 +1,42 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_putnbr.c                                        :+:      :+:    :+:   */
+/*   ft_address.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: sungwook <sungwook@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2022/11/30 17:36:41 by sungwook          #+#    #+#             */
-/*   Updated: 2022/12/01 19:40:50 by sungwook         ###   ########.fr       */
+/*   Created: 2022/11/30 19:31:26 by sungwook          #+#    #+#             */
+/*   Updated: 2022/12/01 19:31:33 by sungwook         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "ft_printf.h"
 
-static void	ft_recursive(unsigned int n)
+int	ft_address(unsigned long long arr)
 {
-	char	c;
+	int		i;
+	char	address[18];
 
-	if (n != 0)
+	i = 0;
+	if (arr == 0)
 	{
-		c = n % 10 + '0';
-		n /= 10;
-		ft_recursive(n);
-		write(1, &c, 1);
+		write(1, "0x0", 3);
+		return (3);
 	}
-	return ;
-}
-
-int	ft_putnbr(unsigned int n)
-{
-	int	count;
-	count = 0;
-	if (n == 0)
+	if (arr < 0)
+		arr *= -1;
+	while (i < 16)
 	{
-		write(1, "0", 1);
-		return (1);
+		if (arr == 0)
+		{
+			address[15 - i - 1] = '0';
+			address[15 - i] = 'x';
+			break ;
+		}
+		address[15 - i] = "0123456789abcdef"[arr % 16];
+		arr /= 16;
+		i++;
 	}
-	ft_recursive(n);
-	count += ft_len_n(n);
-	return (count);
+	write(1, address + 14 - i, i + 2);
+	return (i + 2);
 }

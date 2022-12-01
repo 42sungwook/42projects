@@ -1,30 +1,38 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_printf.h                                        :+:      :+:    :+:   */
+/*   ft_putnbr_base.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: sungwook <sungwook@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2022/11/29 20:02:02 by sungwook          #+#    #+#             */
-/*   Updated: 2022/12/01 19:42:45 by sungwook         ###   ########.fr       */
+/*   Created: 2022/11/30 17:36:32 by sungwook          #+#    #+#             */
+/*   Updated: 2022/12/01 19:10:53 by sungwook         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef FT_PRINTF_H
-# define FT_PRINTF_H
+#include "ft_printf.h"
 
-# include <stdarg.h>
-# include <unistd.h> 
-# include <stdlib.h>
+int	ft_putnbr_base(int nbr, char *base)
+{
+	int				len;
+	char			result[32];
+	unsigned int	digit;
 
-int		ft_address(unsigned long long arr);
-int		ft_len_n(unsigned long long n);
-char	*ft_itoa(int n);
-int		ft_printf(const char *str, ...);
-int		ft_putchar(char c);
-int		ft_putnbr_base(int nbr, char *base);
-int		ft_putnbr(unsigned int n);
-int		ft_putstr(char *s);
-int		ft_free_putstr(char *s);
-
-#endif
+	digit = 16;
+	len = 0;
+	if (nbr < 0)
+		nbr *= -1;
+	if (nbr == 0)
+	{
+		write(1, &base[0], 1);
+		return (1);
+	}
+	while (nbr != 0)
+	{
+		result[31 - len] = base[nbr % digit];
+		nbr = nbr / digit;
+		len++;
+	}
+	write(1, result + 31 - len, len);
+	return (len);
+}

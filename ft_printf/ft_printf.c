@@ -6,13 +6,13 @@
 /*   By: sungwook <sungwook@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/28 15:18:06 by sungwook          #+#    #+#             */
-/*   Updated: 2022/11/29 20:56:04 by sungwook         ###   ########.fr       */
+/*   Updated: 2022/12/01 19:41:42 by sungwook         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "ft_printf.h"
 
-int	ft_inspect(char c)
+static int	ft_inspect(char c)
 {
 	if (c == 'd' || c == 'c' || c == 's' || c == 'p' || \
 			c == 'u' || c == 'i' || c == 'x' || c == 'X' || c == '%')
@@ -20,64 +20,69 @@ int	ft_inspect(char c)
 	return (0);
 }
 
-void	print_something(va_list *ap, char c)
+static int	print_something(va_list *ap, char c)
 {
-	if (c == 'd')
-		ft_putstr_fd(ft_itoa(va_arg(*ap, int)), 1);
-	else if (c == 'i')
-		ft_putstr_fd(ft_itoa(va_arg(*ap, int)), 1);
+	int	count;
+
+	count = 0;
+	if (c == 'd' || c == 'i')
+		count += ft_free_putstr(ft_itoa(va_arg(*ap, int)));
 	else if (c == 's')
-		ft_putstr_fd(va_arg(*ap, char *), 1);
+		count += ft_putstr(va_arg(*ap, char *));
 	else if (c == 'p')
-		ft_putnbr_base(va_arg(*ap, long long), "0123456789abcdef");
+		count += ft_address(va_arg(*ap, long long));
 	else if (c == 'u')
-		ft_putnbr_fd(va_arg(*ap, unsigned int), 1);
+		count += ft_putnbr(va_arg(*ap, unsigned int));
 	else if (c == 'c')
-		ft_putchar_fd(va_arg(*ap, int), 1);
+		count += ft_putchar(va_arg(*ap, int));
 	else if (c == 'x')
-		ft_putnbr_base((long long)va_arg \
-			(*ap, unsigned int), "0123456789abcdef");
+		count += ft_putnbr_base(va_arg(*ap, unsigned int), "0123456789abcdef");
 	else if (c == 'X')
-		ft_putnbr_base((long long)va_arg \
-			(*ap, unsigned int), "0123456789ABCDEF");
+		count += ft_putnbr_base(va_arg(*ap, unsigned int), "0123456789ABCDEF");
 	else if (c == '%')
-		write(1, "%", 1);
+		count += ft_putchar('%');
+	return (count);
 }
 
-int	ft_printf(char *str, ...)
+int	ft_printf(const char *str, ...)
 {
 	va_list		ap;
-	size_t		i;
+	int			i;
+	int			count;
 
 	i = 0;
+	count = 0;
 	va_start(ap, str);
 	while (str[i])
 	{
 		if (str[i] == '%')
 		{
 			if (ft_inspect(str[i + 1]))
-				print_something(&ap, str[i + 1]);
+				count += print_something(&ap, str[i + 1]);
 			else
-				return (-1);
-			i += 2;
+				break ;
+			i++;
 		}
 		else
-			write(1, &str[i], 1);
+			count += write(1, &str[i], 1);
 		i++;
 	}
 	va_end(ap);
-	return (0);
+	if (str[i] == '%')
+		return (-1);
+	return (count);
 }
-
+/*
+#include <stdio.h>
 int	main(void)
 {
-	int	a = 621251351;
-	int	b = 2;
-	char	str[5] = "abc";
+	//int		a = 621251351;
+	int		b;
+	//char	str[5] = "abc";
+	//int		*ptr = &b;
+	//char	d = 'd';
 
-	int		*ptr = &b;
-	char	d = 'd';
-	ft_printf("%p\n", ptr);
-	printf("%p\n", ptr);
+	printf("%d",ft_printf("%u\n", -10));
 	return (0);
 }
+*/
