@@ -12,7 +12,7 @@
 
 #include "ft_printf.h"
 
-int	ft_putnbr_base(int nbr, char *base)
+int	ft_putnbr_base(unsigned int nbr, char *base)
 {
 	int				len;
 	char			result[32];
@@ -20,8 +20,6 @@ int	ft_putnbr_base(int nbr, char *base)
 
 	digit = 16;
 	len = 0;
-	if (nbr < 0)
-		nbr *= -1;
 	if (nbr == 0)
 	{
 		write(1, &base[0], 1);
@@ -33,6 +31,6 @@ int	ft_putnbr_base(int nbr, char *base)
 		nbr = nbr / digit;
 		len++;
 	}
-	write(1, result + 31 - len, len);
+	write(1, result + 32 - len, len);
 	return (len);
 }

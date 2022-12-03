@@ -15,7 +15,7 @@
 int	ft_address(unsigned long long arr)
 {
 	int		i;
-	char	address[18];
+	char	address[32];
 
 	i = 0;
 	if (arr == 0)
@@ -25,18 +25,18 @@ int	ft_address(unsigned long long arr)
 	}
 	if (arr < 0)
 		arr *= -1;
-	while (i < 16)
+	while (i < 32)
 	{
 		if (arr == 0)
 		{
-			address[15 - i - 1] = '0';
-			address[15 - i] = 'x';
+			address[31 - i - 1] = '0';
+			address[31 - i] = 'x';
 			break ;
 		}
-		address[15 - i] = "0123456789abcdef"[arr % 16];
+		address[31 - i] = "0123456789abcdef"[arr % 16];
 		arr /= 16;
 		i++;
 	}
-	write(1, address + 14 - i, i + 2);
+	write(1, address + 30 - i, i + 2);
 	return (i + 2);
 }

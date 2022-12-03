@@ -18,11 +18,12 @@
 # include <stdlib.h>
 
 int		ft_address(unsigned long long arr);
-int		ft_len_n(unsigned long long n);
+int		ft_ul_len_n(unsigned long long n);
+int		ft_len_n(int n);
 char	*ft_itoa(int n);
 int		ft_printf(const char *str, ...);
 int		ft_putchar(char c);
-int		ft_putnbr_base(int nbr, char *base);
+int		ft_putnbr_base(unsigned int nbr, char *base);
 int		ft_putnbr(unsigned int n);
 int		ft_putstr(char *s);
 int		ft_free_putstr(char *s);

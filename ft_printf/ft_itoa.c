@@ -12,7 +12,23 @@
 
 #include "ft_printf.h"
 
-int	ft_len_n(unsigned long long n)
+int	ft_ul_len_n(unsigned long long n)
+{
+	int	i;
+	int	len;
+
+	i = 0;
+	len = 0;
+	while (n != 0)
+	{
+		n /= 10;
+		len++;
+		i++;
+	}
+	return (len);
+}
+
+int	ft_len_n(int n)
 {
 	int	i;
 	int	len;

@@ -29,6 +29,7 @@ static void	ft_recursive(unsigned int n)
 int	ft_putnbr(unsigned int n)
 {
 	int	count;
+
 	count = 0;
 	if (n == 0)
 	{
@@ -36,6 +37,6 @@ int	ft_putnbr(unsigned int n)
 		return (1);
 	}
 	ft_recursive(n);
-	count += ft_len_n(n);
+	count += ft_ul_len_n(n);
 	return (count);
 }
