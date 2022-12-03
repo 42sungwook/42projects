@@ -50,26 +50,26 @@ int	ft_printf(const char *str, ...)
 	int			i;
 	int			count;
 
-	i = 0;
+	i = -1;
 	count = 0;
 	va_start(ap, str);
-	while (str[i])
+	while (str[++i])
 	{
 		if (str[i] == '%')
 		{
 			if (ft_inspect(str[i + 1]))
 				count += print_something(&ap, str[i + 1]);
 			else
-				break ;
+			{
+				va_end(ap);
+				return (-1);
+			}
 			i++;
 		}
 		else
 			count += write(1, &str[i], 1);
-		i++;
 	}
 	va_end(ap);
-	if (str[i] == '%')
-		return (-1);
 	return (count);
 }
 /*
