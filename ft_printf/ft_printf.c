@@ -6,7 +6,7 @@
 /*   By: sungwook <sungwook@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/28 15:18:06 by sungwook          #+#    #+#             */
-/*   Updated: 2022/12/01 19:41:42 by sungwook         ###   ########.fr       */
+/*   Updated: 2022/12/04 11:18:14 by sungwook         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,9 @@
 
 static int	ft_inspect(char c)
 {
-	if (c == 'd' || c == 'c' || c == 's' || c == 'p' || \
+	if (!c)
+		return (0);
+	else if (c == 'd' || c == 'c' || c == 's' || c == 'p' || \
 			c == 'u' || c == 'i' || c == 'x' || c == 'X' || c == '%')
 		return (1);
 	return (0);
@@ -44,45 +46,46 @@ static int	print_something(va_list *ap, char c)
 	return (count);
 }
 
+static int	ft_check_error(const char *str)
+{
+	int	i;
+
+	i = 0;
+	while (str[i])
+	{
+		if (str[i] == '%')
+		{
+			if (ft_inspect(str[i + 1]) == 0)
+				return (-1);
+			i++;
+		}
+		i++;
+	}
+	return (1);
+}
+
 int	ft_printf(const char *str, ...)
 {
 	va_list		ap;
 	int			i;
 	int			count;
 
-	i = -1;
+	i = 0;
 	count = 0;
+	if (ft_check_error(str) == -1)
+		return (-1);
 	va_start(ap, str);
-	while (str[++i])
+	while (str[i])
 	{
 		if (str[i] == '%')
 		{
-			if (ft_inspect(str[i + 1]))
-				count += print_something(&ap, str[i + 1]);
-			else
-			{
-				va_end(ap);
-				return (-1);
-			}
+			count += print_something(&ap, str[i + 1]);
 			i++;
 		}
 		else
 			count += write(1, &str[i], 1);
+		i++;
 	}
 	va_end(ap);
 	return (count);
 }
-/*
-#include <stdio.h>
-int	main(void)
-{
-	//int		a = 621251351;
-	int		b;
-	//char	str[5] = "abc";
-	//int		*ptr = &b;
-	//char	d = 'd';
-
-	printf("%d",ft_printf("%u\n", -10));
-	return (0);
-}
-*/

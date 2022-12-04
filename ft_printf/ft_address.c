@@ -6,7 +6,7 @@
 /*   By: sungwook <sungwook@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/30 19:31:26 by sungwook          #+#    #+#             */
-/*   Updated: 2022/12/01 19:31:33 by sungwook         ###   ########.fr       */
+/*   Updated: 2022/12/04 11:01:58 by sungwook         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,8 +23,6 @@ int	ft_address(unsigned long long arr)
 		write(1, "0x0", 3);
 		return (3);
 	}
-	if (arr < 0)
-		arr *= -1;
 	while (i < 32)
 	{
 		if (arr == 0)
