@@ -6,7 +6,7 @@
 /*   By: sungwook <sungwook@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/28 15:18:06 by sungwook          #+#    #+#             */
-/*   Updated: 2022/12/13 21:45:43 by sungwook         ###   ########.fr       */
+/*   Updated: 2022/12/13 21:56:14 by sungwook         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,7 +71,7 @@ static t_list	*ft_check_error(char *str, t_list *list)
 		i++;
 	}
 	if (str[i] == 0)
-		return (-1);
+		return (0);
 	list = printf_lstadd(str[i], i);
 	return (list);
 }
