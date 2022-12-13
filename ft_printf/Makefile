@@ -6,17 +6,12 @@
 #    By: sungwook <sungwook@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/11/28 15:18:08 by sungwook          #+#    #+#              #
-#    Updated: 2022/12/01 13:38:00 by sungwook         ###   ########.fr        #
+#    Updated: 2022/12/13 15:27:04 by sungwook         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 SRCS = ft_printf.c \
-		ft_address.c \
-		ft_itoa.c \
-		ft_putchar.c \
-		ft_putnbr_base.c \
-		ft_putnbr.c \
-		ft_putstr.c
+		ft_printf_utils.c
 
 OBJS = $(SRCS:.c=.o)
 

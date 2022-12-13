@@ -6,7 +6,7 @@
 /*   By: sungwook <sungwook@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/28 15:18:06 by sungwook          #+#    #+#             */
-/*   Updated: 2022/12/04 11:18:14 by sungwook         ###   ########.fr       */
+/*   Updated: 2022/12/13 21:45:36 by sungwook         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,40 +28,22 @@ static int	print_something(va_list *ap, char c)
 
 	count = 0;
 	if (c == 'd' || c == 'i')
-		count += ft_free_putstr(ft_itoa(va_arg(*ap, int)));
+		count += printf_di(va_arg(*ap, int));
 	else if (c == 's')
-		count += ft_putstr(va_arg(*ap, char *));
+		count += printf_s(va_arg(*ap, char *));
 	else if (c == 'p')
-		count += ft_address(va_arg(*ap, long long));
+		count += printf_p(va_arg(*ap, long long));
 	else if (c == 'u')
-		count += ft_putnbr(va_arg(*ap, unsigned int));
+		count += printf_u(va_arg(*ap, unsigned int));
 	else if (c == 'c')
-		count += ft_putchar(va_arg(*ap, int));
+		count += printf_c(va_arg(*ap, int));
 	else if (c == 'x')
-		count += ft_putnbr_base(va_arg(*ap, unsigned int), "0123456789abcdef");
+		count += printf_x(va_arg(*ap, unsigned int), "0123456789abcdef");
 	else if (c == 'X')
-		count += ft_putnbr_base(va_arg(*ap, unsigned int), "0123456789ABCDEF");
+		count += printf_x(va_arg(*ap, unsigned int), "0123456789ABCDEF");
 	else if (c == '%')
-		count += ft_putchar('%');
+		count += printf_c('%');
 	return (count);
-}
-
-static int	ft_check_error(const char *str)
-{
-	int	i;
-
-	i = 0;
-	while (str[i])
-	{
-		if (str[i] == '%')
-		{
-			if (ft_inspect(str[i + 1]) == 0)
-				return (-1);
-			i++;
-		}
-		i++;
-	}
-	return (1);
 }
 
 int	ft_printf(const char *str, ...)
@@ -72,18 +54,18 @@ int	ft_printf(const char *str, ...)
 
 	i = 0;
 	count = 0;
-	if (ft_check_error(str) == -1)
-		return (-1);
 	va_start(ap, str);
 	while (str[i])
 	{
 		if (str[i] == '%')
 		{
+			if (ft_inspect(str[i + 1]) == 0)
+				return (-1);
 			count += print_something(&ap, str[i + 1]);
 			i++;
 		}
 		else
-			count += write(1, &str[i], 1);
+			count += printf_c(str[i]);
 		i++;
 	}
 	va_end(ap);
