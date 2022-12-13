@@ -5,8 +5,8 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: sungwook <sungwook@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2022/11/27 20:44:08 by sungwook          #+#    #+#             */
-/*   Updated: 2022/11/28 16:31:21 by sungwook         ###   ########.fr       */
+/*   Created: 2022/11/27 16:49:06 by sungwook          #+#    #+#             */
+/*   Updated: 2022/12/13 14:34:13 by sungwook         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,26 +15,23 @@
 
 # include <unistd.h>
 # include <stdlib.h>
-# include <stdio.h>
-# include <fcntl.h>
-
-typedef struct s_list
-{
-	char			*temp;
-	int				fd;
-	struct s_list	*next;
-}					t_list;
-
-size_t		find_nl(char *buff);
-size_t		ft_strlen(const char *s);
-char		*ft_strjoin(char *s1, char *s2);
-char		*ft_make_remain(char *temp);
-char		*ft_make_line(char *temp);
-char		*ft_get_line(int fd, char *temp);
-char		*get_next_line(int fd);
-char		*get_next_line2(t_list *list);
 
 # ifndef BUFFER_SIZE
 #  define BUFFER_SIZE 42
 # endif
+
+typedef struct s_list
+{
+	int				fd;
+	char			*temp;
+	struct s_list	*next;
+}					t_list;
+
+size_t		gnl_find(char *buff);
+size_t		gnl_strlen(const char *s);
+char		*gnl_strjoin(char *s1, char *s2);
+t_list		*gnl_free(t_list *head, t_list *list);
+t_list		*gnl_lstnew(int fd);
+char		*get_next_line(int fd);
+
 #endif

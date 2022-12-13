@@ -6,13 +6,13 @@
 /*   By: sungwook <sungwook@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/27 16:44:30 by sungwook          #+#    #+#             */
-/*   Updated: 2022/11/29 21:36:06 by sungwook         ###   ########.fr       */
+/*   Updated: 2022/12/13 14:35:46 by sungwook         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "get_next_line.h"
 
-char	*ft_make_remain(char *temp)
+static char	*ft_make_remain(char *temp)
 {
 	int		i;
 	int		j;
@@ -41,7 +41,7 @@ char	*ft_make_remain(char *temp)
 	return (remain);
 }
 
-char	*ft_make_line(char *temp)
+static char	*ft_make_line(char *temp)
 {
 	size_t	i;
 	size_t	j;
@@ -63,7 +63,7 @@ char	*ft_make_line(char *temp)
 	return (new_line);
 }
 
-char	*ft_get_line(int fd, char *temp)
+static char	*ft_get_line(int fd, char *temp)
 {
 	char	*buff;
 	int		read_status;
@@ -73,8 +73,8 @@ char	*ft_get_line(int fd, char *temp)
 	{
 		read_status = read(fd, buff, BUFFER_SIZE);
 		buff[BUFFER_SIZE] = 0;
-		if (read_status == BUFFER_SIZE && find_nl(buff) == 0)
-			temp = ft_strjoin(temp, buff);
+		if (read_status == BUFFER_SIZE && gnl_find(buff) == 0)
+			temp = gnl_strjoin(temp, buff);
 		else if (read_status == -1 || ((!temp) && read_status == 0))
 		{
 			if (temp)
@@ -87,7 +87,7 @@ char	*ft_get_line(int fd, char *temp)
 	}
 	if (read_status != BUFFER_SIZE)
 		buff[read_status] = 0;
-	temp = ft_strjoin(temp, buff);
+	temp = gnl_strjoin(temp, buff);
 	free(buff);
 	return (temp);
 }
@@ -97,32 +97,11 @@ char	*get_next_line(int fd)
 	static char	*temp;
 	char		*line;
 
-	if (find_nl(temp) == 0)
+	if (gnl_find(temp) == 0)
 		temp = ft_get_line(fd, temp);
-	if (!temp || temp[0] == 0)
-	{
-		free(temp);
+	if (!temp)
 		return (0);
-	}
 	line = ft_make_line(temp);
 	temp = ft_make_remain(temp);
 	return (line);
 }
-
-/*
-int	main(void)
-{
-	int		fd;
-	char	*line;
-
-	if (0 < (fd = open("./test.txt", O_RDONLY)))
-	{
-		line = get_next_line(fd);
-		printf("%s", line);
-	}
-	else
-	{
-		printf("파일 열기에 실패했습니다.\n");
-	}
-	return (0);
-}*/

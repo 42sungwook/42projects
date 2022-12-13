@@ -6,13 +6,13 @@
 /*   By: sungwook <sungwook@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/27 16:43:59 by sungwook          #+#    #+#             */
-/*   Updated: 2022/11/27 20:29:42 by sungwook         ###   ########.fr       */
+/*   Updated: 2022/12/13 14:34:35 by sungwook         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "get_next_line.h"
 
-size_t	find_nl(char *buff)
+size_t	gnl_find(char *buff)
 {
 	size_t	i;
 
@@ -28,7 +28,7 @@ size_t	find_nl(char *buff)
 	return (0);
 }
 
-size_t	ft_strlen(const char *s)
+size_t	gnl_strlen(const char *s)
 {
 	size_t	i;
 
@@ -40,7 +40,7 @@ size_t	ft_strlen(const char *s)
 	return (i);
 }
 
-char	*ft_strjoin(char *s1, char *s2)
+char	*gnl_strjoin(char *s1, char *s2)
 {
 	size_t	i;
 	size_t	j;
@@ -50,8 +50,8 @@ char	*ft_strjoin(char *s1, char *s2)
 
 	i = 0;
 	j = 0;
-	s1_len = ft_strlen(s1);
-	len = s1_len + ft_strlen(s2);
+	s1_len = gnl_strlen(s1);
+	len = s1_len + gnl_strlen(s2);
 	join = (char *)malloc(sizeof(char) * (len + 1));
 	while (i < s1_len)
 	{

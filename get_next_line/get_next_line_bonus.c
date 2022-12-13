@@ -5,14 +5,14 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: sungwook <sungwook@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2022/11/27 20:43:53 by sungwook          #+#    #+#             */
-/*   Updated: 2022/11/28 16:43:33 by sungwook         ###   ########.fr       */
+/*   Created: 2022/11/27 16:44:30 by sungwook          #+#    #+#             */
+/*   Updated: 2022/12/13 14:38:08 by sungwook         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "get_next_line_bonus.h"
 
-char	*ft_make_remain(char *temp)
+static char	*ft_make_remain(char *temp)
 {
 	int		i;
 	int		j;
@@ -41,7 +41,7 @@ char	*ft_make_remain(char *temp)
 	return (remain);
 }
 
-char	*ft_make_line(char *temp)
+static char	*ft_make_line(char *temp)
 {
 	size_t	i;
 	size_t	j;
@@ -63,7 +63,7 @@ char	*ft_make_line(char *temp)
 	return (new_line);
 }
 
-char	*ft_get_line(int fd, char *temp)
+static char	*ft_get_line(int fd, char *temp)
 {
 	char	*buff;
 	int		read_status;
@@ -73,8 +73,8 @@ char	*ft_get_line(int fd, char *temp)
 	{
 		read_status = read(fd, buff, BUFFER_SIZE);
 		buff[BUFFER_SIZE] = 0;
-		if (read_status == BUFFER_SIZE && find_nl(buff) == 0)
-			temp = ft_strjoin(temp, buff);
+		if (read_status == BUFFER_SIZE && gnl_find(buff) == 0)
+			temp = gnl_strjoin(temp, buff);
 		else if (read_status == -1 || ((!temp) && read_status == 0))
 		{
 			if (temp)
@@ -87,95 +87,47 @@ char	*ft_get_line(int fd, char *temp)
 	}
 	if (read_status != BUFFER_SIZE)
 		buff[read_status] = 0;
-	temp = ft_strjoin(temp, buff);
+	temp = gnl_strjoin(temp, buff);
 	free(buff);
 	return (temp);
 }
 
-char	*get_next_line2(t_list *list)
+static t_list	*gnl_find_list(t_list *list, int fd)
 {
-	char	*temp;
-	char	*line;
-	int		fd;
-
-	fd = list->fd;
-	if (!temp)
-		temp = list->temp;
-	if (find_nl(temp) == 0)
-		temp = ft_get_line(fd, temp);
-	printf("%s", temp);
-	if (!temp || temp[0] == 0)
+	if (!list)
+		list = gnl_lstnew(fd);
+	else
 	{
-		free(temp);
-		return (0);
+		while (list->next != 0 && list->fd != fd)
+			list = list->next;
+		if (list->next == 0 && list->fd != fd)
+		{
+			list->next = gnl_lstnew(fd);
+			list = list->next;
+		}
 	}
-	line = ft_make_line(temp);
-	temp = ft_make_remain(temp);
-	list->temp = temp;
-	return (line);
+	return (list);
 }
 
 char	*get_next_line(int fd)
 {
 	static t_list	*head;
 	t_list			*list;
-	t_list			*temp;
 	char			*line;
 
+	if (fd < 0 || BUFFER_SIZE <= 0)
+		return (0);
+	list = gnl_find_list(head, fd);
 	if (!head)
+		head = list;
+	if (gnl_find(list->temp) == 0)
+		list->temp = ft_get_line(fd, list->temp);
+	if (!list->temp)
 	{
-		head = (t_list *)malloc(sizeof(t_list));
-		head->fd = 0;
-		head->next = 0;
-		head->temp = 0;
+		head = gnl_free(head, list);
+		return (0);
 	}
-	printf("head :: %p\n", head);
-	if (head->next)
-		printf("head n :: %p\n", head->next);
-	temp = head;
-	while (temp)
-	{
-		if (temp->fd == fd)
-			break ;
-		temp = temp->next;
-		if (!temp)
-		{
-			list = (t_list *)malloc(sizeof(t_list));
-			list->fd = fd;
-			list->temp = 0;
-			list->next = 0;
-		}
-	}
-	temp = head;
-	while (temp && temp->fd != fd)
-	{
-		if (temp->next == 0)
-			temp->next = list;
-		temp = temp->next;
-	}
-	if (temp != 0)
-	{
-		line = get_next_line2(temp);
-		return (line);
-	}
-	line = get_next_line2(temp);
+	line = ft_make_line(list->temp);
+	list->temp = ft_make_remain(list->temp);
 	return (line);
-}
-
-int	main(void)
-{
-	int		fd1;
-	int		fd2;
-	char	*line;
-	fd1 = open("./test.txt", O_RDONLY);
-	fd2 = open("./test2.txt", O_RDONLY);
-	line = get_next_line(fd1);
-	printf("%s", line);
-	line = get_next_line(fd2);
-	printf("%s", line);
-	line = get_next_line(fd1);
-	printf("%s", line);
-	
-
-	return (0);
 }
