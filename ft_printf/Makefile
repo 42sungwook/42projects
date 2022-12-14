@@ -6,20 +6,17 @@
 #    By: sungwook <sungwook@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/11/28 15:18:08 by sungwook          #+#    #+#              #
-#    Updated: 2022/12/14 15:16:08 by sungwook         ###   ########.fr        #
+#    Updated: 2022/12/14 15:41:03 by sungwook         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
-SRCS = ft_printf.c \
-		ft_printf_utils.c
-
-SRCS_B = ft_printf_bonus.c \
-			ft_printf_di_bonus.c \
-			ft_printf_p_bonus.c \
-			ft_printf_s_bonus.c \
-			ft_printf_u_bonus.c \
-			ft_printf_x_bonus.c \
-			ft_printf_utils_bonus.c
+SRCS = ft_printf_bonus.c \
+		ft_printf_di_bonus.c \
+		ft_printf_p_bonus.c \
+		ft_printf_s_bonus.c \
+		ft_printf_u_bonus.c \
+		ft_printf_x_bonus.c \
+		ft_printf_utils_bonus.c
 
 OBJS = $(SRCS:.c=.o)
 
@@ -36,7 +33,6 @@ RM = rm -f
 CFLAGS = -Wextra -Wall -Werror
 
 all: $(NAME)
-	RM $(OBJS_B)
 
 $(NAME): $(OBJS)
 	$(AR) $(NAME) $(OBJS)
@@ -55,8 +51,6 @@ re:
 %.o: %.c
 	$(CC) $(CFLAGS) -c $< -o $@
 
-bonus: $(OBJS_B)
-	$(AR) $(NAME) $(OBJS_B)
-	RM $(OBJS)
+bonus : $(NAME)
 
 .PHONY: all clean fclean re bonus

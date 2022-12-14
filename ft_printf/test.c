@@ -1,13 +1,12 @@
-#include <stdio.h>
+#include "ft_printf_bonus.h"
 
 int main()
 {
-	const char *num = 0;
+	const char *num = "abc";
 	unsigned int	x = 123;
 	int y = 0;
 
-	y = printf("%08s", num);
-	printf("%d", y);
+	y = ft_printf("%08s", num);
 }
 
 

@@ -6,7 +6,7 @@
 /*   By: sungwook <sungwook@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/30 17:36:32 by sungwook          #+#    #+#             */
-/*   Updated: 2022/12/14 15:32:27 by sungwook         ###   ########.fr       */
+/*   Updated: 2022/12/14 16:30:41 by sungwook         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,19 +35,20 @@ t_list	*printf_init_list(t_list *list)
 	return (list);
 }
 
-size_t	printf_width(const char *str, t_list **list)
+size_t	printf_width(const char *str, size_t idx, t_list **list)
 {
 	size_t	i;
 	int		num;
 
 	i = 0;
 	num = 0;
-	while (printf_inspect(str[i]) != 0)
+	while (printf_inspect(str[idx + i]) != 0)
 	{
-		if (str[i] >= '0' && str[i] <= '9')
+		if (str[idx + i] >= '0' && str[idx + i] <= '9')
 			num = num * 10 + str[i] - '0';
-		else if (str[i] == ' ' || str[i] == '+' || str[i] == '0' || \
-			str[i] == '#' || str[i] == '-' || str[i] == '.')
+		else if (str[idx + i] == ' ' || str[idx + i] == '+' || \
+			str[idx + i] == '0' || str[idx + i] == '#' || \
+			str[idx + i] == '-' || str[idx + i] == '.')
 			break ;
 		i++;
 	}
@@ -55,19 +56,20 @@ size_t	printf_width(const char *str, t_list **list)
 	return (i);
 }
 
-size_t	printf_precision(const char *str, t_list **list)
+size_t	printf_precision(const char *str, size_t idx, t_list **list)
 {
 	size_t	i;
 	int		num;
 
 	i = 0;
 	num = 0;
-	while (printf_inspect(str[i]) != 0)
+	while (printf_inspect(str[idx + i]) != 0)
 	{
-		if (str[i] >= '0' && str[i] <= '9')
+		if (str[idx + i] >= '0' && str[idx + i] <= '9')
 			num = num * 10 + str[i] - '0';
-		else if (str[i] == ' ' || str[i] == '+' || str[i] == '0' || \
-			str[i] == '#' || str[i] == '-' || str[i] == '.')
+		else if (str[idx + i] == ' ' || str[idx + i] == '+' || \
+			str[idx + i] == '0' || str[idx + i] == '#' || \
+			str[idx + i] == '-' || str[idx + i] == '.')
 			break ;
 		i++;
 	}
@@ -75,29 +77,27 @@ size_t	printf_precision(const char *str, t_list **list)
 	return (i + 1);
 }
 
-t_list	*printf_makelst(const char *str, size_t len, t_list *list)
+t_list	*printf_makelst(const char *str, size_t idx, size_t len, t_list *list)
 {
 	size_t	i;
 
 	i = 0;
 	while (i < len)
 	{
-		if (str[i] == ' ')
+		if (str[idx + i] == ' ')
 			list->space = 1;
-		else if (str[i] == '+')
+		else if (str[idx + i] == '+')
 			list->plus = 1;
-		else if (str[i] == '-')
+		else if (str[idx + i] == '-')
 			list->minus = 1;
-		else if (str[i] == '0')
+		else if (str[idx + i] == '0')
 			list->zero = 1;
-		else if (str[i] == '#')
+		else if (str[idx + i] == '#')
 			list->hash = 1;
-		else if (str[i] >= '1' && str[i] <= '9' && list->width == 0)
-			i += printf_width(&str[i], &list);
-		else if (str[i] == '.' && list->precision == 0)
-			i += printf_precision(&str[i + 1], &list);
-		else if (printf_inspect(str[i]) != 0)
-			list->conversion = printf_inspect(str[i]);
+		else if (str[idx + i] >= '1' && str[i] <= '9' && list->width == 0)
+			i += printf_width(str, idx + i, &list);
+		else if (str[idx + i] == '.' && list->precision == 0)
+			i += printf_precision(str, idx + i + 1, &list);
 		i++;
 	}
 	return (list);
