@@ -6,7 +6,7 @@
 /*   By: sungwook <sungwook@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/29 20:02:02 by sungwook          #+#    #+#             */
-/*   Updated: 2022/12/13 21:47:04 by sungwook         ###   ########.fr       */
+/*   Updated: 2022/12/14 15:03:15 by sungwook         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,19 +19,32 @@
 
 typedef struct s_list
 {
-	char			flag;
-	int				width;
-	int				precision;
-	char			conversion;
-	struct s_list	*next;
+	int		space;
+	int		plus;
+	int		minus;
+	int		zero;
+	int		hash;
+	int		width;
+	int		precision;
+	int		conversion;
+	size_t	len;
+	size_t	str_len;
+	size_t	sign;
+	size_t	blank;
 }					t_list;
 
-size_t	printf_c(char s, t_list *list);
-size_t	printf_s(char *s, t_list *list);
-size_t	printf_p(unsigned long long arr, t_list *list);
-size_t	printf_u(unsigned int nbr, t_list *list);
-size_t	printf_x(unsigned int nbr, char *base, t_list *list);
+int		ft_inspect(char c);
 size_t	printf_di(int nbr, t_list *list);
+size_t	printf_p(unsigned long long arr, t_list *list);
+size_t	printf_s(char *str, t_list *list);
+size_t	printf_c(char c, t_list *list);
+size_t	printf_u(unsigned int nbr, t_list *list);
+size_t	printf_putchar(char c);
+t_list	*printf_init_list(t_list *list);
+size_t	printf_width(char *str, t_list **list);
+size_t	printf_precision(char *str, t_list **list);
+t_list	*printf_makelst(char *str, size_t len, t_list *list);
+
 int		ft_printf(const char *str, ...);
 
 #endif

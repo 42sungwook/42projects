@@ -6,13 +6,13 @@
 /*   By: sungwook <sungwook@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/28 15:18:06 by sungwook          #+#    #+#             */
-/*   Updated: 2022/12/13 21:56:14 by sungwook         ###   ########.fr       */
+/*   Updated: 2022/12/14 15:04:58 by sungwook         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "ft_printf_bonus.h"
 
-static int	ft_inspect(char c)
+int	ft_inspect(char c)
 {
 	if (!c)
 		return (0);
@@ -57,22 +57,28 @@ static size_t	print_something(va_list *ap, t_list *list)
 	return (count);
 }
 
-static t_list	*ft_check_error(char *str, t_list *list)
+static t_list	*ft_check_error(char *str)
 {
 	size_t	i;
+	t_list	*list;
 	int		conversion;
 
 	i = 0;
+	list = malloc(sizeof(t_list));
+	if (!list)
+		return (0);
+	list = printf_init_list(list);
 	while (str[i])
 	{
-		conversion = ft_inspect(str[i]);
-		if (conversion != 0)
+		list->conversion = ft_inspect(str[i]);
+		if (list->conversion != 0)
 			break ;
 		i++;
 	}
 	if (str[i] == 0)
 		return (0);
-	list = printf_lstadd(str[i], i);
+	list = printf_makelst(str[i], i, list);
+	list->str_len = i;
 	return (list);
 }
 
@@ -90,14 +96,15 @@ int	ft_printf(const char *str, ...)
 	{
 		if (str[i] == '%')
 		{
-			list = ft_check_error(&str[i + 1], list);
+			list = ft_check_error(&str[i + 1]);
 			if (!list)
 				return (-1);
 			count += print_something(&ap, list);
-			i++;
+			i += list->str_len;
+			free(list);
 		}
 		else
-			count += printf_c(str[i]);
+			count += printf_putchar(str[i]);
 		i++;
 	}
 	va_end(ap);

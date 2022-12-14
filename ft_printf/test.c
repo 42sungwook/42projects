@@ -2,9 +2,12 @@
 
 int main()
 {
-	const char *num = "Hello";
-	int	x = 123;
-	printf("%.5+d567\n", x);
+	const char *num = 0;
+	unsigned int	x = 123;
+	int y = 0;
+
+	y = printf("%08s", num);
+	printf("%d", y);
 }
 
 
@@ -17,3 +20,6 @@ int main()
 //p  #: 영향없음, 나머지 u와 같음
 //c  #: warning (영향없음), 공백: warning (영향없음), +: warning (영향없음), -: O(0쓰면 위와 동일), 정밀도: 영향없음 (width 같이쓰면 warning), 0옵션: 출력되지만 warning뜸
 //s 정밀도가 최대 문자 갯수, 0옵션 warning하지만 출력은 됨
+
+
+//" " > - > 0        공백과 0은 같이 사용가능 (음수일 때는 안됨)

@@ -6,7 +6,7 @@
 /*   By: sungwook <sungwook@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/30 17:36:32 by sungwook          #+#    #+#             */
-/*   Updated: 2022/12/13 21:45:19 by sungwook         ###   ########.fr       */
+/*   Updated: 2022/12/14 14:50:24 by sungwook         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -123,10 +123,4 @@ size_t	printf_s(char *s)
 		len++;
 	}
 	return (len);
-}
-
-size_t	printf_c(char s)
-{
-	write(1, &s, 1);
-	return (1);
 }

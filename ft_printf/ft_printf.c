@@ -6,11 +6,17 @@
 /*   By: sungwook <sungwook@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/28 15:18:06 by sungwook          #+#    #+#             */
-/*   Updated: 2022/12/13 21:45:36 by sungwook         ###   ########.fr       */
+/*   Updated: 2022/12/14 14:50:31 by sungwook         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "ft_printf.h"
+
+size_t	printf_c(char s)
+{
+	write(1, &s, 1);
+	return (1);
+}
 
 static int	ft_inspect(char c)
 {

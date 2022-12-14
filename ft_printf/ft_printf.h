@@ -6,7 +6,7 @@
 /*   By: sungwook <sungwook@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/29 20:02:02 by sungwook          #+#    #+#             */
-/*   Updated: 2022/12/13 21:46:20 by sungwook         ###   ########.fr       */
+/*   Updated: 2022/12/14 14:51:49 by sungwook         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,6 @@
 
 # include <stdarg.h>
 # include <unistd.h> 
-# include <stdlib.h>
 
 size_t	printf_c(char s);
 size_t	printf_s(char *s);
