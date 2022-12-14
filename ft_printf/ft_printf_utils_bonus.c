@@ -6,7 +6,7 @@
 /*   By: sungwook <sungwook@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/30 17:36:32 by sungwook          #+#    #+#             */
-/*   Updated: 2022/12/14 15:03:31 by sungwook         ###   ########.fr       */
+/*   Updated: 2022/12/14 15:32:27 by sungwook         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,14 +35,14 @@ t_list	*printf_init_list(t_list *list)
 	return (list);
 }
 
-size_t	printf_width(char *str, t_list **list)
+size_t	printf_width(const char *str, t_list **list)
 {
 	size_t	i;
 	int		num;
 
 	i = 0;
 	num = 0;
-	while (ft_inspect(str[i]) != 0)
+	while (printf_inspect(str[i]) != 0)
 	{
 		if (str[i] >= '0' && str[i] <= '9')
 			num = num * 10 + str[i] - '0';
@@ -55,14 +55,14 @@ size_t	printf_width(char *str, t_list **list)
 	return (i);
 }
 
-size_t	printf_precision(char *str, t_list **list)
+size_t	printf_precision(const char *str, t_list **list)
 {
 	size_t	i;
 	int		num;
 
 	i = 0;
 	num = 0;
-	while (ft_inspect(str[i]) != 0)
+	while (printf_inspect(str[i]) != 0)
 	{
 		if (str[i] >= '0' && str[i] <= '9')
 			num = num * 10 + str[i] - '0';
@@ -75,7 +75,7 @@ size_t	printf_precision(char *str, t_list **list)
 	return (i + 1);
 }
 
-t_list	*printf_makelst(char *str, size_t len, t_list *list)
+t_list	*printf_makelst(const char *str, size_t len, t_list *list)
 {
 	size_t	i;
 

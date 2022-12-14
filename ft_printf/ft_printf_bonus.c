@@ -6,13 +6,13 @@
 /*   By: sungwook <sungwook@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/28 15:18:06 by sungwook          #+#    #+#             */
-/*   Updated: 2022/12/14 15:04:58 by sungwook         ###   ########.fr       */
+/*   Updated: 2022/12/14 15:33:06 by sungwook         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "ft_printf_bonus.h"
 
-int	ft_inspect(char c)
+int	printf_inspect(char c)
 {
 	if (!c)
 		return (0);
@@ -39,7 +39,7 @@ static size_t	print_something(va_list *ap, t_list *list)
 
 	count = 0;
 	if (list->conversion == 'd' || list->conversion == 'i')
-		count += printf_di(va_arg(*ap, int));
+		count += printf_di(va_arg(*ap, int), list);
 	else if (list->conversion == 's')
 		count += printf_s(va_arg(*ap, char *), list);
 	else if (list->conversion == 'p')
@@ -57,11 +57,10 @@ static size_t	print_something(va_list *ap, t_list *list)
 	return (count);
 }
 
-static t_list	*ft_check_error(char *str)
+static t_list	*ft_check_error(const char *str)
 {
 	size_t	i;
 	t_list	*list;
-	int		conversion;
 
 	i = 0;
 	list = malloc(sizeof(t_list));
@@ -70,14 +69,14 @@ static t_list	*ft_check_error(char *str)
 	list = printf_init_list(list);
 	while (str[i])
 	{
-		list->conversion = ft_inspect(str[i]);
+		list->conversion = printf_inspect(str[i]);
 		if (list->conversion != 0)
 			break ;
 		i++;
 	}
 	if (str[i] == 0)
 		return (0);
-	list = printf_makelst(str[i], i, list);
+	list = printf_makelst(&str[i], i, list);
 	list->str_len = i;
 	return (list);
 }

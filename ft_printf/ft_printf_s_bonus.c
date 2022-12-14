@@ -6,7 +6,7 @@
 /*   By: sungwook <sungwook@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/30 17:36:32 by sungwook          #+#    #+#             */
-/*   Updated: 2022/12/14 14:46:35 by sungwook         ###   ########.fr       */
+/*   Updated: 2022/12/14 15:22:24 by sungwook         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,14 +18,14 @@ static size_t	s_prec(char *result, t_list *list)
 	{
 		while (list->blank < list->precision)
 		{
-			write(1, result[list->blank], 1);
+			write(1, &result[list->blank], 1);
 			list->blank++;
 		}
 		return (list->blank);
 	}
 	while (list->blank < list->precision - list->len)
 	{
-		write(1, '0', 1);
+		write(1, "0", 1);
 		list->blank++;
 	}
 	write(1, result, list->len);
@@ -82,7 +82,7 @@ size_t	printf_s(char *str, t_list *list)
 	while (str[list->len])
 		list->len++;
 	if (list->precision)
-		return (s_prec(str, list->len));
+		return (s_prec(str, list));
 	else if (list->minus == 1 && list->width > list->len)
 		return (s_minus(str, list));
 	else if (list->width > list->len)

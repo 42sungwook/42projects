@@ -6,7 +6,7 @@
 #    By: sungwook <sungwook@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/11/28 15:18:08 by sungwook          #+#    #+#              #
-#    Updated: 2022/12/14 15:08:26 by sungwook         ###   ########.fr        #
+#    Updated: 2022/12/14 15:16:08 by sungwook         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -36,6 +36,7 @@ RM = rm -f
 CFLAGS = -Wextra -Wall -Werror
 
 all: $(NAME)
+	RM $(OBJS_B)
 
 $(NAME): $(OBJS)
 	$(AR) $(NAME) $(OBJS)
@@ -54,7 +55,8 @@ re:
 %.o: %.c
 	$(CC) $(CFLAGS) -c $< -o $@
 
-bonus:
-	
+bonus: $(OBJS_B)
+	$(AR) $(NAME) $(OBJS_B)
+	RM $(OBJS)
 
 .PHONY: all clean fclean re bonus

@@ -6,7 +6,7 @@
 /*   By: sungwook <sungwook@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/29 20:02:02 by sungwook          #+#    #+#             */
-/*   Updated: 2022/12/14 14:57:30 by sungwook         ###   ########.fr       */
+/*   Updated: 2022/12/14 15:17:37 by sungwook         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,7 @@ static size_t	di_prec(char *result, t_list *list)
 		write(1, "-", 1);
 	while (list->blank < list->precision - list->len)
 	{
-		write(1, '0', 1);
+		write(1, "0", 1);
 		list->blank++;
 	}
 	write(1, result + 32 - list->len, list->len);

@@ -6,7 +6,7 @@
 /*   By: sungwook <sungwook@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/30 17:36:32 by sungwook          #+#    #+#             */
-/*   Updated: 2022/12/14 14:36:50 by sungwook         ###   ########.fr       */
+/*   Updated: 2022/12/14 15:27:07 by sungwook         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,7 @@ static size_t	u_prec(char *result, t_list *list)
 {
 	while (list->blank < list->precision - list->len)
 	{
-		write(1, '0', 1);
+		write(1, "0", 1);
 		list->blank++;
 	}
 	write(1, result + 32 - list->len, list->len);
