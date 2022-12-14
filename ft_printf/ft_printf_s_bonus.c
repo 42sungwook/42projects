@@ -6,7 +6,7 @@
 /*   By: sungwook <sungwook@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/30 17:36:32 by sungwook          #+#    #+#             */
-/*   Updated: 2022/12/14 15:22:24 by sungwook         ###   ########.fr       */
+/*   Updated: 2022/12/14 17:22:08 by sungwook         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -95,6 +95,11 @@ size_t	printf_c(char c, t_list *list)
 {
 	char	result[2];
 
+	if (c == 0)
+	{
+		write(1, "", 1);
+		return (1);
+	}
 	result[0] = c;
 	result[1] = 0;
 	return (printf_s(result, list));

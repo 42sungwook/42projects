@@ -6,7 +6,7 @@
 /*   By: sungwook <sungwook@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/30 17:36:32 by sungwook          #+#    #+#             */
-/*   Updated: 2022/12/14 15:17:45 by sungwook         ###   ########.fr       */
+/*   Updated: 2022/12/14 17:31:33 by sungwook         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,7 +60,10 @@ size_t	printf_p(unsigned long long arr, t_list *list)
 	char		result[32];
 
 	if (arr == 0)
-		return (printf_putchar('0'));
+	{
+		result[31 - list->len] = '0';
+		list->len++;
+	}
 	while (arr > 0)
 	{
 		result[31 - list->len] = "0123456789abcdef"[arr % 16];

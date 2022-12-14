@@ -6,7 +6,7 @@
 /*   By: sungwook <sungwook@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/30 17:36:32 by sungwook          #+#    #+#             */
-/*   Updated: 2022/12/14 16:30:41 by sungwook         ###   ########.fr       */
+/*   Updated: 2022/12/14 17:43:16 by sungwook         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,10 +42,10 @@ size_t	printf_width(const char *str, size_t idx, t_list **list)
 
 	i = 0;
 	num = 0;
-	while (printf_inspect(str[idx + i]) != 0)
+	while (printf_inspect(str[idx + i]) == 0)
 	{
 		if (str[idx + i] >= '0' && str[idx + i] <= '9')
-			num = num * 10 + str[i] - '0';
+			num = num * 10 + str[idx + i] - '0';
 		else if (str[idx + i] == ' ' || str[idx + i] == '+' || \
 			str[idx + i] == '0' || str[idx + i] == '#' || \
 			str[idx + i] == '-' || str[idx + i] == '.')
@@ -63,10 +63,10 @@ size_t	printf_precision(const char *str, size_t idx, t_list **list)
 
 	i = 0;
 	num = 0;
-	while (printf_inspect(str[idx + i]) != 0)
+	while (printf_inspect(str[idx + i]) == 0)
 	{
 		if (str[idx + i] >= '0' && str[idx + i] <= '9')
-			num = num * 10 + str[i] - '0';
+			num = num * 10 + str[idx + i] - '0';
 		else if (str[idx + i] == ' ' || str[idx + i] == '+' || \
 			str[idx + i] == '0' || str[idx + i] == '#' || \
 			str[idx + i] == '-' || str[idx + i] == '.')
