@@ -9,7 +9,7 @@ int main()
 	char	c = 0;
 	int y = 0;
 
-	y = ft_printf(" %.1s", "");
+	y = printf("%5.0i", 0);
 	printf("%d", y);
 	//y = printf("%-1c%-2c%-3c", '0', 0, '1');
 	//printf("%d", y);

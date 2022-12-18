@@ -19,18 +19,18 @@
 
 typedef struct s_list
 {
-	int		space;
-	int		plus;
-	int		minus;
-	int		zero;
-	int		hash;
-	size_t	width;
-	size_t	precision;
-	int		conversion;
-	size_t	len;
-	size_t	str_len;
-	size_t	sign;
-	size_t	blank;
+	int	space;
+	int	plus;
+	int	minus;
+	int	zero;
+	int	hash;
+	int	precision;
+	int	width;
+	int	conversion;
+	int	len;
+	int	str_len;
+	int	sign;
+	int	blank;
 }					t_list;
 
 int		printf_inspect(char c);

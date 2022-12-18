@@ -14,33 +14,56 @@
 
 static size_t	s_prec(char *result, t_list *list)
 {
-	if (list->precision <= list->len)
+	int	i;
+
+	i = 0;
+	if (list->precision <= list->len && list->precision != -1)
+	{
+		while (i < list->width - list->precision)
+		{
+			write(1, " ", 1);
+			i++;
+		}
+		while (list->blank < list->precision)
+		{
+			write(1, &result[list->blank], 1);
+			list->blank++;
+		}
+		return (list->blank + i);
+	}
+	while (i < list->width - list->len)
+	{
+		write(1, " ", 1);
+		i++;
+	}
+	write(1, result, list->len);
+	return (list->len + i);
+}
+
+static size_t	s_minus(char *result, t_list *list)
+{
+	if (list->precision <= list->len && list->precision != -1)
 	{
 		while (list->blank < list->precision)
 		{
 			write(1, &result[list->blank], 1);
 			list->blank++;
 		}
+		while (list->precision < list->width)
+		{
+			write(1, " ", 1);
+			list->blank++;
+			list->precision++;
+		}
 		return (list->blank);
 	}
-	while (list->blank < list->precision - list->len)
-	{
-		write(1, "0", 1);
-		list->blank++;
-	}
 	write(1, result, list->len);
-	return (list->len + list->blank);
-}
-
-static size_t	s_minus(char *result, t_list *list)
-{
-	write(1, result, list->len);
-	while (list->blank < list->width - list->len)
+	while (list->len < list->width)
 	{
 		write(1, " ", 1);
-		list->blank++;
+		list->len++;
 	}
-	return (list->len + list->blank);
+	return (list->len);
 }
 
 static size_t	s_width(char *result, t_list *list)
@@ -78,13 +101,14 @@ size_t	printf_s(char *str, t_list *list)
 		result[5] = ')';
 		result[6] = 0;
 		str = result;
+		list->len += 6;
 	}
 	while (str[list->len])
 		list->len++;
-	if (list->precision)
-		return (s_prec(str, list));
-	else if (list->minus == 1 && list->width > list->len)
+	if (list->minus == 1)
 		return (s_minus(str, list));
+	if (list->precision > -1)
+		return (s_prec(str, list));
 	else if (list->width > list->len)
 		return (s_width(str, list));
 	write(1, str, list->len);
@@ -98,10 +122,14 @@ size_t	printf_c(char c, t_list *list)
 	if (c == 0)
 	{
 		write(1, "", 1);
-		list->len = 1;
+		list->len++;
+		if (list->precision == 0)
+			list->precision = -1;
 		return (printf_s(result, list));
 	}
 	result[0] = c;
 	result[1] = 0;
+	if (list->precision == 0)
+		list->precision = -1;
 	return (printf_s(result, list));
 }

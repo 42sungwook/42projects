@@ -14,15 +14,34 @@
 
 static size_t	di_prec(char *result, t_list *list)
 {
+	int	i;
+
+	i = 0;
+	if (list->minus == 0)
+	{
+		while (i < list->width - list->precision - list->sign)
+		{
+			write(1, " ", 1);
+			i++;
+		}
+	}
 	if (list->sign == 1)
 		write(1, "-", 1);
-	while (list->blank < list->precision - list->len - list->sign)
+	while (list->blank < list->precision - list->len)
 	{
 		write(1, "0", 1);
 		list->blank++;
 	}
 	write(1, result + 32 - list->len, list->len);
-	return (list->len + list->sign + list->blank);
+	if (list->minus != 0)
+	{
+		while (i < list->width - list->precision - list->sign)
+		{
+			write(1, " ", 1);
+			i++;
+		}
+	}
+	return (list->len + list->sign + list->blank + i);
 }
 
 static size_t	di_minus(char *result, t_list *list)
@@ -40,7 +59,7 @@ static size_t	di_minus(char *result, t_list *list)
 
 static size_t	di_width(char *result, t_list *list)
 {
-	if (list->zero == 1)
+	if (list->zero == 1 && list->precision == -1)
 	{
 		if (list->sign == 1)
 			write(1, "-", 1);
@@ -74,8 +93,6 @@ static size_t	di_no_conv(char *result, t_list	*list)
 	else if (list->space)
 		list->sign = printf_putchar(' ');
 	write(1, result + 32 - list->len, list->len);
-	if (list->space)
-		list->len++;
 	return (list->len + list->sign);
 }
 
@@ -90,7 +107,7 @@ size_t	printf_di(int nbr, t_list *list)
 		list->sign = 1;
 		nbr2 *= -1;
 	}
-	if (nbr2 == 0)
+	if (nbr2 == 0 && list->precision != 0)
 	{
 		result[31] = '0';
 		list->len++;
@@ -101,7 +118,9 @@ size_t	printf_di(int nbr, t_list *list)
 		nbr2 = nbr2 / 10;
 		list->len++;
 	}
-	if (list->precision > list->len + list->sign)
+	if (list->precision == 0 && list->width == 0)
+		return (0);
+	if (list->precision > list->len)
 		return (di_prec(result, list));
 	else if (list->minus == 1 && list->width > list->len + list->sign)
 		return (di_minus(result, list));

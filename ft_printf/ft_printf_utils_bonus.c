@@ -26,7 +26,7 @@ t_list	*printf_init_list(t_list *list)
 	list->zero = 0;
 	list->hash = 0;
 	list->width = 0;
-	list->precision = 0;
+	list->precision = -1;
 	list->conversion = 0;
 	list->len = 0;
 	list->sign = 0;
@@ -53,7 +53,7 @@ size_t	printf_width(const char *str, size_t idx, t_list **list)
 		i++;
 	}
 	(*list)->width = num;
-	return (i);
+	return (i - 1);
 }
 
 size_t	printf_precision(const char *str, size_t idx, t_list **list)
@@ -74,7 +74,7 @@ size_t	printf_precision(const char *str, size_t idx, t_list **list)
 		i++;
 	}
 	(*list)->precision = num;
-	return (i + 1);
+	return (i);
 }
 
 t_list	*printf_makelst(const char *str, size_t idx, size_t len, t_list *list)
@@ -96,7 +96,7 @@ t_list	*printf_makelst(const char *str, size_t idx, size_t len, t_list *list)
 			list->hash = 1;
 		else if (str[idx + i] >= '1' && str[i] <= '9' && list->width == 0)
 			i += printf_width(str, idx + i, &list);
-		else if (str[idx + i] == '.' && list->precision == 0)
+		else if (str[idx + i] == '.' && list->precision == -1)
 			i += printf_precision(str, idx + i + 1, &list);
 		i++;
 	}

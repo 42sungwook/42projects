@@ -81,7 +81,7 @@ size_t	printf_x(unsigned int nbr, char *base, t_list *list)
 		nbr = nbr / 16;
 		list->len++;
 	}
-	if (list->hash)
+	if (list->hash && !(result[31] == '0' && list->len == 1))
 		*result = *(x_hash(base, result, &list));
 	if (list->precision > list->len)
 		return (x_prec(result, list));
