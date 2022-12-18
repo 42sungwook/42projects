@@ -26,7 +26,7 @@ static size_t	p_prec(char *result, t_list *list)
 static size_t	p_minus(char *result, t_list *list)
 {
 	write(1, result + 32 - list->len, list->len);
-	while (list->blank < list->width)
+	while (list->blank < list->width - list->len)
 	{
 		write(1, " ", 1);
 		list->blank++;

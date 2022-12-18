@@ -98,7 +98,8 @@ size_t	printf_c(char c, t_list *list)
 	if (c == 0)
 	{
 		write(1, "", 1);
-		return (1);
+		list->len = 1;
+		return (printf_s(result, list));
 	}
 	result[0] = c;
 	result[1] = 0;

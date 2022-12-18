@@ -60,7 +60,10 @@ size_t	printf_u(unsigned int nbr, t_list *list)
 	char		result[32];
 
 	if (nbr == 0)
-		return (printf_putchar('0'));
+	{
+		result[31] = '0';
+		list->len++;
+	}
 	while (nbr > 0)
 	{
 		result[31 - list->len] = nbr % 10 + '0';

@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <limits.h>
 #include "ft_printf_bonus.h"
 
 int main()
@@ -8,8 +9,10 @@ int main()
 	char	c = 0;
 	int y = 0;
 
-	y = ft_printf("%-1c", '0');
+	y = ft_printf(" %.1s", "");
 	printf("%d", y);
+	//y = printf("%-1c%-2c%-3c", '0', 0, '1');
+	//printf("%d", y);
 }
 
 
