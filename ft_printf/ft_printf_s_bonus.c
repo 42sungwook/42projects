@@ -6,7 +6,7 @@
 /*   By: sungwook <sungwook@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/30 17:36:32 by sungwook          #+#    #+#             */
-/*   Updated: 2022/12/14 17:22:08 by sungwook         ###   ########.fr       */
+/*   Updated: 2022/12/19 11:53:26 by sungwook         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -121,7 +121,26 @@ size_t	printf_c(char c, t_list *list)
 
 	if (c == 0)
 	{
+		if (list->width > 0 && list->minus == 0)
+		{
+			while (list->blank < list->width)
+			{
+				write(1, " ", 1);
+				list->blank++;
+			}
+			write(1, "", 1);
+			return (list->blank);
+		}
 		write(1, "", 1);
+		if (list->width > 0 && list->minus != 0)
+		{
+			while (list->blank < list->width)
+			{
+				write(1, " ", 1);
+				list->blank++;
+			}
+			return (list->blank);
+		}
 		list->len++;
 		if (list->precision == 0)
 			list->precision = -1;

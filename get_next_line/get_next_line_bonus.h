@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   get_next_line_bonus.h                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: sungwook <sungwook@student.42.fr>          +#+  +:+       +#+        */
+/*   By: sungwook <sungwook@student.42seoul.kr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/27 16:49:06 by sungwook          #+#    #+#             */
-/*   Updated: 2022/12/13 14:34:13 by sungwook         ###   ########.fr       */
+/*   Updated: 2022/12/21 12:31:10 by sungwook         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,7 +29,7 @@ typedef struct s_list
 
 size_t		gnl_find(char *buff);
 size_t		gnl_strlen(const char *s);
-char		*gnl_strjoin(char *s1, char *s2);
+char		*gnl_strjoin(char *s1, char *s2, size_t i, size_t j);
 t_list		*gnl_free(t_list *head, t_list *list);
 t_list		*gnl_lstnew(int fd);
 char		*get_next_line(int fd);

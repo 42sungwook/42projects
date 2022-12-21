@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   get_next_line_utils_bonus.c                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: sungwook <sungwook@student.42.fr>          +#+  +:+       +#+        */
+/*   By: sungwook <sungwook@student.42seoul.kr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/27 16:43:59 by sungwook          #+#    #+#             */
-/*   Updated: 2022/12/13 14:34:46 by sungwook         ###   ########.fr       */
+/*   Updated: 2022/12/21 12:31:15 by sungwook         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,18 +40,19 @@ size_t	gnl_strlen(const char *s)
 	return (i);
 }
 
-char	*gnl_strjoin(char *s1, char *s2)
+char	*gnl_strjoin(char *s1, char *s2, size_t i, size_t j)
 {
-	size_t	i;
-	size_t	j;
 	size_t	len;
 	size_t	s1_len;
 	char	*join;
 
-	i = 0;
-	j = 0;
 	s1_len = gnl_strlen(s1);
 	len = s1_len + gnl_strlen(s2);
+	if (s1_len > len)
+	{
+		free(s1);
+		return (0);
+	}
 	join = (char *)malloc(sizeof(char) * (len + 1));
 	while (i < s1_len)
 	{

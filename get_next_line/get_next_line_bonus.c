@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   get_next_line_bonus.c                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: sungwook <sungwook@student.42.fr>          +#+  +:+       +#+        */
+/*   By: sungwook <sungwook@student.42seoul.kr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/27 16:44:30 by sungwook          #+#    #+#             */
-/*   Updated: 2022/12/13 14:38:08 by sungwook         ###   ########.fr       */
+/*   Updated: 2022/12/21 12:36:38 by sungwook         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,7 +66,7 @@ static char	*ft_make_line(char *temp)
 static char	*ft_get_line(int fd, char *temp)
 {
 	char	*buff;
-	int		read_status;
+	ssize_t	read_status;
 
 	buff = (char *)malloc(sizeof(char) * (BUFFER_SIZE + 1));
 	while (1)
@@ -74,7 +74,7 @@ static char	*ft_get_line(int fd, char *temp)
 		read_status = read(fd, buff, BUFFER_SIZE);
 		buff[BUFFER_SIZE] = 0;
 		if (read_status == BUFFER_SIZE && gnl_find(buff) == 0)
-			temp = gnl_strjoin(temp, buff);
+			temp = gnl_strjoin(temp, buff, 0, 0);
 		else if (read_status == -1 || ((!temp) && read_status == 0))
 		{
 			if (temp)
@@ -87,7 +87,7 @@ static char	*ft_get_line(int fd, char *temp)
 	}
 	if (read_status != BUFFER_SIZE)
 		buff[read_status] = 0;
-	temp = gnl_strjoin(temp, buff);
+	temp = gnl_strjoin(temp, buff, 0, 0);
 	free(buff);
 	return (temp);
 }
@@ -115,7 +115,7 @@ char	*get_next_line(int fd)
 	t_list			*list;
 	char			*line;
 
-	if (fd < 0 || BUFFER_SIZE <= 0)
+	if (fd < 0 || BUFFER_SIZE <= 0 || BUFFER_SIZE > 2147483647)
 		return (0);
 	list = gnl_find_list(head, fd);
 	if (!head)
