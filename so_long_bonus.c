@@ -6,7 +6,7 @@
 /*   By: chanson <chanson@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/02 15:58:23 by chanson           #+#    #+#             */
-/*   Updated: 2023/01/02 21:41:34 by chanson          ###   ########.fr       */
+/*   Updated: 2023/01/02 22:12:16 by chanson          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,7 +34,10 @@ int	main_loop(t_game *g)
 
 static void	press_key2(int key_code, t_game *g)
 {
-	if (key_code == 18)
+	if (key_code == KEY_K && g->custom.left_ball != 0 \
+						&& g->start == 1 && !(g->reset))
+		catch_enemy(g);
+	else if (key_code == 18)
 		g->level = 30;
 	else if (key_code == 19)
 		g->level = 20;
@@ -54,10 +57,7 @@ int	press_key(int key_code, t_game *g)
 	x = g->user.x / 64;
 	y = g->user.y / 64;
 	if (key_code == KEY_ESC)
-	{
-		system("leaks so_long");
 		exit(0);
-	}
 	if ((key_code == 36 && g->start == 0) || (key_code == 36 && g->start == 2))
 		init_enemy(g);
 	else if (g->reset == 1 && key_code == 15)
@@ -72,9 +72,6 @@ int	press_key(int key_code, t_game *g)
 		draw_move_s(g);
 	else if (key_code == KEY_W && y > 0 && !(g->reset))
 		draw_move_n(g);
-	else if (key_code == KEY_K && g->custom.left_ball != 0 \
-						&& g->start == 1 && !(g->reset))
-		catch_enemy(g);
 	press_key2(key_code, g);
 	return (1);
 }

@@ -6,7 +6,7 @@
 /*   By: chanson <chanson@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/02 15:58:35 by chanson           #+#    #+#             */
-/*   Updated: 2023/01/02 16:08:13 by chanson          ###   ########.fr       */
+/*   Updated: 2023/01/02 22:16:09 by chanson          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -94,4 +94,10 @@ void	make_enemy_map(int **map, t_game *g)
 		}
 		i++;
 	}
+}
+
+int	close_game(t_game *g)
+{
+	mlx_destroy_window(g->mlx, g->win);
+	exit(0);
 }

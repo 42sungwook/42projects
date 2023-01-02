@@ -6,7 +6,7 @@
 /*   By: chanson <chanson@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/02 15:58:42 by chanson           #+#    #+#             */
-/*   Updated: 2023/01/02 21:50:39 by chanson          ###   ########.fr       */
+/*   Updated: 2023/01/02 22:16:04 by chanson          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -120,10 +120,4 @@ int	**dup_arr(int **arr, int size_x, int size_y)
 		y++;
 	}
 	return (arr2);
-}
-
-int	close_game(t_game *g)
-{
-	mlx_destroy_window(g->mlx, g->win);
-	exit(0);
 }

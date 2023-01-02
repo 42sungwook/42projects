@@ -12,7 +12,7 @@ SRCS_B = ./draw/draw_map_bonus.c ./draw/draw_user_move_bonus.c ./draw/draw_user_
 		./initialize/init_img_bonus.c	./so_long_bonus.c ./make_map/read_map_bonus.c \
 		./make_map/make_deque_1_bonus.c ./make_map/make_deque_2_bonus.c \
 		./make_map/map_check_way_bonus.c ./make_map/map_check_bonus.c ./utils/utils_bonus.c \
-		./utils/ft_itoa_bonus.c ./case_check/case_check_bonus.c ./case_check/case_check2_bonus.c \
+		./utils/utils2_bonus.c ./case_check/case_check_bonus.c ./case_check/case_check2_bonus.c \
 		./draw/draw_enemy_bonus.c ./initialize/init_enemy_bonus.c ./draw/draw_enemy2_bonus.c
 
 OBJS = $(SRCS:.c=.o)
