@@ -1,26 +1,5 @@
 #include "../so_long.h"
 
-void	game_next_start(t_game *g)
-{
-	int	fd;
-
-	mlx_destroy_window(g->mlx, g->win);
-	g->addr = "./maps/map2.ber";
-	ft_free(g->map1, g);
-	ft_free(g->map2, g);
-	fd = open(g->addr, O_RDONLY);
-	if (fd == -1)
-	{
-		perror("file error");
-		exit(0);
-	}
-	game_init(g, g->addr);
-	read_map(g);
-	check_valid(g);
-	g->start = 2;
-	game_start(g);
-}
-
 int	game_restart(t_game *g)
 {
 	ft_free(g->map1, g);
@@ -51,10 +30,7 @@ void	case_enter_escape(t_game *g)
 	mlx_clear_window(g->mlx, g->win);
 	g->key_sign = 0;
 	g->reset = 1;
-	if (check_str(g->addr, "map1"))
-		game_next_start(g);
-	else
-		mlx_put_image_to_window(g->mlx, g->win, g->end_img, 0, 0);
+	mlx_put_image_to_window(g->mlx, g->win, g->end_img, 0, 0);
 }
 
 void	case_check(t_game *g)

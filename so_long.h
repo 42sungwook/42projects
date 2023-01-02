@@ -142,7 +142,6 @@ void	check_valid(t_game	*g);
 // case check
 void	find_site(int **arr, t_game *game);
 void	case_check(t_game *g);
-void	game_next_start(t_game *g);
 int		game_restart(t_game *g);
 void	case_eat_collectable(t_game *g, int x, int y);
 void	case_enter_escape(t_game *g);
@@ -151,7 +150,6 @@ void	put_game_end_img(t_game *g);
 //utils
 int		**make_int_map(t_game *g, size_t i, size_t j);
 void	ft_free(int **arr, t_game *g);
-int		check_str(char *str1, char *str2);
 char	*ft_itoa(int n);
 int		**dup_arr(int **arr, int size_x, int size_y);
 int		close_game(t_game *g);

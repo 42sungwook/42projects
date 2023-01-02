@@ -44,34 +44,6 @@ int	**make_int_map(t_game *g, size_t i, size_t j)
 	return (arr);
 }
 
-int	check_str(char *str1, char *str2)
-{
-	int		i;
-	int		j;
-	int		sign;
-
-	i = -1;
-	while (str1[++i])
-	{
-		if (str1[i] == str2[0])
-		{
-			j = 0;
-			sign = 0;
-			while (str1[i + j] && str2[j])
-			{
-				if (str1[i + j] == str2[j])
-					sign = 1;
-				else
-					sign = 0;
-				j++;
-			}
-			if (str2[j] == '\0' && sign == 1)
-				return (1);
-		}
-	}
-	return (0);
-}
-
 int	**dup_arr(int **arr, int size_x, int size_y)
 {
 	int	x;
@@ -105,4 +77,5 @@ void	print_user_move(t_game *g)
 		i++;
 	write(1, move_count, i);
 	write(1, "\n", 1);
+	free(move_count);
 }
