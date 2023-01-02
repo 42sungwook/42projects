@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   so_long_bonus.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: sungwook <sungwook@student.42seoul.kr>     +#+  +:+       +#+        */
+/*   By: chanson <chanson@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/02 15:58:23 by chanson           #+#    #+#             */
-/*   Updated: 2023/01/02 17:21:23 by sungwook         ###   ########.fr       */
+/*   Updated: 2023/01/02 21:41:34 by chanson          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,7 +54,10 @@ int	press_key(int key_code, t_game *g)
 	x = g->user.x / 64;
 	y = g->user.y / 64;
 	if (key_code == KEY_ESC)
+	{
+		system("leaks so_long");
 		exit(0);
+	}
 	if ((key_code == 36 && g->start == 0) || (key_code == 36 && g->start == 2))
 		init_enemy(g);
 	else if (g->reset == 1 && key_code == 15)
@@ -69,7 +72,8 @@ int	press_key(int key_code, t_game *g)
 		draw_move_s(g);
 	else if (key_code == KEY_W && y > 0 && !(g->reset))
 		draw_move_n(g);
-	else if (key_code == KEY_K && g->custom.left_ball != 0)
+	else if (key_code == KEY_K && g->custom.left_ball != 0 \
+						&& g->start == 1 && !(g->reset))
 		catch_enemy(g);
 	press_key2(key_code, g);
 	return (1);
@@ -105,7 +109,7 @@ int	main(int argc, char **argv)
 		return (0);
 	}
 	game_init(&game, argv[1]);
-	read_map(&game, fd);
+	read_map(&game);
 	check_valid(&game);
 	game_start(&game);
 }

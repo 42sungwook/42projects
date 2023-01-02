@@ -6,7 +6,7 @@
 /*   By: chanson <chanson@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/02 16:00:42 by chanson           #+#    #+#             */
-/*   Updated: 2023/01/02 16:15:36 by chanson          ###   ########.fr       */
+/*   Updated: 2023/01/02 21:22:12 by chanson          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,6 +40,8 @@ void	put_game_end_img(t_game *g)
 
 void	put_game_over_img(t_game *g)
 {
+	if (g->enemy_list)
+		delete_complete_deque(g->enemy_list, g);
 	mlx_clear_window(g->mlx, g->win);
 	g->key_sign = 0;
 	g->reset = 1;

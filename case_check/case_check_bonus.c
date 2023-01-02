@@ -6,7 +6,7 @@
 /*   By: chanson <chanson@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/02 16:00:37 by chanson           #+#    #+#             */
-/*   Updated: 2023/01/02 16:15:25 by chanson          ###   ########.fr       */
+/*   Updated: 2023/01/02 21:50:52 by chanson          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,6 @@ void	game_next_start(t_game *g)
 	g->addr = "./maps/map2.ber";
 	ft_free(g->map1, g);
 	ft_free(g->map2, g);
-	delete_deque(g->enemy_list);
 	fd = open(g->addr, O_RDONLY);
 	if (fd == -1)
 	{
@@ -28,7 +27,7 @@ void	game_next_start(t_game *g)
 		exit(0);
 	}
 	game_init(g, g->addr);
-	read_map(g, fd);
+	read_map(g);
 	check_valid(g);
 	g->start = 2;
 	game_start(g);
@@ -67,8 +66,13 @@ void	case_enter_escape(t_game *g)
 	mlx_clear_window(g->mlx, g->win);
 	g->key_sign = 0;
 	g->reset = 1;
+	if (g->enemy_list)
+		delete_complete_deque(g->enemy_list, g);
 	if (check_str(g->addr, "map1"))
+	{
+		ft_free2(g->map);
 		game_next_start(g);
+	}
 	else
 		mlx_put_image_to_window(g->mlx, g->win, g->end_img, 0, 0);
 }

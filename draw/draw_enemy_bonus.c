@@ -6,7 +6,7 @@
 /*   By: chanson <chanson@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/02 15:59:56 by chanson           #+#    #+#             */
-/*   Updated: 2023/01/02 16:16:11 by chanson          ###   ########.fr       */
+/*   Updated: 2023/01/02 21:10:42 by chanson          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -87,6 +87,7 @@ static void	move_enemy(t_game *g, t_node *temp)
 	if (temp->way == 0 || temp->way->cnt == 0)
 	{
 		ft_free(temp->map, g);
+		temp->map = 0;
 		delete_deque(temp->way);
 		temp->map = dup_arr(g->map1, g->map_v.x_size, g->map_v.y_size);
 		make_enemy_map(temp->map, g);

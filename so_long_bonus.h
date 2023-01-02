@@ -6,7 +6,7 @@
 /*   By: chanson <chanson@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/02 16:01:41 by chanson           #+#    #+#             */
-/*   Updated: 2023/01/02 16:11:28 by chanson          ###   ########.fr       */
+/*   Updated: 2023/01/02 21:50:44 by chanson          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -169,7 +169,7 @@ void	init_enemy(t_game *g);
 void	make_enemy_list(t_game *g);
 
 //make map
-void	read_map(t_game *game, int fd);
+void	read_map(t_game *game);
 t_node	*new_node(int x, int y);
 t_deque	*new_deque(void);
 void	deque_add_back(t_deque *deque, t_node *node);
@@ -181,6 +181,7 @@ t_node	*new_node_2(int x, int y, int idx);
 int		map_check_way(t_game *g);
 int		map_check(t_game *g);
 void	check_valid(t_game	*g);
+void	delete_complete_deque(t_deque *deque, t_game *g);
 
 // case check
 void	find_site(int **arr, t_game *game);
@@ -202,6 +203,7 @@ char	*ft_itoa(int n);
 int		**dup_arr(int **arr, int size_x, int size_y);
 void	make_enemy_map(int **map, t_game *g);
 int		close_game(t_game *g);
+void	ft_free2(char **arr);
 
 //main
 void	game_start(t_game *game);

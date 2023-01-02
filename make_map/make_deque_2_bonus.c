@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   make_deque_2_bouns.c                               :+:      :+:    :+:   */
+/*   make_deque_2_bonus.c                               :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: chanson <chanson@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/02 15:58:57 by chanson           #+#    #+#             */
-/*   Updated: 2023/01/02 16:16:51 by chanson          ###   ########.fr       */
+/*   Updated: 2023/01/02 21:29:31 by chanson          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,6 +33,7 @@ t_node	*new_node_2(int x, int y, int idx)
 	node->enemy_dir = 0;
 	node->map = 0;
 	node->way = 0;
+	node->pre_val = 0;
 	return (node);
 }
 
@@ -63,4 +64,31 @@ void	delete_back_deque(t_deque *deque)
 		deque->front = NULL;
 		deque->cnt--;
 	}
+}
+
+void	delete_complete_deque(t_deque *deque, t_game *g)
+{
+	t_node	*temp;
+
+	if (!deque)
+		return ;
+	temp = deque->front;
+	while (temp)
+	{
+		deque->front = temp->next;
+		if (temp->way)
+		{
+			delete_deque(temp->way);
+			temp->way = NULL;
+		}
+		if (temp->map)
+		{
+			ft_free(temp->map, g);
+			temp->map = NULL;
+		}
+		free(temp);
+		temp = deque->front;
+	}
+	free(deque);
+	g->enemy_list = 0;
 }

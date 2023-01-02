@@ -6,11 +6,27 @@
 /*   By: chanson <chanson@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/02 15:58:42 by chanson           #+#    #+#             */
-/*   Updated: 2023/01/02 16:17:23 by chanson          ###   ########.fr       */
+/*   Updated: 2023/01/02 21:50:39 by chanson          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../so_long_bonus.h"
+
+void	ft_free2(char **arr)
+{
+	int	j;
+
+	j = 0;
+	if (!arr)
+		return ;
+	while (arr[j])
+	{
+		free(arr[j]);
+		j++;
+	}
+	free(arr[j]);
+	free(arr);
+}
 
 void	ft_free(int **arr, t_game *g)
 {
