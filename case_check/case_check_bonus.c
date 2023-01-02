@@ -6,7 +6,7 @@
 /*   By: chanson <chanson@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/02 16:00:37 by chanson           #+#    #+#             */
-/*   Updated: 2023/01/02 21:50:52 by chanson          ###   ########.fr       */
+/*   Updated: 2023/01/02 22:08:46 by chanson          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,7 +48,6 @@ int	game_restart(t_game *g)
 	g->key_sign = 0;
 	g->user.d = 3;
 	g->custom.left_ball = 3;
-	init_enemy(g);
 	g->start = 0;
 	return (0);
 }
