@@ -65,19 +65,13 @@ void	game_start(t_game *game)
 
 int	main(int argc, char **argv)
 {
-	int		fd;
 	t_game	game;
 
 	if (argc != 2)
 		return (0);
-	fd = open(argv[1], O_RDONLY);
-	if (fd == -1)
-	{
-		perror("file error");
-		return (0);
-	}
 	game_init(&game, argv[1]);
-	read_map(&game, fd);
+	read_map(&game);
+	system("leaks so_long");
 	check_valid(&game);
 	game_start(&game);
 }

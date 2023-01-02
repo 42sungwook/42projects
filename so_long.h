@@ -22,12 +22,6 @@
 # define MAP_WALL					-1
 # define MAP_BLACK					0
 
-typedef struct s_map_list
-{
-	char				*line;
-	struct s_map_list	*next;
-}						t_map_list;
-
 typedef struct s_user
 {
 	void	*user_e0;
@@ -132,7 +126,7 @@ void	init_custom_img(t_game *g, void *mlx);
 void	init_start(t_game *game, int *x_width, int *y_width);
 
 //make map
-void	read_map(t_game *game, int fd);
+void	read_map(t_game *game);
 t_node	*new_node(int x, int y);
 t_deque	*new_deque(void);
 void	deque_add_back(t_deque *deque, t_node *node);

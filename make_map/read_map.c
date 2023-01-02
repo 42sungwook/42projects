@@ -1,70 +1,62 @@
 
 #include "../so_long.h"
 
-static t_map_list	*sl_newlst(char *line)
+static void	make_map2(char **map, char *line, int i, int j)
 {
-	t_map_list	*new;
-
-	new = (t_map_list *)malloc(sizeof(t_map_list));
-	new->line = line;
-	new->next = 0;
-	return (new);
-}
-
-static void	free_maplist(t_map_list *head, t_map_list *list)
-{
-	list = head;
-	while (list == 0)
+	map[i] = (char *)malloc(sizeof(char) * (j + 1));
+	map[i][j] = 0;
+	j--;
+	while (j >= 0)
 	{
-		list->next = list;
-		free(head);
-		head = list;
+		map[i][j] = line[j];
+		j--;
 	}
 }
 
-static char	**make_map(t_game *game, t_map_list *head)
+static char	**make_map(t_game *game, int fd)
 {
-	t_map_list	*list;
-	char		**map;
-	int			i;
+	char	**map;
+	char	*line;
+	int		i;
+	int		j;
 
 	i = 0;
-	list = head;
 	map = (char **)malloc(sizeof(char *) * (game->map_v.y_size + 1));
 	while (i < game->map_v.y_size)
 	{
-		map[i] = list->line;
-		list = list->next;
+		line = get_next_line(fd);
+		j = 0;
+		while (line[j])
+			j++;
+		make_map2(map, line, i, j);
+		free(line);
 		i++;
 	}
 	map[i] = 0;
 	return (map);
 }
 
-void	read_map(t_game *game, int fd)
+void	read_map(t_game *game)
 {
 	char		*line;
-	t_map_list	*head;
-	t_map_list	*list;
+	int			fd;
 
-	head = 0;
+	fd = open(game->addr, O_RDONLY);
+	if (fd == -1)
+	{
+		perror("file error");
+		exit (0);
+	}
 	while (1)
 	{
 		line = get_next_line(fd);
 		if (line == 0)
 			break ;
-		if (!head)
-		{
-			list = sl_newlst(line);
-			head = list;
-		}
-		else
-		{
-			list->next = sl_newlst(line);
-			list = list->next;
-		}
 		game->map_v.y_size++;
+		free(line);
 	}
-	game->map = make_map(game, head);
-	free_maplist(head, list);
+	close(fd);
+	fd = open(game->addr, O_RDONLY);
+	game->map = make_map(game, fd);
+	close(fd);
 }

@@ -15,7 +15,7 @@ void	game_next_start(t_game *g)
 		exit(0);
 	}
 	game_init(g, g->addr);
-	read_map(g, fd);
+	read_map(g);
 	check_valid(g);
 	g->start = 2;
 	game_start(g);
