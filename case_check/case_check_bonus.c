@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   case_check_bonus.c                                 :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: chanson <chanson@student.42.fr>            +#+  +:+       +#+        */
+/*   By: sungwook <sungwook@student.42seoul.kr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/02 16:00:37 by chanson           #+#    #+#             */
-/*   Updated: 2023/01/02 22:08:46 by chanson          ###   ########.fr       */
+/*   Updated: 2023/01/03 15:36:42 by sungwook         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -73,7 +73,10 @@ void	case_enter_escape(t_game *g)
 		game_next_start(g);
 	}
 	else
+	{
+		printf("put image to win\n");
 		mlx_put_image_to_window(g->mlx, g->win, g->end_img, 0, 0);
+	}
 }
 
 void	case_check(t_game *g)
@@ -87,6 +90,6 @@ void	case_check(t_game *g)
 		case_eat_collectable(g, x, y);
 	if ((g->map1)[y][x] == -3 && g->custom.cnt == 0)
 		case_enter_escape(g);
-	if (player_meet_enemy(g))
+	else if (player_meet_enemy(g))
 		put_game_over_img(g);
 }

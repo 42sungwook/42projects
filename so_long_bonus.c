@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   so_long_bonus.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: chanson <chanson@student.42.fr>            +#+  +:+       +#+        */
+/*   By: sungwook <sungwook@student.42seoul.kr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/02 15:58:23 by chanson           #+#    #+#             */
-/*   Updated: 2023/01/02 22:53:28 by chanson          ###   ########.fr       */
+/*   Updated: 2023/01/03 15:48:08 by sungwook         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -94,17 +94,10 @@ void	game_start(t_game *game)
 
 int	main(int argc, char **argv)
 {
-	int		fd;
 	t_game	game;
 
 	if (argc != 2)
 		return (0);
-	fd = open(argv[1], O_RDONLY);
-	if (fd == -1)
-	{
-		perror("file error");
-		return (0);
-	}
 	game_init(&game, argv[1]);
 	read_map(&game);
 	check_valid(&game);

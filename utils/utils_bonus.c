@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   utils_bonus.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: chanson <chanson@student.42.fr>            +#+  +:+       +#+        */
+/*   By: sungwook <sungwook@student.42seoul.kr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/02 15:58:42 by chanson           #+#    #+#             */
-/*   Updated: 2023/01/02 22:16:04 by chanson          ###   ########.fr       */
+/*   Updated: 2023/01/03 15:23:47 by sungwook         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -79,14 +79,18 @@ int	check_str(char *str1, char *str2)
 	int		sign;
 
 	i = -1;
+	printf("start\n");
 	while (str1[++i])
 	{
+		printf("str1 : %d\n", i);
 		if (str1[i] == str2[0])
 		{
+			printf("str1 = str2 %d\n", i);
 			j = 0;
 			sign = 0;
 			while (str1[i + j] && str2[j])
 			{
+				printf("str1 = str2 (j): %d", j);
 				if (str1[i + j] == str2[j])
 					sign = 1;
 				else

@@ -71,7 +71,6 @@ int	main(int argc, char **argv)
 		return (0);
 	game_init(&game, argv[1]);
 	read_map(&game);
-	system("leaks so_long");
 	check_valid(&game);
 	game_start(&game);
 }
