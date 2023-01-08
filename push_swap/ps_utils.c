@@ -1,13 +1,14 @@
 #include "push_swap.h"
 
-t_list *ps_addlist(int num, int i)
+t_list *ps_addlist(int num)
 {
 	t_list *list;
 
 	list = (t_list *)malloc(sizeof(t_list));
 	list->num = num;
-	list->idx = i;
+	list->idx = 0;
 	list->next = 0;
+	list->group = 0;
 	return (list);
 }
 
@@ -50,7 +51,7 @@ int ps_atoi(char *str)
 	}
 	if (ps_isdigit(str[i]) == 0)
 		exit(0);
-	while (ps_isdigit(str[i]) == 1)
+	while (ps_isdigit(str[i]))
 	{
 		result = result * 10 + (str[i] - '0');
 		i++;
