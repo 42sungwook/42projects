@@ -1,4 +1,4 @@
-SRCS = ./ps_merge.c ./ps_utils.c ./push_swap.c ./ps_utils2.c
+SRCS = ./ps_merge.c ./ps_utils.c ./push_swap.c ./ps_utils2.c ./ps_instructions.c ./push_swap_start.c
 
 OBJS = $(SRCS:.c=.o)
 

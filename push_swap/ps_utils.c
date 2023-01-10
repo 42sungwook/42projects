@@ -1,14 +1,14 @@
 #include "push_swap.h"
 
-t_list *ps_addlist(int num)
+t_list *ps_addlist(int num, int group, size_t idx)
 {
 	t_list *list;
 
 	list = (t_list *)malloc(sizeof(t_list));
 	list->num = num;
-	list->idx = 0;
+	list->idx = idx;
 	list->next = 0;
-	list->group = 0;
+	list->group = group;
 	return (list);
 }
 
