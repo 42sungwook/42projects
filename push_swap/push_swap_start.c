@@ -21,6 +21,8 @@ static void make_reverse_triangle(t_list **stack_a, t_list **stack_b, t_count *c
 			ps_push("b", stack_b, stack_a, count);
 		else if (temp_a->group == 2)
 			find_best_a_to_b(stack_a, stack_b, count);
+		else
+			ps_rotate("a", stack_a, 1);
 		temp_a = *stack_a;
 	}
 }
@@ -49,23 +51,13 @@ static void send_two_groups_to_b(t_list **stack_a, t_list **stack_b, t_count *co
 
 void start_push_swap(t_list **stack_a, t_list **stack_b, t_count *count)
 {
-	t_list *temp_a;
-	t_list *temp_b;
 	send_two_groups_to_b(stack_a, stack_b, count);
+	printf("send_two_groups_to_b\n \n");
+	print_stacks(*stack_a, *stack_b);
+	
 	make_reverse_triangle(stack_a, stack_b, count);
 	//  send_two_groups_to_a(stack_a, stack_b);
 	//  send_last_group_to_a(stack_a, stack_b);
 
-	temp_a = *stack_a;
-	temp_b = *stack_b;
-	while (temp_a)
-	{
-		printf("stack a : %d  %d\n", temp_a->num, temp_a->group);
-		temp_a = temp_a->next;
-	}
-	while (temp_b)
-	{
-		printf("stack b : %d  %d\n", temp_b->num, temp_b->group);
-		temp_b = temp_b->next;
-	}
+	print_stacks(*stack_a, *stack_b);
 }

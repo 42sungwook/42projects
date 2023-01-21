@@ -10,10 +10,10 @@ CFLAGS	=	-Wall -Werror -Wextra
 all:	$(NAME)
 
 $(NAME):	$(OBJS) ./push_swap.h
-			$(CC) $(CFLAGS) $(OBJS) -o $(NAME)
+			$(CC) $(OBJS) -o $(NAME)
 
 %.o : %.c
-			$(CC) $(CFLAGS) -c $< -o $@
+			$(CC) -c $< -o $@
 
 clean:
 			rm -rf $(NAME)
