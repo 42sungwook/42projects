@@ -2,24 +2,49 @@
 
 static void find_idx_in_row(t_list *stack_a, t_count *count)
 {
-	while (stack_a)
+	size_t	row_len;
+	size_t	max_row_len;
+	int		num;
+	t_list	*temp;
+
+	temp = stack_a;
+	max_row_len = 0;
+	row_len = 0;
+	while (temp)
 	{
-		if (stack_a->next != 0)
+		if (temp->next != 0)
 		{
-			if (stack_a->idx + 1 == stack_a->next->idx)
+			if (temp->idx + 1 == temp->next->idx)
+				row_len++;
+			else
 			{
-				if (stack_a->group != 4)
+				if (max_row_len < row_len)
 				{
-					uncount_group(stack_a, count);
-					stack_a->group = 4;
-					count->group4++;
+					num = temp->num - row_len;
+					max_row_len = row_len;
 				}
-				uncount_group(stack_a->next, count);
-				stack_a->next->group = 4;
-				count->group4++;
+				row_len = 0;
 			}
 		}
-		stack_a = stack_a->next;
+		temp = temp->next;
+	}
+	temp = stack_a;
+	count->group4 = max_row_len + 1;
+	if (max_row_len == 0)
+		return ;
+	while (temp)
+	{
+		if (temp->num == num)
+		{
+			while (max_row_len + 1)
+			{
+				temp->group = 4;
+				temp = temp->next;
+				max_row_len--;
+			}
+			break ;
+		}
+		temp = temp->next;
 	}
 }
 

@@ -55,9 +55,9 @@ void start_push_swap(t_list **stack_a, t_list **stack_b, t_count *count)
 	printf("send_two_groups_to_b\n \n");
 	print_stacks(*stack_a, *stack_b);
 	
-	make_reverse_triangle(stack_a, stack_b, count);
+	//make_reverse_triangle(stack_a, stack_b, count);
 	//  send_two_groups_to_a(stack_a, stack_b);
 	//  send_last_group_to_a(stack_a, stack_b);
 
-	print_stacks(*stack_a, *stack_b);
+	//print_stacks(*stack_a, *stack_b);
 }
