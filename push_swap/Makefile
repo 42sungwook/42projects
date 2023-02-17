@@ -1,3 +1,15 @@
+# **************************************************************************** #
+#                                                                              #
+#                                                         :::      ::::::::    #
+#    Makefile                                           :+:      :+:    :+:    #
+#                                                     +:+ +:+         +:+      #
+#    By: sungwook <sungwook@student.42seoul.kr>     +#+  +:+       +#+         #
+#                                                 +#+#+#+#+#+   +#+            #
+#    Created: 2023/02/17 19:30:21 by sungwook          #+#    #+#              #
+#    Updated: 2023/02/17 19:30:22 by sungwook         ###   ########.fr        #
+#                                                                              #
+# **************************************************************************** #
+
 SRCS = ./ps_merge.c ./ps_utils.c ./push_swap.c ./ps_utils2.c ./ps_instructions.c ./push_swap_start.c ./ps_send_group.c
 
 OBJS = $(SRCS:.c=.o)

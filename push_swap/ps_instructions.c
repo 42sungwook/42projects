@@ -1,9 +1,21 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   ps_instructions.c                                  :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: sungwook <sungwook@student.42seoul.kr>     +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2023/02/17 19:27:16 by sungwook          #+#    #+#             */
+/*   Updated: 2023/02/17 19:27:17 by sungwook         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "push_swap.h"
 
 void	ps_push(char *c, t_list **stack_add, t_list **stack_del, t_count *count)
 {
-	t_list *temp;
-	t_list *new;
+	t_list	*temp;
+	t_list	*new;
 
 	temp = *stack_del;
 	new = ps_addlist(temp->num, temp->group, temp->idx);

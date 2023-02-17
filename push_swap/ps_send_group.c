@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   ps_send_group.c                                    :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: sungwook <sungwook@student.42seoul.kr>     +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2023/02/17 19:26:56 by sungwook          #+#    #+#             */
+/*   Updated: 2023/02/17 19:33:58 by sungwook         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "push_swap.h"
 
 void	send_group3_to_a(t_list **stack_a, t_list **stack_b, t_count *count)
@@ -40,7 +52,8 @@ void	send_group1_to_a(t_list **stack_a, t_list **stack_b, t_count *count)
 	}
 }
 
-void find_best_a_to_b(t_list **stack_a, t_list **stack_b, t_count *count, size_t current_idx)
+void	find_best_a_to_b(t_list **stack_a, t_list **stack_b, \
+		t_count *count, size_t current_idx)
 {
 	t_list	*temp_a;
 	size_t	count_ra;
@@ -68,7 +81,8 @@ void find_best_a_to_b(t_list **stack_a, t_list **stack_b, t_count *count, size_t
 	ps_push("b", stack_b, stack_a, count);
 }
 
-void find_best_b_to_a(t_list **stack_a, t_list **stack_b, t_count *count, size_t current_idx)
+void	find_best_b_to_a(t_list **stack_a, t_list **stack_b, \
+		t_count *count, size_t current_idx)
 {
 	t_list	*temp_a;
 	size_t	count_ra;
@@ -79,7 +93,8 @@ void find_best_b_to_a(t_list **stack_a, t_list **stack_b, t_count *count, size_t
 	sign = 0;
 	count_ra = 0;
 	count_rra = 1;
-	temp_next = count->group1 + count->group2 + count->group3 + count->group4 + 1;
+	temp_next = count->group1 + count->group2 + count->group3 \
+		+ count->group4 + 1;
 	temp_a = *stack_a;
 	while (temp_a)
 	{

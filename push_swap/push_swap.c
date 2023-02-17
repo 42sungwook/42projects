@@ -1,6 +1,18 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   push_swap.c                                        :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: sungwook <sungwook@student.42seoul.kr>     +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2023/02/17 19:30:09 by sungwook          #+#    #+#             */
+/*   Updated: 2023/02/17 19:32:27 by sungwook         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "push_swap.h"
 
-static void find_idx_in_row(t_list *stack_a, t_count *count)
+static void	find_idx_in_row(t_list *stack_a, t_count *count)
 {
 	size_t	row_len;
 	size_t	max_row_len;
@@ -46,9 +58,9 @@ static void find_idx_in_row(t_list *stack_a, t_count *count)
 	}
 }
 
-static void div_into_three(t_list *answer, t_list *stack_a, t_count *count)
+static void	div_into_three(t_list *answer, t_list *stack_a, t_count *count)
 {
-	t_list *temp;
+	t_list	*temp;
 
 	count->g2_start_idx = (count->a / 3);
 	count->g3_start_idx = (count->a / 3) * 2;
@@ -77,11 +89,11 @@ static void div_into_three(t_list *answer, t_list *stack_a, t_count *count)
 	}
 }
 
-static size_t make_pre_list(char **av, t_list **answer)
+static size_t	make_pre_list(char **av, t_list **answer)
 {
-	int num;
-	size_t i;
-	t_list *temp;
+	int		num;
+	size_t	i;
+	t_list	*temp;
 
 	i = 1;
 	while (av[i])
@@ -102,12 +114,12 @@ static size_t make_pre_list(char **av, t_list **answer)
 	return (i - 1);
 }
 
-int main(int ac, char **av)
+int	main(int ac, char **av)
 {
-	t_list *answer;
-	t_list *stack_a;
-	t_list *stack_b;
-	t_count count;
+	t_list	*answer;
+	t_list	*stack_a;
+	t_list	*stack_b;
+	t_count	count;
 
 	answer = 0;
 	stack_a = 0;

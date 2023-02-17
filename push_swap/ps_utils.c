@@ -1,8 +1,20 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   ps_utils.c                                         :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: sungwook <sungwook@student.42seoul.kr>     +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2023/02/17 19:30:06 by sungwook          #+#    #+#             */
+/*   Updated: 2023/02/17 19:33:23 by sungwook         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "push_swap.h"
 
-t_list *ps_addlist(int num, int group, size_t idx)
+t_list	*ps_addlist(int num, int group, size_t idx)
 {
-	t_list *list;
+	t_list	*list;
 
 	list = (t_list *)malloc(sizeof(t_list));
 	list->num = num;
@@ -20,23 +32,23 @@ static int ps_isdigit(char c)
 		return (0);
 }
 
-static int ps_isspace(int c)
+static int	ps_isspace(int c)
 {
 	unsigned char chr;
 
 	chr = c;
-	if (chr == '\t' || chr == '\n' || chr == '\v' ||
+	if (chr == '\t' || chr == '\n' || chr == '\v' || \
 		chr == '\f' || chr == '\r' || chr == ' ')
 		return (1);
 	else
 		return (0);
 }
 
-int ps_atoi(char *str)
+int	ps_atoi(char *str)
 {
-	size_t i;
-	long sign;
-	long result;
+	size_t	i;
+	long	sign;
+	long	result;
 
 	i = 0;
 	sign = 1;

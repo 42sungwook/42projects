@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   ps_utils2.c                                        :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: sungwook <sungwook@student.42seoul.kr>     +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2023/02/17 19:30:07 by sungwook          #+#    #+#             */
+/*   Updated: 2023/02/17 19:33:03 by sungwook         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "push_swap.h"
 
 
@@ -39,17 +51,19 @@ void	print_stacks(t_list *stack_a, t_list *stack_b)
 	temp_b = stack_b;
 	while (temp_a)
 	{
-		printf("stack a : num:%d  group:%d  idx:%zu\n", temp_a->num, temp_a->group, temp_a->idx);
+		printf("stack a : num:%d  group:%d  idx:%zu\n", temp_a->num, \
+			temp_a->group, temp_a->idx);
 		temp_a = temp_a->next;
 	}
 	while (temp_b)
 	{
-		printf("stack b : num:%d  group:%d  idx:%zu\n", temp_b->num, temp_b->group, temp_b->idx);
+		printf("stack b : num:%d  group:%d  idx:%zu\n", temp_b->num, \
+			temp_b->group, temp_b->idx);
 		temp_b = temp_b->next;
 	}
 }
 
-void ps_init_count(t_count *count)
+void	ps_init_count(t_count *count)
 {
 	count->a = 0;
 	count->b = 0;

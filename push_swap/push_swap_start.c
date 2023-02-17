@@ -1,6 +1,19 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   push_swap_start.c                                  :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: sungwook <sungwook@student.42seoul.kr>     +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2023/02/17 19:30:08 by sungwook          #+#    #+#             */
+/*   Updated: 2023/02/17 19:32:42 by sungwook         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "push_swap.h"
 
-static void	make_reverse_triangle(t_list **stack_a, t_list **stack_b, t_count *count)
+static void	make_reverse_triangle(t_list **stack_a, t_list **stack_b, \
+		t_count *count)
 {
 	size_t	current_idx;
 
@@ -46,4 +59,5 @@ void	start_push_swap(t_list **stack_a, t_list **stack_b, t_count *count)
 	send_group3_to_a(stack_a, stack_b, count);
 	send_group2_to_a(stack_a, stack_b, count);
 	send_group1_to_a(stack_a, stack_b, count);
+	print_stacks(*stack_a, *stack_b);
 }
