@@ -1,10 +1,10 @@
-SRCS = ./ps_merge.c ./ps_utils.c ./push_swap.c ./ps_utils2.c ./ps_instructions.c ./push_swap_start.c
+SRCS = ./ps_merge.c ./ps_utils.c ./push_swap.c ./ps_utils2.c ./ps_instructions.c ./push_swap_start.c ./ps_send_group.c
 
 OBJS = $(SRCS:.c=.o)
 
 NAME = push_swap
 
-CC		=	cc -g
+CC		=	cc -g -fsanitize=address
 CFLAGS	=	-Wall -Werror -Wextra
 
 all:	$(NAME)
