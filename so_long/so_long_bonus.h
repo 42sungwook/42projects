@@ -6,7 +6,7 @@
 /*   By: sungwook <sungwook@student.42seoul.kr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/03 16:01:26 by sungwook          #+#    #+#             */
-/*   Updated: 2023/01/03 16:01:27 by sungwook         ###   ########.fr       */
+/*   Updated: 2023/03/27 21:00:47 by sungwook         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,7 @@
 
 # include <stdio.h>
 # include <stdlib.h>
-# include <mlx>
+# include <mlx.h>
 # include <unistd.h>
 # include <fcntl.h>
 # include "./get_next_line/get_next_line.h"
