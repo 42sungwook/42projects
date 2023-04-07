@@ -1,63 +1,135 @@
 #include "pipex.h"
 
-#include <unistd.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <errno.h>
-#include <sys/stat.h>
+//./pipex infile "ls -l" "wc -l" outfile
+//< infile ls - l | wc -l > outfile
 
-int main(int argc, char *argv[], char *envp[]) {
-    if (argc < 2) {
-        printf("Usage: %s <filename>\n", argv[0]);
-        return 1;
+//char *args[] = {fullpath, filename, NULL};
+// int ret = execve(args[0], args, envp);
+
+void    ft_free(char **paths)
+{
+    size_t  i;
+
+    i = 0;
+    while (paths[i])
+    {
+        free(paths[i]);
+        i++;
     }
-
-    char *command = "env";
-    char *filename = argv[2];
-
-    char *path = NULL;
-    for (int i = 0; envp[i] != NULL; i++) {
-        if (strncmp(envp[i], "PATH=", 5) == 0) {
-            path = envp[i] + 5;
-            break;
-        }
-    }
-
-    if (path == NULL) {
-        printf("PATH environment variable not found\n");
-        return 1;
-    }
-
-    char *dir = strtok(path, ":");
-    while (dir != NULL) {
-        char fullpath[256];
-        snprintf(fullpath, 256, "%s/%s", dir, command);
-        if (access(fullpath, X_OK) == 0) {
-            printf("path : %s\n", fullpath);
-            char *args[] = {fullpath, filename, NULL};
-            int ret = execve(args[0], args, envp);
-            if (ret == -1) {
-                perror("execve");
-                return 1;
-            }
-            break;
-        }
-
-        dir = strtok(NULL, ":");
-    }
-
-    printf("Command not found: %s\n", command);
-    return 1;
+    free(paths);
 }
 
+void    handle_cmd(t_fds fds, char *cmd, char **paths, char **envp)
+{
+    char    **args;
+    size_t  i;
 
-// int main(int argc, char *argv[]) {
-//     char *args[] = {"cat", argv[1], NULL};
-//     int ret = execve("/bin/cat", args, NULL);
-//     if (ret == -1) {
-//         perror("execve");
-//         return 1;
-//     }
-//     return 0;
-// }
+    i = 0;
+    while (paths[i])
+    {
+        args[0] = join_path(paths[i], cmd);
+        args[1] = fds.fd3;
+        args[2] = NULL;
+        execve(args[0], args, envp); // if execve succeeds, it exits
+        // perror("Error"); <- add perror to debug
+        free(cmd); // if execve fails, we free and we try a new path
+        i++;
+    }
+}
+
+int parent_process(t_fds fds,t_list *pids)
+{
+    int status;
+
+    close(fds.pipe_fd[0]);
+    close(fds.pipe_fd[1]);
+    while (pids)
+    {
+        waitpid(pids, &status, 0);  // supervising the children
+        pids = pids->next;
+    }
+}
+
+int child_process(t_fds fds, char **argv, char **paths, t_list *pids, char **envp)
+{
+    pid_t   child;
+    size_t  i;
+
+    i = 1;
+    while (argv[i + 1])
+    {
+        child = fork();
+        if (child < -1)
+            perror("Fork : ");
+        pids->next = child;
+        //시작 프로세스
+        if (child == 0)
+            handle_cmd(fds, argv[i], paths, envp);
+        //끝 프로세스
+        i++;
+    }
+    return (0);
+}
+
+int check_path_line(char *str, char *word)
+{
+    size_t  i;
+
+    i = 0;
+    while (word[i])
+    {
+        if (word[i] != str[i])
+            return (0);
+        i++;
+    }
+    return (1);
+}
+
+t_fds   open_files(char **argv)
+{
+    int     infile_fd;
+    int     outfile_fd;
+    t_fds   files;
+    size_t  i;
+
+    infile_fd = open(argv[1], O_RDONLY);
+    i = 0;
+    while (argv[i + 1])
+        i++;
+    outfile_fd = open(argv[i], O_CREAT | O_RDWR | O_TRUNC, 0644);
+    files.fd3 = infile_fd;
+    files.fd4 = outfile_fd;
+    return (files);
+}
+
+char    **save_paths(char **envp)
+{
+    size_t  i;
+
+    i = 0;
+    while(envp[i])
+    {
+        if (check_path_line(envp[i], "PATH="))
+            break ;
+        i++;
+    }
+    if (!envp[i])
+        perror("PATH : ");
+    return (ft_split(envp[i]+5, ':'));
+}
+
+int	main(int argc, char **argv, char **envp)
+{
+    t_fds   fds;
+    t_list  *pids;
+    char    **paths;
+
+    fds = open_files(argv);
+    if (fds.fd3 < 0 || fds.fd4 < 0)
+        perror("FD : ");
+    paths = save_paths(envp);
+    pipe(fds.pipe_fd);
+    child_process(fds, argv, paths, pids, envp);
+    parent_process(fds, pids);
+    ft_free(paths);
+}
