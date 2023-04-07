@@ -6,6 +6,7 @@
 //char *args[] = {fullpath, filename, NULL};
 // int ret = execve(args[0], args, envp);
 
+
 void    ft_free(char **paths)
 {
     size_t  i;
@@ -19,12 +20,57 @@ void    ft_free(char **paths)
     free(paths);
 }
 
+size_t	ft_strlen(const char *s)
+{
+	size_t	i;
+
+	i = 0;
+	while (s[i] != 0)
+		i++;
+	return (i);
+}
+
+char    *join_path(char *path, char *cmd)
+{
+	size_t	i;
+	size_t	j;
+	size_t	len;
+    size_t  path_len;
+	char	*join;
+
+	i = 0;
+	j = 0;
+    path_len = ft_strlen(path);
+	len = path_len + ft_strlen(cmd) + 2;
+	join = (char *)malloc(sizeof(char) * len);
+	if (!join)
+		return (0);
+	while (i < ft_strlen(path))
+	{
+		join[i] = path[i];
+		i++;
+	}
+    join[i] = '\\';
+    i++;
+	while (i + j < len - 1)
+	{
+		join[i + j] = cmd[j];
+		j++;
+	}
+	join[i + j] = 0;
+	return (join);
+}
+
 void    handle_cmd(t_fds fds, char *cmd, char **paths, char **envp)
 {
     char    **args;
     size_t  i;
 
     i = 0;
+    dup2(fds.fd3, STDIN_FILENO); // we want f1 to be execve() input
+    dup2(fds.pipe_fd[1], STDOUT_FILENO); // we want end[1] to be execve() stdout
+    close(fds.pipe_fd[0]);
+    close(fds.fd3);
     while (paths[i])
     {
         args[0] = join_path(paths[i], cmd);
@@ -32,7 +78,7 @@ void    handle_cmd(t_fds fds, char *cmd, char **paths, char **envp)
         args[2] = NULL;
         execve(args[0], args, envp); // if execve succeeds, it exits
         // perror("Error"); <- add perror to debug
-        free(cmd); // if execve fails, we free and we try a new path
+        free(args[0]); // if execve fails, we free and we try a new path
         i++;
     }
 }
@@ -43,14 +89,14 @@ int parent_process(t_fds fds,t_list *pids)
 
     close(fds.pipe_fd[0]);
     close(fds.pipe_fd[1]);
-    while (pids)
+    while (*pids)
     {
         waitpid(pids, &status, 0);  // supervising the children
-        pids = pids->next;
+    pids = pids->next;
     }
 }
 
-int child_process(t_fds fds, char **argv, char **paths, t_list *pids, char **envp)
+int child_process(t_fds fds, char **argv, char **paths, t_list **pids, char **envp)
 {
     pid_t   child;
     size_t  i;
@@ -61,7 +107,13 @@ int child_process(t_fds fds, char **argv, char **paths, t_list *pids, char **env
         child = fork();
         if (child < -1)
             perror("Fork : ");
-        pids->next = child;
+        if(!pids)
+            *pids = child;
+        else
+        {
+            (*pids)->next = child;
+            *pids = (*pids)->next;
+        }
         //시작 프로세스
         if (child == 0)
             handle_cmd(fds, argv[i], paths, envp);
@@ -124,6 +176,7 @@ int	main(int argc, char **argv, char **envp)
     t_list  *pids;
     char    **paths;
 
+    pids = 0;
     fds = open_files(argv);
     if (fds.fd3 < 0 || fds.fd4 < 0)
         perror("FD : ");
