@@ -20,154 +20,57 @@ void    ft_free(char **paths)
     free(paths);
 }
 
-size_t	ft_strlen(const char *s)
+void    fork_process(t_fds fds, char *argv, char **paths, char **envp)
 {
-	size_t	i;
-
-	i = 0;
-	while (s[i] != 0)
-		i++;
-	return (i);
-}
-
-char    *join_path(char *path, char *cmd)
-{
-	size_t	i;
-	size_t	j;
-	size_t	len;
-    size_t  path_len;
-	char	*join;
-
-	i = 0;
-	j = 0;
-    path_len = ft_strlen(path);
-	len = path_len + ft_strlen(cmd) + 2;
-	join = (char *)malloc(sizeof(char) * len);
-	if (!join)
-		return (0);
-	while (i < ft_strlen(path))
-	{
-		join[i] = path[i];
-		i++;
-	}
-    join[i] = '\\';
-    i++;
-	while (i + j < len - 1)
-	{
-		join[i + j] = cmd[j];
-		j++;
-	}
-	join[i + j] = 0;
-	return (join);
-}
-
-void    handle_cmd(t_fds fds, char *cmd, char **paths, char **envp)
-{
-    char    **args;
+    int     pipe_fd[2];
+    pid_t   pid;
+    char    **cmds;
+    char    *path;
     size_t  i;
 
     i = 0;
-    dup2(fds.fd3, STDIN_FILENO); // we want f1 to be execve() input
-    dup2(fds.pipe_fd[1], STDOUT_FILENO); // we want end[1] to be execve() stdout
-    close(fds.pipe_fd[0]);
-    close(fds.fd3);
-    while (paths[i])
+    pipe(pipe_fd);
+    pid = fork();
+    if (pid == 0)
     {
-        args[0] = join_path(paths[i], cmd);
-        args[1] = fds.fd3;
-        args[2] = NULL;
-        execve(args[0], args, envp); // if execve succeeds, it exits
-        // perror("Error"); <- add perror to debug
-        free(args[0]); // if execve fails, we free and we try a new path
-        i++;
-    }
-}
-
-int parent_process(t_fds fds,t_list *pids)
-{
-    int status;
-
-    close(fds.pipe_fd[0]);
-    close(fds.pipe_fd[1]);
-    while (*pids)
-    {
-        waitpid(pids, &status, 0);  // supervising the children
-    pids = pids->next;
-    }
-}
-
-int child_process(t_fds fds, char **argv, char **paths, t_list **pids, char **envp)
-{
-    pid_t   child;
-    size_t  i;
-
-    i = 1;
-    while (argv[i + 1])
-    {
-        child = fork();
-        if (child < -1)
-            perror("Fork : ");
-        if(!pids)
-            *pids = child;
-        else
+        close(STDIN_FILENO);
+        dup2(fds.infile, STDIN_FILENO);
+        dup2(STDOUT_FILENO, pipe_fd[0]);
+        close(STDOUT_FILENO);
+        close(pipe_fd[0]);
+        cmds = ft_split(argv, ' ');
+        while (paths[i])
         {
-            (*pids)->next = child;
-            *pids = (*pids)->next;
+            path = join_path(paths[i], argv);
+            execve(path, cmds, envp);
+            free(path);
+            i++;
         }
-        //시작 프로세스
-        if (child == 0)
-            handle_cmd(fds, argv[i], paths, envp);
-        //끝 프로세스
-        i++;
+        i = 0;
+        while(cmds[i])
+        {
+            free(cmds[i]);
+            i++;
+        }
+        free(cmds);
     }
-    return (0);
-}
-
-int check_path_line(char *str, char *word)
-{
-    size_t  i;
-
-    i = 0;
-    while (word[i])
+    else
     {
-        if (word[i] != str[i])
-            return (0);
-        i++;
+        close(pipe_fd[1]);
+        waitpid(pid, NULL, 0);
+        close(pipe_fd[0]); // close the read end of the pipe
+        close(STDOUT_FILENO);
+        dup2(fds.outfile, STDOUT_FILENO);
+        execve("/bin/head", (char *[]){"wc", NULL}, envp);
+        perror("execve");
+        close(fds.infile); // close the input file descriptor
+        close(fds.outfile); // close the output file descriptor
     }
-    return (1);
 }
 
-t_fds   open_files(char **argv)
+void    pipex (t_fds fds, char **argv, char **paths, char **envp)
 {
-    int     infile_fd;
-    int     outfile_fd;
-    t_fds   files;
-    size_t  i;
-
-    infile_fd = open(argv[1], O_RDONLY);
-    i = 0;
-    while (argv[i + 1])
-        i++;
-    outfile_fd = open(argv[i], O_CREAT | O_RDWR | O_TRUNC, 0644);
-    files.fd3 = infile_fd;
-    files.fd4 = outfile_fd;
-    return (files);
-}
-
-char    **save_paths(char **envp)
-{
-    size_t  i;
-
-    i = 0;
-    while(envp[i])
-    {
-        if (check_path_line(envp[i], "PATH="))
-            break ;
-        i++;
-    }
-    if (!envp[i])
-        perror("PATH : ");
-    return (ft_split(envp[i]+5, ':'));
+    fork_process(fds, argv[2], paths, envp);
 }
 
 int	main(int argc, char **argv, char **envp)
@@ -177,12 +80,13 @@ int	main(int argc, char **argv, char **envp)
     char    **paths;
 
     pids = 0;
+    if (argc < 4)
+        return (0);
     fds = open_files(argv);
-    if (fds.fd3 < 0 || fds.fd4 < 0)
-        perror("FD : ");
+    if (fds.infile < 0 )
+        perror("Infile");
     paths = save_paths(envp);
-    pipe(fds.pipe_fd);
-    child_process(fds, argv, paths, pids, envp);
-    parent_process(fds, pids);
+    pipex(fds, argv, paths, envp);
     ft_free(paths);
+
 }
