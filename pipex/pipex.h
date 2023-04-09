@@ -11,19 +11,33 @@
 # define READ_END 0
 # define WRITE_END 1
 
+typedef struct s_arguments
+{
+    int     argc;
+    char    **argv;
+    char    **envp;
+}   t_arguments;
+
+typedef struct s_flist
+{
+    int             pipe[2];
+    struct s_flist  *next;
+}   t_flist;
+
+typedef struct s_plist
+{
+    pid_t           pid;
+    struct s_plist   *next;
+}   t_plist;
+
 typedef struct s_fds
 {
     int     infile;
     int     outfile;
     char    *infile_name;
     char    *outfile_name;
+    t_flist *pipe_fd;
 }   t_fds;
-
-typedef struct s_list
-{
-    pid_t           pid;
-    struct s_list   *next;
-}   t_list;
 
 //open file
 t_fds   open_files(char **argv);
@@ -36,7 +50,7 @@ char *join_path(char *path, char *cmd);
 // int child_process(t_fds fds, char **argv, char **paths, t_list **pids, char **envp);
 
 //parent process
-int parent_process(t_fds fds,t_list *pids);
+// int parent_process(t_fds fds,t_list *pids);
 
 //ft_split
 char	**ft_split(char const *s, char c);
