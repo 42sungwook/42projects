@@ -1,6 +1,6 @@
 #include "pipex.h"
 
-int check_path_line(char *str, char *word)
+static int check_path_line(char *str, char *word)
 {
     size_t  i;
 
