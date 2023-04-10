@@ -7,6 +7,29 @@
 // int ret = execve(args[0], args, envp);
 
 
+t_flist    *pipe_addlist()
+{
+    t_flist *new;
+    new = (t_flist *)malloc(sizeof(t_flist));
+    return (new);
+}
+
+void    make_pipe(t_fds fds)
+{
+    t_flist *temp;
+
+    if (!fds.pipe_fd)
+    {
+        fds.pipe_fd = pipe_addlist();
+        temp = fds.pipe_fd;
+    }
+    else
+    {
+        temp->next = pipe_addlist();
+        temp = temp->next;
+    }
+}
+
 void    ft_free(char **paths)
 {
     size_t  i;
@@ -51,7 +74,10 @@ pid_t    fork_process(t_fds fds, t_arguments args, char **paths, int num)
             dup2(fds.infile, STDIN_FILENO);
         else
             dup2(prev_fd->pipe[0], STDIN_FILENO);
-        dup2(temp->pipe[1], STDOUT_FILENO);
+        if (num == 1)
+            dup2(fds.outfile, STDOUT_FILENO);
+        else
+            dup2(temp->pipe[1], STDOUT_FILENO);
         close(temp->pipe[0]);
         close(temp->pipe[1]);
         cmds = ft_split(args.argv[2], ' ');
@@ -64,31 +90,9 @@ pid_t    fork_process(t_fds fds, t_arguments args, char **paths, int num)
         }
     }
     close(fds.pipe_fd->pipe[0]);
+    make_pipe(fds);
     close(fds.pipe_fd->pipe[1]);
     return (pid);
-}
-
-t_flist    *pipe_addlist()
-{
-    t_flist *new;
-    new = (t_flist *)malloc(sizeof(t_flist));
-    return (new);
-}
-
-void    make_pipe(t_fds fds)
-{
-    t_flist *temp;
-
-    if (!fds.pipe_fd)
-    {
-        fds.pipe_fd = pipe_addlist();
-        temp = fds.pipe_fd;
-    }
-    else
-    {
-        temp->next = pipe_addlist();
-        temp = temp->next;
-    }
 }
 
 void    pipex (t_fds fds, t_arguments args, char **paths)
@@ -97,9 +101,9 @@ void    pipex (t_fds fds, t_arguments args, char **paths)
     // while argc-3만큼 돌면서 fork. 첫번째 제외하고 이전 pipe를 들고 들어가야함
     i = 0;
     fds.pipe_fd = 0;
-    while (i < args.argc - 3)
+    make_pipe(fds);
+    while (i < args.argc - 2)
     {
-        make_pipe(fds);
         fork_process(fds, args, paths, i);
         i++;
     }
@@ -125,5 +129,4 @@ int	main(int argc, char **argv, char **envp)
     args.envp = envp;
     pipex(fds, args, paths);
     ft_free(paths);
-
 }

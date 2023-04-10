@@ -1,14 +1,4 @@
 
-int	ft_error(char *str)
-{
-    perror(str);
-    return (1);
-}
-
-void	ft_perror(char *str)
-{
-    perror(str);
-}
 
 int	num_of_str(char const *str, char c)
 {
