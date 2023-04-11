@@ -18,16 +18,10 @@ typedef struct s_arguments
     char    **envp;
 }   t_arguments;
 
-typedef struct s_flist
-{
-    int             pipe[2];
-    struct s_flist  *next;
-}   t_flist;
-
-typedef struct s_plist
+typedef struct s_list
 {
     pid_t           pid;
-    struct s_plist   *next;
+    struct s_list   *next;
 }   t_plist;
 
 typedef struct s_fds
@@ -36,7 +30,8 @@ typedef struct s_fds
     int     outfile;
     char    *infile_name;
     char    *outfile_name;
-    t_flist *pipe_fd;
+    int     pipe1[2];
+    int     pipe2[2];
 }   t_fds;
 
 //open file

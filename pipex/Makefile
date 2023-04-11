@@ -1,4 +1,4 @@
-SRCS = ./pipex.c ./ft_split.c ./open_files.c ./save_paths.c ./child_process.c
+SRCS = ./pipex.c ./ft_split.c
 OBJS = $(SRCS:.c=.o)
 
 NAME = pipex
