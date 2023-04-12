@@ -90,22 +90,23 @@ char    **save_paths(char **envp)
     return (ft_split(envp[i]+5, ':'));
 }
 
-t_fds   open_files(char **argv)
+t_fds   *open_files(char **argv)
 {
     int     infile_fd;
     int     outfile_fd;
-    t_fds   fds;
+    t_fds   *fds;
     size_t  i;
 
+    fds = (t_fds *)malloc(sizeof(t_fds));
     infile_fd = open(argv[1], O_RDONLY);
     i = 4;
     while (argv[i + 1])
         i++;
     outfile_fd = open(argv[i], O_CREAT | O_RDWR | O_TRUNC, 0644);
-    fds.infile = infile_fd;
-    fds.outfile = outfile_fd;
-    fds.infile_name = argv[1];
-    fds.outfile_name = argv[i];
+    fds->infile = infile_fd;
+    fds->outfile = outfile_fd;
+    fds->infile_name = argv[1];
+    fds->outfile_name = argv[i];
     return (fds);
 }
 
@@ -192,22 +193,30 @@ void    pipex (t_fds fds, t_arguments args, char **paths)
     // waitpid(pid3, &signal, 0);
 }
 
+t_arguments *init_args(int argc, char **argv, char **envp)
+{
+    t_arguments *args;
+
+    args = (t_arguments *)malloc(sizeof(t_arguments));
+    args->argc = argc;
+    args->argv = argv;
+    args->envp = envp;
+    return (args);
+}
+
 int	main(int argc, char **argv, char **envp)
 {
-    t_fds       fds;
-    t_plist     *pids;
-    char        **paths;
-    t_arguments args;
+    // t_fds       fds;
+    // t_plist     *pids;
+    // char        **paths;
+    t_arguments *args;
 
-    pids = 0;
     if (argc < 5)
         return (0);
-    fds = open_files(argv);
-    if (fds.infile < 0 )
+    args = init_args(argc, argv, envp);
+    args->fds = open_files(argv);
+    if (args->fds->infile < 0 )
         perror("Infile");
-    args.argc = argc;
-    args.argv = argv;
-    args.envp = envp;
     paths = save_paths(envp);
     pipex(fds, args, paths);
     ft_free(paths);
