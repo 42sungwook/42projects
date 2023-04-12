@@ -13,8 +13,7 @@
 
 typedef struct s_list
 {
-    char    *path;
-    char    *cmd;
+    char            **cmds;
     struct s_list   *next;
 }   t_list;
 
@@ -33,12 +32,12 @@ typedef struct s_arguments
     int     argc;
     char    **argv;
     char    **envp;
-    t_list  *cmd_arg;
+    t_list  *cmds;
     t_fds   *fds;
 }   t_arguments;
 
 //open file
-t_fds   open_files(char **argv);
+t_fds   *open_files(char **argv);
 
 //save path
 char    **save_paths(char **envp);
