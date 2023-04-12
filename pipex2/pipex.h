@@ -13,41 +13,29 @@
 
 typedef struct s_list
 {
-    char            **cmds;
-    struct s_list   *next;
-}   t_list;
+	char			**cmds;
+	struct s_list	*next;
+}	t_list;
 
 typedef struct s_fds
 {
-    int     infile;
-    int     outfile;
-    char    *infile_name;
-    char    *outfile_name;
-    int     pipe1[2];
-    int     pipe2[2];
-}   t_fds;
+	int		infile;
+	int		outfile;
+	char	*infile_name;
+	char	*outfile_name;
+	int		pipe1[2];
+	int		pipe2[2];
+}	t_fds;
 
 typedef struct s_arguments
 {
-    int     argc;
-    char    **argv;
-    char    **envp;
-    t_list  *cmds;
-    t_fds   *fds;
-}   t_arguments;
-
-//open file
-t_fds   *open_files(char **argv);
-
-//save path
-char    **save_paths(char **envp);
-
-//child process
-char *join_path(char *path, char *cmd);
-// int child_process(t_fds fds, char **argv, char **paths, t_list **pids, char **envp);
-
-//parent process
-// int parent_process(t_fds fds,t_list *pids);
+	int		argc;
+	char	**argv;
+	char	**envp;
+	int		cmd_count;
+	t_list	*cmds;
+	t_fds	*fds;
+}	t_arguments;
 
 //ft_split
 char	**ft_split(char const *s, char c);

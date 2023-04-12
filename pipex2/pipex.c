@@ -32,31 +32,22 @@ void	ft_free(char **paths)
 
 char	*join_path(char *str1, char *str2)
 {
-	size_t	i;
-	size_t	j;
-	size_t	len;
+	int		i;
+	int		j;
+	int		len;
 	char	*str;
 
-	i = 0;
-	j = 0;
+	i = -1;
+	j = -1;
 	len = ft_strlen(str1) + ft_strlen(str2) + 1;
 	str = (char *)malloc(sizeof(char) * (len + 1));
 	str[len] = 0;
-	while (str1[i])
-	{
-		str[j] = str1[i];
-		i++;
-		j++;
-	}
-	i = 0;
-	str[j] = '/';
-	j++;
-	while (str2[i])
-	{
-		str[j] = str2[i];
-		i++;
-		j++;
-	}
+	while (str1[++i])
+		str[i] = str1[i];
+	str[i] = '/';
+	i++;
+	while (str2[++j])
+		str[i + j] = str2[j];
 	return (str);
 }
 
@@ -87,7 +78,7 @@ char	**save_paths(char **envp)
 		i++;
 	}
 	if (!envp[i])
-		perror("PATH");
+		perror("path");
 	return (ft_split(envp[i] + 5, ':'));
 }
 
@@ -117,19 +108,19 @@ void	make_cmdlist(t_arguments *args, char **cmds)
 	}
 }
 
-void	save_cmds(t_arguments *args, char **envp)
+void	save_cmds(t_arguments *args)
 {
-	size_t	i;
-	size_t	j;
+	int		i;
+	int		j;
 	char	**cmds;
 	char	**path;
 
-	i = 2;
-	path = save_paths(envp);
-	while (args->argv[i + 1])
+	i = 1;
+	path = save_paths(args->envp);
+	while (args->argv[++i + 1])
 	{
-		j = 0;
-		while (path[j])
+		j = -1;
+		while (path[++j])
 		{
 			cmds = ft_split(args->argv[i], ' ');
 			cmds[0] = join_path(path[j], cmds[0]);
@@ -139,115 +130,69 @@ void	save_cmds(t_arguments *args, char **envp)
 				break ;
 			}
 			//free cmds
-			j++;
 		}
 		if (!path[j])
 			perror("cmd");
-		i++;
 	}
 }
 
-t_fds	*open_files(char **argv)
+void	open_files(t_arguments *args, char **argv)
 {
 	int		infile_fd;
 	int		outfile_fd;
 	t_fds	*fds;
 	size_t	i;
 
-	fds = (t_fds *)malloc(sizeof(t_fds));
+	args->fds = (t_fds *)malloc(sizeof(t_fds));
 	infile_fd = open(argv[1], O_RDONLY);
 	i = 4;
 	while (argv[i + 1])
 		i++;
 	outfile_fd = open(argv[i], O_CREAT | O_RDWR | O_TRUNC, 0644);
-	fds->infile = infile_fd;
-	fds->outfile = outfile_fd;
-	fds->infile_name = argv[1];
-	fds->outfile_name = argv[i];
-	return (fds);
+	args->fds->infile = infile_fd;
+	args->fds->outfile = outfile_fd;
+	args->fds->infile_name = argv[1];
+	args->fds->outfile_name = argv[i];
+	args->cmd_count = i - 2;
 }
 
-void	pipex (t_fds fds, t_arguments *args, char **envp)
+int	pipex (t_fds fds, t_arguments *args)
 {
 	size_t	i;
-	pid_t	pid1;
-	pid_t	pid2;
-	pid_t	pid3;
+	pid_t	pid;
 	char	**cmds;
-	int		signal;
+	int		status;
+	int		temp;
 
 	i = 0;
 	pipe(fds.pipe1);
-	pid1 = fork();
-	if (pid1 == 0) // 첫번째 자식 프로세스
-	{
-		dup2(fds.infile, STDIN_FILENO);
-		dup2(fds.pipe1[1], STDOUT_FILENO);
-		close(fds.infile);
-		close(fds.pipe1[0]);
-		close(fds.pipe1[1]);
-		cmds = ft_split(args->argv[2], ' ');
-		while (paths[i])
-		{
-			path = join_path(paths[i], cmds[0]);
-			execve(path, cmds, args.envp);
-			free(path);
-			i++;
-		}
-	}
+	pid = fork();
+	first_child_process(fds, args, pid);
 	pipe(fds.pipe2);
-	pid2 = fork();
-	if (pid2 == 0) // 두번째 자식 프로세스
+	while (i < args->cmd_count - 2)
 	{
-		dup2(fds.pipe1[0], STDIN_FILENO);
-		dup2(fds.pipe2[1], STDOUT_FILENO);
-		close(fds.pipe1[0]);
-		close(fds.pipe1[1]);
-		close(fds.pipe2[0]);
-		close(fds.pipe2[1]);
-		cmds = ft_split(args.argv[3], ' ');
-		while (paths[i])
-		{
-			path = join_path(paths[i], cmds[0]);
-			// write(2, path, ft_strlen(path));
-			// write(2, "\n", 1);
-			execve(path, cmds, args.envp);
-			free(path);
-			i++;
-		}
+		pid = fork();
+		//홀짝 구분필요
+		nth_child_process(fds, args, pid);
+		i++;
 	}
-	//부모 프로세스
+	//홀짝 구분필요
 	close(fds.pipe1[0]);
 	close(fds.pipe1[1]);
-	pid3 = fork();
-	if (pid3 == 0) // 세번째 자식 프로세스
-	{
-		dup2(fds.pipe2[0], STDIN_FILENO);
-		dup2(fds.outfile, STDOUT_FILENO);
-		close(fds.outfile);
-		close(fds.pipe2[0]);
-		close(fds.pipe2[1]);
-		cmds = ft_split(args.argv[4], ' ');
-		while (paths[i])
-		{
-			path = join_path(paths[i], cmds[0]);
-			execve(path, cmds, args.envp);
-			free(path);
-			i++;
-		}
-	}
+	pid = fork();
+	last_child_process(fds, args, pid);
+	//홀짝 구분 필요
 	close(fds.pipe2[0]);
 	close(fds.pipe2[1]);
 	i = 0;
 	while (i < 3)
 	{
-		wait(&signal);
+		if (pid == wait(&temp))
+			status = temp;
 		i++;
 	}
-	// waitpid(pid1, &signal, 0);
-	// waitpid(pid2, &signal, 0);
-	// waitpid(pid3, &signal, 0);
-
+	return (status);
+}
 
 t_arguments	*init_args(int argc, char **argv, char **envp)
 {
@@ -257,6 +202,7 @@ t_arguments	*init_args(int argc, char **argv, char **envp)
 	args->argc = argc;
 	args->argv = argv;
 	args->envp = envp;
+	args->cmd_count = 0;
 	args->cmds = 0;
 	args->fds = 0;
 	return (args);
@@ -265,17 +211,17 @@ t_arguments	*init_args(int argc, char **argv, char **envp)
 int	main(int argc, char **argv, char **envp)
 {
 	t_fds		fds;
-    // t_plist     *pids;
-    // char        **paths;
 	t_arguments	*args;
+	int			status;
 
 	if (argc < 5)
 		return (0);
 	args = init_args(argc, argv, envp);
-	args->fds = open_files(argv);
-	if (args->fds->infile < 0 )
+	open_files(args, argv);
+	if (args->fds->infile < 0)
 		perror("Infile");
-	save_cmds(args, envp);
-	pipex(fds, args, envp);
-	ft_free(paths);
+	save_cmds(args);
+	status = pipex(fds, args);
+	//free everything
+	return (status);
 }
