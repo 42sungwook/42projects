@@ -37,7 +37,17 @@ typedef struct s_arguments
 	t_fds	*fds;
 }	t_arguments;
 
+//utils
+char		*join_path(char *str1, char *str2);
+t_arguments	*init_args(int argc, char **argv, char **envp);
+void		make_cmdlist(t_arguments *args, char **cmds);
+t_list		*cmd_addlist(char **cmds);
+size_t		ft_strlen(const char *s);
+
 //ft_split
-char	**ft_split(char const *s, char c);
+char		**ft_split(char const *s, char c);
+
+//pipex
+int			pipex (t_arguments *args);
 
 #endif

@@ -1,9 +1,9 @@
-SRCS = ./pipex.c ./ft_split.c
+SRCS = ./pipex.c ./ft_split.c ./utils.c ./main.c
 OBJS = $(SRCS:.c=.o)
 
 NAME = pipex
 
-CC		=	cc
+CC		=	cc -g -fsanitize=address
 CFLAGS	=	-Wall -Werror -Wextra
 
 all:	$(NAME)
