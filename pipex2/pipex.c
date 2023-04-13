@@ -6,7 +6,13 @@ static void	first_child_process(t_arguments *args, pid_t pid)
 	pid = fork();
 	if (pid == 0)
 	{
-		dup2(args->fds->infile, STDIN_FILENO);
+		if (args->fds->infile != -1)
+			dup2(args->fds->infile, STDIN_FILENO);
+		else
+		{
+			close(STDIN_FILENO);
+			close(STDERR_FILENO);
+		}
 		dup2(args->fds->pipe1[1], STDOUT_FILENO);
 		close(args->fds->infile);
 		close(args->fds->pipe1[0]);

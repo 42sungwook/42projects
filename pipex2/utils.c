@@ -71,5 +71,6 @@ char	*join_path(char *str1, char *str2)
 	i++;
 	while (str2[++j])
 		str[i + j] = str2[j];
+	free(str2);
 	return (str);
 }

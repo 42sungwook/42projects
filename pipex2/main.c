@@ -1,11 +1,14 @@
 #include "pipex.h"
-#include <unistd.h>
 
-//./pipex infile "ls -l" "wc -l" outfile
-//< infile ls - l | wc -l > outfile
+void	free_arr(char **arr)
+{
+	int	i;
 
-//char *args[] = {fullpath, filename, NULL};
-// int ret = execve(args[0], args, envp);
+	i = -1;
+	while (arr[++i])
+		free(arr[i]);
+	free(arr);
+}
 
 static int	check_path_line(char *str, char *word)
 {
@@ -57,13 +60,19 @@ void	save_cmds(t_arguments *args)
 			if (access(cmds[0], X_OK) == 0)
 			{
 				make_cmdlist(args, cmds);
+				free_arr(cmds);
 				break ;
 			}
-			//free cmds
+			free_arr(cmds);
 		}
-		if (!path[j])
-			perror("cmd");
+		if (!path[j] && !(args->fds->infile == -1 && i + 1 == 3))
+		{
+			write(2, args->argv[i], ft_strlen(args->argv[i]));
+			write(2, ": command not found", 19);
+			write(2, "\n", 1);
+		}
 	}
+	free_arr(path);
 }
 
 void	open_files(t_arguments *args, char **argv)
@@ -96,9 +105,10 @@ int	main(int argc, char **argv, char **envp)
 	args = init_args(argc, argv, envp);
 	open_files(args, argv);
 	if (args->fds->infile < 0)
-		perror("Infile");
+		perror(argv[1]);
 	save_cmds(args);
+	if (args->cmds == NULL)
+		return (0);
 	status = pipex(args);
-	//free everything
-	return (status);
+	exit (status);
 }

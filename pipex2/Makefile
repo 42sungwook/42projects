@@ -3,7 +3,7 @@ OBJS = $(SRCS:.c=.o)
 
 NAME = pipex
 
-CC		=	cc -g -fsanitize=address
+CC		=	cc
 CFLAGS	=	-Wall -Werror -Wextra
 
 all:	$(NAME)
