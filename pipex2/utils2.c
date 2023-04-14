@@ -23,10 +23,7 @@ void	nth_child_process2(t_arguments *args, t_list *temp, int sign)
 		dup2(args->fds->pipe1[1], STDOUT_FILENO);
 	}
 	if (temp->cmd[0][0] == 0 || access(temp->cmd[0], X_OK) != 0)
-	{
-		close(STDIN_FILENO);
 		close(STDOUT_FILENO);
-	}
 	close(args->fds->pipe1[0]);
 	close(args->fds->pipe1[1]);
 	close(args->fds->pipe2[0]);
