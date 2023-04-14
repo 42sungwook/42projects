@@ -13,7 +13,7 @@
 
 typedef struct s_list
 {
-	char			**cmds;
+	char			**cmd;
 	struct s_list	*next;
 }	t_list;
 
@@ -43,11 +43,14 @@ t_arguments	*init_args(int argc, char **argv, char **envp);
 void		make_cmdlist(t_arguments *args, char **cmds);
 t_list		*cmd_addlist(char **cmds);
 size_t		ft_strlen(const char *s);
+void		free_arr(char **arr);
+void		nth_child_process2(t_arguments *args, t_list *temp, int sign);
+
 
 //ft_split
 char		**ft_split(char const *s, char c);
 
 //pipex
-int			pipex (t_arguments *args);
+void		pipex(t_arguments *args);
 
 #endif

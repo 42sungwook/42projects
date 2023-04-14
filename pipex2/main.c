@@ -1,15 +1,5 @@
 #include "pipex.h"
 
-void	free_arr(char **arr)
-{
-	int	i;
-
-	i = -1;
-	while (arr[++i])
-		free(arr[i]);
-	free(arr);
-}
-
 static int	check_path_line(char *str, char *word)
 {
 	size_t	i;
@@ -45,7 +35,7 @@ void	save_cmds(t_arguments *args)
 {
 	int		i;
 	int		j;
-	char	**cmds;
+	char	**cmd;
 	char	**path;
 
 	i = 1;
@@ -53,23 +43,29 @@ void	save_cmds(t_arguments *args)
 	while (args->argv[++i + 1])
 	{
 		j = -1;
-		while (path[++j])
+		while (path[++j] && args->argv[i][0] != 0)
 		{
-			cmds = ft_split(args->argv[i], ' ');
-			cmds[0] = join_path(path[j], cmds[0]);
-			if (access(cmds[0], X_OK) == 0)
+			cmd = ft_split(args->argv[i], ' ');
+			cmd[0] = join_path(path[j], cmd[0]);
+			if (!access(cmd[0], X_OK))
 			{
-				make_cmdlist(args, cmds);
-				free_arr(cmds);
+				make_cmdlist(args, cmd);
+				args->cmd_count++;
 				break ;
 			}
-			free_arr(cmds);
+			free_arr(cmd);
 		}
-		if (!path[j] && !(args->fds->infile == -1 && i + 1 == 3))
+		if (!path[j] || args->argv[i][0] == 0)
 		{
-			write(2, args->argv[i], ft_strlen(args->argv[i]));
-			write(2, ": command not found", 19);
-			write(2, "\n", 1);
+			cmd = ft_split(args->argv[i], ' ');
+			if (!(args->fds->infile == -1 && i + 1 == 3))
+			{
+				write(2, args->argv[i], ft_strlen(args->argv[i]));
+				write(2, ": command not found", 19);
+				write(2, "\n", 1);
+			}
+			make_cmdlist(args, cmd);
+			args->cmd_count++;
 		}
 	}
 	free_arr(path);
@@ -92,13 +88,11 @@ void	open_files(t_arguments *args, char **argv)
 	args->fds->outfile = outfile_fd;
 	args->fds->infile_name = argv[1];
 	args->fds->outfile_name = argv[i];
-	args->cmd_count = i - 2;
 }
 
 int	main(int argc, char **argv, char **envp)
 {
 	t_arguments	*args;
-	int			status;
 
 	if (argc < 5)
 		return (0);
@@ -107,8 +101,8 @@ int	main(int argc, char **argv, char **envp)
 	if (args->fds->infile < 0)
 		perror(argv[1]);
 	save_cmds(args);
-	if (args->cmds == NULL)
-		return (0);
-	status = pipex(args);
-	exit (status);
+	// if (args->cmds == NULL)
+	// 	return (0);
+	pipex(args);
+	exit (0);
 }
