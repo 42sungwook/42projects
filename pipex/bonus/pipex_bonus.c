@@ -1,21 +1,22 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   pipex.c                                            :+:      :+:    :+:   */
+/*   pipex_bonus.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: sungwook <sungwook@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/15 14:20:10 by sungwook          #+#    #+#             */
-/*   Updated: 2023/04/15 14:43:24 by sungwook         ###   ########.fr       */
+/*   Updated: 2023/04/15 17:08:45 by sungwook         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "pipex.h"
+#include "pipex_bonus.h"
 
 static void	first_child_process(t_arguments *args, pid_t pid)
 {
 	pipe(args->fds->pipe1);
 	pid = fork();
+	args->hd_pid = pid;
 	if (pid == 0)
 	{
 		if (args->fds->infile != -1)

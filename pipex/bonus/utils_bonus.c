@@ -1,4 +1,16 @@
-#include "pipex.h"
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   utils_bonus.c                                      :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: sungwook <sungwook@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2023/04/15 14:09:20 by sungwook          #+#    #+#             */
+/*   Updated: 2023/04/15 17:03:22 by sungwook         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+#include "pipex_bonus.h"
 
 size_t	ft_strlen(const char *s)
 {
@@ -49,6 +61,8 @@ t_arguments	*init_args(int argc, char **argv, char **envp)
 	args->cmd_count = 0;
 	args->cmds = 0;
 	args->fds = 0;
+	args->heredoc = 0;
+	args->hd_pid = 0;
 	return (args);
 }
 
