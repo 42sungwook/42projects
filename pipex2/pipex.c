@@ -27,30 +27,15 @@ static int	nth_child_process(t_arguments *args, pid_t pid)
 
 	sign = 0;
 	temp = args->cmds->next;
-	if (!temp)
+	if (!temp || !(temp->next))
 		return (sign);
 	while (temp->next)
 	{
 		if (sign == 0)
-			pipe(args->fds->pipe2);
+			sign = nth_child_process_even(pid, args, temp, sign);
 		else
-			pipe(args->fds->pipe1);
-		pid = fork();
-		if (pid == 0)
-			nth_child_process2(args, temp, sign);
+			sign = nth_child_process_odd(pid, args, temp, sign);
 		temp = temp->next;
-		if (sign == 0)
-		{
-			sign = 1;
-			close(args->fds->pipe1[0]);
-			close(args->fds->pipe1[1]);
-		}
-		else
-		{
-			sign = 0;
-			close(args->fds->pipe2[0]);
-			close(args->fds->pipe2[1]);
-		}
 	}
 	return (sign);
 }

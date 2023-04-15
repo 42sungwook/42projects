@@ -37,6 +37,12 @@ typedef struct s_arguments
 	t_fds	*fds;
 }	t_arguments;
 
+//pipex
+void		pipex(t_arguments *args);
+
+//ft_split
+char		**ft_split(char const *s, char c);
+
 //utils
 char		*join_path(char *str1, char *str2);
 t_arguments	*init_args(int argc, char **argv, char **envp);
@@ -44,13 +50,9 @@ void		make_cmdlist(t_arguments *args, char **cmds);
 t_list		*cmd_addlist(char **cmds);
 size_t		ft_strlen(const char *s);
 void		free_arr(char **arr);
-void		nth_child_process2(t_arguments *args, t_list *temp, int sign);
-
-
-//ft_split
-char		**ft_split(char const *s, char c);
-
-//pipex
-void		pipex(t_arguments *args);
+int			nth_child_process_even(pid_t pid, t_arguments *args, \
+				t_list *temp, int sign);
+int			nth_child_process_odd(pid_t pid, t_arguments *args, \
+				t_list *temp, int sign);
 
 #endif
