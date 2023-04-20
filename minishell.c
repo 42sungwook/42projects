@@ -12,33 +12,40 @@ size_t	ft_strlen(const char *s)
 	return (i);
 }
 
-void	heredoc_pipex(int	temp_fd)
+void	parse_line(char *str, t_commands *cmds)
 {
-	char	*line;
+	t_token	token;
+	size_t	i;
 
-	line = readline("heredoc> ");
-	while (line)
+	i = 0;
+	while (str[i])
 	{
-		if (!line)
-			break ;
-		write(temp_fd, line, ft_strlen(line));
-		free(line);
-		line = readline("heredoc> ");
+		if (str[i] == ' ')
+		if (str[i] == "\"")
+		if (str[i] == "\'")
+		if (str[i] == "<")
+		if (str[i] == ">")
+		if (str[i] == "|")
+		if ((!token.quote || token.quote == "\"") && str[i] == "$")
+		
+		if (token.heredoc == 1)
+			read_heredoc(cmds);
+		i++;
 	}
-	free(line);
-	close(temp_fd);
 }
 
-int main()
+int	main(int argc, char **argv, char **envp)
 {
-	char	*str;
-	int		temp_fd;
+	char		*str;
+	int			temp_fd;
+	t_commands	*cmds;
 
 	str = 0;
 	while (1)
 	{
 		str = readline("minishell> : ");
-		//str 파싱......
+		parse_line(str, cmds);
+		execute_cmds(cmds);
 		add_history(str);
 		free(str);
 		if (!str)
