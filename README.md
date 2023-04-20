@@ -5,6 +5,8 @@ parsing 참조: https://pubs.opengroup.org/onlinepubs/009604499/utilities/xcu_ch
 
 <details>
 <summary>토큰 부여의 11가지 규칙</summary>
+</br>
+
 1. 입력의 끝이 인식되면 현재 토큰이 구분됩니다. 현재 토큰이 없으면 입력 종료 표시기가 토큰으로 반환됩니다.
 
 2. 이전 문자가 연산자의 일부로 사용되었고 현재 문자가 quote로 감싸져있지 않고 현재 문자와 함께 사용되어 연산자를 형성할 수 있는 경우 해당 (연산자) 토큰의 일부로 사용됩니다.
