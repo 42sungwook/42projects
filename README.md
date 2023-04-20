@@ -1,4 +1,4 @@
-# minihell
+# MINI HELL
 
 parsing 참조: https://pubs.opengroup.org/onlinepubs/009604499/utilities/xcu_chap02.html
 
