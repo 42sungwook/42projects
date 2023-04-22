@@ -1,7 +1,7 @@
 # MINI HELL
 
 parsing 참조: https://pubs.opengroup.org/onlinepubs/009604499/utilities/xcu_chap02.html
-
+https://trumanfromkorea.tistory.com/79
 
 <details>
 <summary>토큰 부여의 11가지 규칙</summary>
