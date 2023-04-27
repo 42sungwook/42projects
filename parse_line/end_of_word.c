@@ -36,6 +36,7 @@ int	end_of_word(t_commands *cmds, t_token *token, char c)
 	else if (token->quote != 0 && token->dollar == 0)
 		token->word = make_word_c(token->word, c);
 	else if (token->dollar == 1 && token->quote == 1)
-		token->word = make_word_str(token->word, find_dollar_word_in_envp(token));
+		token->word = make_word_str(token->word, find_dollar_word_in_envp(token));//확인 필요
+	token->prev_char = c;
 	return (0);
 }
