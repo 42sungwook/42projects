@@ -67,7 +67,7 @@ $(NAME) : $(ALLOBJS)
 	ar rcs $(NAME) $(ALLOBJS)
 
 %.o: %.c
-	$(CC) $(CFLAGS) -c $< -o $@ -I $(HEADER)
+	@$(CC) $(CFLAGS) -c $< -o $@ -I $(HEADER)
 
 clean:
 	rm -rf $(SRCS_OBJS) $(BONUS_OBJS)

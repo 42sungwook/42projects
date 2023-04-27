@@ -7,6 +7,7 @@
 # include <stdlib.h>
 # include <unistd.h>
 # include <fcntl.h>
+# include "libft/libft.h"
 
 
 # define NULL_ENVP "0"
@@ -37,5 +38,17 @@ typedef struct s_token
 	char	*dollar_word;
 	char	prev_char;
 }	t_token;
+
+//init
+t_token		*init_token(char **envp);
+t_commands	*init_cmds(void);
+
+//parsing
+int		end_of_word(t_commands *cmds, t_token *token, char c);
+char	*make_word_str(char *curr_word, char *c);
+char	*make_word_c(char *curr_word, char c);
+void	make_command(t_commands *cmds, char *word);
+char	**add_cmd(char **cmd, char *word);
+
 
 #endif

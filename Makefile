@@ -1,6 +1,6 @@
 NAME		= minishell
 CC          = cc
-CFLAGS      = -Wall -Wextra -Werror
+# CFLAGS      = -Wall -Wextra -Werror
 RM			= rm -f
 LIBFT		= -Llibft -lft
 LFLAGS		= -lreadline
@@ -17,7 +17,7 @@ M_OBJS		= $(M_PATH:c=o)
 
 P_DIR 	 = ./parse_line
 P_SRCS	 = end_of_word.c make_word.c parse_dollar.c parse_double_quote.c parse_pipe.c \
-		   parse_redirection.c
+		   parse_redirection.c make_command.c
 P_PATH	 = $(addprefix $(P_DIR)/, $(P_SRCS))
 P_OBJS	 = $(P_PATH:c=o)
 
@@ -30,7 +30,7 @@ OBJS = $(M_OBJS) $(P_OBJS)
 
 
 %.o: %.c $(HEADER)
-	$(CC) $(CFLAGS) -c $< -o $@
+	@$(CC) $(CFLAGS) -c $< -o $@
 
 $(NAME): $(G_OBJS) $(OBJS)
 	@make -C libft all
@@ -49,6 +49,7 @@ clean:
 	@make -C libft clean
 	@$(RM) $(G_OBJS)
 	@$(RM) $(M_OBJS)
+	@$(RM) $(P_OBJS)
 	@echo "$(CYAN)╔════════════════════════════════════════╗$(RESET)"
 	@echo "$(CYAN)║           make clean finished.         ║$(RESET)"
 	@echo "$(CYAN)╚════════════════════════════════════════╝$(RESET)"
