@@ -8,6 +8,9 @@
 # include <unistd.h>
 # include <fcntl.h>
 
+
+# define NULL_ENVP "0"
+
 typedef struct s_commands
 {
 	char				*infile;
@@ -21,8 +24,9 @@ typedef struct s_commands
 
 typedef struct s_token
 {
+	char	**envp;
 	char	quote;
-	int		double_quote;
+	int		double_quote; //필요 여부 고려
 	int		dollar;
 	int		pipe;
 	int		command;
@@ -30,6 +34,7 @@ typedef struct s_token
 	int		left_redirection;
 	int		right_redirection;
 	char	*word;
+	char	*dollar_word;
 	char	prev_char;
 }	t_token;
 
