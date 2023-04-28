@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   execute_cmds.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: sungwook <sungwook@student.42.fr>          +#+  +:+       +#+        */
+/*   By: daijeong <daijeong@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/15 14:11:07 by sungwook          #+#    #+#             */
-/*   Updated: 2023/04/28 21:13:31 by sungwook         ###   ########.fr       */
+/*   Updated: 2023/04/28 21:56:05 by daijeong         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,51 +42,45 @@ char	**save_paths(char **envp)
 	return (ft_split(envp[i] + 5, ':'));
 }
 
-void	save_cmds(t_arguments *args)
+void	save_cmds(t_commands *cmds, char **envp)
 {
 	int		i;
 	int		j;
 	char	**path;
 
-	i = 1;
-	if (args->heredoc)
-		i++;
-	path = save_paths(args->envp);
-	while (args->argv[++i + 1])
-	{
-		j = check_access_and_save(args, path, i);
-		if (!path[j] || args->argv[i][0] == 0)
-			save_no_path(args, i);
-	}
+	// if (args->heredoc)
+	// 	i++;
+	path = save_paths(envp);
+	check_access_and_save(cmds, path, i);
+	// save_no_path(args, i);
 	free_arr(path);
 }
 
-void	open_files(t_arguments *args)
+// void	open_files(t_arguments *args)
+// {
+// 	int		infile_fd;
+// 	int		outfile_fd;
+// 	size_t	i;
+
+// 	args->fds = (t_fds *)malloc(sizeof(t_fds));
+// 	infile_fd = open(args->argv[1], O_RDONLY);
+// 	i = 4;
+// 	while (args->argv[i + 1])
+// 		i++;
+// 	outfile_fd = open(args->argv[i], O_CREAT | O_RDWR | O_TRUNC, 0644);
+// 	args->fds->infile = infile_fd;
+// 	args->fds->outfile = outfile_fd;
+// 	args->fds->infile_name = args->argv[1];
+// 	args->fds->outfile_name = args->argv[i];
+// }
+
+int	execute_cmds(t_commands *cmds, char **envp)
 {
-	int		infile_fd;
-	int		outfile_fd;
-	size_t	i;
-
-	args->fds = (t_fds *)malloc(sizeof(t_fds));
-	infile_fd = open(args->argv[1], O_RDONLY);
-	i = 4;
-	while (args->argv[i + 1])
-		i++;
-	outfile_fd = open(args->argv[i], O_CREAT | O_RDWR | O_TRUNC, 0644);
-	args->fds->infile = infile_fd;
-	args->fds->outfile = outfile_fd;
-	args->fds->infile_name = args->argv[1];
-	args->fds->outfile_name = args->argv[i];
-}
-
-int	execute_cmds(t_commands *cmds)
-{
-	t_arguments	*args;
-
 	// open_files(args);
 	// if (args->fds->infile < 0)
 	// 	perror(argv[1]);
-	save_cmds(args);
-	pipex(args);
-	exit (0);
+	save_cmds(cmds, envp);
+	execve(cmds->cmd[0], cmds->cmd, 0);
+	// pipex(cmds);
+	return (0);
 }

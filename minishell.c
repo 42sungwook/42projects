@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: sungwook <sungwook@student.42.fr>          +#+  +:+       +#+        */
+/*   By: daijeong <daijeong@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/27 15:58:44 by daijeong          #+#    #+#             */
-/*   Updated: 2023/04/28 21:08:33 by sungwook         ###   ########.fr       */
+/*   Updated: 2023/04/28 21:18:17 by daijeong         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,7 +58,7 @@ int	main(int argc, char **argv, char **envp)
 	{
 		str = readline("minishell> : ");
 		parse_line(str, temp, token); // 한 캐릭터씩 읽으면서 구조체에 실행시킬 명령어 저장
-		execute_cmds(cmds); // 명령어 실행
+		execute_cmds(cmds, envp); // 명령어 실행
 		add_history(str); // line 저장
 		// free_line(str, cmds, token); // 사용이 끝난 line, 커맨드, 토큰 구조체 free
 		if (!str)

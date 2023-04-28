@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: sungwook <sungwook@student.42.fr>          +#+  +:+       +#+        */
+/*   By: daijeong <daijeong@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/27 15:58:34 by daijeong          #+#    #+#             */
-/*   Updated: 2023/04/28 21:07:42 by sungwook         ###   ########.fr       */
+/*   Updated: 2023/04/28 21:43:17 by daijeong         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,12 +26,6 @@
 # define WRITE_END 1
 # define NULL_ENVP "0"
 
-typedef struct s_list
-{
-	char			**cmd;
-	struct s_list	*next;
-}	t_list;
-
 typedef struct s_fds
 {
 	int		infile;
@@ -41,18 +35,6 @@ typedef struct s_fds
 	int		pipe1[2];
 	int		pipe2[2];
 }	t_fds;
-
-typedef struct s_arguments
-{
-	int		argc;
-	char	**argv;
-	char	**envp;
-	int		cmd_count;
-	t_list	*cmds;
-	t_fds	*fds;
-	int		heredoc;
-	pid_t	hd_pid;
-}	t_arguments;
 
 typedef struct s_commands
 {
@@ -100,23 +82,24 @@ int			parse_double_quote(t_token *token);
 int			print_cmds(char **str);
 
 //pipex
-void		pipex(t_arguments *args);
-
-//heredoc
-char		*ft_strjoin(char const *s1, char const *s2);
-void		open_files_heredoc(t_arguments *args);
-int			pipex_strcmp(char *str1, char *str2);
-void		heredoc_pipex(t_arguments *args);
-
-//utils
+int			execute_cmds(t_commands *cmds, char **envp);
+int			check_access_and_save(t_commands *cmds, char **path, int i);
 char		*join_path(char *str1, char *str2);
-t_arguments	*init_args(int argc, char **argv, char **envp);
-void		make_cmdlist(t_arguments *args, char **cmds);
-t_list		*cmd_addlist(char **cmds);
-size_t		ft_strlen(const char *s);
 void		free_arr(char **arr);
-int			check_access_and_save(t_arguments *args, char **path, int i);
-void		save_no_path(t_arguments *args, int i);
-int			nth_child_process_even(pid_t pid, t_arguments *args, t_list *temp);
-int			nth_child_process_odd(pid_t pid, t_arguments *args, t_list *temp);
+
+
+// void		pipex(t_arguments *args);
+// //heredoc
+// char		*ft_strjoin(char const *s1, char const *s2);
+// void		open_files_heredoc(t_arguments *args);
+// int			pipex_strcmp(char *str1, char *str2);
+// void		heredoc_pipex(t_arguments *args);
+
+// //utils
+// t_arguments	*init_args(int argc, char **argv, char **envp);
+// void		make_cmdlist(t_arguments *args, char **cmds);
+// t_list		*cmd_addlist(char **cmds);
+// void		save_no_path(t_arguments *args, int i);
+// int			nth_child_process_even(pid_t pid, t_arguments *args, t_list *temp);
+// int			nth_child_process_odd(pid_t pid, t_arguments *args, t_list *temp);
 #endif
