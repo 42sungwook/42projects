@@ -6,18 +6,51 @@
 /*   By: daijeong <daijeong@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/27 15:58:47 by daijeong          #+#    #+#             */
-/*   Updated: 2023/04/28 17:47:43 by daijeong         ###   ########.fr       */
+/*   Updated: 2023/04/28 22:10:13 by daijeong         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
+
+t_envp	*ps_addlist(char *str)
+{
+	t_envp	*envp_list;
+
+	envp_list = (t_envp *)malloc(sizeof(t_envp));
+	envp_list->str = ft_strdup(str);
+	return (envp_list);
+}
+
+void	init_envp(t_token *token, char **envp)
+{
+	t_envp	*envp_list;
+	t_envp	*temp;
+	size_t	i;
+
+	i = 0;
+	while (envp[i])
+	{
+		if (!(envp_list))
+		{
+			temp = ps_addlist(envp[i]);
+			envp_list = temp;
+		}
+		else
+		{
+			temp->next = ps_addlist(envp[i]);
+			temp = temp->next;
+		}
+		i++;
+	}
+	token->envp = envp_list;
+}
 
 t_token	*init_token(char **envp)
 {
 	t_token	*token;
 
 	token = malloc(sizeof(t_token));
-	token->envp = envp;
+	init_envp(token, envp);
 	token->quote = 0;
 	token->dollar = 0;
 	token->pipe = 0;

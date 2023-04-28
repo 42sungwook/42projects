@@ -6,7 +6,7 @@
 /*   By: daijeong <daijeong@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/15 14:11:07 by sungwook          #+#    #+#             */
-/*   Updated: 2023/04/28 21:56:05 by daijeong         ###   ########.fr       */
+/*   Updated: 2023/04/28 22:33:28 by daijeong         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -76,11 +76,21 @@ void	save_cmds(t_commands *cmds, char **envp)
 
 int	execute_cmds(t_commands *cmds, char **envp)
 {
+	int	temp;
+	pid_t pid;
+
 	// open_files(args);
 	// if (args->fds->infile < 0)
 	// 	perror(argv[1]);
 	save_cmds(cmds, envp);
-	execve(cmds->cmd[0], cmds->cmd, 0);
+	pid = fork();
+	if (pid == 0)
+	{
+		execve(cmds->cmd[0], cmds->cmd, envp);
+	}
+	wait(&temp);
+	free_arr(cmds->cmd);
+	cmds->cmd = 0;
 	// pipex(cmds);
 	return (0);
 }

@@ -6,7 +6,7 @@
 /*   By: daijeong <daijeong@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/27 15:58:34 by daijeong          #+#    #+#             */
-/*   Updated: 2023/04/28 21:43:17 by daijeong         ###   ########.fr       */
+/*   Updated: 2023/04/28 22:02:13 by daijeong         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,9 +47,15 @@ typedef struct s_commands
 	struct s_commands	*next;
 }	t_commands;
 
+typedef struct s_envp
+{
+	char			*str;
+	struct s_envp	*next;
+}	t_envp;
+
 typedef struct s_token
 {
-	char	**envp;
+	t_envp	*envp;
 	char	quote;
 	int		dollar;
 	int		pipe;

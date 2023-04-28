@@ -6,7 +6,7 @@
 /*   By: daijeong <daijeong@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/27 15:59:22 by daijeong          #+#    #+#             */
-/*   Updated: 2023/04/28 20:11:14 by daijeong         ###   ########.fr       */
+/*   Updated: 2023/04/28 22:18:46 by daijeong         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,29 +14,32 @@
 
 void	find_dollar_word_in_envp(t_token *token)
 {
-	int		i;
 	int		j;
 	int		dollar_word_len;
 	char	*temp;
+	t_envp	*envp_temp;
 
-	i = -1;
+	envp_temp = token->envp;
 	dollar_word_len = ft_strlen(token->dollar_word);
-	while (token->envp[++i])
+	while (envp_temp)
 	{
 		j = -1;
 		while (++j < dollar_word_len)
 		{
-			if (token->envp[i][j] != token->dollar_word[j])
+			if (envp_temp->str[j] != token->dollar_word[j])
 				break ;
 		}
 		if (j != dollar_word_len)
+		{
+			envp_temp = envp_temp->next;
 			continue ;
-		if (j == dollar_word_len && token->envp[i][j] == '=')
+		}
+		if (j == dollar_word_len && envp_temp->str[j] == '=')
 		{
 			if (!token->word)
-				temp = ft_strdup(token->envp[i] + j + 1);
+				temp = ft_strdup(&envp_temp->str[j + 1]);
 			else
-				temp = ft_strjoin(token->word, token->envp[i] + j + 1);
+				temp = ft_strjoin(token->word, &envp_temp->str[j + 1]);
 			if (token->word)
 				free(token->word);
 			free(token->dollar_word);
@@ -45,6 +48,7 @@ void	find_dollar_word_in_envp(t_token *token)
 			token->word = temp;
 			return ;
 		}
+		envp_temp = envp_temp->next;
 	}
 }
 
