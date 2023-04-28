@@ -6,13 +6,13 @@
 #    By: daijeong <daijeong@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/04/27 15:58:46 by daijeong          #+#    #+#              #
-#    Updated: 2023/04/27 15:58:47 by daijeong         ###   ########.fr        #
+#    Updated: 2023/04/28 17:25:38 by daijeong         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 NAME		= minishell
 CC          = cc
-# CFLAGS      = -Wall -Wextra -Werror
+CFLAGS      = -Wall -Wextra -Werror
 RM			= rm -f
 LIBFT		= -Llibft -lft
 LFLAGS		= -lreadline
@@ -22,14 +22,14 @@ HEADER_SRCS	= minishell.h
 HEADER		= $(addprefix $(HEADER_DIR), $(HEADER_SRCS))
 
 M_DIR		= ./
-M_SRCS      = minishell.c init_structures.c free_functions.c
+M_SRCS      = minishell.c init_structures.c free_functions.c printf.c
 M_PATH		= $(addprefix $(M_DIR), $(M_SRCS))
 M_OBJS		= $(M_PATH:c=o)
 
 
 P_DIR 	 = ./parse_line
 P_SRCS	 = end_of_word.c make_word.c parse_dollar.c parse_double_quote.c parse_pipe.c \
-		   parse_redirection.c make_command.c
+		   parse_redirection.c make_command.c parse_single_quote.c
 P_PATH	 = $(addprefix $(P_DIR)/, $(P_SRCS))
 P_OBJS	 = $(P_PATH:c=o)
 

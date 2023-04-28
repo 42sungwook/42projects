@@ -6,8 +6,13 @@
 /*   By: daijeong <daijeong@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/27 15:59:07 by daijeong          #+#    #+#             */
-/*   Updated: 2023/04/27 15:59:08 by daijeong         ###   ########.fr       */
+/*   Updated: 2023/04/28 16:54:03 by daijeong         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../minishell.h"
+// #include "../minishell.h"
+
+// int	parse_redirection(cmds, token)
+// {
+	
+// }

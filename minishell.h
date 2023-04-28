@@ -6,7 +6,7 @@
 /*   By: daijeong <daijeong@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/27 15:58:34 by daijeong          #+#    #+#             */
-/*   Updated: 2023/04/27 15:58:35 by daijeong         ###   ########.fr       */
+/*   Updated: 2023/04/28 17:01:00 by daijeong         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,8 +39,8 @@ typedef struct s_token
 {
 	char	**envp;
 	char	quote;
-	int		double_quote; //필요 여부 고려
 	int		dollar;
+	int		dollar_index;
 	int		pipe;
 	int		command;
 	int		heredoc;
@@ -62,5 +62,12 @@ char	*make_word_c(char *curr_word, char c);
 void	make_command(t_commands *cmds, char *word);
 char	**add_cmd(char **cmd, char *word);
 
+char	*find_dollar_word_in_envp(t_token *token);
+int		parse_dollar(t_token *token);
+int		parse_single_quote(t_token *token);
+int		parse_double_quote(t_token *token);
+
+//print_cmds
+int print_cmds(t_commands *cmd);
 
 #endif

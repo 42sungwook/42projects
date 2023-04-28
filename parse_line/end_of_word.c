@@ -6,7 +6,7 @@
 /*   By: daijeong <daijeong@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/27 15:59:22 by daijeong          #+#    #+#             */
-/*   Updated: 2023/04/27 15:59:23 by daijeong         ###   ########.fr       */
+/*   Updated: 2023/04/28 17:24:49 by daijeong         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,12 +14,13 @@
 
 char	*find_dollar_word_in_envp(t_token *token)
 {
-	int	i;
-	int	j;
-	int	dollar_word_len;
+	int		i;
+	int		j;
+	int		dollar_word_len;
+	char	*temp;
 
 	i = -1;
-	dollar_word_len = ft_strlen(token->dollar_word);
+	dollar_word_len = ft_strlen(&(token->dollar_word[token->dollar_index]));
 	while (token->envp[++i])
 	{
 		j = -1;
@@ -29,7 +30,14 @@ char	*find_dollar_word_in_envp(t_token *token)
 				break ;
 		}
 		if (j == dollar_word_len && token->envp[i][j] == '=')
+		{
+			temp = ft_strjoin(token->word, &(token->envp[i][j + 1]));
+			printf("temp: %s\n", temp);
+			printf("token->envp: %s\n", &(token->envp[i][j + 1]));
+			free(token->word);
+			token->word = temp;
 			return (token->dollar_word);
+		}
 	}
 	return (NULL);
 }

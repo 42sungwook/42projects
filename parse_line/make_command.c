@@ -6,7 +6,7 @@
 /*   By: daijeong <daijeong@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/27 15:59:20 by daijeong          #+#    #+#             */
-/*   Updated: 2023/04/27 15:59:21 by daijeong         ###   ########.fr       */
+/*   Updated: 2023/04/28 15:17:14 by daijeong         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,7 +39,6 @@ char	**add_cmd(char **cmd, char *word)
 	str = ft_strdup(word);
 	new_cmd[i] = str;
 	new_cmd[i + 1] = 0;
-
 	return (new_cmd);
 }
 
@@ -47,9 +46,8 @@ void	make_command(t_commands *cmds, char *word)
 {
 	char	*temp;
 
-	if (cmds->cmd){
+	if (cmds->cmd)
 		cmds->cmd = add_cmd(cmds->cmd, word);
-	}
 	else
 	{
 		cmds->cmd = (char **)malloc(sizeof(char *) * 2);
