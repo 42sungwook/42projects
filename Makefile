@@ -6,13 +6,13 @@
 #    By: daijeong <daijeong@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/04/27 15:58:46 by daijeong          #+#    #+#              #
-#    Updated: 2023/04/28 17:25:38 by daijeong         ###   ########.fr        #
+#    Updated: 2023/04/28 17:39:45 by daijeong         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 NAME		= minishell
-CC          = cc
-CFLAGS      = -Wall -Wextra -Werror
+CC          = cc -g -fsanitize=address
+# CFLAGS      = -Wall -Wextra -Werror
 RM			= rm -f
 LIBFT		= -Llibft -lft
 LFLAGS		= -lreadline

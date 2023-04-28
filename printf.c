@@ -1,11 +1,11 @@
 #include "minishell.h"
 
-int	print_cmds(t_commands *cmd)
+int	print_cmds(char **str)
 {
 	int	i;
 
 	i = -1;
-	while (cmd->cmd[++i])
-		printf("cmd[%d]: %s\n", i, cmd->cmd[i]);
+	while (str[++i])
+		printf("str[%d]: %s\n", i, str[i]);
 	return (0);
 }

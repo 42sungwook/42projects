@@ -6,7 +6,7 @@
 /*   By: daijeong <daijeong@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/27 15:58:44 by daijeong          #+#    #+#             */
-/*   Updated: 2023/04/28 17:21:00 by daijeong         ###   ########.fr       */
+/*   Updated: 2023/04/28 19:40:40 by daijeong         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,6 +33,8 @@ void	parse_line(char *str, t_commands *cmds, t_token *token)
 		// 	parse_pipe(cmds, token);
 		else if (str[i] == '$')
 			parse_dollar(token);
+		else if (token->dollar == 1)
+			token->dollar_word = make_word_c(token->dollar_word, str[i]);
 		else
 			token->word = make_word_c(token->word, str[i]);
 		// if (token->heredoc == 1)
@@ -63,7 +65,7 @@ int	main(int argc, char **argv, char **envp)
 		// free_line(str, cmds, token); // 사용이 끝난 line, 커맨드, 토큰 구조체 free
 		// if (!str)
 		// 	exit_shell();
-		print_cmds(temp);
+		print_cmds(temp->cmd);
 		temp->next = init_cmds();
 		temp = temp->next;
 	}
