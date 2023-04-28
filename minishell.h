@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: daijeong <daijeong@student.42.fr>          +#+  +:+       +#+        */
+/*   By: sungwook <sungwook@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/27 15:58:34 by daijeong          #+#    #+#             */
-/*   Updated: 2023/04/28 19:50:49 by daijeong         ###   ########.fr       */
+/*   Updated: 2023/04/28 21:07:42 by sungwook         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,9 +20,39 @@
 # include <unistd.h>
 # include <fcntl.h>
 # include "libft/libft.h"
+# include <string.h>
 
-
+# define READ_END 0
+# define WRITE_END 1
 # define NULL_ENVP "0"
+
+typedef struct s_list
+{
+	char			**cmd;
+	struct s_list	*next;
+}	t_list;
+
+typedef struct s_fds
+{
+	int		infile;
+	int		outfile;
+	char	*infile_name;
+	char	*outfile_name;
+	int		pipe1[2];
+	int		pipe2[2];
+}	t_fds;
+
+typedef struct s_arguments
+{
+	int		argc;
+	char	**argv;
+	char	**envp;
+	int		cmd_count;
+	t_list	*cmds;
+	t_fds	*fds;
+	int		heredoc;
+	pid_t	hd_pid;
+}	t_arguments;
 
 typedef struct s_commands
 {
@@ -55,18 +85,38 @@ t_token		*init_token(char **envp);
 t_commands	*init_cmds(void);
 
 //parsing
-int		end_of_word(t_commands *cmds, t_token *token, char c);
-char	*make_word_str(char *curr_word, char *c);
-char	*make_word_c(char *curr_word, char c);
-void	make_command(t_commands *cmds, char *word);
-char	**add_cmd(char **cmd, char *word);
+int			end_of_word(t_commands *cmds, t_token *token, char c);
+char		*make_word_str(char *curr_word, char *c);
+char		*make_word_c(char *curr_word, char c);
+void		make_command(t_commands *cmds, char *word);
+char		**add_cmd(char **cmd, char *word);
 
-void	find_dollar_word_in_envp(t_token *token);
-int		parse_dollar(t_token *token);
-int		parse_single_quote(t_token *token);
-int		parse_double_quote(t_token *token);
+void		find_dollar_word_in_envp(t_token *token);
+int			parse_dollar(t_token *token);
+int			parse_single_quote(t_token *token);
+int			parse_double_quote(t_token *token);
 
 //print_cmds
-int print_cmds(char **str);
+int			print_cmds(char **str);
 
+//pipex
+void		pipex(t_arguments *args);
+
+//heredoc
+char		*ft_strjoin(char const *s1, char const *s2);
+void		open_files_heredoc(t_arguments *args);
+int			pipex_strcmp(char *str1, char *str2);
+void		heredoc_pipex(t_arguments *args);
+
+//utils
+char		*join_path(char *str1, char *str2);
+t_arguments	*init_args(int argc, char **argv, char **envp);
+void		make_cmdlist(t_arguments *args, char **cmds);
+t_list		*cmd_addlist(char **cmds);
+size_t		ft_strlen(const char *s);
+void		free_arr(char **arr);
+int			check_access_and_save(t_arguments *args, char **path, int i);
+void		save_no_path(t_arguments *args, int i);
+int			nth_child_process_even(pid_t pid, t_arguments *args, t_list *temp);
+int			nth_child_process_odd(pid_t pid, t_arguments *args, t_list *temp);
 #endif

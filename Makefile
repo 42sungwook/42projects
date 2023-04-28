@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: daijeong <daijeong@student.42.fr>          +#+  +:+       +#+         #
+#    By: sungwook <sungwook@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/04/27 15:58:46 by daijeong          #+#    #+#              #
-#    Updated: 2023/04/28 17:39:45 by daijeong         ###   ########.fr        #
+#    Updated: 2023/04/28 21:12:41 by sungwook         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -33,12 +33,17 @@ P_SRCS	 = end_of_word.c make_word.c parse_dollar.c parse_double_quote.c parse_pi
 P_PATH	 = $(addprefix $(P_DIR)/, $(P_SRCS))
 P_OBJS	 = $(P_PATH:c=o)
 
+E_DIR	= ./execute_cmds
+E_SRCS	= execute_cmds.c heredoc.c pipex.c utils.c utils2.c
+E_PATH	= $(addprefix $(E_DIR)/, $(E_SRCS))
+E_OBJS	= $(E_PATH:c=o)
+
 RESET = \033[0m
 GREEN = \033[1;32m
 CYAN = \033[1;36m
 
 
-OBJS = $(M_OBJS) $(P_OBJS)
+OBJS = $(M_OBJS) $(P_OBJS) $(E_OBJS)
 
 
 %.o: %.c $(HEADER)
@@ -62,6 +67,7 @@ clean:
 	@$(RM) $(G_OBJS)
 	@$(RM) $(M_OBJS)
 	@$(RM) $(P_OBJS)
+	@$(RM) $(E_OBJS)
 	@echo "$(CYAN)╔════════════════════════════════════════╗$(RESET)"
 	@echo "$(CYAN)║           make clean finished.         ║$(RESET)"
 	@echo "$(CYAN)╚════════════════════════════════════════╝$(RESET)"
