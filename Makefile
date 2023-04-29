@@ -6,7 +6,7 @@
 #    By: sungwook <sungwook@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/04/27 15:58:46 by daijeong          #+#    #+#              #
-#    Updated: 2023/04/28 21:12:41 by sungwook         ###   ########.fr        #
+#    Updated: 2023/04/29 15:49:43 by sungwook         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -22,7 +22,7 @@ HEADER_SRCS	= minishell.h
 HEADER		= $(addprefix $(HEADER_DIR), $(HEADER_SRCS))
 
 M_DIR		= ./
-M_SRCS      = minishell.c init_structures.c free_functions.c printf.c
+M_SRCS      = minishell.c init_structures.c free_functions.c printf.c free_arr.c
 M_PATH		= $(addprefix $(M_DIR), $(M_SRCS))
 M_OBJS		= $(M_PATH:c=o)
 
@@ -34,7 +34,8 @@ P_PATH	 = $(addprefix $(P_DIR)/, $(P_SRCS))
 P_OBJS	 = $(P_PATH:c=o)
 
 E_DIR	= ./execute_cmds
-E_SRCS	= execute_cmds.c heredoc.c pipex.c utils.c utils2.c
+E_SRCS	= execute_cmds.c heredoc.c pipex.c save_cmds.c first_child_process.c \
+		  nth_child_process.c last_child_process.c save_fds.c
 E_PATH	= $(addprefix $(E_DIR)/, $(E_SRCS))
 E_OBJS	= $(E_PATH:c=o)
 

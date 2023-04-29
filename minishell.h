@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: daijeong <daijeong@student.42.fr>          +#+  +:+       +#+        */
+/*   By: sungwook <sungwook@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/27 15:58:34 by daijeong          #+#    #+#             */
-/*   Updated: 2023/04/28 22:02:13 by daijeong         ###   ########.fr       */
+/*   Updated: 2023/04/29 15:49:17 by sungwook         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,23 +26,28 @@
 # define WRITE_END 1
 # define NULL_ENVP "0"
 
+typedef struct s_pipe
+{
+	int		pipe1[2];
+	int		pipe2[2];
+}	t_pipe;
+
 typedef struct s_fds
 {
 	int		infile;
 	int		outfile;
-	char	*infile_name;
-	char	*outfile_name;
-	int		pipe1[2];
-	int		pipe2[2];
 }	t_fds;
 
 typedef struct s_commands
 {
-	char				*infile;
-	char				*outfile;
-	int					infile_fd;
-	int					outfile_fd;
+	char				*infile; //list로 바꿔야함
+	char				*outfile; //list로 바꿔야함
+	int					infile_count; //있으면 숫자 없으면 0
+	int					outfile_count;
 	char				**cmd;
+	int					heredoc; //list로 바꿔서 limiter 받아줘야함
+	int					heredoc_last; //1이면 마지막 heredoc이 infile로 아니면 infile의 마지막이 infile로
+	t_fds				*fds;
 	int					exit_code;
 	struct s_commands	*next;
 }	t_commands;
@@ -60,7 +65,6 @@ typedef struct s_token
 	int		dollar;
 	int		pipe;
 	int		command;
-	int		heredoc;
 	int		left_redirection;
 	int		right_redirection;
 	char	*word;
@@ -88,9 +92,18 @@ int			parse_double_quote(t_token *token);
 int			print_cmds(char **str);
 
 //pipex
-int			execute_cmds(t_commands *cmds, char **envp);
-int			check_access_and_save(t_commands *cmds, char **path, int i);
-char		*join_path(char *str1, char *str2);
+void		save_cmds(t_commands *cmds, char **envp);
+int			execute_cmds(t_commands *cmds, t_token *token);
+pid_t		last_child_process1(t_commands *cmds, char **envp, t_pipe pipe_fd);
+pid_t		last_child_process2(t_commands *cmds, char **envp, t_pipe pipe_fd);
+int			nth_child_process(t_commands *cmds, pid_t pid, char **envp, t_pipe pipe_fd);
+void		first_child_process(t_commands *cmds, pid_t pid, char **envp, t_pipe pipe_fd);
+void		save_fds_in_cmds(t_commands *cmds);
+void		init_cmds_fds(t_commands *cmds);
+void		pipex(t_commands *cmds, char **envp, t_pipe pipe_fd);
+
+
+//main
 void		free_arr(char **arr);
 
 
