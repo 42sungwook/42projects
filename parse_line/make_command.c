@@ -6,7 +6,7 @@
 /*   By: sungwook <sungwook@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/27 15:59:20 by daijeong          #+#    #+#             */
-/*   Updated: 2023/05/01 13:31:57 by sungwook         ###   ########.fr       */
+/*   Updated: 2023/05/01 16:57:02 by sungwook         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,37 +38,39 @@ char	**add_cmd(char **cmd, char *word)
 	return (new_cmd);
 }
 
-void	make_redirection_line(t_commands *cmds, char *word)
+void	make_redirection_line(t_commands *cmds, t_token	*token)
 {
+	token->left_redirection = 0;
+	token->right_redirection = 0;
 	if (cmds->infile->flag)
 	{
 		cmds->infile->flag = 0;
-		cmds->infile->line = ft_strdup(word);
+		cmds->infile->line = ft_strdup(token->word);
 	}
 	else if (cmds->outfile->flag)
 	{
 		cmds->outfile->flag = 0;
-		cmds->outfile->line = ft_strdup(word);
+		cmds->outfile->line = ft_strdup(token->word);
 	}
 	else if (cmds->heredoc->flag)
 	{
 		cmds->heredoc->flag = 0;
-		cmds->heredoc->line = ft_strdup(word);
+		cmds->heredoc->line = ft_strdup(token->word);
 	}
 }
 
-void	make_command(t_commands *cmds, char *word)
+void	make_command(t_commands *cmds, t_token *token)
 {
 	char	*temp;
 
 	if (cmds->infile->flag || cmds->outfile->flag || cmds->heredoc->flag)
-		make_redirection_line(cmds, word);
+		make_redirection_line(cmds, token);
 	else if (cmds->cmd)
-		cmds->cmd = add_cmd(cmds->cmd, word);
+		cmds->cmd = add_cmd(cmds->cmd, token->word);
 	else
 	{
 		cmds->cmd = (char **)malloc(sizeof(char *) * 2);
-		temp = ft_strdup(word);
+		temp = ft_strdup(token->word);
 		cmds->cmd[0] = temp;
 		cmds->cmd[1] = 0;
 	}

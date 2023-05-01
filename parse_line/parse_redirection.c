@@ -6,7 +6,7 @@
 /*   By: sungwook <sungwook@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/27 15:59:07 by daijeong          #+#    #+#             */
-/*   Updated: 2023/05/01 13:56:56 by sungwook         ###   ########.fr       */
+/*   Updated: 2023/05/01 16:56:25 by sungwook         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,7 +45,7 @@ int	parse_redirection(t_commands *cmds, t_token *token, char c)
 {
 	if (token->word)
 	{
-		make_command(cmds, token->word);
+		make_command(cmds, token);
 		free(token->word);
 		token->word = 0;
 	}

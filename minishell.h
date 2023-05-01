@@ -6,7 +6,7 @@
 /*   By: sungwook <sungwook@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/27 15:58:34 by daijeong          #+#    #+#             */
-/*   Updated: 2023/05/01 13:56:23 by sungwook         ###   ########.fr       */
+/*   Updated: 2023/05/01 16:56:14 by sungwook         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -87,7 +87,7 @@ t_commands	*init_cmds(void);
 int			end_of_word(t_commands *cmds, t_token *token, char c);
 char		*make_word_str(char *curr_word, char *c);
 char		*make_word_c(char *curr_word, char c);
-void		make_command(t_commands *cmds, char *word);
+void		make_command(t_commands *cmds, t_token *token);
 char		**add_cmd(char **cmd, char *word);
 
 void		find_dollar_word_in_envp(t_token *token);

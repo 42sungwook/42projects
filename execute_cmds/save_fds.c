@@ -10,15 +10,27 @@ void	init_cmds_fds(t_commands *cmds)
 void	open_infile_list(t_commands *cmds)
 {
 	t_line		*temp;
+	int			fd;
+	int			error_fd;
 
+	error_fd = 0;
 	temp = cmds->infile;
 	while (temp)
 	{
 		if (cmds->fds->infile)
 			close(cmds->fds->infile);
-		cmds->fds->infile = open(temp->line, O_RDONLY);
+		fd = open(temp->line, O_RDONLY);
+		if (fd == -1)
+		{
+			write(2, temp->line, ft_strlen(temp->line));
+			write(2, ": No such file or directory\n", 28);
+			error_fd = 1;
+		}
+		cmds->fds->infile = fd;
 		temp = temp->next;
 	}
+	if (error_fd)
+		cmds->fds->infile = -1;
 }
 
 void	open_outfile_list(t_commands *cmds)
@@ -30,7 +42,7 @@ void	open_outfile_list(t_commands *cmds)
 	{
 		if (cmds->fds->outfile)
 			close(cmds->fds->outfile);
-		cmds->fds->outfile = open(temp->line, O_WRONLY);
+		cmds->fds->outfile = open(temp->line, O_CREAT | O_RDWR | O_TRUNC, 0644);
 		temp = temp->next;
 	}
 }
