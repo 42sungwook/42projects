@@ -6,7 +6,7 @@
 /*   By: sungwook <sungwook@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/27 15:59:07 by daijeong          #+#    #+#             */
-/*   Updated: 2023/05/01 16:56:25 by sungwook         ###   ########.fr       */
+/*   Updated: 2023/05/01 19:58:10 by sungwook         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,12 +18,7 @@ void	parse_left_redirection(t_commands *cmds, t_token *token)
 		&& token->right_redirection == 0)
 	{
 		token->left_redirection++;
-		cmds->infile->flag++;
-		if (cmds->infile->flag == 2)
-		{
-			cmds->infile->flag = 0;
-			cmds->heredoc->flag = 1;
-		}
+		cmds->infile_end->flag++;
 	}
 	else
 		token->exit_status = 258;
@@ -35,7 +30,7 @@ void	parse_right_redirection(t_commands *cmds, t_token *token)
 		&& token->left_redirection == 0)
 	{
 		token->right_redirection++;
-		cmds->outfile->flag++;
+		cmds->outfile_end->flag++;
 	}
 	else
 		token->exit_status = 258;

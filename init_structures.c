@@ -6,7 +6,7 @@
 /*   By: sungwook <sungwook@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/27 15:58:47 by daijeong          #+#    #+#             */
-/*   Updated: 2023/05/01 13:53:54 by sungwook         ###   ########.fr       */
+/*   Updated: 2023/05/01 19:40:23 by sungwook         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -82,8 +82,11 @@ t_commands	*init_cmds(void)
 
 	cmds = malloc(sizeof(t_commands));
 	cmds->infile = init_line();
+	cmds->infile_end = cmds->infile;
 	cmds->outfile = init_line();
+	cmds->outfile_end = cmds->outfile;
 	cmds->heredoc = init_line();
+	cmds->heredoc_end = cmds->heredoc;
 	cmds->cmd = 0;
 	cmds->next = 0;
 	return (cmds);

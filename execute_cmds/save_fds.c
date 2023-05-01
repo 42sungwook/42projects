@@ -3,27 +3,27 @@
 void	init_cmds_fds(t_commands *cmds)
 {
 	cmds->fds = (t_fds *)malloc(sizeof(t_fds));
-	cmds->fds->infile = -1;
-	cmds->fds->outfile = -1;
+	cmds->fds->infile = 0;
+	cmds->fds->outfile = 0;
 }
 
 void	open_infile_list(t_commands *cmds)
 {
-	t_line		*temp;
-	int			fd;
-	int			error_fd;
+	t_line	*temp;
+	int		fd;
+	int		error_fd;
 
+	fd = 0;
 	error_fd = 0;
 	temp = cmds->infile;
-	while (temp)
+	while (temp->flag)
 	{
-		if (cmds->fds->infile)
+		if (fd)
 			close(cmds->fds->infile);
 		fd = open(temp->line, O_RDONLY);
 		if (fd == -1)
 		{
-			write(2, temp->line, ft_strlen(temp->line));
-			write(2, ": No such file or directory\n", 28);
+			perror(temp->line);
 			error_fd = 1;
 		}
 		cmds->fds->infile = fd;
@@ -35,16 +35,30 @@ void	open_infile_list(t_commands *cmds)
 
 void	open_outfile_list(t_commands *cmds)
 {
-	t_line		*temp;
+	t_line	*temp;
+	int		fd;
+	int		error_fd;
 
 	temp = cmds->outfile;
-	while (temp)
+	fd = 0;
+	error_fd = 0;
+	while (temp->flag)
 	{
-		if (cmds->fds->outfile)
-			close(cmds->fds->outfile);
-		cmds->fds->outfile = open(temp->line, O_CREAT | O_RDWR | O_TRUNC, 0644);
+		if (fd)
+			close(fd);
+		if (temp->flag == 1)
+			fd = open(temp->line, O_WRONLY | O_CREAT | O_TRUNC, 0644);
+		else if (temp->flag == 2)
+			fd = open(temp->line, O_WRONLY | O_CREAT | O_APPEND, 0644);
+		if (fd == -1)
+		{
+			perror(temp->line);
+			error_fd = 1;
+		}
 		temp = temp->next;
 	}
+	if (error_fd)
+		cmds->fds->outfile = -1;
 }
 
 void	save_fds_in_cmds(t_commands *cmds)

@@ -6,7 +6,7 @@
 /*   By: sungwook <sungwook@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/27 15:59:20 by daijeong          #+#    #+#             */
-/*   Updated: 2023/05/01 16:57:02 by sungwook         ###   ########.fr       */
+/*   Updated: 2023/05/01 20:00:44 by sungwook         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,20 +42,25 @@ void	make_redirection_line(t_commands *cmds, t_token	*token)
 {
 	token->left_redirection = 0;
 	token->right_redirection = 0;
-	if (cmds->infile->flag)
+	if (cmds->infile_end->flag == 1)
 	{
-		cmds->infile->flag = 0;
-		cmds->infile->line = ft_strdup(token->word);
+		cmds->read_heredoc = INFILE_END;
+		cmds->infile_end->line = ft_strdup(token->word);
+		cmds->infile_end->next = init_line();
+		cmds->infile_end = cmds->infile_end->next;
 	}
-	else if (cmds->outfile->flag)
+	else if (cmds->infile_end->flag == 2)
 	{
-		cmds->outfile->flag = 0;
-		cmds->outfile->line = ft_strdup(token->word);
+		cmds->read_heredoc = HEREDOC_END;
+		cmds->heredoc_end->line = ft_strdup(token->word);
+		cmds->heredoc_end->next = init_line();
+		cmds->heredoc_end = cmds->heredoc_end->next;
 	}
-	else if (cmds->heredoc->flag)
+	else if (cmds->outfile_end->flag)
 	{
-		cmds->heredoc->flag = 0;
-		cmds->heredoc->line = ft_strdup(token->word);
+		cmds->outfile_end->line = ft_strdup(token->word);
+		cmds->outfile_end->next = init_line();
+		cmds->outfile_end = cmds->outfile_end->next;
 	}
 }
 
@@ -63,7 +68,7 @@ void	make_command(t_commands *cmds, t_token *token)
 {
 	char	*temp;
 
-	if (cmds->infile->flag || cmds->outfile->flag || cmds->heredoc->flag)
+	if (cmds->infile_end->flag || cmds->outfile_end->flag)
 		make_redirection_line(cmds, token);
 	else if (cmds->cmd)
 		cmds->cmd = add_cmd(cmds->cmd, token->word);

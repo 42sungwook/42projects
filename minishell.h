@@ -6,7 +6,7 @@
 /*   By: sungwook <sungwook@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/27 15:58:34 by daijeong          #+#    #+#             */
-/*   Updated: 2023/05/01 16:56:14 by sungwook         ###   ########.fr       */
+/*   Updated: 2023/05/01 19:44:46 by sungwook         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,9 +50,12 @@ typedef struct s_fds
 typedef struct s_commands
 {
 	t_line				*infile; //list로 바꿔야함
+	t_line				*infile_end;
 	t_line				*outfile; //list로 바꿔야함
+	t_line				*outfile_end;
 	char				**cmd;
 	t_line				*heredoc; //list로 바꿔서 limiter 받아줘야함
+	t_line				*heredoc_end;
 	int					read_heredoc;
 	t_fds				*fds;
 	struct s_commands	*next;
@@ -82,6 +85,8 @@ typedef struct s_token
 //init
 t_token		*init_token(char **envp);
 t_commands	*init_cmds(void);
+t_line		*init_line(void);
+
 
 //parsing
 int			end_of_word(t_commands *cmds, t_token *token, char c);
