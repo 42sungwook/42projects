@@ -6,7 +6,7 @@
 /*   By: sungwook <sungwook@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/27 15:58:44 by daijeong          #+#    #+#             */
-/*   Updated: 2023/04/29 15:41:00 by sungwook         ###   ########.fr       */
+/*   Updated: 2023/05/01 11:27:56 by sungwook         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,8 +25,8 @@ void	parse_line(char *str, t_commands *cmds, t_token *token)
 			parse_double_quote(token);
 		else if (str[i] == '\'')
 			parse_single_quote(token);
-		// else if (str[i] == '<' || str[i] == '>')
-		// 	parse_redirection(cmds, token);
+		else if (str[i] == '<' || str[i] == '>')
+			parse_redirection(cmds, token, str[i]);
 		// else if (str[i] == '|')
 		// 	parse_pipe(cmds, token);
 		else if (str[i] == '$')
@@ -35,8 +35,6 @@ void	parse_line(char *str, t_commands *cmds, t_token *token)
 			token->dollar_word = make_word_c(token->dollar_word, str[i]);
 		else
 			token->word = make_word_c(token->word, str[i]);
-		// if (token->heredoc == 1)
-		// 	read_heredoc(cmds);
 	}
 	end_of_word(cmds, token, str[i]);
 }

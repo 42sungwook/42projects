@@ -6,7 +6,7 @@
 /*   By: sungwook <sungwook@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/27 15:58:34 by daijeong          #+#    #+#             */
-/*   Updated: 2023/04/29 15:49:17 by sungwook         ###   ########.fr       */
+/*   Updated: 2023/05/01 13:56:23 by sungwook         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,6 +25,15 @@
 # define READ_END 0
 # define WRITE_END 1
 # define NULL_ENVP "0"
+# define INFILE_END 0
+# define HEREDOC_END 1
+
+typedef struct s_line
+{
+	char			*line;
+	int				flag;
+	struct s_line	*next;
+}	t_line;
 
 typedef struct s_pipe
 {
@@ -40,15 +49,12 @@ typedef struct s_fds
 
 typedef struct s_commands
 {
-	char				*infile; //list로 바꿔야함
-	char				*outfile; //list로 바꿔야함
-	int					infile_count; //있으면 숫자 없으면 0
-	int					outfile_count;
+	t_line				*infile; //list로 바꿔야함
+	t_line				*outfile; //list로 바꿔야함
 	char				**cmd;
-	int					heredoc; //list로 바꿔서 limiter 받아줘야함
-	int					heredoc_last; //1이면 마지막 heredoc이 infile로 아니면 infile의 마지막이 infile로
+	t_line				*heredoc; //list로 바꿔서 limiter 받아줘야함
+	int					read_heredoc;
 	t_fds				*fds;
-	int					exit_code;
 	struct s_commands	*next;
 }	t_commands;
 
@@ -70,6 +76,7 @@ typedef struct s_token
 	char	*word;
 	char	*dollar_word;
 	char	prev_char;
+	int		exit_status;
 }	t_token;
 
 //init
@@ -87,6 +94,8 @@ void		find_dollar_word_in_envp(t_token *token);
 int			parse_dollar(t_token *token);
 int			parse_single_quote(t_token *token);
 int			parse_double_quote(t_token *token);
+int			parse_redirection(t_commands *cmds, t_token *token, char c);
+
 
 //print_cmds
 int			print_cmds(char **str);
@@ -101,7 +110,8 @@ void		first_child_process(t_commands *cmds, pid_t pid, char **envp, t_pipe pipe_
 void		save_fds_in_cmds(t_commands *cmds);
 void		init_cmds_fds(t_commands *cmds);
 void		pipex(t_commands *cmds, char **envp, t_pipe pipe_fd);
-
+void		open_infile_list(t_commands *cmds);
+void		open_outfile_list(t_commands *cmds);
 
 //main
 void		free_arr(char **arr);

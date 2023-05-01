@@ -6,11 +6,22 @@
 /*   By: sungwook <sungwook@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/27 15:58:47 by daijeong          #+#    #+#             */
-/*   Updated: 2023/04/29 15:40:58 by sungwook         ###   ########.fr       */
+/*   Updated: 2023/05/01 13:53:54 by sungwook         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
+
+t_line	*init_line(void)
+{
+	t_line	*line;
+
+	line = (t_line *)malloc(sizeof(t_line));
+	line->line = 0;
+	line->flag = 0;
+	line->next = 0;
+	return (line);
+}
 
 t_envp	*envp_addlist(char *str)
 {
@@ -60,6 +71,7 @@ t_token	*init_token(char **envp)
 	token->right_redirection = 0;
 	token->word = 0;
 	token->dollar_word = 0;
+	token->exit_status = 0;
 	token->prev_char = 0;
 	return (token);
 }
@@ -69,13 +81,10 @@ t_commands	*init_cmds(void)
 	t_commands	*cmds;
 
 	cmds = malloc(sizeof(t_commands));
-	cmds->infile = 0;
-	cmds->outfile = 0;
-	cmds->infile_count = 0;
-	cmds->outfile_count = 0;
+	cmds->infile = init_line();
+	cmds->outfile = init_line();
+	cmds->heredoc = init_line();
 	cmds->cmd = 0;
-	cmds->heredoc = 0;
-	cmds->exit_code = 0;
 	cmds->next = 0;
 	return (cmds);
 }
