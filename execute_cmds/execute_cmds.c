@@ -6,7 +6,7 @@
 /*   By: sungwook <sungwook@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/15 14:11:07 by sungwook          #+#    #+#             */
-/*   Updated: 2023/05/01 13:44:29 by sungwook         ###   ########.fr       */
+/*   Updated: 2023/05/01 20:32:04 by sungwook         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,7 +55,8 @@ int	execute_cmds(t_commands *cmds, t_token *token)
 	// wait(&temp);
 
 	pipex(cmds, envp, pipe_fd);
-	free_arr(cmds->cmd);
+	if (cmds->cmd)
+		free_arr(cmds->cmd);
 	cmds->cmd = 0;
 	free_arr(envp);
 	return (0);

@@ -55,6 +55,7 @@ void	open_outfile_list(t_commands *cmds)
 			perror(temp->line);
 			error_fd = 1;
 		}
+		cmds->fds->outfile = fd;
 		temp = temp->next;
 	}
 	if (error_fd)
