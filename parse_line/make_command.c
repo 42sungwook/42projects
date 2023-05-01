@@ -6,7 +6,7 @@
 /*   By: sungwook <sungwook@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/27 15:59:20 by daijeong          #+#    #+#             */
-/*   Updated: 2023/05/01 20:00:44 by sungwook         ###   ########.fr       */
+/*   Updated: 2023/05/01 21:14:45 by sungwook         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,10 @@ char	**add_cmd(char **cmd, char *word)
 
 	i = 0;
 	if (cmd)
+	{
 		while (cmd[i++])
+			;
+	}
 	new_cmd = (char **)malloc(sizeof(char *) * (i + 2));
 	if (!(new_cmd))
 		return (0);

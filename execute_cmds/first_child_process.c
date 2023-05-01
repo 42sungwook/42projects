@@ -6,7 +6,7 @@
 /*   By: sungwook <sungwook@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/29 14:46:58 by sungwook          #+#    #+#             */
-/*   Updated: 2023/05/01 20:34:04 by sungwook         ###   ########.fr       */
+/*   Updated: 2023/05/01 21:19:22 by sungwook         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,9 +31,9 @@ void	child_process_check_fd(t_commands *cmds)
 	}
 }
 
-void	first_child_process(t_commands *cmds, pid_t pid, char **envp, t_pipe pipe_fd)
+void	first_child_process(t_commands *cmds, pid_t pid, char **envp, t_pipe *pipe_fd)
 {
-	pipe(pipe_fd.pipe1);
+	pipe(pipe_fd->pipe1);
 	pid = fork();
 	if (pid == 0)
 	{

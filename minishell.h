@@ -6,7 +6,7 @@
 /*   By: sungwook <sungwook@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/27 15:58:34 by daijeong          #+#    #+#             */
-/*   Updated: 2023/05/01 19:44:46 by sungwook         ###   ########.fr       */
+/*   Updated: 2023/05/01 21:17:18 by sungwook         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,12 +72,12 @@ typedef struct s_token
 	t_envp	*envp;
 	char	quote;
 	int		dollar;
+	char	*dollar_word;
 	int		pipe;
 	int		command;
 	int		left_redirection;
 	int		right_redirection;
 	char	*word;
-	char	*dollar_word;
 	char	prev_char;
 	int		exit_status;
 }	t_token;
@@ -108,18 +108,21 @@ int			print_cmds(char **str);
 //pipex
 void		save_cmds(t_commands *cmds, char **envp);
 int			execute_cmds(t_commands *cmds, t_token *token);
-pid_t		last_child_process1(t_commands *cmds, char **envp, t_pipe pipe_fd);
-pid_t		last_child_process2(t_commands *cmds, char **envp, t_pipe pipe_fd);
-int			nth_child_process(t_commands *cmds, pid_t pid, char **envp, t_pipe pipe_fd);
-void		first_child_process(t_commands *cmds, pid_t pid, char **envp, t_pipe pipe_fd);
+pid_t		last_child_process1(t_commands *cmds, char **envp, t_pipe *pipe_fd);
+pid_t		last_child_process2(t_commands *cmds, char **envp, t_pipe *pipe_fd);
+int			nth_child_process(t_commands *cmds, pid_t pid, char **envp, t_pipe *pipe_fd);
+void		first_child_process(t_commands *cmds, pid_t pid, char **envp, t_pipe *pipe_fd);
 void		save_fds_in_cmds(t_commands *cmds);
 void		init_cmds_fds(t_commands *cmds);
-void		pipex(t_commands *cmds, char **envp, t_pipe pipe_fd);
+void		pipex(t_commands *cmds, char **envp, t_pipe *pipe_fd);
 void		open_infile_list(t_commands *cmds);
 void		open_outfile_list(t_commands *cmds);
 
 //main
 void		free_arr(char **arr);
+
+//free
+void		free_everything(t_commands **cmds, t_token *token, char *str);
 
 
 // void		pipex(t_arguments *args);

@@ -6,7 +6,7 @@
 /*   By: sungwook <sungwook@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/15 14:20:10 by sungwook          #+#    #+#             */
-/*   Updated: 2023/05/01 17:01:58 by sungwook         ###   ########.fr       */
+/*   Updated: 2023/05/01 21:18:57 by sungwook         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,12 +25,10 @@ static void	wait_pids(t_commands *cmds)
 	}
 }
 
-void	pipex(t_commands *cmds, char **envp, t_pipe pipe_fd)
+void	pipex(t_commands *cmds, char **envp, t_pipe *pipe_fd)
 {
 	pid_t	pid;
-	int		temp;
 	int		sign;
-	t_fds	fds;
 
 	pid = 0;
 	first_child_process(cmds, pid, envp, pipe_fd);

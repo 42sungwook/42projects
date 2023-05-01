@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   make_word.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: daijeong <daijeong@student.42.fr>          +#+  +:+       +#+        */
+/*   By: sungwook <sungwook@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/27 15:59:18 by daijeong          #+#    #+#             */
-/*   Updated: 2023/04/27 15:59:19 by daijeong         ###   ########.fr       */
+/*   Updated: 2023/05/01 21:13:45 by sungwook         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,6 @@
 
 char	*make_word_str(char *curr_word, char *c)
 {
-	size_t	i;
 	char	*new_word;
 
 	new_word = ft_strjoin(curr_word, c);

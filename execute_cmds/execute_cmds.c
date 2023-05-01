@@ -6,7 +6,7 @@
 /*   By: sungwook <sungwook@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/15 14:11:07 by sungwook          #+#    #+#             */
-/*   Updated: 2023/05/01 20:32:04 by sungwook         ###   ########.fr       */
+/*   Updated: 2023/05/01 21:16:39 by sungwook         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,11 +40,10 @@ char	**make_two_pointer_envp(t_token *token)
 
 int	execute_cmds(t_commands *cmds, t_token *token)
 {
-	int			temp;
-	pid_t		pid;
-	t_pipe		pipe_fd;
+	t_pipe		*pipe_fd;
 	char		**envp;
 
+	pipe_fd = (t_pipe *)malloc(sizeof(t_pipe));
 	envp = make_two_pointer_envp(token);
 	save_cmds(cmds, envp);
 	// pid = fork();
@@ -59,5 +58,6 @@ int	execute_cmds(t_commands *cmds, t_token *token)
 		free_arr(cmds->cmd);
 	cmds->cmd = 0;
 	free_arr(envp);
+	free(pipe_fd);
 	return (0);
 }
