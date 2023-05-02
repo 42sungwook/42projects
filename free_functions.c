@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   free_functions.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: sungwook <sungwook@student.42.fr>          +#+  +:+       +#+        */
+/*   By: daijeong <daijeong@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/27 15:58:55 by daijeong          #+#    #+#             */
-/*   Updated: 2023/05/01 21:12:36 by sungwook         ###   ########.fr       */
+/*   Updated: 2023/05/02 11:26:35 by daijeong         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -74,7 +74,6 @@ void	free_everything(t_commands **cmds, t_token *token, char *str)
 	token->left_redirection = 0;
 	token->right_redirection = 0;
 	token->pipe = 0;
-	token->command = 0;
 	token->prev_char = 0;
 	*cmds = init_cmds();
 }

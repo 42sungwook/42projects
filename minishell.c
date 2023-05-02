@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: sungwook <sungwook@student.42.fr>          +#+  +:+       +#+        */
+/*   By: daijeong <daijeong@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/27 15:58:44 by daijeong          #+#    #+#             */
-/*   Updated: 2023/05/01 21:21:44 by sungwook         ###   ########.fr       */
+/*   Updated: 2023/05/02 11:18:44 by daijeong         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,8 +27,8 @@ void	parse_line(char *str, t_commands *cmds, t_token *token)
 			parse_single_quote(token);
 		else if (str[i] == '<' || str[i] == '>')
 			parse_redirection(cmds, token, str[i]);
-		// else if (str[i] == '|')
-		// 	parse_pipe(cmds, token);
+		else if (str[i] == '|')
+			cmds = parse_pipe(cmds, token);
 		else if (str[i] == '$')
 			parse_dollar(token);
 		else if (token->dollar == 1)

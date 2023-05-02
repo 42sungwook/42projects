@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   end_of_word.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: sungwook <sungwook@student.42.fr>          +#+  +:+       +#+        */
+/*   By: daijeong <daijeong@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/27 15:59:22 by daijeong          #+#    #+#             */
-/*   Updated: 2023/05/01 16:56:10 by sungwook         ###   ########.fr       */
+/*   Updated: 2023/05/02 11:56:03 by daijeong         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,7 +52,7 @@ void	find_dollar_word_in_envp(t_token *token)
 	}
 }
 
-int	end_of_word(t_commands *cmds, t_token *token, char c)
+void	end_of_word(t_commands *cmds, t_token *token, char c)
 {
 	if (token->dollar == 1 && token->quote == 0)
 	{
@@ -68,10 +68,11 @@ int	end_of_word(t_commands *cmds, t_token *token, char c)
 			token->word = 0;
 		}
 	}
+	token->prev_char = c;
+	if (c == '|')
+		return ;
 	else if (token->quote != 0 && token->dollar == 0)
 		token->word = make_word_c(token->word, c);
 	else if (token->dollar == 1 && token->quote == 1)
 		find_dollar_word_in_envp(token);
-	token->prev_char = c;
-	return (0);
 }

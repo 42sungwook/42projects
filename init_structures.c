@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   init_structures.c                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: sungwook <sungwook@student.42.fr>          +#+  +:+       +#+        */
+/*   By: daijeong <daijeong@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/27 15:58:47 by daijeong          #+#    #+#             */
-/*   Updated: 2023/05/01 21:20:19 by sungwook         ###   ########.fr       */
+/*   Updated: 2023/05/02 11:26:27 by daijeong         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,7 +66,6 @@ t_token	*init_token(char **envp)
 	token->quote = 0;
 	token->dollar = 0;
 	token->pipe = 0;
-	token->command = 0;
 	token->left_redirection = 0;
 	token->right_redirection = 0;
 	token->word = 0;

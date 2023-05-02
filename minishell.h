@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: sungwook <sungwook@student.42.fr>          +#+  +:+       +#+        */
+/*   By: daijeong <daijeong@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/27 15:58:34 by daijeong          #+#    #+#             */
-/*   Updated: 2023/05/01 21:17:18 by sungwook         ###   ########.fr       */
+/*   Updated: 2023/05/02 11:43:48 by daijeong         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -74,7 +74,6 @@ typedef struct s_token
 	int		dollar;
 	char	*dollar_word;
 	int		pipe;
-	int		command;
 	int		left_redirection;
 	int		right_redirection;
 	char	*word;
@@ -89,7 +88,7 @@ t_line		*init_line(void);
 
 
 //parsing
-int			end_of_word(t_commands *cmds, t_token *token, char c);
+void		end_of_word(t_commands *cmds, t_token *token, char c);
 char		*make_word_str(char *curr_word, char *c);
 char		*make_word_c(char *curr_word, char c);
 void		make_command(t_commands *cmds, t_token *token);
@@ -100,7 +99,7 @@ int			parse_dollar(t_token *token);
 int			parse_single_quote(t_token *token);
 int			parse_double_quote(t_token *token);
 int			parse_redirection(t_commands *cmds, t_token *token, char c);
-
+t_commands	*parse_pipe(t_commands *cmds, t_token *token);
 
 //print_cmds
 int			print_cmds(char **str);
@@ -117,6 +116,7 @@ void		init_cmds_fds(t_commands *cmds);
 void		pipex(t_commands *cmds, char **envp, t_pipe *pipe_fd);
 void		open_infile_list(t_commands *cmds);
 void		open_outfile_list(t_commands *cmds);
+void		child_process_check_fd(t_commands *cmds);
 
 //main
 void		free_arr(char **arr);

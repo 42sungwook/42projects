@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   first_child_process.c                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: sungwook <sungwook@student.42.fr>          +#+  +:+       +#+        */
+/*   By: daijeong <daijeong@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/29 14:46:58 by sungwook          #+#    #+#             */
-/*   Updated: 2023/05/01 21:19:22 by sungwook         ###   ########.fr       */
+/*   Updated: 2023/05/02 11:38:38 by daijeong         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,13 +38,14 @@ void	first_child_process(t_commands *cmds, pid_t pid, char **envp, t_pipe *pipe_
 	if (pid == 0)
 	{
 		child_process_check_fd(cmds);
+		if (cmds->fds->outfile == 0)
+			dup2(pipe_fd->pipe1[WRITE_END], STDOUT_FILENO);
 		if (!cmds->cmd)
 			exit(0);
 		if (cmds->cmd[0][0] == 0 || access(cmds->cmd[0], X_OK) != 0)
 			close(STDOUT_FILENO);
-		// dup2(pipe_fd.pipe1[WRITE_END], STDOUT_FILENO);
-		// close(pipe_fd.pipe1[READ_END]);
-		// close(pipe_fd.pipe1[WRITE_END]);
+		close(pipe_fd->pipe1[READ_END]);
+		close(pipe_fd->pipe1[WRITE_END]);
 		execve(cmds->cmd[0], cmds->cmd, envp);
 	}
 }

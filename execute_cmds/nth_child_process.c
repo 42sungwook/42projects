@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   nth_child_process.c                                :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: sungwook <sungwook@student.42.fr>          +#+  +:+       +#+        */
+/*   By: daijeong <daijeong@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/29 15:20:04 by sungwook          #+#    #+#             */
-/*   Updated: 2023/05/01 21:19:11 by sungwook         ###   ########.fr       */
+/*   Updated: 2023/05/02 12:10:46 by daijeong         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,10 +18,15 @@ static int	nth_child_process_even(pid_t pid, t_commands *cmds, char **envp, t_pi
 	pid = fork();
 	if (pid == 0)
 	{
-		dup2(pipe_fd->pipe1[READ_END], STDIN_FILENO);
-		dup2(pipe_fd->pipe2[WRITE_END], STDOUT_FILENO);
+		child_process_check_fd(cmds);
+		if (cmds->fds->infile == 0)
+			dup2(pipe_fd->pipe1[READ_END], STDIN_FILENO);
+		if (cmds->fds->outfile == 0)
+			dup2(pipe_fd->pipe2[WRITE_END], STDOUT_FILENO);
 		if (cmds->cmd[0][0] == 0 || access(cmds->cmd[0], X_OK) != 0)
 			close(STDOUT_FILENO);
+		if (!cmds->cmd)
+			exit(0);
 		close(pipe_fd->pipe1[READ_END]);
 		close(pipe_fd->pipe1[WRITE_END]);
 		close(pipe_fd->pipe2[READ_END]);
@@ -39,10 +44,15 @@ static int	nth_child_process_odd(pid_t pid, t_commands *cmds, char **envp, t_pip
 	pid = fork();
 	if (pid == 0)
 	{
-		dup2(pipe_fd->pipe2[READ_END], STDIN_FILENO);
-		dup2(pipe_fd->pipe1[WRITE_END], STDOUT_FILENO);
+		child_process_check_fd(cmds);
+		if (cmds->fds->infile == 0)
+			dup2(pipe_fd->pipe2[READ_END], STDIN_FILENO);
+		if (cmds->fds->outfile == 0)
+			dup2(pipe_fd->pipe1[WRITE_END], STDOUT_FILENO);
 		if (cmds->cmd[0][0] == 0 || access(cmds->cmd[0], X_OK) != 0)
 			close(STDOUT_FILENO);
+		if (!cmds->cmd)
+			exit(0);
 		close(pipe_fd->pipe1[READ_END]);
 		close(pipe_fd->pipe1[WRITE_END]);
 		close(pipe_fd->pipe2[READ_END]);

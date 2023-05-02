@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   save_cmds.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: sungwook <sungwook@student.42.fr>          +#+  +:+       +#+        */
+/*   By: daijeong <daijeong@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/29 12:58:35 by sungwook          #+#    #+#             */
-/*   Updated: 2023/05/01 20:30:33 by sungwook         ###   ########.fr       */
+/*   Updated: 2023/05/02 12:13:05 by daijeong         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -95,8 +95,8 @@ void	save_cmds(t_commands *cmds, char **envp)
 	temp_cmds = cmds;
 	while (temp_cmds)
 	{
-		check_access_and_save(cmds, path);
-		save_fds_in_cmds(cmds);
+		check_access_and_save(temp_cmds, path);
+		save_fds_in_cmds(temp_cmds);
 		temp_cmds = temp_cmds->next;
 	}
 	free_arr(path);
