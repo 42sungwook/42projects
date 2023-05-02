@@ -6,7 +6,7 @@
 /*   By: daijeong <daijeong@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/27 15:58:44 by daijeong          #+#    #+#             */
-/*   Updated: 2023/05/02 11:18:44 by daijeong         ###   ########.fr       */
+/*   Updated: 2023/05/02 15:45:08 by daijeong         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,9 +22,9 @@ void	parse_line(char *str, t_commands *cmds, t_token *token)
 		if (str[i] == ' ' || str[i] == '\t' || str[i] == '\n') //white space 추가
 			end_of_word(cmds, token, str[i]);
 		else if (str[i] == '\"')
-			parse_double_quote(token);
+			parse_double_quote(cmds, token);
 		else if (str[i] == '\'')
-			parse_single_quote(token);
+			parse_single_quote(cmds, token);
 		else if (str[i] == '<' || str[i] == '>')
 			parse_redirection(cmds, token, str[i]);
 		else if (str[i] == '|')

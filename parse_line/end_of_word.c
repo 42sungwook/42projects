@@ -6,7 +6,7 @@
 /*   By: daijeong <daijeong@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/27 15:59:22 by daijeong          #+#    #+#             */
-/*   Updated: 2023/05/02 11:56:03 by daijeong         ###   ########.fr       */
+/*   Updated: 2023/05/02 16:02:29 by daijeong         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,7 +59,8 @@ void	end_of_word(t_commands *cmds, t_token *token, char c)
 		find_dollar_word_in_envp(token);
 		token->dollar = 0;
 	}
-	if (token->quote == 0 && token->dollar == 0)
+	if ((c == 0 && (token->quote == '\'' || token->quote == '\"')) || \
+		(token->quote == 0 && token->dollar == 0))
 	{
 		if (token->word)
 		{

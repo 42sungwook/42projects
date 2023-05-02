@@ -6,7 +6,7 @@
 /*   By: daijeong <daijeong@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/15 14:11:07 by sungwook          #+#    #+#             */
-/*   Updated: 2023/05/02 14:44:05 by daijeong         ###   ########.fr       */
+/*   Updated: 2023/05/02 15:49:19 by daijeong         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,6 +43,8 @@ int	execute_cmds(t_commands *cmds, t_token *token)
 	t_pipe		*pipe_fd;
 	char		**envp;
 
+	if (cmds->cmd == 0)
+		return (0);
 	pipe_fd = (t_pipe *)malloc(sizeof(t_pipe));
 	envp = make_two_pointer_envp(token);
 	save_cmds(cmds, envp);

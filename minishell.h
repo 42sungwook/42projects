@@ -6,7 +6,7 @@
 /*   By: daijeong <daijeong@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/27 15:58:34 by daijeong          #+#    #+#             */
-/*   Updated: 2023/05/02 11:43:48 by daijeong         ###   ########.fr       */
+/*   Updated: 2023/05/02 15:44:56 by daijeong         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -96,8 +96,8 @@ char		**add_cmd(char **cmd, char *word);
 
 void		find_dollar_word_in_envp(t_token *token);
 int			parse_dollar(t_token *token);
-int			parse_single_quote(t_token *token);
-int			parse_double_quote(t_token *token);
+int			parse_single_quote(t_commands *cmds, t_token *token);
+int			parse_double_quote(t_commands *cmds, t_token *token);
 int			parse_redirection(t_commands *cmds, t_token *token, char c);
 t_commands	*parse_pipe(t_commands *cmds, t_token *token);
 
