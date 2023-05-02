@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   heredoc.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: daijeong <daijeong@student.42.fr>          +#+  +:+       +#+        */
+/*   By: sungwook <sungwook@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/15 14:52:26 by sungwook          #+#    #+#             */
-/*   Updated: 2023/05/02 17:34:44 by daijeong         ###   ########.fr       */
+/*   Updated: 2023/05/02 19:44:40 by sungwook         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,18 +28,22 @@ int	pipex_strcmp(const char *str1, const char *str2)
 	return (1);
 }
 
-void	write_in_heredoc(int fd, char *limiter)
+void	write_in_heredoc(int fd, const char *limiter)
 {
 	char	*str;
 
-	str = readline("> ");
-	while (!pipex_strcmp(str, limiter))
+	while (1)
 	{
-		write(fd, str, ft_strlen(str));
-		free(str);
 		str = readline("> ");
+		if (pipex_strcmp(str, limiter))
+			break ;
+		ft_putstr_fd(str, fd);
+		ft_putstr_fd("\n", fd);
+		printf("%d\n", fd);
+		// printf("%zd\n", write(fd, str, ft_strlen(str)));
+		free(str);
+		str = 0;
 	}
-	free(str);
 	close(fd);
 }
 
@@ -53,23 +57,20 @@ int	open_heredoc_fd(t_commands *cmds)
 	i = 0;
 	file_fd = 0;
 	heredoc_temp = cmds->heredoc;
-	heredoc_file = ft_strdup("/tmp/heredoc_temp");
-	while (heredoc_temp)
+	heredoc_file = ft_strdup("heredoc_temp");
+	while (heredoc_temp->flag)
 	{
-		if (file_fd > 0)
-		{
-			// unlink(heredoc_file);
-			close(file_fd);
-		}
 		//heredoc_file 이름 바꿔주면서 open 해주는 부분 필요
 		// if (access(heredoc_file, F_OK))
 		// {
-			file_fd = open(heredoc_file, O_RDWR | O_CREAT | O_TRUNC, 0644);
+			file_fd = open(heredoc_file, O_WRONLY | O_CREAT | O_TRUNC, 0644);
 			write_in_heredoc(file_fd, heredoc_temp->line);
 		// }
 		heredoc_temp = heredoc_temp->next;
 	}
-	file_fd = open(heredoc_file, O_RDONLY);
+	if (file_fd)
+		file_fd = open(heredoc_file, O_RDONLY);
+	printf("%d\n", file_fd);
 	if (heredoc_temp->line)
 		free(heredoc_temp->line);
 	heredoc_temp->line = heredoc_file;
@@ -89,5 +90,8 @@ void	open_heredoc(t_commands *cmds)
 			fd = open_heredoc_fd(temp_cmds);
 		if (temp_cmds->read_heredoc)
 			temp_cmds->fds->infile = fd;
+		// else
+		// 	close(fd);
+		temp_cmds = temp_cmds->next;
 	}
 }

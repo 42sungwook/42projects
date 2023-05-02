@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: daijeong <daijeong@student.42.fr>          +#+  +:+       +#+        */
+/*   By: sungwook <sungwook@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/27 15:58:44 by daijeong          #+#    #+#             */
-/*   Updated: 2023/05/02 15:45:08 by daijeong         ###   ########.fr       */
+/*   Updated: 2023/05/02 19:47:04 by sungwook         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,6 +62,7 @@ int	main(int argc, char **argv, char **envp)
 		add_history(str); // line 저장
 		// free_everything(&cmds, token, str); // 사용이 끝난 line, 커맨드, 토큰 구조체 free
 		// print_cmds(temp->cmd);
+		free(str);
 		temp->next = init_cmds();
 		temp = temp->next;
 	}
