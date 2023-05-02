@@ -6,7 +6,7 @@
 /*   By: sungwook <sungwook@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/15 14:52:26 by sungwook          #+#    #+#             */
-/*   Updated: 2023/05/02 19:44:40 by sungwook         ###   ########.fr       */
+/*   Updated: 2023/05/02 19:47:58 by sungwook         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,8 +39,6 @@ void	write_in_heredoc(int fd, const char *limiter)
 			break ;
 		ft_putstr_fd(str, fd);
 		ft_putstr_fd("\n", fd);
-		printf("%d\n", fd);
-		// printf("%zd\n", write(fd, str, ft_strlen(str)));
 		free(str);
 		str = 0;
 	}
