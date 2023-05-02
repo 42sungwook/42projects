@@ -6,7 +6,7 @@
 /*   By: daijeong <daijeong@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/15 14:11:07 by sungwook          #+#    #+#             */
-/*   Updated: 2023/05/02 12:12:22 by daijeong         ###   ########.fr       */
+/*   Updated: 2023/05/02 14:44:05 by daijeong         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,10 +46,6 @@ int	execute_cmds(t_commands *cmds, t_token *token)
 	pipe_fd = (t_pipe *)malloc(sizeof(t_pipe));
 	envp = make_two_pointer_envp(token);
 	save_cmds(cmds, envp);
-	printf("cmds: %s\n", cmds->cmd[0]);
-	printf("cmds1: %s\n", cmds->cmd[1]);
-	printf("cmds next: %s\n", cmds->next->cmd[0]);
-	printf("cmds next1: %s\n", cmds->next->cmd[1]);
 	pipex(cmds, envp, pipe_fd);
 	if (cmds->cmd)
 		free_arr(cmds->cmd);

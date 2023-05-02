@@ -69,10 +69,10 @@ void	save_fds_in_cmds(t_commands *cmds)
 	temp = cmds;
 	while (temp)
 	{
-		init_cmds_fds(cmds);
-		open_infile_list(cmds);
-		open_outfile_list(cmds);
-		//open_heredoc(cmds);
+		init_cmds_fds(temp);
+		open_infile_list(temp);
+		open_outfile_list(temp);
+		//open_heredoc(temp);
 		temp = temp->next;
 	}
 }

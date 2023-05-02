@@ -6,7 +6,7 @@
 /*   By: daijeong <daijeong@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/29 15:20:03 by sungwook          #+#    #+#             */
-/*   Updated: 2023/05/02 11:41:01 by daijeong         ###   ########.fr       */
+/*   Updated: 2023/05/02 14:58:49 by daijeong         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,18 +22,16 @@ pid_t	last_child_process1(t_commands *cmds, char **envp, t_pipe *pipe_fd)
 	pid = fork();
 	if (pid == 0)
 	{
-		child_process_check_fd(cmds);
-		if (cmds->fds->infile == 0)
-			dup2(pipe_fd->pipe2[READ_END], STDIN_FILENO);
-		if (cmds->fds->outfile == 0)
-			dup2(cmds->fds->outfile, STDOUT_FILENO);
-		close(pipe_fd->pipe2[READ_END]);
-		close(pipe_fd->pipe2[WRITE_END]);
 		temp = cmds;
 		while (temp->next)
 			temp = temp->next;
-		if (!cmds->cmd)
+		if (temp->fds->outfile == -1 || !temp->cmd)
 			exit(0);
+		child_process_check_fd(temp);
+		if (temp->fds->infile == 0)
+			dup2(pipe_fd->pipe2[READ_END], STDIN_FILENO);
+		close(pipe_fd->pipe2[READ_END]);
+		close(pipe_fd->pipe2[WRITE_END]);
 		execve(temp->cmd[0], temp->cmd, envp);
 	}
 	close(pipe_fd->pipe2[READ_END]);
@@ -51,18 +49,16 @@ pid_t	last_child_process2(t_commands *cmds, char **envp, t_pipe *pipe_fd)
 	pid = fork();
 	if (pid == 0)
 	{
-		child_process_check_fd(cmds);
-		if (cmds->fds->infile == 0)
-			dup2(pipe_fd->pipe1[READ_END], STDIN_FILENO);
-		if (cmds->fds->outfile == 0)
-			dup2(cmds->fds->outfile, STDOUT_FILENO);
-		close(pipe_fd->pipe1[READ_END]);
-		close(pipe_fd->pipe1[WRITE_END]);
 		temp = cmds;
 		while (temp->next)
 			temp = temp->next;
-		if (!cmds->cmd)
+		if (temp->fds->outfile == -1 || !temp->cmd)
 			exit(0);
+		child_process_check_fd(temp);
+		if (temp->fds->infile == 0)
+			dup2(pipe_fd->pipe1[READ_END], STDIN_FILENO);
+		close(pipe_fd->pipe1[READ_END]);
+		close(pipe_fd->pipe1[WRITE_END]);
 		execve(temp->cmd[0], temp->cmd, envp);
 	}
 	close(pipe_fd->pipe1[READ_END]);
