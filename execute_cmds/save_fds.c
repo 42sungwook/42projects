@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   save_fds.c                                         :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: daijeong <daijeong@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2023/05/02 16:26:18 by daijeong          #+#    #+#             */
+/*   Updated: 2023/05/02 16:51:02 by daijeong         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "../minishell.h"
 
 void	init_cmds_fds(t_commands *cmds)
@@ -72,7 +84,7 @@ void	save_fds_in_cmds(t_commands *cmds)
 		init_cmds_fds(temp);
 		open_infile_list(temp);
 		open_outfile_list(temp);
-		//open_heredoc(temp);
+		open_heredoc(temp);
 		temp = temp->next;
 	}
 }

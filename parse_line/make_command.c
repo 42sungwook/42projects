@@ -6,7 +6,7 @@
 /*   By: daijeong <daijeong@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/27 15:59:20 by daijeong          #+#    #+#             */
-/*   Updated: 2023/05/02 15:39:43 by daijeong         ###   ########.fr       */
+/*   Updated: 2023/05/02 16:48:34 by daijeong         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,6 +54,7 @@ void	make_redirection_line(t_commands *cmds, t_token	*token)
 	}
 	else if (cmds->infile_end->flag == 2)
 	{
+		cmds->heredoc_end->flag = 1;
 		cmds->read_heredoc = HEREDOC_END;
 		cmds->heredoc_end->line = ft_strdup(token->word);
 		cmds->heredoc_end->next = init_line();

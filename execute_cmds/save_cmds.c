@@ -6,7 +6,7 @@
 /*   By: daijeong <daijeong@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/29 12:58:35 by sungwook          #+#    #+#             */
-/*   Updated: 2023/05/02 15:47:29 by daijeong         ###   ########.fr       */
+/*   Updated: 2023/05/02 16:55:00 by daijeong         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -91,6 +91,8 @@ void	save_cmds(t_commands *cmds, char **envp)
 	char		**path;
 	t_commands	*temp_cmds;
 
+	if (!cmds->cmd)
+		return ;
 	path = save_paths(envp);
 	temp_cmds = cmds;
 	while (temp_cmds)

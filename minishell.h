@@ -6,7 +6,7 @@
 /*   By: daijeong <daijeong@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/27 15:58:34 by daijeong          #+#    #+#             */
-/*   Updated: 2023/05/02 15:44:56 by daijeong         ###   ########.fr       */
+/*   Updated: 2023/05/02 16:42:52 by daijeong         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -124,9 +124,9 @@ void		free_arr(char **arr);
 //free
 void		free_everything(t_commands **cmds, t_token *token, char *str);
 
+//heredoc
+void	open_heredoc(t_commands *cmds);
 
-// void		pipex(t_arguments *args);
-// //heredoc
 // char		*ft_strjoin(char const *s1, char const *s2);
 // void		open_files_heredoc(t_arguments *args);
 // int			pipex_strcmp(char *str1, char *str2);
