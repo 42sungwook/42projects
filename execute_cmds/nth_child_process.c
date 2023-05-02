@@ -6,7 +6,7 @@
 /*   By: daijeong <daijeong@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/29 15:20:04 by sungwook          #+#    #+#             */
-/*   Updated: 2023/05/02 12:10:46 by daijeong         ###   ########.fr       */
+/*   Updated: 2023/05/02 15:11:53 by daijeong         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,6 +18,8 @@ static int	nth_child_process_even(pid_t pid, t_commands *cmds, char **envp, t_pi
 	pid = fork();
 	if (pid == 0)
 	{
+		if (!cmds->cmd)
+			exit(0);
 		child_process_check_fd(cmds);
 		if (cmds->fds->infile == 0)
 			dup2(pipe_fd->pipe1[READ_END], STDIN_FILENO);
@@ -25,8 +27,6 @@ static int	nth_child_process_even(pid_t pid, t_commands *cmds, char **envp, t_pi
 			dup2(pipe_fd->pipe2[WRITE_END], STDOUT_FILENO);
 		if (cmds->cmd[0][0] == 0 || access(cmds->cmd[0], X_OK) != 0)
 			close(STDOUT_FILENO);
-		if (!cmds->cmd)
-			exit(0);
 		close(pipe_fd->pipe1[READ_END]);
 		close(pipe_fd->pipe1[WRITE_END]);
 		close(pipe_fd->pipe2[READ_END]);
@@ -44,6 +44,8 @@ static int	nth_child_process_odd(pid_t pid, t_commands *cmds, char **envp, t_pip
 	pid = fork();
 	if (pid == 0)
 	{
+		if (!cmds->cmd)
+			exit(0);
 		child_process_check_fd(cmds);
 		if (cmds->fds->infile == 0)
 			dup2(pipe_fd->pipe2[READ_END], STDIN_FILENO);
@@ -51,8 +53,6 @@ static int	nth_child_process_odd(pid_t pid, t_commands *cmds, char **envp, t_pip
 			dup2(pipe_fd->pipe1[WRITE_END], STDOUT_FILENO);
 		if (cmds->cmd[0][0] == 0 || access(cmds->cmd[0], X_OK) != 0)
 			close(STDOUT_FILENO);
-		if (!cmds->cmd)
-			exit(0);
 		close(pipe_fd->pipe1[READ_END]);
 		close(pipe_fd->pipe1[WRITE_END]);
 		close(pipe_fd->pipe2[READ_END]);

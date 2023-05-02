@@ -6,7 +6,7 @@
 /*   By: daijeong <daijeong@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/29 14:46:58 by sungwook          #+#    #+#             */
-/*   Updated: 2023/05/02 15:00:19 by daijeong         ###   ########.fr       */
+/*   Updated: 2023/05/02 15:11:39 by daijeong         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,11 +37,11 @@ void	first_child_process(t_commands *cmds, pid_t pid, char **envp, t_pipe *pipe_
 	pid = fork();
 	if (pid == 0)
 	{
+		if (!cmds->cmd)
+			exit(0);
 		child_process_check_fd(cmds);
 		if (cmds->fds->outfile == 0 && cmds->next)
 			dup2(pipe_fd->pipe1[WRITE_END], STDOUT_FILENO);
-		if (!cmds->cmd)
-			exit(0);
 		if (cmds->cmd[0][0] == 0 || access(cmds->cmd[0], X_OK) != 0)
 			close(STDOUT_FILENO); 
 		close(pipe_fd->pipe1[READ_END]);
