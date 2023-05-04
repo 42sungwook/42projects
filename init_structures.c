@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   init_structures.c                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: daijeong <daijeong@student.42.fr>          +#+  +:+       +#+        */
+/*   By: sungwook <sungwook@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/27 15:58:47 by daijeong          #+#    #+#             */
-/*   Updated: 2023/05/02 11:26:27 by daijeong         ###   ########.fr       */
+/*   Updated: 2023/05/04 20:54:24 by sungwook         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,6 +40,7 @@ void	init_envp(t_token *token, char **envp)
 	size_t	i;
 
 	i = 0;
+	envp_list = 0;
 	while (envp[i])
 	{
 		if (!(envp_list))
@@ -87,6 +88,7 @@ t_commands	*init_cmds(void)
 	cmds->heredoc = init_line();
 	cmds->heredoc_end = cmds->heredoc;
 	cmds->cmd = 0;
+	cmds->fds = 0;
 	cmds->next = 0;
 	return (cmds);
 }

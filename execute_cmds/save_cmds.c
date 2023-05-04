@@ -6,7 +6,7 @@
 /*   By: sungwook <sungwook@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/29 12:58:35 by sungwook          #+#    #+#             */
-/*   Updated: 2023/05/02 18:47:04 by sungwook         ###   ########.fr       */
+/*   Updated: 2023/05/04 19:44:37 by sungwook         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,7 +41,7 @@ static void	check_access_and_save(t_commands *cmds, char **path)
 	char	*temp;
 
 	i = -1;
-	if (!cmds->cmd)
+	if (!cmds->cmd || !cmds->cmd[0])
 		return ;
 	while (path[++i])
 	{

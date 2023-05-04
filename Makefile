@@ -6,12 +6,12 @@
 #    By: sungwook <sungwook@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/04/27 15:58:46 by daijeong          #+#    #+#              #
-#    Updated: 2023/05/01 20:47:10 by sungwook         ###   ########.fr        #
+#    Updated: 2023/05/04 19:51:44 by sungwook         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 NAME		= minishell
-CC          = cc -g -fsanitize=address
+CC          = cc -g
 CFLAGS      = -Wall -Wextra -Werror
 RM			= rm -f
 LIBFT		= -Llibft -lft

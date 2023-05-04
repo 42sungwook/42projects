@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   make_command.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: daijeong <daijeong@student.42.fr>          +#+  +:+       +#+        */
+/*   By: sungwook <sungwook@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/27 15:59:20 by daijeong          #+#    #+#             */
-/*   Updated: 2023/05/02 17:04:34 by daijeong         ###   ########.fr       */
+/*   Updated: 2023/05/04 19:43:34 by sungwook         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,7 +35,10 @@ char	**add_cmd(char **cmd, char *word)
 	}
 	else
 		i = 0;
-	str = ft_strdup(word);
+	if (!word)
+		str = 0;
+	else
+		str = ft_strdup(word);
 	new_cmd[i] = str;
 	new_cmd[i + 1] = 0;
 	return (new_cmd);

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   free_functions.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: daijeong <daijeong@student.42.fr>          +#+  +:+       +#+        */
+/*   By: sungwook <sungwook@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/27 15:58:55 by daijeong          #+#    #+#             */
-/*   Updated: 2023/05/02 11:26:35 by daijeong         ###   ########.fr       */
+/*   Updated: 2023/05/04 20:52:17 by sungwook         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,21 +59,47 @@ void	free_commands(t_commands *cmds)
 	}
 }
 
-void	free_everything(t_commands **cmds, t_token *token, char *str)
+void	free_everything(t_commands *cmds, t_token *token, char *str)
 {
-	if (*cmds)
-		free_commands(*cmds);
+	t_commands	*temp;
+
+	temp = cmds;
+	while (temp)
+	{
+		if (temp->infile)
+			free_line(temp->infile);
+		if (temp->outfile)
+			free_line(temp->outfile);
+		if (temp->heredoc)
+			free_line(temp->heredoc);
+		if (temp->fds)
+			free(temp->fds);
+		if (temp->cmd)
+			free_arr(temp->cmd);
+		temp = temp->next;
+	}
+	while (cmds)
+	{
+		temp = cmds->next;
+		free(cmds);
+		cmds = temp;
+	}
 	if (str)
 		free(str);
 	token->quote = 0;
 	token->dollar = 0;
 	if (token->dollar_word)
+	{
 		free(token->dollar_word);
+		token->dollar_word = 0;
+	}
 	if (token->word)
+	{
 		free(token->word);
+		token->word = 0;
+	}
 	token->left_redirection = 0;
 	token->right_redirection = 0;
 	token->pipe = 0;
 	token->prev_char = 0;
-	*cmds = init_cmds();
 }

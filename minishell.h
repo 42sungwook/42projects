@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: daijeong <daijeong@student.42.fr>          +#+  +:+       +#+        */
+/*   By: sungwook <sungwook@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/27 15:58:34 by daijeong          #+#    #+#             */
-/*   Updated: 2023/05/02 16:42:52 by daijeong         ###   ########.fr       */
+/*   Updated: 2023/05/04 20:17:43 by sungwook         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -122,7 +122,7 @@ void		child_process_check_fd(t_commands *cmds);
 void		free_arr(char **arr);
 
 //free
-void		free_everything(t_commands **cmds, t_token *token, char *str);
+void		free_everything(t_commands *cmds, t_token *token, char *str);
 
 //heredoc
 void	open_heredoc(t_commands *cmds);
