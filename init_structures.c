@@ -6,7 +6,7 @@
 /*   By: sungwook <sungwook@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/27 15:58:47 by daijeong          #+#    #+#             */
-/*   Updated: 2023/05/04 20:54:24 by sungwook         ###   ########.fr       */
+/*   Updated: 2023/05/05 11:57:29 by sungwook         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -87,6 +87,7 @@ t_commands	*init_cmds(void)
 	cmds->outfile_end = cmds->outfile;
 	cmds->heredoc = init_line();
 	cmds->heredoc_end = cmds->heredoc;
+	cmds->read_heredoc = 0;
 	cmds->cmd = 0;
 	cmds->fds = 0;
 	cmds->next = 0;

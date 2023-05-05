@@ -6,7 +6,7 @@
 /*   By: sungwook <sungwook@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/27 15:58:34 by daijeong          #+#    #+#             */
-/*   Updated: 2023/05/04 20:17:43 by sungwook         ###   ########.fr       */
+/*   Updated: 2023/05/05 11:25:59 by sungwook         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,6 +27,9 @@
 # define NULL_ENVP "0"
 # define INFILE_END 0
 # define HEREDOC_END 1
+# define CLOSE_PIPE1 1
+# define CLOSE_PIPE2 2
+# define CLOSE_BOTH 3
 
 typedef struct s_line
 {
@@ -49,12 +52,12 @@ typedef struct s_fds
 
 typedef struct s_commands
 {
-	t_line				*infile; //list로 바꿔야함
+	t_line				*infile;
 	t_line				*infile_end;
-	t_line				*outfile; //list로 바꿔야함
+	t_line				*outfile;
 	t_line				*outfile_end;
 	char				**cmd;
-	t_line				*heredoc; //list로 바꿔서 limiter 받아줘야함
+	t_line				*heredoc;
 	t_line				*heredoc_end;
 	int					read_heredoc;
 	t_fds				*fds;
@@ -86,7 +89,6 @@ t_token		*init_token(char **envp);
 t_commands	*init_cmds(void);
 t_line		*init_line(void);
 
-
 //parsing
 void		end_of_word(t_commands *cmds, t_token *token, char c);
 char		*make_word_str(char *curr_word, char *c);
@@ -104,19 +106,22 @@ t_commands	*parse_pipe(t_commands *cmds, t_token *token);
 //print_cmds
 int			print_cmds(char **str);
 
-//pipex
+//execute_cmds
 void		save_cmds(t_commands *cmds, char **envp);
 int			execute_cmds(t_commands *cmds, t_token *token);
 pid_t		last_child_process1(t_commands *cmds, char **envp, t_pipe *pipe_fd);
 pid_t		last_child_process2(t_commands *cmds, char **envp, t_pipe *pipe_fd);
-int			nth_child_process(t_commands *cmds, pid_t pid, char **envp, t_pipe *pipe_fd);
-void		first_child_process(t_commands *cmds, pid_t pid, char **envp, t_pipe *pipe_fd);
+int			nth_child_process(t_commands *cmds, pid_t pid, \
+			char **envp, t_pipe *pipe_fd);
+void		first_child_process(t_commands *cmds, pid_t pid, \
+			char **envp, t_pipe *pipe_fd);
 void		save_fds_in_cmds(t_commands *cmds);
 void		init_cmds_fds(t_commands *cmds);
 void		pipex(t_commands *cmds, char **envp, t_pipe *pipe_fd);
 void		open_infile_list(t_commands *cmds);
 void		open_outfile_list(t_commands *cmds);
 void		child_process_check_fd(t_commands *cmds);
+void		close_pipe(t_pipe *pipe_fd, int flag);
 
 //main
 void		free_arr(char **arr);
@@ -125,18 +130,10 @@ void		free_arr(char **arr);
 void		free_everything(t_commands *cmds, t_token *token, char *str);
 
 //heredoc
-void	open_heredoc(t_commands *cmds);
+void		open_heredoc(t_commands *cmds);
 
-// char		*ft_strjoin(char const *s1, char const *s2);
-// void		open_files_heredoc(t_arguments *args);
-// int			pipex_strcmp(char *str1, char *str2);
-// void		heredoc_pipex(t_arguments *args);
+//builtins
+int			check_builtins(t_commands	*cmds);
+void		execute_builtins(t_commands *cmds, char **envp);
 
-// //utils
-// t_arguments	*init_args(int argc, char **argv, char **envp);
-// void		make_cmdlist(t_arguments *args, char **cmds);
-// t_list		*cmd_addlist(char **cmds);
-// void		save_no_path(t_arguments *args, int i);
-// int			nth_child_process_even(pid_t pid, t_arguments *args, t_list *temp);
-// int			nth_child_process_odd(pid_t pid, t_arguments *args, t_list *temp);
 #endif

@@ -6,7 +6,7 @@
 /*   By: sungwook <sungwook@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/29 12:58:35 by sungwook          #+#    #+#             */
-/*   Updated: 2023/05/04 19:44:37 by sungwook         ###   ########.fr       */
+/*   Updated: 2023/05/05 11:54:00 by sungwook         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -95,17 +95,20 @@ void	save_cmds(t_commands *cmds, char **envp)
 	temp_cmds = cmds;
 	while (temp_cmds)
 	{
-		check_access_and_save(temp_cmds, path);
-		if (temp_cmds->cmd && (!temp_cmds->cmd[0] || \
-			access(temp_cmds->cmd[0], X_OK)))
+		if (!check_builtins(temp_cmds))
 		{
-			write(2, "minishell: ", 11);
-			write(2, temp_cmds->cmd[0], ft_strlen(temp_cmds->cmd[0]));
-			write(2, ": command not found\n", 20);
-			free_arr(cmds->cmd);
-			temp_cmds->cmd = 0;
+			check_access_and_save(temp_cmds, path);
+			if (temp_cmds->cmd && (!temp_cmds->cmd[0] || \
+				access(temp_cmds->cmd[0], X_OK)))
+			{
+				write(2, "minishell: ", 11);
+				write(2, temp_cmds->cmd[0], ft_strlen(temp_cmds->cmd[0]));
+				write(2, ": command not found\n", 20);
+				free_arr(cmds->cmd);
+				temp_cmds->cmd = 0;
+			}
+			save_fds_in_cmds(temp_cmds);
 		}
-		save_fds_in_cmds(temp_cmds);
 		temp_cmds = temp_cmds->next;
 	}
 	free_arr(path);

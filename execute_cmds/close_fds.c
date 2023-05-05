@@ -1,25 +1,27 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   free_arr.c                                         :+:      :+:    :+:   */
+/*   close_fds.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: sungwook <sungwook@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/04/15 14:09:16 by sungwook          #+#    #+#             */
-/*   Updated: 2023/05/05 11:55:13 by sungwook         ###   ########.fr       */
+/*   Created: 2023/05/05 11:08:21 by sungwook          #+#    #+#             */
+/*   Updated: 2023/05/05 11:16:40 by sungwook         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "minishell.h"
+#include "../minishell.h"
 
-void	free_arr(char **arr)
+void	close_pipe(t_pipe *pipe_fd, int flag)
 {
-	int	i;
-
-	i = -1;
-	if (!arr)
-		return ;
-	while (arr[++i])
-		free(arr[i]);
-	free(arr);
+	if (flag == CLOSE_PIPE1 || flag == CLOSE_BOTH)
+	{
+		close(pipe_fd->pipe1[READ_END]);
+		close(pipe_fd->pipe1[WRITE_END]);
+	}
+	if (flag == CLOSE_PIPE2 || flag == CLOSE_BOTH)
+	{
+		close(pipe_fd->pipe2[READ_END]);
+		close(pipe_fd->pipe2[WRITE_END]);
+	}
 }

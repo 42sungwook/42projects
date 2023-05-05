@@ -6,7 +6,7 @@
 /*   By: sungwook <sungwook@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/15 14:52:26 by sungwook          #+#    #+#             */
-/*   Updated: 2023/05/02 19:47:58 by sungwook         ###   ########.fr       */
+/*   Updated: 2023/05/05 11:50:32 by sungwook         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,7 +68,6 @@ int	open_heredoc_fd(t_commands *cmds)
 	}
 	if (file_fd)
 		file_fd = open(heredoc_file, O_RDONLY);
-	printf("%d\n", file_fd);
 	if (heredoc_temp->line)
 		free(heredoc_temp->line);
 	heredoc_temp->line = heredoc_file;

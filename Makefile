@@ -6,12 +6,12 @@
 #    By: sungwook <sungwook@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/04/27 15:58:46 by daijeong          #+#    #+#              #
-#    Updated: 2023/05/04 19:51:44 by sungwook         ###   ########.fr        #
+#    Updated: 2023/05/05 11:48:02 by sungwook         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 NAME		= minishell
-CC          = cc -g
+CC          = cc -g -fsanitize=address
 CFLAGS      = -Wall -Wextra -Werror
 RM			= rm -f
 LIBFT		= -Llibft -lft
@@ -35,16 +35,21 @@ P_OBJS	 = $(P_PATH:c=o)
 
 E_DIR	= ./execute_cmds
 E_SRCS	= execute_cmds.c heredoc.c pipex.c save_cmds.c first_child_process.c \
-		  nth_child_process.c last_child_process.c save_fds.c
+		  nth_child_process.c last_child_process.c save_fds.c close_fds.c
 E_PATH	= $(addprefix $(E_DIR)/, $(E_SRCS))
 E_OBJS	= $(E_PATH:c=o)
+
+B_DIR	= ./builtin
+B_SRCS	= check_builtins.c
+B_PATH	= $(addprefix $(B_DIR)/, $(B_SRCS))
+B_OBJS	= $(B_PATH:c=o)
 
 RESET = \033[0m
 GREEN = \033[1;32m
 CYAN = \033[1;36m
 
 
-OBJS = $(M_OBJS) $(P_OBJS) $(E_OBJS)
+OBJS = $(M_OBJS) $(P_OBJS) $(E_OBJS) $(B_OBJS)
 
 
 %.o: %.c $(HEADER)
@@ -69,6 +74,7 @@ clean:
 	@$(RM) $(M_OBJS)
 	@$(RM) $(P_OBJS)
 	@$(RM) $(E_OBJS)
+	@$(RM) $(B_OBJS)
 	@echo "$(CYAN)╔════════════════════════════════════════╗$(RESET)"
 	@echo "$(CYAN)║           make clean finished.         ║$(RESET)"
 	@echo "$(CYAN)╚════════════════════════════════════════╝$(RESET)"
