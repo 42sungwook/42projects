@@ -6,7 +6,7 @@
 /*   By: sungwook <sungwook@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/29 14:46:58 by sungwook          #+#    #+#             */
-/*   Updated: 2023/05/05 15:46:06 by sungwook         ###   ########.fr       */
+/*   Updated: 2023/05/05 17:40:54 by sungwook         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,7 +32,7 @@ void	child_process_check_fd(t_commands *cmds)
 }
 
 void	first_child_process(t_commands *cmds, pid_t pid, \
-		char **envp, t_pipe *pipe_fd)
+		t_token *token, t_pipe *pipe_fd)
 {
 	pipe(pipe_fd->pipe1);
 	pid = fork();
@@ -47,8 +47,8 @@ void	first_child_process(t_commands *cmds, pid_t pid, \
 			close(STDOUT_FILENO);
 		close_pipe(pipe_fd, CLOSE_PIPE1);
 		if (!check_builtins(cmds))
-			execve(cmds->cmd[0], cmds->cmd, envp);
+			execve(cmds->cmd[0], cmds->cmd, make_two_pointer_envp(token));
 		else
-			exit(execute_builtins(cmds, envp));
+			exit(execute_builtins(cmds, token));
 	}
 }

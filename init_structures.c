@@ -6,7 +6,7 @@
 /*   By: sungwook <sungwook@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/27 15:58:47 by daijeong          #+#    #+#             */
-/*   Updated: 2023/05/05 14:42:09 by sungwook         ###   ########.fr       */
+/*   Updated: 2023/05/05 17:16:36 by sungwook         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,7 +33,7 @@ t_envp	*envp_addlist(char *str)
 	return (envp_list);
 }
 
-void	init_envp(t_token *token, char **envp)
+t_envp	*init_envp(char **envp)
 {
 	t_envp	*envp_list;
 	t_envp	*temp;
@@ -55,7 +55,7 @@ void	init_envp(t_token *token, char **envp)
 		}
 		i++;
 	}
-	token->envp = envp_list;
+	return (envp_list);
 }
 
 t_token	*init_token(char **envp)
@@ -63,7 +63,7 @@ t_token	*init_token(char **envp)
 	t_token	*token;
 
 	token = malloc(sizeof(t_token));
-	init_envp(token, envp);
+	token->envp = init_envp(envp);
 	token->quote = 0;
 	token->dollar = 0;
 	token->pipe = 0;

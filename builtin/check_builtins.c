@@ -6,7 +6,7 @@
 /*   By: sungwook <sungwook@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/05 10:19:15 by sungwook          #+#    #+#             */
-/*   Updated: 2023/05/05 15:26:19 by sungwook         ###   ########.fr       */
+/*   Updated: 2023/05/05 17:46:47 by sungwook         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,20 +25,20 @@ int	check_builtins(t_commands	*cmds)
 	return (0);
 }
 
-int	execute_builtins(t_commands *cmds, char **envp)
+int	execute_builtins(t_commands *cmds, t_token *token)
 {
-	// if (!ft_strcmp(cmds->cmd[0], "echo"))
-	// 	builtin_echo(cmds);
-	if (!ft_strcmp(cmds->cmd[0], "cd"))
-		return (builtin_cd(cmds, envp));
-	// else if (!ft_strcmp(cmds->cmd[0], "pwd"))
-	// 	builtin_pwd();
+	if (!ft_strcmp(cmds->cmd[0], "echo"))
+		builtin_echo(cmds);
+	else if (!ft_strcmp(cmds->cmd[0], "cd"))
+		return (builtin_cd(cmds, token));
+	else if (!ft_strcmp(cmds->cmd[0], "env"))
+		builtin_env(token);
+	else if (!ft_strcmp(cmds->cmd[0], "pwd"))
+		builtin_pwd();
 	// else if (!ft_strcmp(cmds->cmd[0], "export"))
 	// 	builtin_export(cmds);
-	// else if (!ft_strcmp(cmds->cmd[0], "unset"))
-	// 	builtin_unset(cmds);
-	// else if (!ft_strcmp(cmds->cmd[0], "env"))
-	// 	builtin_env(cmds);
+	else if (!ft_strcmp(cmds->cmd[0], "unset"))
+		builtin_unset(token, cmds->cmd);
 	// else if (!ft_strcmp(cmds->cmd[0], "exit"))
 	// 	builtin_exit(cmds);
 	return (0);

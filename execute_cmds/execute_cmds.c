@@ -6,7 +6,7 @@
 /*   By: sungwook <sungwook@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/15 14:11:07 by sungwook          #+#    #+#             */
-/*   Updated: 2023/05/05 11:23:28 by sungwook         ###   ########.fr       */
+/*   Updated: 2023/05/05 17:37:32 by sungwook         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,10 +48,10 @@ int	execute_cmds(t_commands *cmds, t_token *token)
 	save_cmds(cmds, envp);
 	if (check_builtins(cmds) && !cmds->next)
 	{
-		execute_builtins(cmds, envp);
+		execute_builtins(cmds, token);
 		return (0);
 	}
-	pipex(cmds, envp, pipe_fd);
+	pipex(cmds, token, pipe_fd);
 	if (cmds->cmd)
 		free_arr(cmds->cmd);
 	cmds->cmd = 0;

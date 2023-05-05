@@ -3,25 +3,26 @@
 /*                                                        :::      ::::::::   */
 /*   builtin_env.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: daijeong <daijeong@student.42.fr>          +#+  +:+       +#+        */
+/*   By: sungwook <sungwook@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/27 15:59:30 by daijeong          #+#    #+#             */
-/*   Updated: 2023/04/27 15:59:31 by daijeong         ###   ########.fr       */
+/*   Updated: 2023/05/05 17:45:26 by sungwook         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../minishell.h"
 
-int	builtin_env(char **envp)
+int	builtin_env(t_token *token)
 {
-	size_t	i;
+	t_envp	*envp_list;
 
-	i = 0;
-	while (envp[i])
+	envp_list = token->envp;
+	while (envp_list)
 	{
-		if (write(1, envp[i], ft_strlen(envp[i])) < 0)
+		if (write(1, envp_list->str, ft_strlen(envp_list->str)) < 0)
 			return (-1);
-		i++;
+		write(1, "\n", 1);
+		envp_list = envp_list->next;
 	}
 	return (0);
 }

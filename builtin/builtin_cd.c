@@ -6,31 +6,31 @@
 /*   By: sungwook <sungwook@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/27 15:59:28 by daijeong          #+#    #+#             */
-/*   Updated: 2023/05/05 15:44:49 by sungwook         ###   ########.fr       */
+/*   Updated: 2023/05/05 17:44:21 by sungwook         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../minishell.h"
 
-int	builtin_cd(t_commands *cmds, char **envp)
+int	builtin_cd(t_commands *cmds, t_token *token)
 {
-	size_t	i;
+	t_envp	*temp;
 
-	i = 0;
+	temp = token->envp;
 	if (cmds->cmd[1] == 0 || !ft_strcmp(cmds->cmd[1], "~"))
 	{
-		while (envp[i])
+		while (temp)
 		{
-			if (!ft_strncmp(envp[i], "HOME=", 5))
+			if (!ft_strncmp(temp->str, "HOME=", 5))
 				break ;
-			i++;
+			temp = temp->next;
 		}
-		if (envp[i] == 0)
+		if (!temp)
 		{
 			write(2, "cd: HOME not set\n", 17);
 			return (1);
 		}
-		chdir(envp[i] + 5);
+		chdir(temp->str + 5);
 		return (0);
 	}
 	if (chdir(cmds->cmd[1]))

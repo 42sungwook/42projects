@@ -6,7 +6,7 @@
 /*   By: sungwook <sungwook@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/27 15:58:34 by daijeong          #+#    #+#             */
-/*   Updated: 2023/05/05 14:38:51 by sungwook         ###   ########.fr       */
+/*   Updated: 2023/05/05 17:46:10 by sungwook         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -88,6 +88,7 @@ typedef struct s_token
 t_token		*init_token(char **envp);
 t_commands	*init_cmds(void);
 t_line		*init_line(void);
+t_envp		*init_envp(char **envp);
 
 //parsing
 void		end_of_word(t_commands *cmds, t_token *token, char c);
@@ -109,21 +110,23 @@ int			print_cmds(char **str);
 //execute_cmds
 void		save_cmds(t_commands *cmds, char **envp);
 int			execute_cmds(t_commands *cmds, t_token *token);
-pid_t		last_child_process1(t_commands *cmds, char **envp, t_pipe *pipe_fd);
-pid_t		last_child_process2(t_commands *cmds, char **envp, t_pipe *pipe_fd);
+pid_t		last_child_process1(t_commands *cmds, t_token *token, \
+			t_pipe *pipe_fd);
+pid_t		last_child_process2(t_commands *cmds, t_token *token, \
+			t_pipe *pipe_fd);
 int			nth_child_process(t_commands *cmds, pid_t pid, \
-			char **envp, t_pipe *pipe_fd);
+			t_token *token, t_pipe *pipe_fd);
 void		first_child_process(t_commands *cmds, pid_t pid, \
-			char **envp, t_pipe *pipe_fd);
+			t_token *token, t_pipe *pipe_fd);
 void		save_fds_in_cmds(t_commands *cmds);
 void		init_cmds_fds(t_commands *cmds);
-void		pipex(t_commands *cmds, char **envp, t_pipe *pipe_fd);
+void		pipex(t_commands *cmds, t_token *token, t_pipe *pipe_fd);
 void		open_infile_list(t_commands *cmds);
 void		open_outfile_list(t_commands *cmds);
 void		child_process_check_fd(t_commands *cmds);
 void		close_pipe(t_pipe *pipe_fd, int flag);
 void		close_all_fds(t_commands *cmds);
-
+char		**make_two_pointer_envp(t_token *token);
 
 //main
 void		free_arr(char **arr);
@@ -136,8 +139,12 @@ void		open_heredoc(t_commands *cmds);
 
 //builtins
 int			check_builtins(t_commands	*cmds);
-int			execute_builtins(t_commands *cmds, char **envp);
-int			builtin_cd(t_commands *cmds, char **envp);
+int			execute_builtins(t_commands *cmds, t_token *token);
+int			builtin_cd(t_commands *cmds, t_token *token);
+int			builtin_echo(t_commands *cmds);
+int			builtin_env(t_token *token);
+int			builtin_pwd(void);
+int			builtin_unset(t_token *token, char **cmd);
 
 
 #endif

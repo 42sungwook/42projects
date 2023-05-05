@@ -6,7 +6,7 @@
 /*   By: sungwook <sungwook@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/15 14:20:10 by sungwook          #+#    #+#             */
-/*   Updated: 2023/05/05 14:37:21 by sungwook         ###   ########.fr       */
+/*   Updated: 2023/05/05 17:23:25 by sungwook         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,20 +25,20 @@ static void	wait_pids(t_commands *cmds)
 	}
 }
 
-void	pipex(t_commands *cmds, char **envp, t_pipe *pipe_fd)
+void	pipex(t_commands *cmds, t_token *token, t_pipe *pipe_fd)
 {
 	pid_t	pid;
 	int		sign;
 
 	pid = 0;
-	first_child_process(cmds, pid, envp, pipe_fd);
-	sign = nth_child_process(cmds, pid, envp, pipe_fd);
+	first_child_process(cmds, pid, token, pipe_fd);
+	sign = nth_child_process(cmds, pid, token, pipe_fd);
 	if (cmds->next)
 	{
 		if (sign == 1)
-			pid = last_child_process1(cmds, envp, pipe_fd);
+			pid = last_child_process1(cmds, token, pipe_fd);
 		else
-			pid = last_child_process2(cmds, envp, pipe_fd);
+			pid = last_child_process2(cmds, token, pipe_fd);
 	}
 	else
 	{

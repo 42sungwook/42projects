@@ -6,7 +6,7 @@
 #    By: sungwook <sungwook@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/04/27 15:58:46 by daijeong          #+#    #+#              #
-#    Updated: 2023/05/05 14:35:26 by sungwook         ###   ########.fr        #
+#    Updated: 2023/05/05 17:16:14 by sungwook         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -40,7 +40,7 @@ E_PATH	= $(addprefix $(E_DIR)/, $(E_SRCS))
 E_OBJS	= $(E_PATH:c=o)
 
 B_DIR	= ./builtin
-B_SRCS	= check_builtins.c builtin_cd.c
+B_SRCS	= check_builtins.c builtin_cd.c builtin_echo.c builtin_env.c builtin_pwd.c builtin_unset.c
 B_PATH	= $(addprefix $(B_DIR)/, $(B_SRCS))
 B_OBJS	= $(B_PATH:c=o)
 
