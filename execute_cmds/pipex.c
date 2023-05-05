@@ -6,7 +6,7 @@
 /*   By: sungwook <sungwook@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/15 14:20:10 by sungwook          #+#    #+#             */
-/*   Updated: 2023/05/05 17:23:25 by sungwook         ###   ########.fr       */
+/*   Updated: 2023/05/05 21:11:42 by sungwook         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,7 +46,5 @@ void	pipex(t_commands *cmds, t_token *token, t_pipe *pipe_fd)
 		close(pipe_fd->pipe1[1]);
 	}
 	close_all_fds(cmds);
-
-	//infile outfile 모두 닫기
 	wait_pids(cmds);
 }

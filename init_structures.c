@@ -6,7 +6,7 @@
 /*   By: sungwook <sungwook@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/27 15:58:47 by daijeong          #+#    #+#             */
-/*   Updated: 2023/05/05 17:16:36 by sungwook         ###   ########.fr       */
+/*   Updated: 2023/05/05 21:09:41 by sungwook         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -93,4 +93,3 @@ t_commands	*init_cmds(void)
 	cmds->next = 0;
 	return (cmds);
 }
-

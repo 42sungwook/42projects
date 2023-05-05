@@ -6,7 +6,7 @@
 /*   By: sungwook <sungwook@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/27 15:58:44 by daijeong          #+#    #+#             */
-/*   Updated: 2023/05/05 14:11:38 by sungwook         ###   ########.fr       */
+/*   Updated: 2023/05/05 21:10:01 by sungwook         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,11 +60,10 @@ int	main(int argc, char **argv, char **envp)
 		str = readline("minishell> : ");
 		if (!str || ft_strcmp(str, "exit") == 0)
 			exit(0);
-		parse_line(str, cmds, token); // 한 캐릭터씩 읽으면서 구조체에 실행시킬 명령어 저장
-		execute_cmds(cmds, token); // 명령어 실행
-		add_history(str); // line 저장
-		free_everything(cmds, token, str); // 사용이 끝난 line, 커맨드, 토큰 구조체 free
-		// print_cmds(temp->cmd);
+		parse_line(str, cmds, token);
+		execute_cmds(cmds, token);
+		add_history(str);
+		free_everything(cmds, token, str);
 		cmds = init_cmds();
 		// check_leak();
 	}
