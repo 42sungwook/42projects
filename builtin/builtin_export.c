@@ -6,7 +6,7 @@
 /*   By: sungwook <sungwook@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/27 15:59:33 by daijeong          #+#    #+#             */
-/*   Updated: 2023/05/05 20:32:29 by sungwook         ###   ########.fr       */
+/*   Updated: 2023/05/05 20:38:23 by sungwook         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -87,8 +87,9 @@ int	builtin_export(t_token *token, char **cmd)
 			{
 				equal_location = cmpcmp(cmd[i], '=');
 				if (equal_location && \
-					!ft_strncmp(tmp_list->str, cmd[i], equal_location))
+					!ft_strncmp(tmp_list->str, cmd[i], equal_location + 1))
 				{
+					printf("YEST\n");
 					envp_list = delete_envp_list(envp_list, tmp_list);
 					break ;
 				}

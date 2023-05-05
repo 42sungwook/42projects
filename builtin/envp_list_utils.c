@@ -6,7 +6,7 @@
 /*   By: sungwook <sungwook@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/05 20:13:54 by sungwook          #+#    #+#             */
-/*   Updated: 2023/05/05 20:32:12 by sungwook         ###   ########.fr       */
+/*   Updated: 2023/05/05 20:37:26 by sungwook         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,8 +55,10 @@ t_envp	*delete_envp_list(t_envp *envp_list, t_envp *tmp_list)
 {
 	t_envp	*prev_list;
 
+	printf("IN DELETE\n");
 	if (tmp_list == envp_list)
 	{
+		printf("FIRST\n");
 		tmp_list = tmp_list->next;
 		free(envp_list->str);
 		free(envp_list);
@@ -65,9 +67,12 @@ t_envp	*delete_envp_list(t_envp *envp_list, t_envp *tmp_list)
 	}
 	else
 	{
+		printf("SECOND\n");
 		prev_list = envp_list;
 		while (prev_list->next != tmp_list)
 			prev_list = prev_list->next;
+		printf("curr_list: %s\n", tmp_list->str);
+		printf("next_list: %s\n", tmp_list->next->str);
 		prev_list->next = tmp_list->next;
 		free(tmp_list->str);
 		free(tmp_list);
