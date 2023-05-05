@@ -6,7 +6,7 @@
 /*   By: sungwook <sungwook@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/27 15:59:20 by daijeong          #+#    #+#             */
-/*   Updated: 2023/05/05 11:36:27 by sungwook         ###   ########.fr       */
+/*   Updated: 2023/05/05 13:58:17 by sungwook         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,6 +41,7 @@ char	**add_cmd(char **cmd, char *word)
 		str = ft_strdup(word);
 	new_cmd[i] = str;
 	new_cmd[i + 1] = 0;
+	free(cmd);
 	return (new_cmd);
 }
 

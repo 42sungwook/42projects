@@ -6,7 +6,7 @@
 /*   By: sungwook <sungwook@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/27 15:58:44 by daijeong          #+#    #+#             */
-/*   Updated: 2023/05/05 11:57:59 by sungwook         ###   ########.fr       */
+/*   Updated: 2023/05/05 13:52:12 by sungwook         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,10 +39,10 @@ void	parse_line(char *str, t_commands *cmds, t_token *token)
 	end_of_word(cmds, token, str[i]);
 }
 
-// void	check_leak(void)
-// {
-// 	system("leaks --list -- minishell");
-// }
+void	check_leak(void)
+{
+	system("leaks --list -- minishell");
+}
 
 int	main(int argc, char **argv, char **envp)
 {
@@ -66,7 +66,7 @@ int	main(int argc, char **argv, char **envp)
 		free_everything(cmds, token, str); // 사용이 끝난 line, 커맨드, 토큰 구조체 free
 		// print_cmds(temp->cmd);
 		cmds = init_cmds();
-		// check_leak();
+		check_leak();
 	}
 }
 

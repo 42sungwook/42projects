@@ -6,7 +6,7 @@
 /*   By: sungwook <sungwook@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/02 16:26:18 by daijeong          #+#    #+#             */
-/*   Updated: 2023/05/05 11:55:45 by sungwook         ###   ########.fr       */
+/*   Updated: 2023/05/05 14:03:27 by sungwook         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,8 @@
 
 void	init_cmds_fds(t_commands *cmds)
 {
+	if (cmds->fds)
+		free(cmds->fds);
 	cmds->fds = (t_fds *)malloc(sizeof(t_fds));
 	cmds->fds->infile = 0;
 	cmds->fds->outfile = 0;
