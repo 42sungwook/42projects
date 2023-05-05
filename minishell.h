@@ -6,7 +6,7 @@
 /*   By: sungwook <sungwook@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/27 15:58:34 by daijeong          #+#    #+#             */
-/*   Updated: 2023/05/05 17:46:10 by sungwook         ###   ########.fr       */
+/*   Updated: 2023/05/05 20:20:01 by sungwook         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -131,6 +131,9 @@ char		**make_two_pointer_envp(t_token *token);
 //main
 void		free_arr(char **arr);
 
+//merge
+void		merge_sort(t_envp **list, size_t size);
+
 //free
 void		free_everything(t_commands *cmds, t_token *token, char *str);
 
@@ -145,6 +148,12 @@ int			builtin_echo(t_commands *cmds);
 int			builtin_env(t_token *token);
 int			builtin_pwd(void);
 int			builtin_unset(t_token *token, char **cmd);
-
+int			builtin_export(t_token *token, char **cmd);
+t_envp		*delete_envp_list(t_envp *envp_list, t_envp *tmp_list);
+int			envp_lstsize(t_envp *lst);
+t_envp		*envp_lstlast(t_envp *lst);
+void		envp_lstadd_back(t_envp **lst, t_envp *new);
+t_envp		*delete_envp_list(t_envp *envp_list, t_envp *tmp_list);
+t_envp		*ft_listdup(t_envp *envp);
 
 #endif

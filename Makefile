@@ -6,7 +6,7 @@
 #    By: sungwook <sungwook@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/04/27 15:58:46 by daijeong          #+#    #+#              #
-#    Updated: 2023/05/05 17:16:14 by sungwook         ###   ########.fr        #
+#    Updated: 2023/05/05 20:18:04 by sungwook         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -22,7 +22,7 @@ HEADER_SRCS	= minishell.h
 HEADER		= $(addprefix $(HEADER_DIR), $(HEADER_SRCS))
 
 M_DIR		= ./
-M_SRCS      = minishell.c init_structures.c free_functions.c printf.c free_arr.c
+M_SRCS      = minishell.c init_structures.c free_functions.c printf.c free_arr.c merge_sort.c
 M_PATH		= $(addprefix $(M_DIR), $(M_SRCS))
 M_OBJS		= $(M_PATH:c=o)
 
@@ -40,7 +40,8 @@ E_PATH	= $(addprefix $(E_DIR)/, $(E_SRCS))
 E_OBJS	= $(E_PATH:c=o)
 
 B_DIR	= ./builtin
-B_SRCS	= check_builtins.c builtin_cd.c builtin_echo.c builtin_env.c builtin_pwd.c builtin_unset.c
+B_SRCS	= check_builtins.c builtin_cd.c builtin_echo.c builtin_env.c builtin_pwd.c builtin_unset.c \
+		  builtin_export.c envp_list_utils.c
 B_PATH	= $(addprefix $(B_DIR)/, $(B_SRCS))
 B_OBJS	= $(B_PATH:c=o)
 
