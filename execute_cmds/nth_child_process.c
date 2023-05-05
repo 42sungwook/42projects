@@ -6,7 +6,7 @@
 /*   By: sungwook <sungwook@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/29 15:20:04 by sungwook          #+#    #+#             */
-/*   Updated: 2023/05/05 11:16:13 by sungwook         ###   ########.fr       */
+/*   Updated: 2023/05/05 15:32:50 by sungwook         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,7 +32,7 @@ static int	nth_child_process_even(pid_t pid, t_commands *cmds, \
 		if (!check_builtins(cmds))
 			execve(cmds->cmd[0], cmds->cmd, envp);
 		else
-			execute_builtins(cmds, envp);
+			exit(execute_builtins(cmds, envp));
 	}
 	close_pipe(pipe_fd, CLOSE_PIPE1);
 	return (1);
@@ -58,7 +58,7 @@ static int	nth_child_process_odd(pid_t pid, t_commands *cmds, \
 		if (!check_builtins(cmds))
 			execve(cmds->cmd[0], cmds->cmd, envp);
 		else
-			execute_builtins(cmds, envp);
+			exit(execute_builtins(cmds, envp));
 	}
 	close_pipe(pipe_fd, CLOSE_PIPE2);
 	return (0);

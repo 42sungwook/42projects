@@ -6,7 +6,7 @@
 /*   By: sungwook <sungwook@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/29 12:58:35 by sungwook          #+#    #+#             */
-/*   Updated: 2023/05/05 11:54:00 by sungwook         ###   ########.fr       */
+/*   Updated: 2023/05/05 15:44:12 by sungwook         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,20 +56,6 @@ static void	check_access_and_save(t_commands *cmds, char **path)
 	}
 }
 
-static int	check_path_line(char *str, char *word)
-{
-	size_t	i;
-
-	i = 0;
-	while (word[i])
-	{
-		if (word[i] != str[i])
-			return (0);
-		i++;
-	}
-	return (1);
-}
-
 static char	**save_paths(char **envp)
 {
 	size_t	i;
@@ -77,7 +63,7 @@ static char	**save_paths(char **envp)
 	i = 0;
 	while (envp[i])
 	{
-		if (check_path_line(envp[i], "PATH="))
+		if (!ft_strncmp(envp[i], "PATH=", 5))
 			break ;
 		i++;
 	}
@@ -107,8 +93,8 @@ void	save_cmds(t_commands *cmds, char **envp)
 				free_arr(cmds->cmd);
 				temp_cmds->cmd = 0;
 			}
-			save_fds_in_cmds(temp_cmds);
 		}
+		save_fds_in_cmds(temp_cmds);
 		temp_cmds = temp_cmds->next;
 	}
 	free_arr(path);

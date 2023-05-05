@@ -6,7 +6,7 @@
 /*   By: sungwook <sungwook@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/29 14:46:58 by sungwook          #+#    #+#             */
-/*   Updated: 2023/05/05 11:17:47 by sungwook         ###   ########.fr       */
+/*   Updated: 2023/05/05 15:46:06 by sungwook         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,7 @@
 
 void	child_process_check_fd(t_commands *cmds)
 {
-	if (cmds->fds->infile == -1 || cmds->fds->outfile == -1)
+	if (cmds->fds->infile < 0 || cmds->fds->outfile < 0)
 		exit(1);
 	else
 	{
@@ -49,6 +49,6 @@ void	first_child_process(t_commands *cmds, pid_t pid, \
 		if (!check_builtins(cmds))
 			execve(cmds->cmd[0], cmds->cmd, envp);
 		else
-			execute_builtins(cmds, envp);
+			exit(execute_builtins(cmds, envp));
 	}
 }

@@ -6,7 +6,7 @@
 /*   By: sungwook <sungwook@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/05 10:19:15 by sungwook          #+#    #+#             */
-/*   Updated: 2023/05/05 11:33:00 by sungwook         ###   ########.fr       */
+/*   Updated: 2023/05/05 15:26:19 by sungwook         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,12 +25,12 @@ int	check_builtins(t_commands	*cmds)
 	return (0);
 }
 
-void	execute_builtins(t_commands *cmds, char **envp)
+int	execute_builtins(t_commands *cmds, char **envp)
 {
 	// if (!ft_strcmp(cmds->cmd[0], "echo"))
 	// 	builtin_echo(cmds);
-	// else if (!ft_strcmp(cmds->cmd[0], "cd"))
-	// 	builtin_cd(cmds);
+	if (!ft_strcmp(cmds->cmd[0], "cd"))
+		return (builtin_cd(cmds, envp));
 	// else if (!ft_strcmp(cmds->cmd[0], "pwd"))
 	// 	builtin_pwd();
 	// else if (!ft_strcmp(cmds->cmd[0], "export"))
@@ -41,6 +41,5 @@ void	execute_builtins(t_commands *cmds, char **envp)
 	// 	builtin_env(cmds);
 	// else if (!ft_strcmp(cmds->cmd[0], "exit"))
 	// 	builtin_exit(cmds);
-	if (cmds || envp)
-		return ;
+	return (0);
 }

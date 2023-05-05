@@ -6,7 +6,7 @@
 /*   By: sungwook <sungwook@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/02 16:26:18 by daijeong          #+#    #+#             */
-/*   Updated: 2023/05/05 14:03:27 by sungwook         ###   ########.fr       */
+/*   Updated: 2023/05/05 15:36:57 by sungwook         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,7 +32,7 @@ void	open_infile_list(t_commands *cmds)
 	temp = cmds->infile;
 	while (temp->flag)
 	{
-		if (fd)
+		if (fd > 0)
 			close(cmds->fds->infile);
 		fd = open(temp->line, O_RDONLY);
 		if (fd == -1)
@@ -58,7 +58,7 @@ void	open_outfile_list(t_commands *cmds)
 	error_fd = 0;
 	while (temp->flag)
 	{
-		if (fd)
+		if (fd > 0)
 			close(fd);
 		if (temp->flag == 1)
 			fd = open(temp->line, O_WRONLY | O_CREAT | O_TRUNC, 0644);

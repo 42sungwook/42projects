@@ -6,7 +6,7 @@
 /*   By: sungwook <sungwook@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/27 15:58:34 by daijeong          #+#    #+#             */
-/*   Updated: 2023/05/05 11:25:59 by sungwook         ###   ########.fr       */
+/*   Updated: 2023/05/05 14:38:51 by sungwook         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -122,6 +122,8 @@ void		open_infile_list(t_commands *cmds);
 void		open_outfile_list(t_commands *cmds);
 void		child_process_check_fd(t_commands *cmds);
 void		close_pipe(t_pipe *pipe_fd, int flag);
+void		close_all_fds(t_commands *cmds);
+
 
 //main
 void		free_arr(char **arr);
@@ -134,6 +136,8 @@ void		open_heredoc(t_commands *cmds);
 
 //builtins
 int			check_builtins(t_commands	*cmds);
-void		execute_builtins(t_commands *cmds, char **envp);
+int			execute_builtins(t_commands *cmds, char **envp);
+int			builtin_cd(t_commands *cmds, char **envp);
+
 
 #endif

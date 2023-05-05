@@ -6,12 +6,12 @@
 #    By: sungwook <sungwook@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/04/27 15:58:46 by daijeong          #+#    #+#              #
-#    Updated: 2023/05/05 13:54:41 by sungwook         ###   ########.fr        #
+#    Updated: 2023/05/05 14:35:26 by sungwook         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 NAME		= minishell
-CC          = cc -g
+CC          = cc -g -fsanitize=address
 CFLAGS      = -Wall -Wextra -Werror
 RM			= rm -f
 LIBFT		= -Llibft -lft
@@ -40,7 +40,7 @@ E_PATH	= $(addprefix $(E_DIR)/, $(E_SRCS))
 E_OBJS	= $(E_PATH:c=o)
 
 B_DIR	= ./builtin
-B_SRCS	= check_builtins.c
+B_SRCS	= check_builtins.c builtin_cd.c
 B_PATH	= $(addprefix $(B_DIR)/, $(B_SRCS))
 B_OBJS	= $(B_PATH:c=o)
 

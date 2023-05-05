@@ -6,7 +6,7 @@
 /*   By: sungwook <sungwook@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/29 15:20:03 by sungwook          #+#    #+#             */
-/*   Updated: 2023/05/05 11:16:02 by sungwook         ###   ########.fr       */
+/*   Updated: 2023/05/05 15:45:59 by sungwook         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,7 +24,7 @@ pid_t	last_child_process1(t_commands *cmds, char **envp, t_pipe *pipe_fd)
 		temp = cmds;
 		while (temp->next)
 			temp = temp->next;
-		if (temp->fds->outfile == -1 || !temp->cmd)
+		if (!temp->cmd)
 			exit(0);
 		child_process_check_fd(temp);
 		if (temp->fds->infile == 0)
@@ -33,7 +33,7 @@ pid_t	last_child_process1(t_commands *cmds, char **envp, t_pipe *pipe_fd)
 		if (!check_builtins(cmds))
 			execve(cmds->cmd[0], cmds->cmd, envp);
 		else
-			execute_builtins(cmds, envp);
+			exit(execute_builtins(cmds, envp));
 	}
 	close_pipe(pipe_fd, CLOSE_PIPE2);
 	return (pid);
@@ -51,7 +51,7 @@ pid_t	last_child_process2(t_commands *cmds, char **envp, t_pipe *pipe_fd)
 		temp = cmds;
 		while (temp->next)
 			temp = temp->next;
-		if (temp->fds->outfile == -1 || !temp->cmd)
+		if (!temp->cmd)
 			exit(0);
 		child_process_check_fd(temp);
 		if (temp->fds->infile == 0)
@@ -60,7 +60,7 @@ pid_t	last_child_process2(t_commands *cmds, char **envp, t_pipe *pipe_fd)
 		if (!check_builtins(cmds))
 			execve(cmds->cmd[0], cmds->cmd, envp);
 		else
-			execute_builtins(cmds, envp);
+			exit(execute_builtins(cmds, envp));
 	}
 	close_pipe(pipe_fd, CLOSE_PIPE1);
 	return (pid);
