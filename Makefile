@@ -3,16 +3,16 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: sungwook <sungwook@student.42.fr>          +#+  +:+       +#+         #
+#    By: Wilbur0306 <Wilbur0306@student.42.fr>      +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/04/27 15:58:46 by daijeong          #+#    #+#              #
-#    Updated: 2023/05/05 21:10:20 by sungwook         ###   ########.fr        #
+#    Updated: 2023/05/06 15:51:24 by Wilbur0306       ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 NAME		= minishell
 CC          = cc -g -fsanitize=address
-CFLAGS      = -Wall -Wextra -Werror
+CFLAGS      =
 RM			= rm -f
 LIBFT		= -Llibft -lft
 LFLAGS		= -lreadline

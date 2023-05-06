@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   first_child_process.c                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: sungwook <sungwook@student.42.fr>          +#+  +:+       +#+        */
+/*   By: Wilbur0306 <Wilbur0306@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/29 14:46:58 by sungwook          #+#    #+#             */
-/*   Updated: 2023/05/05 17:40:54 by sungwook         ###   ########.fr       */
+/*   Updated: 2023/05/06 14:34:15 by Wilbur0306       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,6 +35,7 @@ void	first_child_process(t_commands *cmds, pid_t pid, \
 		t_token *token, t_pipe *pipe_fd)
 {
 	pipe(pipe_fd->pipe1);
+	pipe(pipe_fd->pipe2);
 	pid = fork();
 	if (pid == 0)
 	{
@@ -45,7 +46,7 @@ void	first_child_process(t_commands *cmds, pid_t pid, \
 			dup2(pipe_fd->pipe1[WRITE_END], STDOUT_FILENO);
 		if (cmds->cmd[0][0] == 0 || access(cmds->cmd[0], X_OK) != 0)
 			close(STDOUT_FILENO);
-		close_pipe(pipe_fd, CLOSE_PIPE1);
+		close_pipe(pipe_fd, CLOSE_BOTH);
 		if (!check_builtins(cmds))
 			execve(cmds->cmd[0], cmds->cmd, make_two_pointer_envp(token));
 		else

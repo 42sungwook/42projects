@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: sungwook <sungwook@student.42.fr>          +#+  +:+       +#+        */
+/*   By: Wilbur0306 <Wilbur0306@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/27 15:58:34 by daijeong          #+#    #+#             */
-/*   Updated: 2023/05/05 21:10:29 by sungwook         ###   ########.fr       */
+/*   Updated: 2023/05/06 13:12:52 by Wilbur0306       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,6 +22,7 @@
 # include "libft/libft.h"
 # include <string.h>
 
+# define ASCII_ZERO 48
 # define READ_END 0
 # define WRITE_END 1
 # define NULL_ENVP "0"

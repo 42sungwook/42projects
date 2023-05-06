@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   free_functions.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: sungwook <sungwook@student.42.fr>          +#+  +:+       +#+        */
+/*   By: Wilbur0306 <Wilbur0306@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/27 15:58:55 by daijeong          #+#    #+#             */
-/*   Updated: 2023/05/05 14:42:00 by sungwook         ###   ########.fr       */
+/*   Updated: 2023/05/06 16:42:05 by Wilbur0306       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,6 +64,8 @@ void	free_everything(t_commands *cmds, t_token *token, char *str)
 	t_commands	*temp;
 
 	temp = cmds;
+
+	print_everything(cmds, token, str);
 	while (temp)
 	{
 		if (temp->infile)
@@ -76,6 +78,14 @@ void	free_everything(t_commands *cmds, t_token *token, char *str)
 			free(temp->fds);
 		if (temp->cmd)
 			free_arr(temp->cmd);
+		temp->infile = 0;
+		temp->outfile = 0;
+		temp->heredoc = 0;
+		temp->fds = 0;
+		temp->cmd = 0;
+		temp->heredoc_end = 0;
+		temp->infile_end = 0;
+		temp->outfile_end = 0;
 		temp = temp->next;
 	}
 	while (cmds)

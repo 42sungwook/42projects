@@ -3,30 +3,30 @@
 /*                                                        :::      ::::::::   */
 /*   heredoc.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: sungwook <sungwook@student.42.fr>          +#+  +:+       +#+        */
+/*   By: Wilbur0306 <Wilbur0306@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/15 14:52:26 by sungwook          #+#    #+#             */
-/*   Updated: 2023/05/05 15:54:16 by sungwook         ###   ########.fr       */
+/*   Updated: 2023/05/06 16:42:10 by Wilbur0306       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../minishell.h"
 
-int	pipex_strcmp(const char *str1, const char *str2)
-{
-	size_t	i;
+// int	pipex_strcmp(const char *str1, const char *str2)
+// {
+// 	size_t	i;
 
-	i = 0;
-	while (str1[i] && str2[i])
-	{
-		if (str1[i] != str2[i])
-			return (0);
-		i++;
-	}
-	if (str1[i] || str2[i])
-		return (0);
-	return (1);
-}
+// 	i = 0;
+// 	while (str1[i] && str2[i])
+// 	{
+// 		if (str1[i] != str2[i])
+// 			return (0);
+// 		i++;
+// 	}
+// 	if (str1[i] || str2[i])
+// 		return (0);
+// 	return (1);
+// }
 
 void	write_in_heredoc(int fd, const char *limiter)
 {
@@ -35,7 +35,7 @@ void	write_in_heredoc(int fd, const char *limiter)
 	while (1)
 	{
 		str = readline("> ");
-		if (pipex_strcmp(str, limiter))
+		if (!ft_strcmp(str, limiter))
 			break ;
 		ft_putstr_fd(str, fd);
 		ft_putstr_fd("\n", fd);
@@ -45,50 +45,71 @@ void	write_in_heredoc(int fd, const char *limiter)
 	close(fd);
 }
 
+void	check_heredoc_name(char **heredoc_file, t_line *heredoc_temp, int file_fd)
+{
+	static char	c;
+	char		*temp;
+
+	if (c == 0)
+		c = ASCII_ZERO;
+	if (c == '9')
+		return ;
+	while (heredoc_temp->line)
+	{
+		if (access(*heredoc_file, F_OK))
+		{
+			file_fd = open(*heredoc_file, O_WRONLY | O_CREAT | O_TRUNC, 0644);
+			write_in_heredoc(file_fd, heredoc_temp->line);
+			return ;
+		}
+		else
+		{
+			if (c == '9')
+				return ;
+			temp = ft_strdup("heredoc_temp");
+			if (*heredoc_file)
+				free(*heredoc_file);
+			*heredoc_file = ft_strjoin(temp, &c);
+			free(temp);
+			c++;
+		}
+	}
+}
+
 int	open_heredoc_fd(t_commands *cmds)
 {
-	int		i;
 	t_line	*heredoc_temp;
 	char	*heredoc_file;
 	int		file_fd;
 
-	i = 0;
 	file_fd = 0;
 	heredoc_temp = cmds->heredoc;
-	heredoc_file = ft_strdup("heredoc_temp");
+	heredoc_file = 0;
 	while (heredoc_temp->flag)
 	{
-		//heredoc_file 이름 바꿔주면서 open 해주는 부분 필요
-		// if (access(heredoc_file, F_OK))
-		// {
-			file_fd = open(heredoc_file, O_WRONLY | O_CREAT | O_TRUNC, 0644);
-			write_in_heredoc(file_fd, heredoc_temp->line);
-		// }
+		if (heredoc_file)
+			free(heredoc_file);
+		heredoc_file = ft_strdup("heredoc_temp");
+		check_heredoc_name(&heredoc_file, heredoc_temp, file_fd);
+		// heredoc_temp->line = heredoc_file;
 		heredoc_temp = heredoc_temp->next;
 	}
 	if (file_fd)
 		file_fd = open(heredoc_file, O_RDONLY);
-	if (heredoc_temp->line)
-		free(heredoc_temp->line);
-	heredoc_temp->line = heredoc_file;
 	// unlink(heredoc_file);
 	return (file_fd);
 }
 
 void	open_heredoc(t_commands *cmds)
 {
-	t_commands	*temp_cmds;
 	int			fd;
 
-	temp_cmds = cmds;
-	while (temp_cmds)
+	if (cmds->heredoc->flag > 0)
 	{
-		if (temp_cmds->heredoc->flag)
-			fd = open_heredoc_fd(temp_cmds);
-		if (temp_cmds->read_heredoc)
-			temp_cmds->fds->infile = fd;
-		// else
-		// 	close(fd);
-		temp_cmds = temp_cmds->next;
+		fd = open_heredoc_fd(cmds);
+		if (cmds->read_heredoc == HEREDOC_END)
+			cmds->fds->infile = fd;
+		else
+			close(fd);
 	}
 }

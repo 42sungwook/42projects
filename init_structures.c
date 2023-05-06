@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   init_structures.c                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: sungwook <sungwook@student.42.fr>          +#+  +:+       +#+        */
+/*   By: Wilbur0306 <Wilbur0306@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/27 15:58:47 by daijeong          #+#    #+#             */
-/*   Updated: 2023/05/05 21:09:41 by sungwook         ###   ########.fr       */
+/*   Updated: 2023/05/06 15:47:24 by Wilbur0306       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,13 +14,13 @@
 
 t_line	*init_line(void)
 {
-	t_line	*line;
+	t_line	*new;
 
-	line = (t_line *)malloc(sizeof(t_line));
-	line->line = 0;
-	line->flag = 0;
-	line->next = 0;
-	return (line);
+	new = (t_line *)malloc(sizeof(t_line));
+	new->line = 0;
+	new->flag = 0;
+	new->next = 0;
+	return (new);
 }
 
 t_envp	*envp_addlist(char *str)

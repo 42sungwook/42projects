@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   save_cmds.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: sungwook <sungwook@student.42.fr>          +#+  +:+       +#+        */
+/*   By: Wilbur0306 <Wilbur0306@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/29 12:58:35 by sungwook          #+#    #+#             */
-/*   Updated: 2023/05/05 15:44:12 by sungwook         ###   ########.fr       */
+/*   Updated: 2023/05/06 16:41:24 by Wilbur0306       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -94,8 +94,8 @@ void	save_cmds(t_commands *cmds, char **envp)
 				temp_cmds->cmd = 0;
 			}
 		}
-		save_fds_in_cmds(temp_cmds);
 		temp_cmds = temp_cmds->next;
 	}
+	save_fds_in_cmds(cmds);
 	free_arr(path);
 }
