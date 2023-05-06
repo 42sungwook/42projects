@@ -6,27 +6,11 @@
 /*   By: Wilbur0306 <Wilbur0306@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/15 14:52:26 by sungwook          #+#    #+#             */
-/*   Updated: 2023/05/06 16:42:10 by Wilbur0306       ###   ########.fr       */
+/*   Updated: 2023/05/06 17:26:04 by Wilbur0306       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../minishell.h"
-
-// int	pipex_strcmp(const char *str1, const char *str2)
-// {
-// 	size_t	i;
-
-// 	i = 0;
-// 	while (str1[i] && str2[i])
-// 	{
-// 		if (str1[i] != str2[i])
-// 			return (0);
-// 		i++;
-// 	}
-// 	if (str1[i] || str2[i])
-// 		return (0);
-// 	return (1);
-// }
 
 void	write_in_heredoc(int fd, const char *limiter)
 {
@@ -45,27 +29,24 @@ void	write_in_heredoc(int fd, const char *limiter)
 	close(fd);
 }
 
-void	check_heredoc_name(char **heredoc_file, t_line *heredoc_temp, int file_fd)
+int	check_heredoc_name(char **heredoc_file, t_line *heredoc_temp, int file_fd)
 {
-	static char	c;
-	char		*temp;
+	char	c;
+	char	*temp;
 
-	if (c == 0)
-		c = ASCII_ZERO;
-	if (c == '9')
-		return ;
+	c = ASCII_ZERO;
 	while (heredoc_temp->line)
 	{
 		if (access(*heredoc_file, F_OK))
 		{
 			file_fd = open(*heredoc_file, O_WRONLY | O_CREAT | O_TRUNC, 0644);
 			write_in_heredoc(file_fd, heredoc_temp->line);
-			return ;
+			return (file_fd);
 		}
 		else
 		{
 			if (c == '9')
-				return ;
+				return (0);
 			temp = ft_strdup("heredoc_temp");
 			if (*heredoc_file)
 				free(*heredoc_file);
@@ -74,6 +55,7 @@ void	check_heredoc_name(char **heredoc_file, t_line *heredoc_temp, int file_fd)
 			c++;
 		}
 	}
+	return (0);
 }
 
 int	open_heredoc_fd(t_commands *cmds)
@@ -87,16 +69,15 @@ int	open_heredoc_fd(t_commands *cmds)
 	heredoc_file = 0;
 	while (heredoc_temp->flag)
 	{
-		if (heredoc_file)
-			free(heredoc_file);
 		heredoc_file = ft_strdup("heredoc_temp");
-		check_heredoc_name(&heredoc_file, heredoc_temp, file_fd);
-		// heredoc_temp->line = heredoc_file;
+		file_fd = check_heredoc_name(&heredoc_file, heredoc_temp, file_fd);
+		free(heredoc_temp->line);
+		heredoc_temp->line = heredoc_file;
 		heredoc_temp = heredoc_temp->next;
 	}
 	if (file_fd)
 		file_fd = open(heredoc_file, O_RDONLY);
-	// unlink(heredoc_file);
+	unlink(heredoc_file);
 	return (file_fd);
 }
 

@@ -6,7 +6,7 @@
 /*   By: Wilbur0306 <Wilbur0306@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/27 15:58:55 by daijeong          #+#    #+#             */
-/*   Updated: 2023/05/06 16:42:05 by Wilbur0306       ###   ########.fr       */
+/*   Updated: 2023/05/06 16:52:33 by Wilbur0306       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,7 +65,6 @@ void	free_everything(t_commands *cmds, t_token *token, char *str)
 
 	temp = cmds;
 
-	print_everything(cmds, token, str);
 	while (temp)
 	{
 		if (temp->infile)
