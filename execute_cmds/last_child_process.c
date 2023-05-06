@@ -6,7 +6,7 @@
 /*   By: Wilbur0306 <Wilbur0306@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/29 15:20:03 by sungwook          #+#    #+#             */
-/*   Updated: 2023/05/06 13:00:18 by Wilbur0306       ###   ########.fr       */
+/*   Updated: 2023/05/06 15:16:45 by Wilbur0306       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,10 +30,10 @@ pid_t	last_child_process1(t_commands *cmds, t_token *token, t_pipe *pipe_fd)
 		if (temp->fds->infile == 0)
 			dup2(pipe_fd->pipe2[READ_END], STDIN_FILENO);
 		close_pipe(pipe_fd, CLOSE_PIPE2);
-		if (!check_builtins(cmds))
-			execve(cmds->cmd[0], cmds->cmd, make_two_pointer_envp(token));
+		if (!check_builtins(temp))
+			execve(temp->cmd[0], temp->cmd, make_two_pointer_envp(token));
 		else
-			exit(execute_builtins(cmds, token));
+			exit(execute_builtins(temp, token));
 	}
 	close_pipe(pipe_fd, CLOSE_PIPE2);
 	return (pid);
