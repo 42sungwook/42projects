@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: Wilbur0306 <Wilbur0306@student.42.fr>      +#+  +:+       +#+        */
+/*   By: daijeong <daijeong@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/27 15:58:34 by daijeong          #+#    #+#             */
-/*   Updated: 2023/05/06 13:12:52 by Wilbur0306       ###   ########.fr       */
+/*   Updated: 2023/05/09 21:57:04 by daijeong         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,7 +29,7 @@
 # define INFILE_END 0
 # define HEREDOC_END 1
 # define CLOSE_PIPE1 1
-# define CLOSE_PIPE2 2
+# define CLOSE_PIPE2 0
 # define CLOSE_BOTH 3
 
 typedef struct s_line
@@ -38,12 +38,6 @@ typedef struct s_line
 	int				flag;
 	struct s_line	*next;
 }	t_line;
-
-typedef struct s_pipe
-{
-	int		pipe1[2];
-	int		pipe2[2];
-}	t_pipe;
 
 typedef struct s_fds
 {
@@ -83,6 +77,7 @@ typedef struct s_token
 	char	*word;
 	char	prev_char;
 	int		exit_status;
+	int		pipe_fd[2][2];
 }	t_token;
 
 //init
@@ -108,21 +103,17 @@ t_commands	*parse_pipe(t_commands *cmds, t_token *token);
 //execute_cmds
 void		save_cmds(t_commands *cmds, char **envp);
 int			execute_cmds(t_commands *cmds, t_token *token);
-pid_t		last_child_process1(t_commands *cmds, t_token *token, \
-			t_pipe *pipe_fd);
-pid_t		last_child_process2(t_commands *cmds, t_token *token, \
-			t_pipe *pipe_fd);
-int			nth_child_process(t_commands *cmds, pid_t pid, \
-			t_token *token, t_pipe *pipe_fd);
-void		first_child_process(t_commands *cmds, pid_t pid, \
-			t_token *token, t_pipe *pipe_fd);
+pid_t		last_child_process(int sign, t_commands *cmds, t_token *token);
+int			nth_child_process(int sign, t_commands *cmds, pid_t pid, \
+			t_token *token);
+void		first_child_process(t_commands *cmds, pid_t pid, t_token *token);
 void		save_fds_in_cmds(t_commands *cmds);
 void		init_cmds_fds(t_commands *cmds);
-void		pipex(t_commands *cmds, t_token *token, t_pipe *pipe_fd);
+void		pipex(t_commands *cmds, t_token *token);
 void		open_infile_list(t_commands *cmds);
 void		open_outfile_list(t_commands *cmds);
 void		child_process_check_fd(t_commands *cmds);
-void		close_pipe(t_pipe *pipe_fd, int flag);
+void		close_pipe(t_token *token, int flag);
 void		close_all_fds(t_commands *cmds);
 char		**make_two_pointer_envp(t_token *token);
 

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   first_child_process.c                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: Wilbur0306 <Wilbur0306@student.42.fr>      +#+  +:+       +#+        */
+/*   By: daijeong <daijeong@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/29 14:46:58 by sungwook          #+#    #+#             */
-/*   Updated: 2023/05/06 14:34:15 by Wilbur0306       ###   ########.fr       */
+/*   Updated: 2023/05/09 21:45:27 by daijeong         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,10 +32,9 @@ void	child_process_check_fd(t_commands *cmds)
 }
 
 void	first_child_process(t_commands *cmds, pid_t pid, \
-		t_token *token, t_pipe *pipe_fd)
+		t_token *token)
 {
-	pipe(pipe_fd->pipe1);
-	pipe(pipe_fd->pipe2);
+	pipe(token->pipe_fd[0]);
 	pid = fork();
 	if (pid == 0)
 	{
@@ -43,10 +42,10 @@ void	first_child_process(t_commands *cmds, pid_t pid, \
 			exit(0);
 		child_process_check_fd(cmds);
 		if (cmds->fds->outfile == 0 && cmds->next)
-			dup2(pipe_fd->pipe1[WRITE_END], STDOUT_FILENO);
+			dup2(token->pipe_fd[0][WRITE_END], STDOUT_FILENO);
 		if (cmds->cmd[0][0] == 0 || access(cmds->cmd[0], X_OK) != 0)
 			close(STDOUT_FILENO);
-		close_pipe(pipe_fd, CLOSE_BOTH);
+		close_pipe(token, CLOSE_BOTH);
 		if (!check_builtins(cmds))
 			execve(cmds->cmd[0], cmds->cmd, make_two_pointer_envp(token));
 		else

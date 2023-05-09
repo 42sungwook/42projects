@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   pipex.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: sungwook <sungwook@student.42.fr>          +#+  +:+       +#+        */
+/*   By: daijeong <daijeong@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/15 14:20:10 by sungwook          #+#    #+#             */
-/*   Updated: 2023/05/05 21:11:42 by sungwook         ###   ########.fr       */
+/*   Updated: 2023/05/09 22:17:39 by daijeong         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,25 +25,30 @@ static void	wait_pids(t_commands *cmds)
 	}
 }
 
-void	pipex(t_commands *cmds, t_token *token, t_pipe *pipe_fd)
+void	pipex(t_commands *cmds, t_token *token)
 {
-	pid_t	pid;
-	int		sign;
+	pid_t		pid;
+	int			sign;
+	t_commands	*temp;
 
 	pid = 0;
-	first_child_process(cmds, pid, token, pipe_fd);
-	sign = nth_child_process(cmds, pid, token, pipe_fd);
-	if (cmds->next)
+	sign = 0;
+	temp = cmds->next;
+	first_child_process(cmds, pid, token);
+	if (cmds->next && cmds->next->next)
 	{
-		if (sign == 1)
-			pid = last_child_process1(cmds, token, pipe_fd);
-		else
-			pid = last_child_process2(cmds, token, pipe_fd);
+		while (temp->next)
+		{
+			sign = nth_child_process(sign, temp, pid, token);
+			temp = temp->next;
+		}
 	}
+	if (cmds->next)
+		pid = last_child_process(sign, cmds, token);
 	else
 	{
-		close(pipe_fd->pipe1[0]);
-		close(pipe_fd->pipe1[1]);
+		close(token->pipe_fd[0][0]);
+		close(token->pipe_fd[0][1]);
 	}
 	close_all_fds(cmds);
 	wait_pids(cmds);
