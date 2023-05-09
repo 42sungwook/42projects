@@ -6,7 +6,7 @@
 /*   By: daijeong <daijeong@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/15 14:20:10 by sungwook          #+#    #+#             */
-/*   Updated: 2023/05/09 22:17:39 by daijeong         ###   ########.fr       */
+/*   Updated: 2023/05/09 22:43:57 by daijeong         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,8 +43,8 @@ void	pipex(t_commands *cmds, t_token *token)
 			temp = temp->next;
 		}
 	}
-	if (cmds->next)
-		pid = last_child_process(sign, cmds, token);
+	if (temp)
+		pid = last_child_process(sign, temp, token);
 	else
 	{
 		close(token->pipe_fd[0][0]);
