@@ -6,7 +6,7 @@
 /*   By: daijeong <daijeong@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/15 14:52:26 by sungwook          #+#    #+#             */
-/*   Updated: 2023/05/10 19:52:29 by daijeong         ###   ########.fr       */
+/*   Updated: 2023/05/10 21:47:23 by daijeong         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,17 +43,14 @@ int	check_heredoc_name(char **heredoc_file, t_line *heredoc_temp, int file_fd)
 			write_in_heredoc(file_fd, heredoc_temp->line);
 			return (file_fd);
 		}
-		else
-		{
-			if (str[0] == '9')
-				return (0);
-			temp = ft_strdup("heredoc_temp");
-			if (*heredoc_file)
-				free(*heredoc_file);
-			*heredoc_file = ft_strjoin(temp, str);
-			free(temp);
-			str[0]++;
-		}
+		if (str[0] == '9')
+			return (0);
+		temp = ft_strdup("heredoc_temp");
+		if (*heredoc_file)
+			free(*heredoc_file);
+		*heredoc_file = ft_strjoin(temp, str);
+		free(temp);
+		str[0]++;
 	}
 	return (0);
 }
