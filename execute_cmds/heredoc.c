@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   heredoc.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: Wilbur0306 <Wilbur0306@student.42.fr>      +#+  +:+       +#+        */
+/*   By: daijeong <daijeong@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/15 14:52:26 by sungwook          #+#    #+#             */
-/*   Updated: 2023/05/06 17:26:04 by Wilbur0306       ###   ########.fr       */
+/*   Updated: 2023/05/10 19:37:08 by daijeong         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,10 +31,11 @@ void	write_in_heredoc(int fd, const char *limiter)
 
 int	check_heredoc_name(char **heredoc_file, t_line *heredoc_temp, int file_fd)
 {
-	char	c;
+	char	str[2];
 	char	*temp;
 
-	c = ASCII_ZERO;
+	str[0] = ASCII_ZERO;
+	str[1] = '\0';
 	while (heredoc_temp->line)
 	{
 		if (access(*heredoc_file, F_OK))
@@ -45,14 +46,14 @@ int	check_heredoc_name(char **heredoc_file, t_line *heredoc_temp, int file_fd)
 		}
 		else
 		{
-			if (c == '9')
+			if (str[0] == '9')
 				return (0);
 			temp = ft_strdup("heredoc_temp");
 			if (*heredoc_file)
 				free(*heredoc_file);
-			*heredoc_file = ft_strjoin(temp, &c);
+			*heredoc_file = ft_strjoin(temp, str);
 			free(temp);
-			c++;
+			str[0]++;
 		}
 	}
 	return (0);
