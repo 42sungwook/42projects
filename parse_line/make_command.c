@@ -3,30 +3,20 @@
 /*                                                        :::      ::::::::   */
 /*   make_command.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: sungwook <sungwook@student.42.fr>          +#+  +:+       +#+        */
+/*   By: daijeong <daijeong@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/27 15:59:20 by daijeong          #+#    #+#             */
-/*   Updated: 2023/05/05 13:58:17 by sungwook         ###   ########.fr       */
+/*   Updated: 2023/05/10 22:04:44 by daijeong         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../minishell.h"
 
-char	**add_cmd(char **cmd, char *word)
+void	**add_new_cmd(char **cmd, char **new_cmd, char *word)
 {
-	int		i;
-	char	**new_cmd;
 	char	*str;
+	int		i;
 
-	i = 0;
-	if (cmd)
-	{
-		while (cmd[i++])
-			;
-	}
-	new_cmd = (char **)malloc(sizeof(char *) * (i + 2));
-	if (!(new_cmd))
-		return (0);
 	i = -1;
 	if (cmd)
 	{
@@ -41,6 +31,23 @@ char	**add_cmd(char **cmd, char *word)
 		str = ft_strdup(word);
 	new_cmd[i] = str;
 	new_cmd[i + 1] = 0;
+}
+
+char	**add_cmd(char **cmd, char *word)
+{
+	int		i;
+	char	**new_cmd;
+
+	i = 0;
+	if (cmd)
+	{
+		while (cmd[i++])
+			;
+	}
+	new_cmd = (char **)malloc(sizeof(char *) * (i + 2));
+	if (!(new_cmd))
+		return (0);
+	add_new_cmd(cmd, new_cmd, word);
 	free(cmd);
 	return (new_cmd);
 }

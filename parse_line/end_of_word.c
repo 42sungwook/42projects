@@ -6,17 +6,33 @@
 /*   By: daijeong <daijeong@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/27 15:59:22 by daijeong          #+#    #+#             */
-/*   Updated: 2023/05/02 16:02:29 by daijeong         ###   ########.fr       */
+/*   Updated: 2023/05/10 22:00:40 by daijeong         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../minishell.h"
 
+void	found_dollar_word_in_envp(t_token *token, t_envp *envp_temp, int j)
+{
+	char	*temp;
+
+	if (!token->word)
+		temp = ft_strdup(&envp_temp->str[j + 1]);
+	else
+		temp = ft_strjoin(token->word, &envp_temp->str[j + 1]);
+	if (token->word)
+		free(token->word);
+	free(token->dollar_word);
+	token->dollar_word = 0;
+	token->dollar = 0;
+	token->word = temp;
+	return ;
+}
+
 void	find_dollar_word_in_envp(t_token *token)
 {
 	int		j;
 	int		dollar_word_len;
-	char	*temp;
 	t_envp	*envp_temp;
 
 	envp_temp = token->envp;
@@ -35,19 +51,7 @@ void	find_dollar_word_in_envp(t_token *token)
 			continue ;
 		}
 		if (j == dollar_word_len && envp_temp->str[j] == '=')
-		{
-			if (!token->word)
-				temp = ft_strdup(&envp_temp->str[j + 1]);
-			else
-				temp = ft_strjoin(token->word, &envp_temp->str[j + 1]);
-			if (token->word)
-				free(token->word);
-			free(token->dollar_word);
-			token->dollar_word = 0;
-			token->dollar = 0;
-			token->word = temp;
-			return ;
-		}
+			found_dollar_word_in_envp(token, envp_temp, j);
 		envp_temp = envp_temp->next;
 	}
 }
