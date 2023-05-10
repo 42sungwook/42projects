@@ -6,7 +6,7 @@
 /*   By: sungwook <sungwook@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/29 12:58:35 by sungwook          #+#    #+#             */
-/*   Updated: 2023/05/10 15:56:29 by sungwook         ###   ########.fr       */
+/*   Updated: 2023/05/10 16:23:59 by sungwook         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -90,7 +90,7 @@ void	save_cmds(t_commands *cmds, char **envp)
 				write(2, "minishell: ", 11);
 				write(2, temp_cmds->cmd[0], ft_strlen(temp_cmds->cmd[0]));
 				write(2, ": command not found\n", 20);
-				free_arr(cmds->cmd);
+				free_arr(temp_cmds->cmd);
 				temp_cmds->cmd = 0;
 			}
 		}
