@@ -6,7 +6,7 @@
 /*   By: sungwook <sungwook@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/05 10:19:15 by sungwook          #+#    #+#             */
-/*   Updated: 2023/05/05 20:23:19 by sungwook         ###   ########.fr       */
+/*   Updated: 2023/05/10 15:58:25 by sungwook         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,7 @@
 
 int	check_builtins(t_commands	*cmds)
 {
-	if (cmds->cmd && (!ft_strcmp(cmds->cmd[0], "echo") || \
+	if (cmds->cmd && cmds->cmd[0] && (!ft_strcmp(cmds->cmd[0], "echo") || \
 		!ft_strcmp(cmds->cmd[0], "cd") || \
 		!ft_strcmp(cmds->cmd[0], "pwd") || \
 		!ft_strcmp(cmds->cmd[0], "export") || \
