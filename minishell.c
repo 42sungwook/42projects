@@ -6,7 +6,7 @@
 /*   By: daijeong <daijeong@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/27 15:58:44 by daijeong          #+#    #+#             */
-/*   Updated: 2023/05/11 20:59:51 by daijeong         ###   ########.fr       */
+/*   Updated: 2023/05/11 21:15:47 by daijeong         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,7 +53,7 @@ int	main(int argc, char **argv, char **envp)
 	str = 0;
 	(void)argc;
 	(void)argv;
-	// init_signal();
+	init_signal();
 	cmds = init_cmds();
 	token = init_token(envp);
 	while (1)
