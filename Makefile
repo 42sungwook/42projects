@@ -6,16 +6,16 @@
 #    By: daijeong <daijeong@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/04/27 15:58:46 by daijeong          #+#    #+#              #
-#    Updated: 2023/05/11 20:01:36 by daijeong         ###   ########.fr        #
+#    Updated: 2023/05/11 20:56:12 by daijeong         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 NAME		= minishell
 CC          = cc -g -fsanitize=address
-CFLAGS      =
+CFLAGS      = -Wall -Wextra -Werror -Ilibft -I${HOME}/.brew/opt/readline/include
 RM			= rm -f
 LIBFT		= -Llibft -lft
-LFLAGS		= -lreadline
+LFLAGS		= -lreadline -L${HOME}/.brew/opt/readline/lib
 
 HEADER_DIR  = ./
 HEADER_SRCS	= minishell.h
