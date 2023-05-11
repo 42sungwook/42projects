@@ -6,7 +6,7 @@
 /*   By: daijeong <daijeong@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/27 15:58:55 by daijeong          #+#    #+#             */
-/*   Updated: 2023/05/10 21:52:31 by daijeong         ###   ########.fr       */
+/*   Updated: 2023/05/11 21:12:15 by daijeong         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -99,6 +99,11 @@ void	free_everything(t_commands *cmds, t_token *token, char *str)
 			free(temp->fds);
 		if (temp->cmd)
 			free_arr(temp->cmd);
+		temp->infile = 0;
+		temp->outfile = 0;
+		temp->heredoc = 0;
+		temp->fds = 0;
+		temp->cmd = 0;
 		temp = temp->next;
 	}
 	free_commands(cmds);
