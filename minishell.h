@@ -6,7 +6,7 @@
 /*   By: daijeong <daijeong@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/27 15:58:34 by daijeong          #+#    #+#             */
-/*   Updated: 2023/05/09 21:57:04 by daijeong         ###   ########.fr       */
+/*   Updated: 2023/05/11 20:03:14 by daijeong         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,6 +19,7 @@
 # include <stdlib.h>
 # include <unistd.h>
 # include <fcntl.h>
+# include <signal.h>
 # include "libft/libft.h"
 # include <string.h>
 
@@ -129,6 +130,9 @@ void		free_everything(t_commands *cmds, t_token *token, char *str);
 
 //heredoc
 void		open_heredoc(t_commands *cmds);
+
+//signal
+void		init_signal(void);
 
 //builtins
 int			check_builtins(t_commands	*cmds);

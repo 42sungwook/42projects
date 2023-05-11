@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: Wilbur0306 <Wilbur0306@student.42.fr>      +#+  +:+       +#+         #
+#    By: daijeong <daijeong@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/04/27 15:58:46 by daijeong          #+#    #+#              #
-#    Updated: 2023/05/06 15:51:24 by Wilbur0306       ###   ########.fr        #
+#    Updated: 2023/05/11 20:01:36 by daijeong         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -22,7 +22,7 @@ HEADER_SRCS	= minishell.h
 HEADER		= $(addprefix $(HEADER_DIR), $(HEADER_SRCS))
 
 M_DIR		= ./
-M_SRCS      = minishell.c init_structures.c free_functions.c free_arr.c merge_sort.c utils.c
+M_SRCS      = minishell.c init_structures.c free_functions.c free_arr.c merge_sort.c utils.c signal.c
 M_PATH		= $(addprefix $(M_DIR), $(M_SRCS))
 M_OBJS		= $(M_PATH:c=o)
 

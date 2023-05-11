@@ -6,13 +6,13 @@
 /*   By: daijeong <daijeong@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/27 15:59:20 by daijeong          #+#    #+#             */
-/*   Updated: 2023/05/10 22:04:44 by daijeong         ###   ########.fr       */
+/*   Updated: 2023/05/11 19:49:54 by daijeong         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../minishell.h"
 
-void	**add_new_cmd(char **cmd, char **new_cmd, char *word)
+void	add_new_cmd(char **cmd, char **new_cmd, char *word)
 {
 	char	*str;
 	int		i;
