@@ -6,7 +6,7 @@
 /*   By: daijeong <daijeong@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/29 14:46:58 by sungwook          #+#    #+#             */
-/*   Updated: 2023/05/09 22:52:34 by daijeong         ###   ########.fr       */
+/*   Updated: 2023/05/12 16:45:11 by daijeong         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,9 +25,10 @@ void	child_process_check_fd(t_commands *cmds)
 	}
 }
 
-void	first_child_process(t_commands *cmds, pid_t pid, \
-		t_token *token)
+void	first_child_process(t_commands *cmds, t_token *token)
 {
+	pid_t	pid;
+
 	pipe(token->pipe_fd[0]);
 	pid = fork();
 	if (pid == 0)
@@ -45,4 +46,5 @@ void	first_child_process(t_commands *cmds, pid_t pid, \
 		else
 			exit(execute_builtins(cmds, token));
 	}
+	token->pid = pid;
 }

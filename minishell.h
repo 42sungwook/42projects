@@ -6,7 +6,7 @@
 /*   By: daijeong <daijeong@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/27 15:58:34 by daijeong          #+#    #+#             */
-/*   Updated: 2023/05/12 16:27:00 by daijeong         ###   ########.fr       */
+/*   Updated: 2023/05/12 16:48:29 by daijeong         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -79,6 +79,7 @@ typedef struct s_token
 	int		right_redirection;
 	char	*word;
 	char	prev_char;
+	pid_t	pid;
 	int		pipe_fd[2][2];
 }	t_token;
 
@@ -106,10 +107,9 @@ int			parse_question(t_token *token);
 //execute_cmds
 void		save_cmds(t_commands *cmds, char **envp);
 int			execute_cmds(t_commands *cmds, t_token *token);
-pid_t		last_child_process(int sign, t_commands *cmds, t_token *token);
-int			nth_child_process(int sign, t_commands *cmds, pid_t pid, \
-			t_token *token);
-void		first_child_process(t_commands *cmds, pid_t pid, t_token *token);
+void		last_child_process(int sign, t_commands *cmds, t_token *token);
+int			nth_child_process(int sign, t_commands *cmds, t_token *token);
+void		first_child_process(t_commands *cmds, t_token *token);
 void		save_fds_in_cmds(t_commands *cmds);
 void		init_cmds_fds(t_commands *cmds);
 void		pipex(t_commands *cmds, t_token *token);

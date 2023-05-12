@@ -6,13 +6,13 @@
 /*   By: daijeong <daijeong@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/29 15:20:03 by sungwook          #+#    #+#             */
-/*   Updated: 2023/05/09 22:49:31 by daijeong         ###   ########.fr       */
+/*   Updated: 2023/05/12 16:48:01 by daijeong         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../minishell.h"
 
-pid_t	last_child_process(int sign, t_commands *cmds, t_token *token)
+void	last_child_process(int sign, t_commands *cmds, t_token *token)
 {
 	pid_t		pid;
 
@@ -32,5 +32,5 @@ pid_t	last_child_process(int sign, t_commands *cmds, t_token *token)
 			exit(execute_builtins(cmds, token));
 	}
 	close_pipe(token, sign);
-	return (pid);
+	token->pid = pid;
 }

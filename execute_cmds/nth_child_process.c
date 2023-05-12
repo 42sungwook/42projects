@@ -6,14 +6,16 @@
 /*   By: daijeong <daijeong@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/29 15:20:04 by sungwook          #+#    #+#             */
-/*   Updated: 2023/05/09 22:16:24 by daijeong         ###   ########.fr       */
+/*   Updated: 2023/05/12 16:47:22 by daijeong         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../minishell.h"
 
-int	nth_child_process(int sign, t_commands *cmds, pid_t pid, t_token *token)
+int	nth_child_process(int sign, t_commands *cmds, t_token *token)
 {
+	pid_t	pid;
+
 	pipe(token->pipe_fd[1 - sign]);
 	pid = fork();
 	if (pid == 0)

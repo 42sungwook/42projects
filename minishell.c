@@ -6,7 +6,7 @@
 /*   By: daijeong <daijeong@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/27 15:58:44 by daijeong          #+#    #+#             */
-/*   Updated: 2023/05/12 16:27:13 by daijeong         ###   ########.fr       */
+/*   Updated: 2023/05/12 16:30:43 by daijeong         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -82,7 +82,6 @@ int	main(int argc, char **argv, char **envp)
 // exit status 만들어야함
 // ctrl D 눌렀을 때
 // exit command 입력했을 때
-// $? 처리 -> exit status로 치환
 
 //heredoc EOF일때 unlink 처리
 
