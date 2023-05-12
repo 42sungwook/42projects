@@ -6,7 +6,7 @@
 /*   By: daijeong <daijeong@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/27 15:58:44 by daijeong          #+#    #+#             */
-/*   Updated: 2023/05/11 21:15:47 by daijeong         ###   ########.fr       */
+/*   Updated: 2023/05/12 15:01:13 by daijeong         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,15 +53,16 @@ int	main(int argc, char **argv, char **envp)
 	str = 0;
 	(void)argc;
 	(void)argv;
-	init_signal();
 	cmds = init_cmds();
 	token = init_token(envp);
 	while (1)
-	{
+	{	
+		init_signal();
 		str = readline("minishell> : ");
 		if (!str || ft_strcmp(str, "exit") == 0)
 			exit(0);
 		parse_line(str, cmds, token);
+		del_signal();
 		execute_cmds(cmds, token);
 		add_history(str);
 		free_everything(cmds, token, str);

@@ -6,7 +6,7 @@
 /*   By: daijeong <daijeong@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/27 15:58:34 by daijeong          #+#    #+#             */
-/*   Updated: 2023/05/11 20:30:03 by daijeong         ###   ########.fr       */
+/*   Updated: 2023/05/12 14:55:26 by daijeong         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -133,6 +133,7 @@ void		open_heredoc(t_commands *cmds);
 
 //signal
 void		init_signal(void);
+void		del_signal(void);
 
 //builtins
 int			check_builtins(t_commands	*cmds);
