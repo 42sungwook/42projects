@@ -6,7 +6,7 @@
 /*   By: daijeong <daijeong@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/27 15:58:34 by daijeong          #+#    #+#             */
-/*   Updated: 2023/05/12 17:03:00 by daijeong         ###   ########.fr       */
+/*   Updated: 2023/05/12 17:12:38 by daijeong         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -86,7 +86,7 @@ typedef struct s_token
 }	t_token;
 
 //init
-t_token		*init_token(char **envp);
+t_token		*init_token(char **envp, int argc, char **argv);
 t_commands	*init_cmds(void);
 t_line		*init_line(void);
 t_envp		*init_envp(char **envp);

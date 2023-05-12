@@ -6,7 +6,7 @@
 /*   By: daijeong <daijeong@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/27 15:58:47 by daijeong          #+#    #+#             */
-/*   Updated: 2023/05/12 15:46:03 by daijeong         ###   ########.fr       */
+/*   Updated: 2023/05/12 17:13:01 by daijeong         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,10 +58,12 @@ t_envp	*init_envp(char **envp)
 	return (envp_list);
 }
 
-t_token	*init_token(char **envp)
+t_token	*init_token(char **envp, int argc, char **argv)
 {
 	t_token	*token;
 
+	(void)argc;
+	(void)argv;
 	token = malloc(sizeof(t_token));
 	token->envp = init_envp(envp);
 	token->quote = 0;

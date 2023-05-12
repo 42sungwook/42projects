@@ -6,7 +6,7 @@
 /*   By: daijeong <daijeong@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/27 15:58:44 by daijeong          #+#    #+#             */
-/*   Updated: 2023/05/12 16:30:43 by daijeong         ###   ########.fr       */
+/*   Updated: 2023/05/12 17:13:06 by daijeong         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,11 +54,8 @@ int	main(int argc, char **argv, char **envp)
 
 	str = 0;
 	g_exit_status = 0;
-	(void)argc;
-	(void)argv;
-	// atexit(check_leak);
 	cmds = init_cmds();
-	token = init_token(envp);
+	token = init_token(envp, argc, argv);
 	while (1)
 	{	
 		init_signal();
