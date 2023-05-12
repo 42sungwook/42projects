@@ -6,7 +6,7 @@
 /*   By: daijeong <daijeong@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/27 15:58:44 by daijeong          #+#    #+#             */
-/*   Updated: 2023/05/12 15:58:07 by daijeong         ###   ########.fr       */
+/*   Updated: 2023/05/12 16:27:13 by daijeong         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,6 +31,8 @@ void	parse_line(char *str, t_commands *cmds, t_token *token)
 			cmds = parse_pipe(cmds, token);
 		else if (str[i] == '$')
 			parse_dollar(token);
+		else if (str[i] == '?')
+			parse_question(token);
 		else if (token->dollar == 1)
 			token->dollar_word = make_word_c(token->dollar_word, str[i]);
 		else
@@ -51,6 +53,7 @@ int	main(int argc, char **argv, char **envp)
 	t_token		*token;
 
 	str = 0;
+	g_exit_status = 0;
 	(void)argc;
 	(void)argv;
 	// atexit(check_leak);

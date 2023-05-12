@@ -6,7 +6,7 @@
 /*   By: daijeong <daijeong@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/27 15:58:34 by daijeong          #+#    #+#             */
-/*   Updated: 2023/05/12 15:38:26 by daijeong         ###   ########.fr       */
+/*   Updated: 2023/05/12 16:27:00 by daijeong         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,7 +33,7 @@
 # define CLOSE_PIPE2 0
 # define CLOSE_BOTH 3
 
-static int	g_exit_status;
+int	g_exit_status;
 
 typedef struct s_line
 {
@@ -101,6 +101,7 @@ int			parse_single_quote(t_commands *cmds, t_token *token);
 int			parse_double_quote(t_commands *cmds, t_token *token);
 int			parse_redirection(t_commands *cmds, t_token *token, char c);
 t_commands	*parse_pipe(t_commands *cmds, t_token *token);
+int			parse_question(t_token *token);
 
 //execute_cmds
 void		save_cmds(t_commands *cmds, char **envp);

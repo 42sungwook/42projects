@@ -6,7 +6,7 @@
 #    By: daijeong <daijeong@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/04/27 15:58:46 by daijeong          #+#    #+#              #
-#    Updated: 2023/05/11 20:56:12 by daijeong         ###   ########.fr        #
+#    Updated: 2023/05/12 16:12:28 by daijeong         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -29,7 +29,7 @@ M_OBJS		= $(M_PATH:c=o)
 
 P_DIR 	 = ./parse_line
 P_SRCS	 = end_of_word.c make_word.c parse_dollar.c parse_double_quote.c parse_pipe.c \
-		   parse_redirection.c make_command.c parse_single_quote.c
+		   parse_redirection.c make_command.c parse_single_quote.c parse_question.c
 P_PATH	 = $(addprefix $(P_DIR)/, $(P_SRCS))
 P_OBJS	 = $(P_PATH:c=o)
 
