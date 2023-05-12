@@ -6,7 +6,7 @@
 /*   By: daijeong <daijeong@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/29 15:20:03 by sungwook          #+#    #+#             */
-/*   Updated: 2023/05/12 16:48:01 by daijeong         ###   ########.fr       */
+/*   Updated: 2023/05/12 17:22:28 by daijeong         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,6 +20,7 @@ void	last_child_process(int sign, t_commands *cmds, t_token *token)
 	pid = fork();
 	if (pid == 0)
 	{
+		init_signal();
 		if (!cmds->cmd)
 			exit(0);
 		if (cmds->fds->infile == 0)

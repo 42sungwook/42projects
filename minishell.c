@@ -6,7 +6,7 @@
 /*   By: daijeong <daijeong@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/27 15:58:44 by daijeong          #+#    #+#             */
-/*   Updated: 2023/05/12 17:13:06 by daijeong         ###   ########.fr       */
+/*   Updated: 2023/05/12 17:20:52 by daijeong         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,8 +65,8 @@ int	main(int argc, char **argv, char **envp)
 			write(2, "exit\n", 5);
 			exit(0);
 		}
-		parse_line(str, cmds, token);
 		del_signal();
+		parse_line(str, cmds, token);
 		execute_cmds(cmds, token);
 		add_history(str);
 		free_everything(cmds, token, str);
@@ -81,4 +81,5 @@ int	main(int argc, char **argv, char **envp)
 // exit command 입력했을 때
 
 //heredoc EOF일때 unlink 처리
-
+//heredoc <<<< SEGV 처리
+//sleep ctrl c, d 안되는거 처리
