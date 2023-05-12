@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   first_child_process.c                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: daijeong <daijeong@student.42.fr>          +#+  +:+       +#+        */
+/*   By: sungwook <sungwook@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/29 14:46:58 by sungwook          #+#    #+#             */
-/*   Updated: 2023/05/12 17:21:00 by daijeong         ###   ########.fr       */
+/*   Updated: 2023/05/12 20:49:53 by sungwook         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,7 +41,7 @@ void	first_child_process(t_commands *cmds, t_token *token)
 		if (cmds->cmd[0][0] == 0 || access(cmds->cmd[0], X_OK) != 0)
 			close(STDOUT_FILENO);
 		child_process_check_fd(cmds);
-		close_pipe(token, CLOSE_BOTH);
+		close_pipe(token, CLOSE_PIPE1);
 		if (!check_builtins(cmds))
 			execve(cmds->cmd[0], cmds->cmd, make_two_pointer_envp(token));
 		else
