@@ -6,7 +6,7 @@
 /*   By: daijeong <daijeong@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/27 15:58:34 by daijeong          #+#    #+#             */
-/*   Updated: 2023/05/12 14:55:26 by daijeong         ###   ########.fr       */
+/*   Updated: 2023/05/12 15:38:26 by daijeong         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,6 +32,8 @@
 # define CLOSE_PIPE1 1
 # define CLOSE_PIPE2 0
 # define CLOSE_BOTH 3
+
+static int	g_exit_status;
 
 typedef struct s_line
 {
@@ -77,7 +79,6 @@ typedef struct s_token
 	int		right_redirection;
 	char	*word;
 	char	prev_char;
-	int		exit_status;
 	int		pipe_fd[2][2];
 }	t_token;
 

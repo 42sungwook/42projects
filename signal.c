@@ -6,7 +6,7 @@
 /*   By: daijeong <daijeong@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/11 19:38:12 by daijeong          #+#    #+#             */
-/*   Updated: 2023/05/12 14:59:58 by daijeong         ###   ########.fr       */
+/*   Updated: 2023/05/12 15:36:14 by daijeong         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,6 +37,5 @@ void	del_signal(void)
 	extern int	rl_catch_signals;
 
 	rl_catch_signals = 1;
-	signal(SIGQUIT, SIG_IGN);
 	signal(SIGINT, SIG_IGN);
 }

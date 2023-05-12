@@ -6,7 +6,7 @@
 /*   By: daijeong <daijeong@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/27 15:58:44 by daijeong          #+#    #+#             */
-/*   Updated: 2023/05/12 15:01:13 by daijeong         ###   ########.fr       */
+/*   Updated: 2023/05/12 15:58:07 by daijeong         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,7 +41,7 @@ void	parse_line(char *str, t_commands *cmds, t_token *token)
 
 // void	check_leak(void)
 // {
-// 	system("leaks --list -- minishell");
+// 	system("leaks minishell");
 // }
 
 int	main(int argc, char **argv, char **envp)
@@ -53,22 +53,33 @@ int	main(int argc, char **argv, char **envp)
 	str = 0;
 	(void)argc;
 	(void)argv;
+	// atexit(check_leak);
 	cmds = init_cmds();
 	token = init_token(envp);
 	while (1)
 	{	
 		init_signal();
 		str = readline("minishell> : ");
-		if (!str || ft_strcmp(str, "exit") == 0)
+		if (!str)
+		{
+			write(2, "exit\n", 5);
 			exit(0);
+		}
 		parse_line(str, cmds, token);
 		del_signal();
 		execute_cmds(cmds, token);
 		add_history(str);
 		free_everything(cmds, token, str);
 		cmds = init_cmds();
-		// check_leak();
 	}
 }
 
-//exit long long 범위까지 256으로 나눠서 exit값 반환
+//exit long long 범위까지 256으로 나눠서 exit값 반
+
+// exit status 만들어야함
+// ctrl D 눌렀을 때
+// exit command 입력했을 때
+// $? 처리 -> exit status로 치환
+
+//heredoc EOF일때 unlink 처리
+

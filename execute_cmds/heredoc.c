@@ -6,7 +6,7 @@
 /*   By: daijeong <daijeong@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/15 14:52:26 by sungwook          #+#    #+#             */
-/*   Updated: 2023/05/10 21:47:23 by daijeong         ###   ########.fr       */
+/*   Updated: 2023/05/12 15:54:56 by daijeong         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,8 +19,11 @@ void	write_in_heredoc(int fd, const char *limiter)
 	while (1)
 	{
 		str = readline("> ");
-		if (!ft_strcmp(str, limiter))
+		if (!str || !ft_strcmp(str, limiter))
+		{
+			free(str);
 			break ;
+		}
 		ft_putstr_fd(str, fd);
 		ft_putstr_fd("\n", fd);
 		free(str);

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parse_redirection.c                                :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: sungwook <sungwook@student.42.fr>          +#+  +:+       +#+        */
+/*   By: daijeong <daijeong@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/27 15:59:07 by daijeong          #+#    #+#             */
-/*   Updated: 2023/05/01 19:58:10 by sungwook         ###   ########.fr       */
+/*   Updated: 2023/05/12 15:39:01 by daijeong         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,7 @@ void	parse_left_redirection(t_commands *cmds, t_token *token)
 		cmds->infile_end->flag++;
 	}
 	else
-		token->exit_status = 258;
+		g_exit_status = 258;
 }
 
 void	parse_right_redirection(t_commands *cmds, t_token *token)
@@ -33,7 +33,7 @@ void	parse_right_redirection(t_commands *cmds, t_token *token)
 		cmds->outfile_end->flag++;
 	}
 	else
-		token->exit_status = 258;
+		g_exit_status = 258;
 }
 
 int	parse_redirection(t_commands *cmds, t_token *token, char c)

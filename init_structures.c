@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   init_structures.c                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: Wilbur0306 <Wilbur0306@student.42.fr>      +#+  +:+       +#+        */
+/*   By: daijeong <daijeong@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/27 15:58:47 by daijeong          #+#    #+#             */
-/*   Updated: 2023/05/06 15:47:24 by Wilbur0306       ###   ########.fr       */
+/*   Updated: 2023/05/12 15:46:03 by daijeong         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,7 +71,6 @@ t_token	*init_token(char **envp)
 	token->right_redirection = 0;
 	token->word = 0;
 	token->dollar_word = 0;
-	token->exit_status = 0;
 	token->prev_char = 0;
 	return (token);
 }

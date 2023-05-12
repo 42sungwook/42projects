@@ -6,7 +6,13 @@
 /*   By: daijeong <daijeong@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/27 15:59:31 by daijeong          #+#    #+#             */
-/*   Updated: 2023/05/10 22:05:09 by daijeong         ###   ########.fr       */
+/*   Updated: 2023/05/12 15:17:38 by daijeong         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
+#include "../minishell.h"
+
+unsigned char	builtin_exit(t_commands *cmds)
+{
+	
+}
