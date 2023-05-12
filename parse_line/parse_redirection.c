@@ -6,7 +6,7 @@
 /*   By: daijeong <daijeong@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/27 15:59:07 by daijeong          #+#    #+#             */
-/*   Updated: 2023/05/12 17:02:27 by daijeong         ###   ########.fr       */
+/*   Updated: 2023/05/12 21:39:50 by daijeong         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,12 +50,3 @@ int	parse_redirection(t_commands *cmds, t_token *token, char c)
 		parse_right_redirection(cmds, token);
 	return (0);
 }
-// <<
-// <
-// >
-// >>
-//<<<
-//>>>
-//<a <b <c
-//<a <<b <c cat | << d
-//syntax error: 258

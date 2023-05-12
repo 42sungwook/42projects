@@ -6,7 +6,7 @@
 /*   By: daijeong <daijeong@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/27 15:58:44 by daijeong          #+#    #+#             */
-/*   Updated: 2023/05/12 17:20:52 by daijeong         ###   ########.fr       */
+/*   Updated: 2023/05/12 21:39:34 by daijeong         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -76,10 +76,7 @@ int	main(int argc, char **argv, char **envp)
 
 //exit long long 범위까지 256으로 나눠서 exit값 반
 
-// exit status 만들어야함
-// ctrl D 눌렀을 때
 // exit command 입력했을 때
 
 //heredoc EOF일때 unlink 처리
-//heredoc <<<< SEGV 처리
-//sleep ctrl c, d 안되는거 처리
+//redirection SEGV
