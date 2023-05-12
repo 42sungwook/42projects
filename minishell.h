@@ -6,7 +6,7 @@
 /*   By: daijeong <daijeong@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/27 15:58:34 by daijeong          #+#    #+#             */
-/*   Updated: 2023/05/12 16:48:29 by daijeong         ###   ########.fr       */
+/*   Updated: 2023/05/12 17:03:00 by daijeong         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,6 +32,8 @@
 # define CLOSE_PIPE1 1
 # define CLOSE_PIPE2 0
 # define CLOSE_BOTH 3
+# define SYNTAX_ERROR 258
+# define CMD_NOT_FOUND 127
 
 int	g_exit_status;
 

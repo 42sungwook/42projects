@@ -6,7 +6,7 @@
 /*   By: daijeong <daijeong@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/29 12:58:35 by sungwook          #+#    #+#             */
-/*   Updated: 2023/05/12 16:27:44 by daijeong         ###   ########.fr       */
+/*   Updated: 2023/05/12 17:06:46 by daijeong         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -84,11 +84,10 @@ void	save_cmds(t_commands *cmds, char **envp)
 		if (!check_builtins(temp_cmds))
 		{
 			check_access_and_save(temp_cmds, path);
-			g_exit_status = 0;
 			if (temp_cmds->cmd && (!temp_cmds->cmd[0] || \
 				access(temp_cmds->cmd[0], X_OK)))
 			{
-				g_exit_status = 127;
+				g_exit_status = CMD_NOT_FOUND;
 				write(2, "minishell: ", 11);
 				write(2, temp_cmds->cmd[0], ft_strlen(temp_cmds->cmd[0]));
 				write(2, ": command not found\n", 20);

@@ -6,7 +6,7 @@
 /*   By: daijeong <daijeong@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/27 15:59:07 by daijeong          #+#    #+#             */
-/*   Updated: 2023/05/12 15:39:01 by daijeong         ###   ########.fr       */
+/*   Updated: 2023/05/12 17:02:27 by daijeong         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,7 @@ void	parse_left_redirection(t_commands *cmds, t_token *token)
 		cmds->infile_end->flag++;
 	}
 	else
-		g_exit_status = 258;
+		g_exit_status = SYNTAX_ERROR;
 }
 
 void	parse_right_redirection(t_commands *cmds, t_token *token)
@@ -33,7 +33,7 @@ void	parse_right_redirection(t_commands *cmds, t_token *token)
 		cmds->outfile_end->flag++;
 	}
 	else
-		g_exit_status = 258;
+		g_exit_status = SYNTAX_ERROR;
 }
 
 int	parse_redirection(t_commands *cmds, t_token *token, char c)
