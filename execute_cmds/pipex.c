@@ -6,7 +6,7 @@
 /*   By: sungwook <sungwook@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/15 14:20:10 by sungwook          #+#    #+#             */
-/*   Updated: 2023/05/13 13:49:57 by sungwook         ###   ########.fr       */
+/*   Updated: 2023/05/13 14:20:55 by sungwook         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,6 +42,7 @@ void	pipex(t_commands *cmds, t_token *token)
 	first_child_process(cmds, token);
 	if (temp && temp->next)
 	{
+		close_pipe(token, CLOSE_PIPE2);
 		while (temp->next)
 		{
 			sign = nth_child_process(sign, temp, token);
@@ -51,7 +52,7 @@ void	pipex(t_commands *cmds, t_token *token)
 	if (temp)
 		last_child_process(sign, temp, token);
 	else
-		close_pipe(token, CLOSE_PIPE1);
+		close_pipe(token, CLOSE_BOTH);
 	close_all_fds(cmds);
 	wait_pids(cmds, token);
 }

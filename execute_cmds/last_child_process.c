@@ -6,7 +6,7 @@
 /*   By: sungwook <sungwook@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/29 15:20:03 by sungwook          #+#    #+#             */
-/*   Updated: 2023/05/13 14:04:06 by sungwook         ###   ########.fr       */
+/*   Updated: 2023/05/13 14:27:05 by sungwook         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,6 +32,6 @@ void	last_child_process(int sign, t_commands *cmds, t_token *token)
 		else
 			exit(execute_builtins(cmds, token));
 	}
-	close_pipe(token, sign);
+	close_pipe(token, 1 - sign);
 	token->pid = pid;
 }
