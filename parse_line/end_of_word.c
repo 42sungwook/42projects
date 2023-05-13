@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   end_of_word.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: daijeong <daijeong@student.42.fr>          +#+  +:+       +#+        */
+/*   By: sungwook <sungwook@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/27 15:59:22 by daijeong          #+#    #+#             */
-/*   Updated: 2023/05/12 16:09:27 by daijeong         ###   ########.fr       */
+/*   Updated: 2023/05/13 22:04:31 by sungwook         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,7 +51,10 @@ void	find_dollar_word_in_envp(t_token *token)
 			continue ;
 		}
 		if (j == dollar_word_len && envp_temp->str[j] == '=')
+		{
 			found_dollar_word_in_envp(token, envp_temp, j);
+			return ;
+		}
 		envp_temp = envp_temp->next;
 	}
 }
