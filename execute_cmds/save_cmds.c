@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   save_cmds.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: daijeong <daijeong@student.42.fr>          +#+  +:+       +#+        */
+/*   By: sungwook <sungwook@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/29 12:58:35 by sungwook          #+#    #+#             */
-/*   Updated: 2023/05/12 17:06:46 by daijeong         ###   ########.fr       */
+/*   Updated: 2023/05/13 19:34:46 by sungwook         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -100,3 +100,7 @@ void	save_cmds(t_commands *cmds, char **envp)
 	save_fds_in_cmds(cmds);
 	free_arr(path);
 }
+
+//heredoc 어떻게 종료?
+// ctrl c 누르면?
+// $? 눌렀을 때 1

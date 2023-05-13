@@ -6,7 +6,7 @@
 /*   By: sungwook <sungwook@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/15 14:20:10 by sungwook          #+#    #+#             */
-/*   Updated: 2023/05/13 14:20:55 by sungwook         ###   ########.fr       */
+/*   Updated: 2023/05/13 19:19:08 by sungwook         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,12 +21,9 @@ static void	wait_pids(t_commands *cmds, t_token *token)
 	temp = cmds;
 	while (temp)
 	{
-		if (temp->cmd)
-		{
-			pid = waitpid(-1, &status, 0);
-			if (pid == token->pid)
-				g_exit_status = WEXITSTATUS(status);
-		}
+		pid = waitpid(-1, &status, 0);
+		if (pid == token->pid)
+			g_exit_status = WEXITSTATUS(status);
 		temp = temp->next;
 	}
 }

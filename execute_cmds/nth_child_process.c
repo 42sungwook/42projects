@@ -6,7 +6,7 @@
 /*   By: sungwook <sungwook@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/29 15:20:04 by sungwook          #+#    #+#             */
-/*   Updated: 2023/05/13 14:34:09 by sungwook         ###   ########.fr       */
+/*   Updated: 2023/05/13 19:14:08 by sungwook         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,8 +28,6 @@ int	nth_child_process(int sign, t_commands *cmds, t_token *token)
 			dup2(token->pipe_fd[sign][READ_END], STDIN_FILENO);
 		if (cmds->fds->outfile == 0)
 			dup2(token->pipe_fd[1 - sign][WRITE_END], STDOUT_FILENO);
-		if (cmds->cmd[0][0] == 0 || access(cmds->cmd[0], X_OK) != 0)
-			close(STDOUT_FILENO);
 		close_pipe(token, CLOSE_BOTH);
 		if (!check_builtins(cmds))
 			execve(cmds->cmd[0], cmds->cmd, make_two_pointer_envp(token));
