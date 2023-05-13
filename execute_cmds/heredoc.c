@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   heredoc.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: daijeong <daijeong@student.42.fr>          +#+  +:+       +#+        */
+/*   By: sungwook <sungwook@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/15 14:52:26 by sungwook          #+#    #+#             */
-/*   Updated: 2023/05/12 15:54:56 by daijeong         ###   ########.fr       */
+/*   Updated: 2023/05/13 13:46:39 by sungwook         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,6 +43,8 @@ int	check_heredoc_name(char **heredoc_file, t_line *heredoc_temp, int file_fd)
 		if (access(*heredoc_file, F_OK))
 		{
 			file_fd = open(*heredoc_file, O_WRONLY | O_CREAT | O_TRUNC, 0644);
+			if (heredoc_temp->next->flag)
+				unlink(*heredoc_file);
 			write_in_heredoc(file_fd, heredoc_temp->line);
 			return (file_fd);
 		}
@@ -74,8 +76,6 @@ int	open_heredoc_fd(t_commands *cmds)
 		free(heredoc_temp->line);
 		heredoc_temp->line = heredoc_file;
 		heredoc_temp = heredoc_temp->next;
-		if (heredoc_temp->next)
-			unlink(heredoc_file);
 		close(file_fd);
 	}
 	if (file_fd)

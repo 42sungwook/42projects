@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   signal.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: daijeong <daijeong@student.42.fr>          +#+  +:+       +#+        */
+/*   By: sungwook <sungwook@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/11 19:38:12 by daijeong          #+#    #+#             */
-/*   Updated: 2023/05/12 17:39:57 by daijeong         ###   ########.fr       */
+/*   Updated: 2023/05/13 13:11:16 by sungwook         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,6 +30,15 @@ void	init_signal(void)
 	rl_catch_signals = 0;
 	signal(SIGQUIT, SIG_IGN);
 	signal(SIGINT, &sigint_handler);
+}
+
+void	init_child_signal(void)
+{
+	extern int	rl_catch_signals;
+
+	rl_catch_signals = 0;
+	signal(SIGQUIT, SIG_DFL);
+	signal(SIGINT, SIG_DFL);
 }
 
 void	del_signal(void)

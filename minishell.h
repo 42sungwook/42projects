@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: daijeong <daijeong@student.42.fr>          +#+  +:+       +#+        */
+/*   By: sungwook <sungwook@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/27 15:58:34 by daijeong          #+#    #+#             */
-/*   Updated: 2023/05/12 17:12:38 by daijeong         ###   ########.fr       */
+/*   Updated: 2023/05/13 13:12:21 by sungwook         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -138,6 +138,7 @@ void		open_heredoc(t_commands *cmds);
 //signal
 void		init_signal(void);
 void		del_signal(void);
+void		init_child_signal(void);
 
 //builtins
 int			check_builtins(t_commands	*cmds);

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   pipex.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: daijeong <daijeong@student.42.fr>          +#+  +:+       +#+        */
+/*   By: sungwook <sungwook@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/15 14:20:10 by sungwook          #+#    #+#             */
-/*   Updated: 2023/05/12 17:07:15 by daijeong         ###   ########.fr       */
+/*   Updated: 2023/05/13 13:49:57 by sungwook         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,7 +40,7 @@ void	pipex(t_commands *cmds, t_token *token)
 	sign = 0;
 	temp = cmds->next;
 	first_child_process(cmds, token);
-	if (cmds->next && cmds->next->next)
+	if (temp && temp->next)
 	{
 		while (temp->next)
 		{
@@ -51,10 +51,7 @@ void	pipex(t_commands *cmds, t_token *token)
 	if (temp)
 		last_child_process(sign, temp, token);
 	else
-	{
-		close(token->pipe_fd[0][0]);
-		close(token->pipe_fd[0][1]);
-	}
+		close_pipe(token, CLOSE_PIPE1);
 	close_all_fds(cmds);
 	wait_pids(cmds, token);
 }
