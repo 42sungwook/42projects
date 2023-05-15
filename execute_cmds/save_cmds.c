@@ -6,7 +6,7 @@
 /*   By: daijeong <daijeong@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/29 12:58:35 by sungwook          #+#    #+#             */
-/*   Updated: 2023/05/15 20:44:01 by daijeong         ###   ########.fr       */
+/*   Updated: 2023/05/15 22:30:17 by daijeong         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,7 +68,7 @@ static char	**save_paths(char **envp)
 		i++;
 	}
 	if (!envp[i])
-		perror("path");
+		return (0);
 	return (ft_split(envp[i] + 5, ':'));
 }
 
@@ -83,7 +83,8 @@ int	save_cmds(t_commands *cmds, char **envp)
 	{
 		if (!check_builtins(temp_cmds))
 		{
-			check_access_and_save(temp_cmds, path);
+			if (path)
+				check_access_and_save(temp_cmds, path);
 			if (temp_cmds->cmd && (!temp_cmds->cmd[0] || \
 				access(temp_cmds->cmd[0], X_OK)))
 			{

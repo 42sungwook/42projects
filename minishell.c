@@ -6,7 +6,7 @@
 /*   By: daijeong <daijeong@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/27 15:58:44 by daijeong          #+#    #+#             */
-/*   Updated: 2023/05/15 21:44:09 by daijeong         ###   ########.fr       */
+/*   Updated: 2023/05/15 22:14:32 by daijeong         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,11 +40,6 @@ void	parse_line(char *str, t_commands *cmds, t_token *token)
 	}
 	end_of_word(cmds, token, str[i]);
 }
-
-// void	check_leak(void)
-// {
-// 	system("leaks minishell");
-// }
 
 int	main(int argc, char **argv, char **envp)
 {
@@ -81,5 +76,3 @@ int	main(int argc, char **argv, char **envp)
 //heredoc EOF일때 unlink 처리
 //redirection SEGV
 
-
-// heredoc 에서 crtl c 로 나왔는데 cat 명령어 실행을 하지 않는다?? -> infile fd -1 이라서? 
