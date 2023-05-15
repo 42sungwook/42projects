@@ -6,7 +6,7 @@
 /*   By: daijeong <daijeong@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/02 16:26:18 by daijeong          #+#    #+#             */
-/*   Updated: 2023/05/15 19:48:16 by daijeong         ###   ########.fr       */
+/*   Updated: 2023/05/15 21:51:30 by daijeong         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,7 +40,8 @@ void	open_infile_list(t_commands *cmds)
 			perror(temp->line);
 			error_fd = 1;
 		}
-		cmds->fds->infile = fd;
+		if (cmds->read_heredoc == INFILE_END)
+			cmds->fds->infile = fd;
 		temp = temp->next;
 	}
 	if (error_fd)
@@ -84,10 +85,10 @@ int	save_fds_in_cmds(t_commands *cmds)
 	while (temp)
 	{
 		init_cmds_fds(temp);
-		open_infile_list(temp);
-		open_outfile_list(temp);
 		if (open_heredoc(temp))
 			return (1);
+		open_infile_list(temp);
+		open_outfile_list(temp);
 		temp = temp->next;
 	}
 	return (0);

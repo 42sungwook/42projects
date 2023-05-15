@@ -6,7 +6,7 @@
 /*   By: daijeong <daijeong@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/29 12:58:35 by sungwook          #+#    #+#             */
-/*   Updated: 2023/05/15 19:47:55 by daijeong         ###   ########.fr       */
+/*   Updated: 2023/05/15 20:44:01 by daijeong         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -102,7 +102,3 @@ int	save_cmds(t_commands *cmds, char **envp)
 	free_arr(path);
 	return (0);
 }
-
-//heredoc 어떻게 종료?
-// ctrl c 누르면?
-// $? 눌렀을 때 1

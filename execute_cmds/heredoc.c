@@ -6,7 +6,7 @@
 /*   By: daijeong <daijeong@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/15 14:52:26 by sungwook          #+#    #+#             */
-/*   Updated: 2023/05/15 20:28:03 by daijeong         ###   ########.fr       */
+/*   Updated: 2023/05/15 21:52:30 by daijeong         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -73,11 +73,14 @@ int	open_heredoc_fd(t_commands *cmds)
 			close(file_fd);
 			heredoc_temp = heredoc_temp->next;
 		}
-		exit(0);
+		exit(1);
 	}
 	waitpid(pid, &status, 0);
-	if (WEXITSTATUS(status) == 1)
+	if (WEXITSTATUS(status) == 0)
+	{
+		g_exit_status = 1;
 		return (-1);
+	}
 	while (heredoc_temp->next->flag)
 		heredoc_temp = heredoc_temp->next;
 	str_temp = ft_itoa((long long)heredoc_temp->line);
