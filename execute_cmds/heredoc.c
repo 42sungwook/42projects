@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   heredoc.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: sungwook <sungwook@student.42.fr>          +#+  +:+       +#+        */
+/*   By: daijeong <daijeong@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/15 14:52:26 by sungwook          #+#    #+#             */
-/*   Updated: 2023/05/13 19:31:43 by sungwook         ###   ########.fr       */
+/*   Updated: 2023/05/15 15:29:48 by daijeong         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,7 +50,7 @@ int	check_heredoc_name(char **heredoc_file, t_line *heredoc_temp, int file_fd)
 		}
 		if (str[0] == '9')
 			return (0);
-		temp = ft_strdup("heredoc_temp");
+		temp = ft_strdup("/tmp/");
 		if (*heredoc_file)
 			free(*heredoc_file);
 		*heredoc_file = ft_strjoin(temp, str);
@@ -64,6 +64,7 @@ int	open_heredoc_fd(t_commands *cmds)
 {
 	t_line	*heredoc_temp;
 	char	*heredoc_file;
+	char	*temp_dir;
 	int		file_fd;
 
 	file_fd = 0;
@@ -71,7 +72,8 @@ int	open_heredoc_fd(t_commands *cmds)
 	heredoc_file = 0;
 	while (heredoc_temp->flag)
 	{
-		heredoc_file = ft_strdup("heredoc_temp");
+		temp_dir = getenv("TMPDIR");
+		heredoc_file = ft_strdup(temp_dir);
 		file_fd = check_heredoc_name(&heredoc_file, heredoc_temp, file_fd);
 		free(heredoc_temp->line);
 		heredoc_temp->line = heredoc_file;
