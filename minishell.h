@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: sungwook <sungwook@student.42.fr>          +#+  +:+       +#+        */
+/*   By: daijeong <daijeong@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/27 15:58:34 by daijeong          #+#    #+#             */
-/*   Updated: 2023/05/13 13:12:21 by sungwook         ###   ########.fr       */
+/*   Updated: 2023/05/15 19:49:27 by daijeong         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -107,12 +107,12 @@ t_commands	*parse_pipe(t_commands *cmds, t_token *token);
 int			parse_question(t_token *token);
 
 //execute_cmds
-void		save_cmds(t_commands *cmds, char **envp);
+int			save_cmds(t_commands *cmds, char **envp);
 int			execute_cmds(t_commands *cmds, t_token *token);
 void		last_child_process(int sign, t_commands *cmds, t_token *token);
 int			nth_child_process(int sign, t_commands *cmds, t_token *token);
 void		first_child_process(t_commands *cmds, t_token *token);
-void		save_fds_in_cmds(t_commands *cmds);
+int			save_fds_in_cmds(t_commands *cmds);
 void		init_cmds_fds(t_commands *cmds);
 void		pipex(t_commands *cmds, t_token *token);
 void		open_infile_list(t_commands *cmds);
@@ -133,7 +133,7 @@ void		merge_sort(t_envp **list, size_t size);
 void		free_everything(t_commands *cmds, t_token *token, char *str);
 
 //heredoc
-void		open_heredoc(t_commands *cmds);
+int			open_heredoc(t_commands *cmds);
 
 //signal
 void		init_signal(void);

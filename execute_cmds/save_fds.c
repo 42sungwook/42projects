@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   save_fds.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: Wilbur0306 <Wilbur0306@student.42.fr>      +#+  +:+       +#+        */
+/*   By: daijeong <daijeong@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/02 16:26:18 by daijeong          #+#    #+#             */
-/*   Updated: 2023/05/06 16:34:41 by Wilbur0306       ###   ########.fr       */
+/*   Updated: 2023/05/15 19:48:16 by daijeong         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -76,7 +76,7 @@ void	open_outfile_list(t_commands *cmds)
 		cmds->fds->outfile = -1;
 }
 
-void	save_fds_in_cmds(t_commands *cmds)
+int	save_fds_in_cmds(t_commands *cmds)
 {
 	t_commands	*temp;
 
@@ -86,7 +86,9 @@ void	save_fds_in_cmds(t_commands *cmds)
 		init_cmds_fds(temp);
 		open_infile_list(temp);
 		open_outfile_list(temp);
-		open_heredoc(temp);
+		if (open_heredoc(temp))
+			return (1);
 		temp = temp->next;
 	}
+	return (0);
 }

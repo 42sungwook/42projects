@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   save_cmds.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: sungwook <sungwook@student.42.fr>          +#+  +:+       +#+        */
+/*   By: daijeong <daijeong@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/29 12:58:35 by sungwook          #+#    #+#             */
-/*   Updated: 2023/05/13 19:34:46 by sungwook         ###   ########.fr       */
+/*   Updated: 2023/05/15 19:47:55 by daijeong         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,7 +72,7 @@ static char	**save_paths(char **envp)
 	return (ft_split(envp[i] + 5, ':'));
 }
 
-void	save_cmds(t_commands *cmds, char **envp)
+int	save_cmds(t_commands *cmds, char **envp)
 {
 	char		**path;
 	t_commands	*temp_cmds;
@@ -97,8 +97,10 @@ void	save_cmds(t_commands *cmds, char **envp)
 		}
 		temp_cmds = temp_cmds->next;
 	}
-	save_fds_in_cmds(cmds);
+	if (save_fds_in_cmds(cmds))
+		return (1);
 	free_arr(path);
+	return (0);
 }
 
 //heredoc 어떻게 종료?
