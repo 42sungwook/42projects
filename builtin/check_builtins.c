@@ -6,7 +6,7 @@
 /*   By: daijeong <daijeong@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/05 10:19:15 by sungwook          #+#    #+#             */
-/*   Updated: 2023/05/16 14:50:01 by daijeong         ###   ########.fr       */
+/*   Updated: 2023/05/16 20:42:09 by daijeong         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,16 +27,18 @@ int	check_builtins(t_commands	*cmds)
 
 int	execute_builtins(t_commands *cmds, t_token *token)
 {
+	if (cmds->fds->outfile < 0)
+		return (-1);
 	if (!ft_strcmp(cmds->cmd[0], "echo"))
 		builtin_echo(cmds);
 	else if (!ft_strcmp(cmds->cmd[0], "cd"))
 		return (builtin_cd(cmds, token));
 	else if (!ft_strcmp(cmds->cmd[0], "env"))
-		builtin_env(token);
+		builtin_env(cmds, token);
 	else if (!ft_strcmp(cmds->cmd[0], "pwd"))
-		builtin_pwd();
+		builtin_pwd(cmds);
 	else if (!ft_strcmp(cmds->cmd[0], "export"))
-		builtin_export(token, cmds->cmd);
+		builtin_export(cmds, token, cmds->cmd);
 	else if (!ft_strcmp(cmds->cmd[0], "unset"))
 		builtin_unset(token, cmds->cmd);
 	else if (!ft_strcmp(cmds->cmd[0], "exit"))

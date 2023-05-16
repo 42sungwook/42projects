@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: sungwook <sungwook@student.42.fr>          +#+  +:+       +#+        */
+/*   By: daijeong <daijeong@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/27 15:58:34 by daijeong          #+#    #+#             */
-/*   Updated: 2023/05/16 18:34:39 by sungwook         ###   ########.fr       */
+/*   Updated: 2023/05/16 20:39:41 by daijeong         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -146,10 +146,10 @@ int			check_builtins(t_commands	*cmds);
 int			execute_builtins(t_commands *cmds, t_token *token);
 int			builtin_cd(t_commands *cmds, t_token *token);
 int			builtin_echo(t_commands *cmds);
-int			builtin_env(t_token *token);
-int			builtin_pwd(void);
+int			builtin_env(t_commands *cmds, t_token *token);
+int			builtin_pwd(t_commands *cmds);
 int			builtin_unset(t_token *token, char **cmd);
-int			builtin_export(t_token *token, char **cmd);
+int			builtin_export(t_commands *cmds, t_token *token, char **cmd);
 int			builtin_exit(t_commands *cmds);
 t_envp		*delete_envp_list(t_envp *envp_list, t_envp *tmp_list);
 int			envp_lstsize(t_envp *lst);

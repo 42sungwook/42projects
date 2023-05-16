@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   builtin_export.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: sungwook <sungwook@student.42.fr>          +#+  +:+       +#+        */
+/*   By: daijeong <daijeong@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/27 15:59:33 by daijeong          #+#    #+#             */
-/*   Updated: 2023/05/05 21:07:54 by sungwook         ###   ########.fr       */
+/*   Updated: 2023/05/16 20:44:07 by daijeong         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,27 +26,29 @@ void	add_new_envp(t_envp *envp, char *cmd)
 	tmp->next = new;
 }
 
-void	print_export_message(t_envp *free_tmp)
+void	print_export_message(t_commands *cmds, t_envp *free_tmp)
 {
 	int	equal_location;
 	int	i;
 
+	if (!cmds->fds->outfile)
+		cmds->fds->outfile = 1;
 	while (free_tmp)
 	{
-		ft_putstr_fd("declare -x ", 1);
+		ft_putstr_fd("declare -x ", cmds->fds->outfile);
 		equal_location = cmpcmp(free_tmp->str, '=') + 1;
 		i = -1;
 		while (++i < equal_location)
-			ft_putchar_fd(free_tmp->str[i], 1);
-		ft_putchar_fd('"', 1);
-		ft_putstr_fd(free_tmp->str + equal_location, 1);
-		ft_putchar_fd('"', 1);
-		ft_putchar_fd('\n', 1);
+			ft_putchar_fd(free_tmp->str[i], cmds->fds->outfile);
+		ft_putchar_fd('"', cmds->fds->outfile);
+		ft_putstr_fd(free_tmp->str + equal_location, cmds->fds->outfile);
+		ft_putchar_fd('"', cmds->fds->outfile);
+		ft_putchar_fd('\n', cmds->fds->outfile);
 		free_tmp = free_tmp->next;
 	}
 }
 
-int	print_envp_list(t_envp *envp)
+int	print_envp_list(t_commands *cmds, t_envp *envp)
 {
 	t_envp	*tmp;
 	t_envp	*free_tmp;
@@ -54,7 +56,7 @@ int	print_envp_list(t_envp *envp)
 	tmp = ft_listdup(envp);
 	merge_sort(&tmp, envp_lstsize(tmp));
 	free_tmp = tmp;
-	print_export_message(free_tmp);
+	print_export_message(cmds, free_tmp);
 	free_tmp = tmp;
 	while (free_tmp)
 	{
@@ -88,7 +90,7 @@ void	valid_envp_name(t_envp *envp, char *cmd)
 	add_new_envp(envp, cmd);
 }
 
-int	builtin_export(t_token *token, char **cmd)
+int	builtin_export(t_commands *cmds, t_token *token, char **cmd)
 {
 	t_envp	*envp_list;
 	t_envp	*tmp_list;
@@ -97,7 +99,7 @@ int	builtin_export(t_token *token, char **cmd)
 	i = 0;
 	envp_list = token->envp;
 	if (!cmd[1] || cmd[1][0] == '#')
-		return (print_envp_list(envp_list));
+		return (print_envp_list(cmds, envp_list));
 	while (cmd[++i])
 	{
 		tmp_list = envp_list;
