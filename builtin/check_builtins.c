@@ -6,7 +6,7 @@
 /*   By: daijeong <daijeong@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/05 10:19:15 by sungwook          #+#    #+#             */
-/*   Updated: 2023/05/12 15:13:56 by daijeong         ###   ########.fr       */
+/*   Updated: 2023/05/16 14:50:01 by daijeong         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,7 +39,7 @@ int	execute_builtins(t_commands *cmds, t_token *token)
 		builtin_export(token, cmds->cmd);
 	else if (!ft_strcmp(cmds->cmd[0], "unset"))
 		builtin_unset(token, cmds->cmd);
-	// else if (!ft_strcmp(cmds->cmd[0], "exit"))
-	// 	builtin_exit(cmds);
+	else if (!ft_strcmp(cmds->cmd[0], "exit"))
+		builtin_exit(cmds);
 	return (0);
 }

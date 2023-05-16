@@ -6,7 +6,7 @@
 /*   By: daijeong <daijeong@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/27 15:58:34 by daijeong          #+#    #+#             */
-/*   Updated: 2023/05/15 21:09:49 by daijeong         ###   ########.fr       */
+/*   Updated: 2023/05/16 14:04:12 by daijeong         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -150,6 +150,7 @@ int			builtin_env(t_token *token);
 int			builtin_pwd(void);
 int			builtin_unset(t_token *token, char **cmd);
 int			builtin_export(t_token *token, char **cmd);
+int			builtin_exit(t_commands *cmds);
 t_envp		*delete_envp_list(t_envp *envp_list, t_envp *tmp_list);
 int			envp_lstsize(t_envp *lst);
 t_envp		*envp_lstlast(t_envp *lst);
