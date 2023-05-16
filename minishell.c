@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: sungwook <sungwook@student.42.fr>          +#+  +:+       +#+        */
+/*   By: daijeong <daijeong@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/27 15:58:44 by daijeong          #+#    #+#             */
-/*   Updated: 2023/05/16 18:37:48 by sungwook         ###   ########.fr       */
+/*   Updated: 2023/05/16 20:07:21 by daijeong         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,6 +27,18 @@ int	parse_character(t_commands *cmds, t_token *token, char c)
 	else if (c == '?')
 		return (parse_question(token));
 	return (1);
+}
+
+int	parse_syntax_error(t_commands *cmds, t_token *token)
+{
+	if ((token->pipe >= 1 && !cmds->cmd && !token->word && !token->dollar_word) \
+		|| token->quote)
+	{
+		write(2, "minishell: syntax error\n", 24);
+		g_exit_status = SYNTAX_ERROR;
+		return (1);
+	}
+	return (0);
 }
 
 int	parse_line(char *str, t_commands *cmds, t_token *token)
@@ -50,6 +62,8 @@ int	parse_line(char *str, t_commands *cmds, t_token *token)
 			token->word = make_word_c(token->word, str[i]);
 	}
 	if (flag == 1)
+		return (1);
+	if (parse_syntax_error(cmds, token))
 		return (1);
 	end_of_word(cmds, token, str[i]);
 	return (0);
