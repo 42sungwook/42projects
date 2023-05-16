@@ -36,6 +36,7 @@ int	builtin_exit(t_commands *cmds)
 		}
 		ft_putstr_fd("exit\n", 2);
 		ft_putstr_fd("minishell: exit: too many arguments\n", 2);
+		g_exit_status = 1;
 		return (1);
 	}
 	if (cmds->cmd[1])

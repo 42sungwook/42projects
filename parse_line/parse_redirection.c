@@ -6,7 +6,7 @@
 /*   By: daijeong <daijeong@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/27 15:59:07 by daijeong          #+#    #+#             */
-/*   Updated: 2023/05/12 21:39:50 by daijeong         ###   ########.fr       */
+/*   Updated: 2023/05/16 16:36:43 by daijeong         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,12 @@ void	parse_left_redirection(t_commands *cmds, t_token *token)
 		cmds->infile_end->flag++;
 	}
 	else
+	{
+		write(2, "minishell: syntax error near unexpected token `", 47);
+		write(2, "<", 1);
+		write(2, "'\n", 2);
 		g_exit_status = SYNTAX_ERROR;
+	}
 }
 
 void	parse_right_redirection(t_commands *cmds, t_token *token)

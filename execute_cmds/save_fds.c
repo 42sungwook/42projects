@@ -6,7 +6,7 @@
 /*   By: daijeong <daijeong@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/02 16:26:18 by daijeong          #+#    #+#             */
-/*   Updated: 2023/05/15 21:51:30 by daijeong         ###   ########.fr       */
+/*   Updated: 2023/05/16 16:44:20 by daijeong         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,14 +30,14 @@ void	open_infile_list(t_commands *cmds)
 	fd = 0;
 	error_fd = 0;
 	temp = cmds->infile;
-	while (temp->flag)
+	while (temp && temp->flag)
 	{
 		if (fd > 0)
 			close(cmds->fds->infile);
 		fd = open(temp->line, O_RDONLY);
 		if (fd == -1)
 		{
-			perror(temp->line);
+			// perror(temp->line);
 			error_fd = 1;
 		}
 		if (cmds->read_heredoc == INFILE_END)
