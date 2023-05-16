@@ -6,12 +6,12 @@
 #    By: daijeong <daijeong@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/04/27 15:58:46 by daijeong          #+#    #+#              #
-#    Updated: 2023/05/15 22:27:00 by daijeong         ###   ########.fr        #
+#    Updated: 2023/05/16 13:05:53 by daijeong         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 NAME		= minishell
-CC          = cc -g -fsanitize=address
+CC          = cc -g
 CFLAGS      = -Wall -Wextra -Werror -Ilibft -I${HOME}/.brew/opt/readline/include
 RM			= rm -f
 LIBFT		= -Llibft -lft
