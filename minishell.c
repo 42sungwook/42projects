@@ -3,42 +3,56 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: daijeong <daijeong@student.42.fr>          +#+  +:+       +#+        */
+/*   By: sungwook <sungwook@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/27 15:58:44 by daijeong          #+#    #+#             */
-/*   Updated: 2023/05/15 22:14:32 by daijeong         ###   ########.fr       */
+/*   Updated: 2023/05/16 18:37:48 by sungwook         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-void	parse_line(char *str, t_commands *cmds, t_token *token)
+int	parse_character(t_commands *cmds, t_token *token, char c)
 {
-	int		i;
+	if (c == ' ' || c == '\t' || c == '\n')
+		return (end_of_word(cmds, token, c));
+	else if (c == '\"')
+		return (parse_double_quote(cmds, token));
+	else if (c == '\'')
+		return (parse_single_quote(cmds, token));
+	else if (c == '<' || c == '>')
+		return (parse_redirection(cmds, token, c));
+	else if (c == '$')
+		return (parse_dollar(token));
+	else if (c == '?')
+		return (parse_question(token));
+	return (1);
+}
+
+int	parse_line(char *str, t_commands *cmds, t_token *token)
+{
+	int	i;
+	int	flag;
 
 	i = -1;
-	while (str[++i])
+	flag = 0;
+	while (str[++i] && flag == 0)
 	{
-		if (str[i] == ' ' || str[i] == '\t' || str[i] == '\n') //white space 추가
-			end_of_word(cmds, token, str[i]);
-		else if (str[i] == '\"')
-			parse_double_quote(cmds, token);
-		else if (str[i] == '\'')
-			parse_single_quote(cmds, token);
-		else if (str[i] == '<' || str[i] == '>')
-			parse_redirection(cmds, token, str[i]);
+		if (str[i] == ' ' || str[i] == '\t' || str[i] == '\n' || \
+			str[i] == '\"' || str[i] == '<' || str[i] == '>' || \
+			str[i] == '\'' || str[i] == '$' || str[i] == '?')
+			flag = parse_character(cmds, token, str[i]);
 		else if (str[i] == '|')
 			cmds = parse_pipe(cmds, token);
-		else if (str[i] == '$')
-			parse_dollar(token);
-		else if (str[i] == '?')
-			parse_question(token);
 		else if (token->dollar == 1)
 			token->dollar_word = make_word_c(token->dollar_word, str[i]);
 		else
 			token->word = make_word_c(token->word, str[i]);
 	}
+	if (flag == 1)
+		return (1);
 	end_of_word(cmds, token, str[i]);
+	return (0);
 }
 
 int	main(int argc, char **argv, char **envp)
@@ -61,8 +75,8 @@ int	main(int argc, char **argv, char **envp)
 			exit(0);
 		}
 		del_signal();
-		parse_line(str, cmds, token);
-		execute_cmds(cmds, token);
+		if (!parse_line(str, cmds, token))
+			execute_cmds(cmds, token);
 		add_history(str);
 		free_everything(cmds, token, str);
 		cmds = init_cmds();

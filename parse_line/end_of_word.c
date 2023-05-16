@@ -6,13 +6,13 @@
 /*   By: sungwook <sungwook@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/27 15:59:22 by daijeong          #+#    #+#             */
-/*   Updated: 2023/05/13 22:04:31 by sungwook         ###   ########.fr       */
+/*   Updated: 2023/05/16 18:33:54 by sungwook         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../minishell.h"
 
-void	found_dollar_word_in_envp(t_token *token, t_envp *envp_temp, int j)
+int	found_dollar_word_in_envp(t_token *token, t_envp *envp_temp, int j)
 {
 	char	*temp;
 
@@ -26,10 +26,10 @@ void	found_dollar_word_in_envp(t_token *token, t_envp *envp_temp, int j)
 	token->dollar_word = 0;
 	token->dollar = 0;
 	token->word = temp;
-	return ;
+	return (0);
 }
 
-void	find_dollar_word_in_envp(t_token *token)
+int	find_dollar_word_in_envp(t_token *token)
 {
 	int		j;
 	int		dollar_word_len;
@@ -53,13 +53,14 @@ void	find_dollar_word_in_envp(t_token *token)
 		if (j == dollar_word_len && envp_temp->str[j] == '=')
 		{
 			found_dollar_word_in_envp(token, envp_temp, j);
-			return ;
+			return (0);
 		}
 		envp_temp = envp_temp->next;
 	}
+	return (0);
 }
 
-void	end_of_word(t_commands *cmds, t_token *token, char c)
+int	end_of_word(t_commands *cmds, t_token *token, char c)
 {
 	if (token->dollar == 1 && token->quote == 0)
 	{
@@ -78,9 +79,10 @@ void	end_of_word(t_commands *cmds, t_token *token, char c)
 	}
 	token->prev_char = c;
 	if (c == '|')
-		return ;
+		return (0);
 	else if (token->quote != 0 && token->dollar == 0)
 		token->word = make_word_c(token->word, c);
 	else if (token->dollar == 1 && token->quote == 1)
 		find_dollar_word_in_envp(token);
+	return (0);
 }

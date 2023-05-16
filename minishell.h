@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: daijeong <daijeong@student.42.fr>          +#+  +:+       +#+        */
+/*   By: sungwook <sungwook@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/27 15:58:34 by daijeong          #+#    #+#             */
-/*   Updated: 2023/05/16 14:04:12 by daijeong         ###   ########.fr       */
+/*   Updated: 2023/05/16 18:34:39 by sungwook         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -92,13 +92,13 @@ t_line		*init_line(void);
 t_envp		*init_envp(char **envp);
 
 //parsing
-void		end_of_word(t_commands *cmds, t_token *token, char c);
+int			end_of_word(t_commands *cmds, t_token *token, char c);
 char		*make_word_str(char *curr_word, char *c);
 char		*make_word_c(char *curr_word, char c);
 void		make_command(t_commands *cmds, t_token *token);
 char		**add_cmd(char **cmd, char *word);
 
-void		find_dollar_word_in_envp(t_token *token);
+int			find_dollar_word_in_envp(t_token *token);
 int			parse_dollar(t_token *token);
 int			parse_single_quote(t_commands *cmds, t_token *token);
 int			parse_double_quote(t_commands *cmds, t_token *token);
