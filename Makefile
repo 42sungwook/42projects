@@ -6,7 +6,7 @@
 #    By: daijeong <daijeong@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/04/27 15:58:46 by daijeong          #+#    #+#              #
-#    Updated: 2023/05/16 13:05:53 by daijeong         ###   ########.fr        #
+#    Updated: 2023/05/16 15:24:54 by daijeong         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -42,7 +42,7 @@ E_OBJS	= $(E_PATH:c=o)
 
 B_DIR	= ./builtin
 B_SRCS	= check_builtins.c builtin_cd.c builtin_echo.c builtin_env.c builtin_pwd.c builtin_unset.c \
-		  builtin_export.c envp_list_utils.c
+		  builtin_export.c envp_list_utils.c builtin_exit.c
 B_PATH	= $(addprefix $(B_DIR)/, $(B_SRCS))
 B_OBJS	= $(B_PATH:c=o)
 
