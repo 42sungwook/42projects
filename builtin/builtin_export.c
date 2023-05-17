@@ -6,7 +6,7 @@
 /*   By: sungwook <sungwook@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/27 15:59:33 by daijeong          #+#    #+#             */
-/*   Updated: 2023/05/17 15:29:54 by sungwook         ###   ########.fr       */
+/*   Updated: 2023/05/17 18:11:42 by sungwook         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -112,6 +112,7 @@ int	builtin_export(t_commands *cmds, t_token *token, char **cmd)
 			ft_putstr_fd("minishell: export: `", 2);
 			ft_putstr_fd(cmd[i], 2);
 			ft_putstr_fd("': not a valid identifier\n", 2);
+			g_exit_status = 1;
 		}
 	}
 	return (0);
