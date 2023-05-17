@@ -6,7 +6,7 @@
 /*   By: sungwook <sungwook@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/05 10:19:15 by sungwook          #+#    #+#             */
-/*   Updated: 2023/05/17 19:52:16 by sungwook         ###   ########.fr       */
+/*   Updated: 2023/05/17 21:03:42 by sungwook         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,7 +36,7 @@ int	execute_builtins(t_commands *cmds, t_token *token)
 	else if (!ft_strcmp(cmds->cmd[0], "env"))
 		return (builtin_env(cmds, token));
 	else if (!ft_strcmp(cmds->cmd[0], "pwd"))
-		return (builtin_pwd(cmds));
+		return (builtin_pwd(cmds, token));
 	else if (!ft_strcmp(cmds->cmd[0], "export"))
 		return (builtin_export(cmds, token, cmds->cmd));
 	else if (!ft_strcmp(cmds->cmd[0], "unset"))

@@ -6,7 +6,7 @@
 /*   By: sungwook <sungwook@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/27 15:58:34 by daijeong          #+#    #+#             */
-/*   Updated: 2023/05/17 13:00:52 by sungwook         ###   ########.fr       */
+/*   Updated: 2023/05/17 21:03:59 by sungwook         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -140,7 +140,7 @@ int			execute_builtins(t_commands *cmds, t_token *token);
 int			builtin_cd(t_commands *cmds, t_token *token);
 int			builtin_echo(t_commands *cmds);
 int			builtin_env(t_commands *cmds, t_token *token);
-int			builtin_pwd(t_commands *cmds);
+int			builtin_pwd(t_commands *cmds, t_token *token);
 int			builtin_unset(t_token *token, char **cmd);
 int			builtin_export(t_commands *cmds, t_token *token, char **cmd);
 int			builtin_exit(t_commands *cmds);
@@ -150,5 +150,7 @@ t_envp		*envp_lstlast(t_envp *lst);
 void		envp_lstadd_back(t_envp **lst, t_envp *new);
 t_envp		*delete_envp_list(t_envp *envp_list, t_envp *tmp_list);
 t_envp		*ft_listdup(t_envp *envp);
+char		*find_current_dir(t_token *token);
+
 
 #endif
