@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: daijeong <daijeong@student.42.fr>          +#+  +:+       +#+        */
+/*   By: sungwook <sungwook@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/27 15:58:44 by daijeong          #+#    #+#             */
-/*   Updated: 2023/05/16 20:07:21 by daijeong         ###   ########.fr       */
+/*   Updated: 2023/05/17 13:19:48 by sungwook         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -96,11 +96,3 @@ int	main(int argc, char **argv, char **envp)
 		cmds = init_cmds();
 	}
 }
-
-//exit long long 범위까지 256으로 나눠서 exit값 반
-
-// exit command 입력했을 때
-
-//heredoc EOF일때 unlink 처리
-//redirection SEGV
-

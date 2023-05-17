@@ -3,28 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   builtin_export.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: daijeong <daijeong@student.42.fr>          +#+  +:+       +#+        */
+/*   By: sungwook <sungwook@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/27 15:59:33 by daijeong          #+#    #+#             */
-/*   Updated: 2023/05/16 20:44:07 by daijeong         ###   ########.fr       */
+/*   Updated: 2023/05/17 15:29:54 by sungwook         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../minishell.h"
-
-void	add_new_envp(t_envp *envp, char *cmd)
-{
-	t_envp	*tmp;
-	t_envp	*new;
-
-	tmp = envp;
-	while (tmp->next)
-		tmp = tmp->next;
-	new = (t_envp *)malloc(sizeof(t_envp));
-	new->str = ft_strdup(cmd);
-	new->next = 0;
-	tmp->next = new;
-}
 
 void	print_export_message(t_commands *cmds, t_envp *free_tmp)
 {
@@ -36,14 +22,22 @@ void	print_export_message(t_commands *cmds, t_envp *free_tmp)
 	while (free_tmp)
 	{
 		ft_putstr_fd("declare -x ", cmds->fds->outfile);
-		equal_location = cmpcmp(free_tmp->str, '=') + 1;
-		i = -1;
-		while (++i < equal_location)
-			ft_putchar_fd(free_tmp->str[i], cmds->fds->outfile);
-		ft_putchar_fd('"', cmds->fds->outfile);
-		ft_putstr_fd(free_tmp->str + equal_location, cmds->fds->outfile);
-		ft_putchar_fd('"', cmds->fds->outfile);
-		ft_putchar_fd('\n', cmds->fds->outfile);
+		equal_location = cmpcmp(free_tmp->str, '=');
+		if (equal_location)
+		{
+			i = -1;
+			while (++i < equal_location + 1)
+				ft_putchar_fd(free_tmp->str[i], cmds->fds->outfile);
+			ft_putchar_fd('"', cmds->fds->outfile);
+			ft_putstr_fd(free_tmp->str + equal_location + 1, cmds->fds->outfile);
+			ft_putchar_fd('"', cmds->fds->outfile);
+			ft_putchar_fd('\n', cmds->fds->outfile);
+		}
+		else
+		{
+			ft_putstr_fd(free_tmp->str, cmds->fds->outfile);
+			ft_putchar_fd('\n', cmds->fds->outfile);
+		}
 		free_tmp = free_tmp->next;
 	}
 }
@@ -68,44 +62,51 @@ int	print_envp_list(t_commands *cmds, t_envp *envp)
 	return (0);
 }
 
-void	valid_envp_name(t_envp *envp, char *cmd)
+void	valid_envp_name(t_envp **envp, char *str)
 {
-	t_envp	*tmp_list;
+	t_envp	*temp;
 	int		equal_location;
 
-	tmp_list = envp;
-	equal_location = cmpcmp(cmd, '=');
-	if (!equal_location)
-		return ;
-	while (tmp_list)
+	temp = *envp;
+	equal_location = cmpcmp(str, '=');
+	while (temp)
 	{
 		if (equal_location && \
-			!ft_strncmp(tmp_list->str, cmd, equal_location + 1))
+			(!ft_strncmp(temp->str, str, equal_location + 1) || \
+			(!ft_strchr(temp->str, '=') && \
+			ft_strncmp(str, temp->str, ft_strlen(temp->str) + 1) == '=')))
 		{
-			envp = delete_envp_list(envp, tmp_list);
+			free(temp->str);
+			temp->str = ft_strdup(str);
 			break ;
 		}
-		tmp_list = tmp_list->next;
+		else if (!equal_location && \
+			ft_strcmp(temp->str, str) == '=')
+			break ;
+		if (!temp->next)
+		{
+			temp->next = (t_envp *)malloc(sizeof(t_envp));
+			temp->next->str = ft_strdup(str);
+			temp->next->next = 0;
+			break ;
+		}
+		temp = temp->next;
 	}
-	add_new_envp(envp, cmd);
 }
 
 int	builtin_export(t_commands *cmds, t_token *token, char **cmd)
 {
-	t_envp	*envp_list;
-	t_envp	*tmp_list;
 	int		i;
 
 	i = 0;
-	envp_list = token->envp;
 	if (!cmd[1] || cmd[1][0] == '#')
-		return (print_envp_list(cmds, envp_list));
+		return (print_envp_list(cmds, token->envp));
 	while (cmd[++i])
 	{
-		tmp_list = envp_list;
-		if (!ft_isdigit(cmd[i][0]) && ft_isalpha(cmd[i][0]) && \
-			ft_strncmp(cmd[i], "_", 2))
-			valid_envp_name(envp_list, cmd[i]);
+		if (cmd[i][0] == '#')
+			return (0);
+		else if (ft_isalpha(cmd[i][0]) || cmd[i][0] == '_')
+			valid_envp_name(&token->envp, cmd[i]);
 		else
 		{
 			ft_putstr_fd("minishell: export: `", 2);
@@ -113,6 +114,5 @@ int	builtin_export(t_commands *cmds, t_token *token, char **cmd)
 			ft_putstr_fd("': not a valid identifier\n", 2);
 		}
 	}
-	token->envp = envp_list;
 	return (0);
 }
