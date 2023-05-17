@@ -6,7 +6,7 @@
 /*   By: sungwook <sungwook@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/15 14:52:26 by sungwook          #+#    #+#             */
-/*   Updated: 2023/05/17 21:59:59 by sungwook         ###   ########.fr       */
+/*   Updated: 2023/05/17 22:07:11 by sungwook         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -78,6 +78,7 @@ int	open_heredoc_fd(t_commands *cmds)
 	waitpid(pid, &status, 0);
 	if (WEXITSTATUS(status) == 0)
 	{
+		write(1, "\n", 1);
 		g_exit_status = 1;
 		return (-1);
 	}
