@@ -6,7 +6,7 @@
 /*   By: sungwook <sungwook@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/27 15:59:07 by daijeong          #+#    #+#             */
-/*   Updated: 2023/05/16 18:31:14 by sungwook         ###   ########.fr       */
+/*   Updated: 2023/05/17 16:30:09 by sungwook         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,9 +23,7 @@ int	parse_left_redirection(t_commands *cmds, t_token *token)
 	}
 	else
 	{
-		write(2, "minishell: syntax error near unexpected token `", 47);
-		write(2, "<", 1);
-		write(2, "'\n", 2);
+		write(2, "minishell: syntax error\n", 24);
 		g_exit_status = SYNTAX_ERROR;
 		return (1);
 	}
@@ -41,6 +39,7 @@ int	parse_right_redirection(t_commands *cmds, t_token *token)
 	}
 	else
 	{
+		write(2, "minishell: syntax error\n", 24);
 		g_exit_status = SYNTAX_ERROR;
 		return (1);
 	}
@@ -56,8 +55,26 @@ int	parse_redirection(t_commands *cmds, t_token *token, char c)
 		token->word = 0;
 	}
 	if (c == '<')
+	{
+		if (token->prev_char == '>')
+		{
+			write(2, "minishell: syntax error\n", 24);
+			g_exit_status = SYNTAX_ERROR;
+			return (1);
+		}
+		token->prev_char = c;
 		return (parse_left_redirection(cmds, token));
+	}
 	else if (c == '>')
+	{
+		if (token->prev_char == '<')
+		{
+			write(2, "minishell: syntax error\n", 24);
+			g_exit_status = SYNTAX_ERROR;
+			return (1);
+		}
+		token->prev_char = c;
 		return (parse_right_redirection(cmds, token));
+	}
 	return (0);
 }

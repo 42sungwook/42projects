@@ -6,7 +6,7 @@
 /*   By: sungwook <sungwook@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/27 15:58:44 by daijeong          #+#    #+#             */
-/*   Updated: 2023/05/17 15:51:09 by sungwook         ###   ########.fr       */
+/*   Updated: 2023/05/17 16:28:46 by sungwook         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,8 +31,9 @@ int	parse_character(t_commands *cmds, t_token *token, char c)
 
 int	parse_syntax_error(t_commands *cmds, t_token *token)
 {
-	if ((token->pipe >= 1 && !cmds->cmd && !token->word && !token->dollar_word) \
-		|| token->quote)
+	if ((((token->pipe >= 1 && !cmds->cmd) || (token->left_redirection || \
+		token->right_redirection)) && (!token->word && !token->dollar_word)) || \
+		token->quote)
 	{
 		write(2, "minishell: syntax error\n", 24);
 		g_exit_status = SYNTAX_ERROR;
