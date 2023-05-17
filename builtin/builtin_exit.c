@@ -15,9 +15,11 @@
 int	builtin_exit(t_commands *cmds)
 {
 	int		i;
+	int		status;
 	char	*str;
 
 	i = 0;
+	status = 0;
 	if (cmds->cmd[1] && cmds->cmd[2])
 	{
 		str = cmds->cmd[1];
@@ -51,8 +53,9 @@ int	builtin_exit(t_commands *cmds)
 				exit(-1);
 			}
 		}
+		status = ft_atoi(str);
 		ft_putstr_fd("exit\n", 2);
-		exit(g_exit_status);
+		exit(status);
 	}
 	ft_putstr_fd("exit\n", 2);
 	exit(g_exit_status);
