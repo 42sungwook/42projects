@@ -6,12 +6,12 @@
 #    By: sungwook <sungwook@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/04/27 15:58:46 by daijeong          #+#    #+#              #
-#    Updated: 2023/05/17 13:16:53 by sungwook         ###   ########.fr        #
+#    Updated: 2023/05/17 21:57:18 by sungwook         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 NAME		= minishell
-CC          = cc -g
+CC          = cc -g -fsanitize=address
 CFLAGS      = -Wall -Wextra -Werror -Ilibft -I${HOME}/.brew/opt/readline/include
 RM			= rm -f
 LIBFT		= -Llibft -lft

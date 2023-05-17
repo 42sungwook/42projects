@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   save_fds.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: daijeong <daijeong@student.42.fr>          +#+  +:+       +#+        */
+/*   By: sungwook <sungwook@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/02 16:26:18 by daijeong          #+#    #+#             */
-/*   Updated: 2023/05/16 21:46:45 by daijeong         ###   ########.fr       */
+/*   Updated: 2023/05/17 21:59:56 by sungwook         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,14 +21,12 @@ void	init_cmds_fds(t_commands *cmds)
 	cmds->fds->outfile = 0;
 }
 
-void	open_infile_list(t_commands *cmds)
+int	open_infile_list(t_commands *cmds)
 {
 	t_line	*temp;
 	int		fd;
-	int		error_fd;
 
 	fd = 0;
-	error_fd = 0;
 	temp = cmds->infile;
 	while (temp && temp->flag)
 	{
@@ -39,25 +37,23 @@ void	open_infile_list(t_commands *cmds)
 		{
 			write(2, "minishell: ", 11);
 			perror(temp->line);
-			error_fd = 1;
+			cmds->fds->infile = -1;
+			return (1);
 		}
 		if (cmds->read_heredoc == INFILE_END)
 			cmds->fds->infile = fd;
 		temp = temp->next;
 	}
-	if (error_fd)
-		cmds->fds->infile = -1;
+	return (0);
 }
 
-void	open_outfile_list(t_commands *cmds)
+int	open_outfile_list(t_commands *cmds)
 {
 	t_line	*temp;
 	int		fd;
-	int		error_fd;
 
 	temp = cmds->outfile;
 	fd = 0;
-	error_fd = 0;
 	while (temp->flag)
 	{
 		if (fd > 0)
@@ -68,27 +64,31 @@ void	open_outfile_list(t_commands *cmds)
 			fd = open(temp->line, O_WRONLY | O_CREAT | O_APPEND, 0644);
 		if (fd == -1)
 		{
+			write(2, "minishell: ", 11);
 			perror(temp->line);
-			error_fd = 1;
+			cmds->fds->outfile = -1;
+			return (1);
 		}
 		cmds->fds->outfile = fd;
 		temp = temp->next;
 	}
-	if (error_fd)
-		cmds->fds->outfile = -1;
+	return (0);
 }
 
 int	save_fds_in_cmds(t_commands *cmds)
 {
 	t_commands	*temp;
 
+	if (open_heredoc(cmds))
+		return (1);
 	temp = cmds;
 	while (temp)
 	{
-		init_cmds_fds(temp);
-		if (open_heredoc(temp))
-			return (1);
-		open_infile_list(temp);
+		if (open_infile_list(temp))
+		{
+			temp = temp->next;
+			continue ;
+		}
 		open_outfile_list(temp);
 		temp = temp->next;
 	}

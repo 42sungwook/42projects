@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   heredoc.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: daijeong <daijeong@student.42.fr>          +#+  +:+       +#+        */
+/*   By: sungwook <sungwook@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/15 14:52:26 by sungwook          #+#    #+#             */
-/*   Updated: 2023/05/15 21:57:55 by daijeong         ###   ########.fr       */
+/*   Updated: 2023/05/17 21:59:59 by sungwook         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -96,17 +96,24 @@ int	open_heredoc_fd(t_commands *cmds)
 
 int	open_heredoc(t_commands *cmds)
 {
+	t_commands	*temp;
 	int			fd;
 
-	if (cmds->heredoc->flag > 0)
+	temp = cmds;
+	while (temp)
 	{
-		fd = open_heredoc_fd(cmds);
-		if (fd == -1)
-			return (1);
-		if (cmds->read_heredoc == HEREDOC_END)
-			cmds->fds->infile = fd;
-		else
-			close(fd);
+		init_cmds_fds(temp);
+		if (temp->heredoc->flag > 0)
+		{
+			fd = open_heredoc_fd(temp);
+			if (fd == -1)
+				return (1);
+			if (temp->read_heredoc == HEREDOC_END)
+				temp->fds->infile = fd;
+			else
+				close(fd);
+		}
+		temp = temp->next;
 	}
 	return (0);
 }
