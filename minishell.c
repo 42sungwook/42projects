@@ -6,7 +6,7 @@
 /*   By: sungwook <sungwook@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/27 15:58:44 by daijeong          #+#    #+#             */
-/*   Updated: 2023/05/17 13:19:48 by sungwook         ###   ########.fr       */
+/*   Updated: 2023/05/17 15:46:05 by sungwook         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,10 +54,10 @@ int	parse_line(char *str, t_commands *cmds, t_token *token)
 			str[i] == '\"' || str[i] == '<' || str[i] == '>' || \
 			str[i] == '\'' || str[i] == '$' || str[i] == '?')
 			flag = parse_character(cmds, token, str[i]);
-		else if (str[i] == '|')
-			cmds = parse_pipe(cmds, token);
 		else if (token->dollar == 1)
 			token->dollar_word = make_word_c(token->dollar_word, str[i]);
+		else if (str[i] == '|')
+			cmds = parse_pipe(cmds, token);
 		else
 			token->word = make_word_c(token->word, str[i]);
 	}

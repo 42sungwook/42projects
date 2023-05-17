@@ -6,7 +6,7 @@
 /*   By: sungwook <sungwook@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/27 15:59:11 by daijeong          #+#    #+#             */
-/*   Updated: 2023/05/05 21:12:34 by sungwook         ###   ########.fr       */
+/*   Updated: 2023/05/17 15:45:26 by sungwook         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,6 +30,8 @@ int	parse_double_quote(t_commands *cmds, t_token *token)
 		find_dollar_word_in_envp(token);
 		token->quote = 0;
 	}
+	if (token->quote == '\'')
+		token->word = make_word_c(token->word, '\"');
 	token->prev_char = '\"';
 	return (0);
 }
