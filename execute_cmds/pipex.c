@@ -6,7 +6,7 @@
 /*   By: sungwook <sungwook@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/15 14:20:10 by sungwook          #+#    #+#             */
-/*   Updated: 2023/05/17 16:40:36 by sungwook         ###   ########.fr       */
+/*   Updated: 2023/05/17 21:10:42 by sungwook         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,16 +21,13 @@ static void	wait_pids(t_commands *cmds, t_token *token)
 	temp = cmds;
 	while (temp)
 	{
-		if (temp->cmd)
+		pid = waitpid(-1, &status, 0);
+		if (pid == token->pid)
 		{
-			pid = waitpid(-1, &status, 0);
-			if (pid == token->pid)
-			{
-				if (WIFSIGNALED(status))
-					g_exit_status = 128 + status;
-				else 
-					g_exit_status = WEXITSTATUS(status);
-			}
+			if (WIFSIGNALED(status))
+				g_exit_status = 128 + status;
+			else
+				g_exit_status = WEXITSTATUS(status);
 		}
 		temp = temp->next;
 	}
@@ -58,31 +55,33 @@ void	pipex(t_commands *cmds, t_token *token)
 
 	i = 0;
 	temp = cmds;
+	prev_fd = 0;
 	while (temp)
 	{
-		if (temp->cmd)
+		pipe(pipe_fd);
+		token->pid = fork();
+		if (token->pid == 0)
 		{
-			pipe(pipe_fd);
-			token->pid = fork();
-			if (token->pid == 0)
-			{
-				init_child_signal();
-				child_process_check_fd(temp);
-				if (i != 0 && !temp->fds->infile)
-					dup2(prev_fd, STDIN_FILENO);
-				if (temp->next && !temp->fds->outfile)
-					dup2(pipe_fd[WRITE_END], STDOUT_FILENO);
-				close(pipe_fd[READ_END]);
-				close(pipe_fd[WRITE_END]);
-				if (!check_builtins(temp))
-					execve(temp->cmd[0], temp->cmd, make_two_pointer_envp(token));
-				else
-					exit(execute_builtins(temp, token));
-			}
-			prev_fd = pipe_fd[READ_END];
+			init_child_signal();
+			if (!temp->cmd)
+				exit(0);
+			child_process_check_fd(temp);
+			if (i != 0 && !temp->fds->infile)
+				dup2(prev_fd, STDIN_FILENO);
+			if (temp->next && !temp->fds->outfile)
+				dup2(pipe_fd[WRITE_END], STDOUT_FILENO);
+			close(pipe_fd[READ_END]);
 			close(pipe_fd[WRITE_END]);
-			i++;
+			if (!check_builtins(temp))
+				execve(temp->cmd[0], temp->cmd, make_two_pointer_envp(token));
+			else
+				exit(execute_builtins(temp, token));
 		}
+		if (prev_fd)
+			close(prev_fd);
+		prev_fd = pipe_fd[READ_END];
+		close(pipe_fd[WRITE_END]);
+		i++;
 		temp = temp->next;
 	}
 	if (i)
