@@ -6,7 +6,7 @@
 /*   By: sungwook <sungwook@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/15 14:20:10 by sungwook          #+#    #+#             */
-/*   Updated: 2023/05/17 13:17:30 by sungwook         ###   ########.fr       */
+/*   Updated: 2023/05/17 16:40:36 by sungwook         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,7 +25,12 @@ static void	wait_pids(t_commands *cmds, t_token *token)
 		{
 			pid = waitpid(-1, &status, 0);
 			if (pid == token->pid)
-				g_exit_status = WEXITSTATUS(status);
+			{
+				if (WIFSIGNALED(status))
+					g_exit_status = 128 + status;
+				else 
+					g_exit_status = WEXITSTATUS(status);
+			}
 		}
 		temp = temp->next;
 	}
