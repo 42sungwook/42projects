@@ -6,7 +6,7 @@
 /*   By: daijeong <daijeong@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/17 13:33:44 by daijeong          #+#    #+#             */
-/*   Updated: 2023/05/17 17:08:04 by daijeong         ###   ########.fr       */
+/*   Updated: 2023/05/17 17:16:28 by daijeong         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,8 +27,10 @@ void	parse_exit_ll(char *str)
 	while (str[i] == ' ' || (str[i] >= 9 && str[i] <= 13))
 		str++;
 	if (str[i] == '-' || str[i] == '+')
+	{
 		if (str[i++] == '-')
 			sign *= -1;
+	}
 	while (str[i] >= '0' && str[i] <= '9')
 	{
 		temp = result * 10 + (str[i++] - ASCII_ZERO);
@@ -49,7 +51,7 @@ void	print_not_digit(char *str)
 	int	i;
 
 	i = 0;
-	if (str[0] == '-')
+	if (str[0] == '-' || str[0] == '+')
 		i++;
 	while (str[i])
 	{
