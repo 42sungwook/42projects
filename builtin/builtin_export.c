@@ -6,7 +6,7 @@
 /*   By: sungwook <sungwook@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/27 15:59:33 by daijeong          #+#    #+#             */
-/*   Updated: 2023/05/17 19:53:12 by sungwook         ###   ########.fr       */
+/*   Updated: 2023/05/17 22:23:10 by sungwook         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,6 +69,9 @@ void	valid_envp_name(t_envp **envp, char *str)
 
 	temp = *envp;
 	equal_location = cmpcmp(str, '=');
+	if ((equal_location && check_valid_cmd(str, "export", equal_location - 1)) \
+		|| (!equal_location && check_valid_cmd(str, "export", ft_strlen(str))))
+		return ;
 	while (temp)
 	{
 		if (equal_location && \
