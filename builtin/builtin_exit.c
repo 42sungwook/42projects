@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   builtin_exit.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: daijeong <daijeong@student.42.fr>          +#+  +:+       +#+        */
+/*   By: sungwook <sungwook@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/17 13:33:44 by daijeong          #+#    #+#             */
-/*   Updated: 2023/05/17 17:16:28 by daijeong         ###   ########.fr       */
+/*   Updated: 2023/05/17 19:53:00 by sungwook         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -79,7 +79,6 @@ int	builtin_exit(t_commands *cmds)
 		print_not_digit(str);
 		ft_putstr_fd("exit\n", 2);
 		ft_putstr_fd("minishell: exit: too many arguments\n", 2);
-		g_exit_status = 1;
 		return (1);
 	}
 	if (cmds->cmd[1])

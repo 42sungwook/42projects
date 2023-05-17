@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   check_builtins.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: daijeong <daijeong@student.42.fr>          +#+  +:+       +#+        */
+/*   By: sungwook <sungwook@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/05 10:19:15 by sungwook          #+#    #+#             */
-/*   Updated: 2023/05/16 20:42:09 by daijeong         ###   ########.fr       */
+/*   Updated: 2023/05/17 19:52:16 by sungwook         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,18 +30,18 @@ int	execute_builtins(t_commands *cmds, t_token *token)
 	if (cmds->fds->outfile < 0)
 		return (-1);
 	if (!ft_strcmp(cmds->cmd[0], "echo"))
-		builtin_echo(cmds);
+		return (builtin_echo(cmds));
 	else if (!ft_strcmp(cmds->cmd[0], "cd"))
 		return (builtin_cd(cmds, token));
 	else if (!ft_strcmp(cmds->cmd[0], "env"))
-		builtin_env(cmds, token);
+		return (builtin_env(cmds, token));
 	else if (!ft_strcmp(cmds->cmd[0], "pwd"))
-		builtin_pwd(cmds);
+		return (builtin_pwd(cmds));
 	else if (!ft_strcmp(cmds->cmd[0], "export"))
-		builtin_export(cmds, token, cmds->cmd);
+		return (builtin_export(cmds, token, cmds->cmd));
 	else if (!ft_strcmp(cmds->cmd[0], "unset"))
-		builtin_unset(token, cmds->cmd);
+		return (builtin_unset(token, cmds->cmd));
 	else if (!ft_strcmp(cmds->cmd[0], "exit"))
-		builtin_exit(cmds);
+		return (builtin_exit(cmds));
 	return (0);
 }
