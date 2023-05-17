@@ -6,7 +6,7 @@
 /*   By: sungwook <sungwook@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/15 14:20:10 by sungwook          #+#    #+#             */
-/*   Updated: 2023/05/17 21:10:42 by sungwook         ###   ########.fr       */
+/*   Updated: 2023/05/17 21:13:26 by sungwook         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,7 +64,7 @@ void	pipex(t_commands *cmds, t_token *token)
 		{
 			init_child_signal();
 			if (!temp->cmd)
-				exit(0);
+				exit(127);
 			child_process_check_fd(temp);
 			if (i != 0 && !temp->fds->infile)
 				dup2(prev_fd, STDIN_FILENO);

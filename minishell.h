@@ -6,7 +6,7 @@
 /*   By: sungwook <sungwook@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/27 15:58:34 by daijeong          #+#    #+#             */
-/*   Updated: 2023/05/17 21:03:59 by sungwook         ###   ########.fr       */
+/*   Updated: 2023/05/17 21:26:50 by sungwook         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -102,7 +102,7 @@ int			parse_dollar(t_token *token);
 int			parse_single_quote(t_commands *cmds, t_token *token);
 int			parse_double_quote(t_commands *cmds, t_token *token);
 int			parse_redirection(t_commands *cmds, t_token *token, char c);
-t_commands	*parse_pipe(t_commands *cmds, t_token *token);
+int			parse_pipe(t_commands **cmds, t_token *token);
 int			parse_question(t_token *token);
 
 //execute_cmds

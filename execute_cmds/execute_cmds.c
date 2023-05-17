@@ -6,7 +6,7 @@
 /*   By: sungwook <sungwook@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/15 14:11:07 by sungwook          #+#    #+#             */
-/*   Updated: 2023/05/17 19:52:33 by sungwook         ###   ########.fr       */
+/*   Updated: 2023/05/17 21:19:55 by sungwook         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,6 +51,7 @@ int	execute_cmds(t_commands *cmds, t_token *token)
 		g_exit_status = execute_builtins(cmds, token);
 		return (0);
 	}
-	pipex(cmds, token);
+	if (cmds->cmd || token->pipe > 0)
+		pipex(cmds, token);
 	return (0);
 }
