@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   execute_cmds.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: daijeong <daijeong@student.42.fr>          +#+  +:+       +#+        */
+/*   By: sungwook <sungwook@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/15 14:11:07 by sungwook          #+#    #+#             */
-/*   Updated: 2023/05/15 21:46:58 by daijeong         ###   ########.fr       */
+/*   Updated: 2023/05/17 12:56:23 by sungwook         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,12 +45,12 @@ int	execute_cmds(t_commands *cmds, t_token *token)
 	envp = make_two_pointer_envp(token);
 	if (save_cmds(cmds, envp))
 		return (1);
+	free_arr(envp);
 	if (check_builtins(cmds) && !cmds->next)
 	{
 		execute_builtins(cmds, token);
 		return (0);
 	}
 	pipex(cmds, token);
-	free_arr(envp);
 	return (0);
 }

@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: daijeong <daijeong@student.42.fr>          +#+  +:+       +#+         #
+#    By: sungwook <sungwook@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/04/27 15:58:46 by daijeong          #+#    #+#              #
-#    Updated: 2023/05/16 15:24:54 by daijeong         ###   ########.fr        #
+#    Updated: 2023/05/17 12:37:51 by sungwook         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -35,8 +35,7 @@ P_PATH	 = $(addprefix $(P_DIR)/, $(P_SRCS))
 P_OBJS	 = $(P_PATH:c=o)
 
 E_DIR	= ./execute_cmds
-E_SRCS	= execute_cmds.c heredoc.c pipex.c save_cmds.c first_child_process.c \
-		  nth_child_process.c last_child_process.c save_fds.c close_fds.c
+E_SRCS	= execute_cmds.c heredoc.c pipex.c save_cmds.c save_fds.c
 E_PATH	= $(addprefix $(E_DIR)/, $(E_SRCS))
 E_OBJS	= $(E_PATH:c=o)
 

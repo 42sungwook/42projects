@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   pipex.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: daijeong <daijeong@student.42.fr>          +#+  +:+       +#+        */
+/*   By: sungwook <sungwook@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/15 14:20:10 by sungwook          #+#    #+#             */
-/*   Updated: 2023/05/15 22:46:00 by daijeong         ###   ########.fr       */
+/*   Updated: 2023/05/17 13:15:47 by sungwook         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,28 +31,56 @@ static void	wait_pids(t_commands *cmds, t_token *token)
 	}
 }
 
+void	child_process_check_fd(t_commands *cmds)
+{
+	if (cmds->fds->infile < 0 || cmds->fds->outfile < 0)
+		exit(1);
+	else
+	{
+		if (cmds->fds->infile)
+			dup2(cmds->fds->infile, STDIN_FILENO);
+		if (cmds->fds->outfile)
+			dup2(cmds->fds->outfile, STDOUT_FILENO);
+	}
+}
+
 void	pipex(t_commands *cmds, t_token *token)
 {
-	int			sign;
 	t_commands	*temp;
+	int			i;
+	int			pipe_fd[2];
+	int			prev_fd;
 
-	token->pid = 0;
-	sign = 0;
-	temp = cmds->next;
-	first_child_process(cmds, token);
-	if (temp && temp->next)
+	i = 0;
+	temp = cmds;
+	while (temp)
 	{
-		close_pipe(token, CLOSE_PIPE2);
-		while (temp->next)
+		if (temp->cmd)
 		{
-			sign = nth_child_process(sign, temp, token);
-			temp = temp->next;
+			pipe(pipe_fd);
+			token->pid = fork();
+			if (token->pid == 0)
+			{
+				init_child_signal();
+				child_process_check_fd(temp);
+				if (i != 0 && !temp->fds->infile)
+					dup2(prev_fd, STDIN_FILENO);
+				if (temp->next && !temp->fds->outfile)
+					dup2(pipe_fd[WRITE_END], STDOUT_FILENO);
+				close(pipe_fd[READ_END]);
+				close(pipe_fd[WRITE_END]);
+				if (!check_builtins(temp))
+					execve(temp->cmd[0], temp->cmd, make_two_pointer_envp(token));
+				else
+					exit(execute_builtins(temp, token));
+			}
+			prev_fd = pipe_fd[READ_END];
+			close(pipe_fd[WRITE_END]);
+			i++;
 		}
+		temp = temp->next;
 	}
-	if (temp)
-		last_child_process(sign, temp, token);
-	else
-		close_pipe(token, CLOSE_BOTH);
-	close_all_fds(cmds);
+	if (i)
+		close(prev_fd);
 	wait_pids(cmds, token);
 }

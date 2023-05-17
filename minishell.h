@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: daijeong <daijeong@student.42.fr>          +#+  +:+       +#+        */
+/*   By: sungwook <sungwook@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/27 15:58:34 by daijeong          #+#    #+#             */
-/*   Updated: 2023/05/16 20:39:41 by daijeong         ###   ########.fr       */
+/*   Updated: 2023/05/17 13:00:52 by sungwook         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -82,7 +82,6 @@ typedef struct s_token
 	char	*word;
 	char	prev_char;
 	pid_t	pid;
-	int		pipe_fd[2][2];
 }	t_token;
 
 //init
@@ -109,17 +108,11 @@ int			parse_question(t_token *token);
 //execute_cmds
 int			save_cmds(t_commands *cmds, char **envp);
 int			execute_cmds(t_commands *cmds, t_token *token);
-void		last_child_process(int sign, t_commands *cmds, t_token *token);
-int			nth_child_process(int sign, t_commands *cmds, t_token *token);
-void		first_child_process(t_commands *cmds, t_token *token);
 int			save_fds_in_cmds(t_commands *cmds);
 void		init_cmds_fds(t_commands *cmds);
 void		pipex(t_commands *cmds, t_token *token);
 void		open_infile_list(t_commands *cmds);
 void		open_outfile_list(t_commands *cmds);
-void		child_process_check_fd(t_commands *cmds);
-void		close_pipe(t_token *token, int flag);
-void		close_all_fds(t_commands *cmds);
 char		**make_two_pointer_envp(t_token *token);
 
 //main
