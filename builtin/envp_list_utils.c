@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   envp_list_utils.c                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: sungwook <sungwook@student.42.fr>          +#+  +:+       +#+        */
+/*   By: daijeong <daijeong@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/05 20:13:54 by sungwook          #+#    #+#             */
-/*   Updated: 2023/05/05 20:45:21 by sungwook         ###   ########.fr       */
+/*   Updated: 2023/05/18 14:26:59 by daijeong         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,13 +27,24 @@ int	envp_lstsize(t_envp *lst)
 	return (count);
 }
 
-t_envp	*envp_lstlast(t_envp *lst)
+int	print_envp_list(t_commands *cmds, t_envp *envp)
 {
-	if (!lst)
-		return (0);
-	while (lst->next)
-		lst = lst->next;
-	return (lst);
+	t_envp	*tmp;
+	t_envp	*free_tmp;
+
+	tmp = ft_listdup(envp);
+	merge_sort(&tmp, envp_lstsize(tmp));
+	free_tmp = tmp;
+	print_export_message(cmds, free_tmp);
+	free_tmp = tmp;
+	while (free_tmp)
+	{
+		tmp = free_tmp->next;
+		free(free_tmp->str);
+		free(free_tmp);
+		free_tmp = tmp;
+	}
+	return (0);
 }
 
 void	envp_lstadd_back(t_envp **lst, t_envp *new)
@@ -48,7 +59,11 @@ void	envp_lstadd_back(t_envp **lst, t_envp *new)
 		*lst = new;
 		return ;
 	}
-	envp_lstlast(*lst)->next = new;
+	if (!lst)
+		return ;
+	while ((*lst)->next)
+		lst = &(*lst)->next;
+	(*lst)->next = new;
 }
 
 t_envp	*delete_envp_list(t_envp *envp_list, t_envp *tmp_list)

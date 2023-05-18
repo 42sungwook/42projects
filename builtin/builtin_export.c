@@ -6,16 +6,38 @@
 /*   By: daijeong <daijeong@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/27 15:59:33 by daijeong          #+#    #+#             */
-/*   Updated: 2023/05/18 12:49:40 by daijeong         ###   ########.fr       */
+/*   Updated: 2023/05/18 14:28:06 by daijeong         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../minishell.h"
 
+void	equal_location_ox(int equal_location, t_commands *cmds, \
+t_envp *free_tmp)
+{
+	int	i;
+
+	if (equal_location)
+	{
+		i = -1;
+		while (++i < equal_location + 1)
+			ft_putchar_fd(free_tmp->str[i], cmds->fds->outfile);
+		ft_putchar_fd('"', cmds->fds->outfile);
+		ft_putstr_fd(free_tmp->str + equal_location + 1, \
+					cmds->fds->outfile);
+		ft_putchar_fd('"', cmds->fds->outfile);
+		ft_putchar_fd('\n', cmds->fds->outfile);
+	}
+	else
+	{
+		ft_putstr_fd(free_tmp->str, cmds->fds->outfile);
+		ft_putchar_fd('\n', cmds->fds->outfile);
+	}
+}
+
 void	print_export_message(t_commands *cmds, t_envp *free_tmp)
 {
 	int	equal_location;
-	int	i;
 
 	if (!cmds->fds->outfile)
 		cmds->fds->outfile = 1;
@@ -23,44 +45,9 @@ void	print_export_message(t_commands *cmds, t_envp *free_tmp)
 	{
 		ft_putstr_fd("declare -x ", cmds->fds->outfile);
 		equal_location = cmpcmp(free_tmp->str, '=');
-		if (equal_location)
-		{
-			i = -1;
-			while (++i < equal_location + 1)
-				ft_putchar_fd(free_tmp->str[i], cmds->fds->outfile);
-			ft_putchar_fd('"', cmds->fds->outfile);
-			ft_putstr_fd(free_tmp->str + equal_location + 1, \
-						cmds->fds->outfile);
-			ft_putchar_fd('"', cmds->fds->outfile);
-			ft_putchar_fd('\n', cmds->fds->outfile);
-		}
-		else
-		{
-			ft_putstr_fd(free_tmp->str, cmds->fds->outfile);
-			ft_putchar_fd('\n', cmds->fds->outfile);
-		}
+		equal_location_ox(equal_location, cmds, free_tmp);
 		free_tmp = free_tmp->next;
 	}
-}
-
-int	print_envp_list(t_commands *cmds, t_envp *envp)
-{
-	t_envp	*tmp;
-	t_envp	*free_tmp;
-
-	tmp = ft_listdup(envp);
-	merge_sort(&tmp, envp_lstsize(tmp));
-	free_tmp = tmp;
-	print_export_message(cmds, free_tmp);
-	free_tmp = tmp;
-	while (free_tmp)
-	{
-		tmp = free_tmp->next;
-		free(free_tmp->str);
-		free(free_tmp);
-		free_tmp = tmp;
-	}
-	return (0);
 }
 
 void	valid_envp_name(t_envp **envp, char *str)

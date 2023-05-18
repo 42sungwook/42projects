@@ -6,7 +6,7 @@
 /*   By: daijeong <daijeong@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/27 15:58:34 by daijeong          #+#    #+#             */
-/*   Updated: 2023/05/18 12:47:34 by daijeong         ###   ########.fr       */
+/*   Updated: 2023/05/18 14:26:16 by daijeong         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -144,7 +144,8 @@ int			builtin_export(t_commands *cmds, t_token *token, char **cmd);
 int			builtin_exit(t_commands *cmds);
 t_envp		*delete_envp_list(t_envp *envp_list, t_envp *tmp_list);
 int			envp_lstsize(t_envp *lst);
-t_envp		*envp_lstlast(t_envp *lst);
+int			print_envp_list(t_commands *cmds, t_envp *envp);
+void		print_export_message(t_commands *cmds, t_envp *free_tmp);
 void		envp_lstadd_back(t_envp **lst, t_envp *new);
 t_envp		*delete_envp_list(t_envp *envp_list, t_envp *tmp_list);
 t_envp		*ft_listdup(t_envp *envp);
