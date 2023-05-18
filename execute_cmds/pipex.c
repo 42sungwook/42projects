@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   pipex.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: sungwook <sungwook@student.42.fr>          +#+  +:+       +#+        */
+/*   By: daijeong <daijeong@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/15 14:20:10 by sungwook          #+#    #+#             */
-/*   Updated: 2023/05/18 16:28:19 by sungwook         ###   ########.fr       */
+/*   Updated: 2023/05/18 16:35:13 by daijeong         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,12 +59,7 @@ void	child_process(t_commands *temp, t_token *token, int i)
 	close(token->pipe_fd[READ_END]);
 	close(token->pipe_fd[WRITE_END]);
 	if (!check_builtins(temp))
-	{
-		write(2, "child: ", 7);
-		write(2, temp->cmd[0], ft_strlen(temp->cmd[0]));
-		write(2, "\n", 1);
 		execve(temp->cmd[0], temp->cmd, make_two_pointer_envp(token));
-	}
 	else
 		exit(execute_builtins(temp, token));
 }
