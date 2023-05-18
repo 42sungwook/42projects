@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: sungwook <sungwook@student.42.fr>          +#+  +:+       +#+        */
+/*   By: daijeong <daijeong@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/27 15:58:34 by daijeong          #+#    #+#             */
-/*   Updated: 2023/05/17 22:12:24 by sungwook         ###   ########.fr       */
+/*   Updated: 2023/05/18 12:47:34 by daijeong         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -150,6 +150,5 @@ t_envp		*delete_envp_list(t_envp *envp_list, t_envp *tmp_list);
 t_envp		*ft_listdup(t_envp *envp);
 char		*find_current_dir(t_token *token);
 int			check_valid_cmd(char *cmd, char *str, int len);
-
 
 #endif

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   builtin_export.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: sungwook <sungwook@student.42.fr>          +#+  +:+       +#+        */
+/*   By: daijeong <daijeong@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/27 15:59:33 by daijeong          #+#    #+#             */
-/*   Updated: 2023/05/17 22:23:10 by sungwook         ###   ########.fr       */
+/*   Updated: 2023/05/18 12:49:40 by daijeong         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,7 +29,8 @@ void	print_export_message(t_commands *cmds, t_envp *free_tmp)
 			while (++i < equal_location + 1)
 				ft_putchar_fd(free_tmp->str[i], cmds->fds->outfile);
 			ft_putchar_fd('"', cmds->fds->outfile);
-			ft_putstr_fd(free_tmp->str + equal_location + 1, cmds->fds->outfile);
+			ft_putstr_fd(free_tmp->str + equal_location + 1, \
+						cmds->fds->outfile);
 			ft_putchar_fd('"', cmds->fds->outfile);
 			ft_putchar_fd('\n', cmds->fds->outfile);
 		}
