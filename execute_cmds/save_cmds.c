@@ -6,7 +6,7 @@
 /*   By: daijeong <daijeong@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/29 12:58:35 by sungwook          #+#    #+#             */
-/*   Updated: 2023/05/15 22:30:17 by daijeong         ###   ########.fr       */
+/*   Updated: 2023/05/18 15:25:05 by daijeong         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,6 +72,22 @@ static char	**save_paths(char **envp)
 	return (ft_split(envp[i] + 5, ':'));
 }
 
+void	not_builtins(char **path, t_commands *temp_cmds)
+{
+	if (path)
+		check_access_and_save(temp_cmds, path);
+	if (temp_cmds->cmd && (!temp_cmds->cmd[0] || \
+		access(temp_cmds->cmd[0], X_OK)))
+	{
+		g_exit_status = CMD_NOT_FOUND;
+		write(2, "minishell: ", 11);
+		write(2, temp_cmds->cmd[0], ft_strlen(temp_cmds->cmd[0]));
+		write(2, ": command not found\n", 20);
+		free_arr(temp_cmds->cmd);
+		temp_cmds->cmd = 0;
+	}
+}
+
 int	save_cmds(t_commands *cmds, char **envp)
 {
 	char		**path;
@@ -82,20 +98,7 @@ int	save_cmds(t_commands *cmds, char **envp)
 	while (temp_cmds)
 	{
 		if (!check_builtins(temp_cmds))
-		{
-			if (path)
-				check_access_and_save(temp_cmds, path);
-			if (temp_cmds->cmd && (!temp_cmds->cmd[0] || \
-				access(temp_cmds->cmd[0], X_OK)))
-			{
-				g_exit_status = CMD_NOT_FOUND;
-				write(2, "minishell: ", 11);
-				write(2, temp_cmds->cmd[0], ft_strlen(temp_cmds->cmd[0]));
-				write(2, ": command not found\n", 20);
-				free_arr(temp_cmds->cmd);
-				temp_cmds->cmd = 0;
-			}
-		}
+			not_builtins(path, temp_cmds);
 		temp_cmds = temp_cmds->next;
 	}
 	if (save_fds_in_cmds(cmds))
