@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: daijeong <daijeong@student.42.fr>          +#+  +:+       +#+        */
+/*   By: sungwook <sungwook@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/27 15:58:34 by daijeong          #+#    #+#             */
-/*   Updated: 2023/05/18 14:34:58 by daijeong         ###   ########.fr       */
+/*   Updated: 2023/05/18 16:23:44 by sungwook         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,6 +22,7 @@
 # include <fcntl.h>
 # include "libft/libft.h"
 # include <string.h>
+# include <sys/stat.h>
 
 # define ASCII_ZERO 48
 # define READ_END 0
@@ -111,6 +112,7 @@ int			parse_question(t_token *token);
 int			save_cmds(t_commands *cmds, char **envp);
 int			execute_cmds(t_commands *cmds, t_token *token);
 int			save_fds_in_cmds(t_commands *cmds);
+int			is_directory(const char *path);
 void		init_cmds_fds(t_commands *cmds);
 void		pipex(t_commands *cmds, t_token *token);
 char		**make_two_pointer_envp(t_token *token);

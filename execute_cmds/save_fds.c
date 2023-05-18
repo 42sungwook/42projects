@@ -6,11 +6,20 @@
 /*   By: sungwook <sungwook@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/02 16:26:18 by daijeong          #+#    #+#             */
-/*   Updated: 2023/05/17 21:59:56 by sungwook         ###   ########.fr       */
+/*   Updated: 2023/05/18 16:22:56 by sungwook         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../minishell.h"
+
+int	is_directory(const char *path)
+{
+	struct stat	path_stat;
+
+	if (stat(path, &path_stat) == 0)
+		return (S_ISDIR(path_stat.st_mode));
+	return (0);
+}
 
 void	init_cmds_fds(t_commands *cmds)
 {
