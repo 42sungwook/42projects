@@ -3,34 +3,21 @@
 /*                                                        :::      ::::::::   */
 /*   builtin_exit.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: sungwook <sungwook@student.42.fr>          +#+  +:+       +#+        */
+/*   By: daijeong <daijeong@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/17 13:33:44 by daijeong          #+#    #+#             */
-/*   Updated: 2023/05/17 19:53:00 by sungwook         ###   ########.fr       */
+/*   Updated: 2023/05/18 13:34:39 by daijeong         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../minishell.h"
 
-void	parse_exit_ll(char *str)
+void	atoll_not_digit(char *str, int i)
 {
 	long long	result;
 	long long	temp;
-	int			sign;
-	int			i;
 
 	result = 0;
-	sign = 1;
-	i = 0;
-	if (!ft_strcmp(str, "-9223372036854775808"))
-		return ;
-	while (str[i] == ' ' || (str[i] >= 9 && str[i] <= 13))
-		str++;
-	if (str[i] == '-' || str[i] == '+')
-	{
-		if (str[i++] == '-')
-			sign *= -1;
-	}
 	while (str[i] >= '0' && str[i] <= '9')
 	{
 		temp = result * 10 + (str[i++] - ASCII_ZERO);
@@ -44,6 +31,20 @@ void	parse_exit_ll(char *str)
 		}
 		result = temp;
 	}
+}
+
+void	parse_exit_ll(char *str)
+{
+	int			i;
+
+	i = 0;
+	if (!ft_strcmp(str, "-9223372036854775808"))
+		return ;
+	while (str[i] == ' ' || (str[i] >= 9 && str[i] <= 13))
+		str++;
+	if (str[i] == '-' || str[i] == '+')
+		i++;
+	atoll_not_digit(str, i);
 }
 
 void	print_not_digit(char *str)
