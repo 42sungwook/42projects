@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   end_of_word.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: sungwook <sungwook@student.42.fr>          +#+  +:+       +#+        */
+/*   By: daijeong <daijeong@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/27 15:59:22 by daijeong          #+#    #+#             */
-/*   Updated: 2023/05/16 18:33:54 by sungwook         ###   ########.fr       */
+/*   Updated: 2023/05/18 13:49:37 by daijeong         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,6 +29,24 @@ int	found_dollar_word_in_envp(t_token *token, t_envp *envp_temp, int j)
 	return (0);
 }
 
+int	find_dollar_word_in_envp_line(t_token *token, int *j, int dollar_word_len, \
+t_envp *envp_temp)
+{
+	while (++(*j) < dollar_word_len)
+	{
+		if (envp_temp->str[*j] != token->dollar_word[*j])
+			break ;
+	}
+	if (*j != dollar_word_len)
+		return (1);
+	if (*j == dollar_word_len && envp_temp->str[*j] == '=')
+	{
+		found_dollar_word_in_envp(token, envp_temp, *j);
+		return (0);
+	}
+	return (1);
+}
+
 int	find_dollar_word_in_envp(t_token *token)
 {
 	int		j;
@@ -40,21 +58,9 @@ int	find_dollar_word_in_envp(t_token *token)
 	while (envp_temp)
 	{
 		j = -1;
-		while (++j < dollar_word_len)
-		{
-			if (envp_temp->str[j] != token->dollar_word[j])
-				break ;
-		}
-		if (j != dollar_word_len)
-		{
-			envp_temp = envp_temp->next;
-			continue ;
-		}
-		if (j == dollar_word_len && envp_temp->str[j] == '=')
-		{
-			found_dollar_word_in_envp(token, envp_temp, j);
+		if (!find_dollar_word_in_envp_line(token, &j, dollar_word_len, \
+		envp_temp))
 			return (0);
-		}
 		envp_temp = envp_temp->next;
 	}
 	return (0);
