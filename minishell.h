@@ -6,7 +6,7 @@
 /*   By: daijeong <daijeong@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/27 15:58:34 by daijeong          #+#    #+#             */
-/*   Updated: 2023/05/18 14:26:16 by daijeong         ###   ########.fr       */
+/*   Updated: 2023/05/18 14:34:58 by daijeong         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -77,6 +77,8 @@ typedef struct s_token
 	int		dollar;
 	char	*dollar_word;
 	int		pipe;
+	int		pipe_fd[2];
+	int		prev_fd;
 	int		left_redirection;
 	int		right_redirection;
 	char	*word;
