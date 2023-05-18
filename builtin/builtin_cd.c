@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   builtin_cd.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: sungwook <sungwook@student.42.fr>          +#+  +:+       +#+        */
+/*   By: daijeong <daijeong@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/27 15:59:28 by daijeong          #+#    #+#             */
-/*   Updated: 2023/05/17 20:55:53 by sungwook         ###   ########.fr       */
+/*   Updated: 2023/05/18 12:43:36 by daijeong         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,8 +20,11 @@ char	*find_current_dir(t_token *token)
 	temp = token->envp;
 	while (temp)
 	{
-		if (!ft_strncmp(temp->str, "PWD=", 4))
-			break ;
+		if (temp->str)
+		{
+			if (!ft_strncmp(temp->str, "PWD=", 4))
+				break ;
+		}
 		temp = temp->next;
 	}
 	if (!temp)
