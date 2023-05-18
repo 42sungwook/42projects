@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   save_cmds.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: sungwook <sungwook@student.42.fr>          +#+  +:+       +#+        */
+/*   By: daijeong <daijeong@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/29 12:58:35 by sungwook          #+#    #+#             */
-/*   Updated: 2023/05/18 16:22:44 by sungwook         ###   ########.fr       */
+/*   Updated: 2023/05/18 17:15:20 by daijeong         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -81,6 +81,7 @@ void	not_builtins(char **path, t_commands *temp_cmds)
 	{
 		if (is_directory(temp_cmds->cmd[0]))
 		{
+			g_exit_status = IS_DIR;
 			write(2, "minishell: ", 11);
 			write(2, temp_cmds->cmd[0], ft_strlen(temp_cmds->cmd[0]));
 			write(2, ": is a directory\n", 17);
