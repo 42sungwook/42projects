@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parse_single_quote.c                               :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: sungwook <sungwook@student.42.fr>          +#+  +:+       +#+        */
+/*   By: daijeong <daijeong@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/27 15:59:00 by daijeong          #+#    #+#             */
-/*   Updated: 2023/05/17 15:45:56 by sungwook         ###   ########.fr       */
+/*   Updated: 2023/05/18 16:49:18 by daijeong         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,6 +22,8 @@ int	parse_single_quote(t_commands *cmds, t_token *token)
 	}
 	if (token->quote == 0)
 		token->quote = '\'';
+	else if (token->quote == '\"' && token->dollar_word)
+		find_dollar_word_in_envp(token);
 	else if (token->quote == '\'')
 		token->quote = 0;
 	if (token->quote == '\"')
