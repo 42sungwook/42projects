@@ -6,7 +6,7 @@
 /*   By: daijeong <daijeong@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/27 15:59:33 by daijeong          #+#    #+#             */
-/*   Updated: 2023/05/18 14:28:06 by daijeong         ###   ########.fr       */
+/*   Updated: 2023/05/18 14:31:08 by daijeong         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,6 +50,30 @@ void	print_export_message(t_commands *cmds, t_envp *free_tmp)
 	}
 }
 
+int	update_envp(int equal_location, t_envp *temp, char *str)
+{
+	if (equal_location && \
+			(!ft_strncmp(temp->str, str, equal_location + 1) || \
+			(!ft_strchr(temp->str, '=') && \
+			ft_strncmp(str, temp->str, ft_strlen(temp->str) + 1) == '=')))
+	{
+		free(temp->str);
+		temp->str = ft_strdup(str);
+		return (0);
+	}
+	else if (!equal_location && \
+		ft_strcmp(temp->str, str) == '=')
+		return (0);
+	if (!temp->next)
+	{
+		temp->next = (t_envp *)malloc(sizeof(t_envp));
+		temp->next->str = ft_strdup(str);
+		temp->next->next = 0;
+		return (0);
+	}
+	return (1);
+}
+
 void	valid_envp_name(t_envp **envp, char *str)
 {
 	t_envp	*temp;
@@ -62,25 +86,8 @@ void	valid_envp_name(t_envp **envp, char *str)
 		return ;
 	while (temp)
 	{
-		if (equal_location && \
-			(!ft_strncmp(temp->str, str, equal_location + 1) || \
-			(!ft_strchr(temp->str, '=') && \
-			ft_strncmp(str, temp->str, ft_strlen(temp->str) + 1) == '=')))
-		{
-			free(temp->str);
-			temp->str = ft_strdup(str);
-			break ;
-		}
-		else if (!equal_location && \
-			ft_strcmp(temp->str, str) == '=')
-			break ;
-		if (!temp->next)
-		{
-			temp->next = (t_envp *)malloc(sizeof(t_envp));
-			temp->next->str = ft_strdup(str);
-			temp->next->next = 0;
-			break ;
-		}
+		if (!update_envp(equal_location, temp, str))
+			return ;
 		temp = temp->next;
 	}
 }
