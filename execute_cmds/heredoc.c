@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   heredoc.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: daijeong <daijeong@student.42.fr>          +#+  +:+       +#+        */
+/*   By: sungwook <sungwook@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/15 14:52:26 by sungwook          #+#    #+#             */
-/*   Updated: 2023/05/18 13:13:02 by daijeong         ###   ########.fr       */
+/*   Updated: 2023/05/20 21:34:54 by sungwook         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,7 +61,6 @@ int *file_fd)
 	waitpid(pid, &status, 0);
 	if (WEXITSTATUS(status) == 0)
 	{
-		write(1, "\n", 1);
 		g_exit_status = 1;
 		return (1);
 	}
@@ -91,7 +90,7 @@ int	open_heredoc_fd(t_commands *cmds)
 	pid = fork();
 	if (pid == 0)
 	{
-		init_child_signal();
+		init_heredoc_signal();
 		while (heredoc_temp->flag)
 		{
 			file_fd = check_heredoc_name(heredoc_file, heredoc_temp, file_fd);

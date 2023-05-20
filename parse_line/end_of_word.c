@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   end_of_word.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: daijeong <daijeong@student.42.fr>          +#+  +:+       +#+        */
+/*   By: sungwook <sungwook@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/27 15:59:22 by daijeong          #+#    #+#             */
-/*   Updated: 2023/05/18 17:04:06 by daijeong         ###   ########.fr       */
+/*   Updated: 2023/05/20 22:06:31 by sungwook         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,6 +53,14 @@ int	find_dollar_word_in_envp(t_token *token)
 	int		dollar_word_len;
 	t_envp	*envp_temp;
 
+	if (!token->dollar_word && token->prev_char == '$')
+	{
+		if (token->word)
+			token->word = make_word_c(token->word, '$');
+		else
+			token->word = ft_strdup("$");
+		return (0);
+	}
 	envp_temp = token->envp;
 	dollar_word_len = ft_strlen(token->dollar_word);
 	while (envp_temp)

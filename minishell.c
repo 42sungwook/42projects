@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: daijeong <daijeong@student.42.fr>          +#+  +:+       +#+        */
+/*   By: sungwook <sungwook@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/27 15:58:44 by daijeong          #+#    #+#             */
-/*   Updated: 2023/05/18 13:16:58 by daijeong         ###   ########.fr       */
+/*   Updated: 2023/05/20 21:32:17 by sungwook         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,7 +55,7 @@ int	parse_line(char *str, t_commands *cmds, t_token *token)
 			str[i] == '\"' || str[i] == '<' || str[i] == '>' || \
 			str[i] == '\'' || str[i] == '$' || str[i] == '?')
 			flag = parse_character(cmds, token, str[i]);
-		else if (str[i] == '|')
+		else if (str[i] == '|' && !token->quote)
 			flag = parse_pipe(&cmds, token);
 		else if (token->dollar == 1)
 			token->dollar_word = make_word_c(token->dollar_word, str[i]);
