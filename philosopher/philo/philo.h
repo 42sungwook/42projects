@@ -16,6 +16,11 @@ typedef struct s_data
 	int				nb_eat;
 	int				is_dead;
 	long			start_time;
+	pthread_t		*philo;
+	pthread_mutex_t	*fork;
+	pthread_mutex_t	print;
+	pthread_mutex_t	dead;
+	pthread_mutex_t	eat;
 }					t_data;
 
 int		ft_atoi(const char *str);

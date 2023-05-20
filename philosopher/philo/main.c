@@ -37,6 +37,72 @@ int	ft_init_philo(t_data *data, int argc, char **argv)
 	return (0);
 }
 
+int	ft_init_mutex(t_data *data)
+{
+	int	i;
+
+	i = 0;
+	data->fork = malloc(sizeof(pthread_mutex_t) * data->nb_of_philo);
+	if (!data->fork)
+		return (1);
+	while (i < data->nb_of_philo)
+	{
+		if (pthread_mutex_init(&data->fork[i], NULL))
+			return (1);
+		i++;
+	}
+	if (pthread_mutex_init(&data->print, NULL))
+		return (1);
+	if (pthread_mutex_init(&data->dead, NULL))
+		return (1);
+	if (pthread_mutex_init(&data->eat, NULL))
+		return (1);
+	return (0);
+}
+
+int	ft_routine(t_data *data)
+{
+	int	i;
+
+	i = 0;
+	while (1)
+	{
+		if (pthread_mutex_lock(&data->fork[i]))
+			return (1);
+		if (pthread_mutex_lock(&data->fork[(i + 1) % data->nb_of_philo]))
+			return (1);
+		if (ft_eat(data, i))
+			return (1);
+		if (pthread_mutex_unlock(&data->fork[i]))
+			return (1);
+		if (pthread_mutex_unlock(&data->fork[(i + 1) % data->nb_of_philo]))
+			return (1);
+		if (ft_sleep(data, i))
+			return (1);
+		if (ft_think(data, i))
+			return (1);
+	}
+	return (0);
+}
+
+int	ft_init_thread(t_data *data)
+{
+	int	i;
+
+	i = 0;
+	data->philo = malloc(sizeof(pthread_t) * data->nb_of_philo);
+	if (!data->philo)
+		return (1);
+	data->start_time = ft_get_time();
+	while (i < data->nb_of_philo)
+	{
+		if (pthread_create(&data->philo[i], NULL, ft_routine, &data->philo[i]))
+			return (1);
+		i++;
+	}
+	return (0);
+}
+
 int	main(int argc, char **argv)
 {
 	t_data	*data;
