@@ -6,7 +6,7 @@
 /*   By: sungwook <sungwook@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/27 15:59:22 by daijeong          #+#    #+#             */
-/*   Updated: 2023/05/20 22:06:31 by sungwook         ###   ########.fr       */
+/*   Updated: 2023/05/21 15:07:04 by sungwook         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -76,7 +76,7 @@ int	find_dollar_word_in_envp(t_token *token)
 
 int	end_of_word(t_commands *cmds, t_token *token, char c)
 {
-	if (token->dollar == 1 && token->quote == 0)
+	if (token->dollar == 1 && (!token->quote || token->quote == '\"'))
 	{
 		find_dollar_word_in_envp(token);
 		token->dollar = 0;
