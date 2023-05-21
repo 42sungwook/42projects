@@ -19,7 +19,10 @@ int	print_status(t_philo *philo, char *status)
 		printf("%ld %d %s\n", ft_get_time() - philo->data->start_time, \
 			philo->id + 1, status);
 		if (ft_strcmp(status, "is eating"))
-			philo->eat_time = ft_get_time();
+		{
+			philo->eat_time = ft_get_time() - philo->data->start_time;
+			philo->eat_start = ft_get_time();
+		}
 	}
 	else
 		flag = 1;
@@ -37,7 +40,7 @@ int	monitoring(t_philo *philo, t_data *data)
 	pthread_mutex_lock(data->print);
 	while (i < data->nb_of_philo)
 	{
-		if (ft_get_time() - philo[i].eat_time > data->time_to_die)
+		if (ft_get_time() - philo[i].eat_start > data->time_to_die)
 		{
 			data->is_dead = 1;
 			printf("%ld %d is dead\n", ft_get_time() - data->start_time, i + 1);
@@ -82,7 +85,6 @@ int	ft_error(t_data *data, char *str)
 void	*ft_routine(t_philo *philo)
 {
 	int		i;
-	int		j;
 	int		eat_num;
 	t_data	*data;
 
@@ -112,8 +114,7 @@ void	*ft_routine(t_philo *philo)
 			pthread_mutex_unlock(&data->fork[(i + 1) % data->nb_of_philo]);
 			break ;
 		}
-		j = -1;
-		while (++j < data->time_to_eat * 10)
+		while (ft_get_time() - data->start_time < (philo->eat_time + data->time_to_eat))
 			usleep(100);
 		eat_num++;
 		pthread_mutex_unlock(&data->fork[i]);
@@ -122,8 +123,7 @@ void	*ft_routine(t_philo *philo)
 			break ;
 		if (eat_num == data->nb_need_eat)
 			break ;
-		j = -1;
-		while (++j < data->time_to_slp * 10)
+		while (ft_get_time() - data->start_time < (philo->eat_time + data->time_to_eat + data->time_to_slp))
 			usleep(100);
 	}
 	return (NULL);

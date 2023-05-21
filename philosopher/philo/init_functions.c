@@ -60,7 +60,8 @@ int	ft_init_thread(t_data *data, t_philo *philo)
 	{
 		philo[i].data = data;
 		philo[i].id = i;
-		philo[i].eat_time = ft_get_time();
+		philo[i].eat_time = 0;
+		philo[i].eat_start = ft_get_time();
 		if (pthread_create(&data->philo[i], NULL, (void *)ft_routine, philo + i))
 			return (1);
 		i++;

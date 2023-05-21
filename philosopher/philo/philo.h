@@ -29,6 +29,7 @@ typedef struct s_philo
 	struct s_data	*data;
 	int				id;
 	long			eat_time;
+	long			eat_start;
 }					t_philo;
 
 int		ft_atoi(const char *str);
