@@ -6,15 +6,23 @@
 /*   By: sungwook <sungwook@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/27 15:58:44 by daijeong          #+#    #+#             */
-/*   Updated: 2023/05/20 21:32:17 by sungwook         ###   ########.fr       */
+/*   Updated: 2023/05/21 13:16:50 by sungwook         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
+int	ft_isspace(char c)
+{
+	if (c == ' ' || c == '\t' || c == '\n' || \
+		c == '\v' || c == '\f' || c == '\r')
+		return (1);
+	return (0);
+}
+
 int	parse_character(t_commands *cmds, t_token *token, char c)
 {
-	if (c == ' ' || c == '\t' || c == '\n')
+	if (ft_isspace(c))
 		return (end_of_word(cmds, token, c));
 	else if (c == '\"')
 		return (parse_double_quote(cmds, token));
@@ -51,7 +59,7 @@ int	parse_line(char *str, t_commands *cmds, t_token *token)
 	flag = 0;
 	while (str[++i] && flag == 0)
 	{
-		if (str[i] == ' ' || str[i] == '\t' || str[i] == '\n' || \
+		if (ft_isspace(str[i]) || \
 			str[i] == '\"' || str[i] == '<' || str[i] == '>' || \
 			str[i] == '\'' || str[i] == '$' || str[i] == '?')
 			flag = parse_character(cmds, token, str[i]);
