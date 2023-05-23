@@ -70,6 +70,23 @@ void	ft_free_data(t_data *data)
 	}
 	if (data->philo)
 		free(data->philo);
+	if (data->init)
+	{
+		pthread_mutex_destroy(data->init);
+		free(data->init);
+	}
+	if (data->print)
+	{
+		pthread_mutex_destroy(data->print);
+		free(data->print);
+	}
+	if (data->dead)
+	{
+		pthread_mutex_destroy(data->dead);
+		free(data->dead);
+	}
+	if (data)
+		free(data);
 }
 
 int	ft_error(t_data *data, char *str)
@@ -145,6 +162,7 @@ void	*ft_routine(t_philo *philo)
 	return (NULL);
 }
 
+
 int	main(int argc, char **argv)
 {
 	t_philo	*philo;
@@ -176,5 +194,6 @@ int	main(int argc, char **argv)
 		i++;
 	}
 	ft_free_data(data);
+	free(philo);
 	return (0);
 }
