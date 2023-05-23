@@ -55,16 +55,25 @@ int	ft_init_thread(t_data *data, t_philo *philo)
 	data->philo = malloc(sizeof(pthread_t) * data->nb_of_philo);
 	if (!data->philo)
 		return (1);
-	data->start_time = ft_get_time();
 	while (i < data->nb_of_philo)
 	{
 		philo[i].data = data;
 		philo[i].id = i;
 		philo[i].eat_time = 0;
-		philo[i].eat_start = ft_get_time();
+		philo[i].eat_start = 0;
 		if (pthread_create(&data->philo[i], NULL, (void *)ft_routine, philo + i))
 			return (1);
 		i++;
+	}
+	while (1)
+	{
+		pthread_mutex_lock(data->init);
+		if (data->nb_of_init == data->nb_of_philo)
+		{
+			pthread_mutex_unlock(data->init);
+			break ;
+		}
+		pthread_mutex_unlock(data->init);
 	}
 	return (0);
 }

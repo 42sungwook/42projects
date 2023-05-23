@@ -18,7 +18,7 @@ int	print_status(t_philo *philo, char *status)
 	{
 		printf("%ld %d %s\n", ft_get_time() - philo->data->start_time, \
 			philo->id + 1, status);
-		if (ft_strcmp(status, "is eating"))
+		if (!ft_strcmp(status, "is eating"))
 		{
 			philo->eat_time = ft_get_time() - philo->data->start_time;
 			philo->eat_start = ft_get_time();
@@ -37,19 +37,20 @@ int	monitoring(t_philo *philo, t_data *data)
 	int	i;
 
 	i = 0;
-	pthread_mutex_lock(data->print);
 	while (i < data->nb_of_philo)
 	{
-		if (ft_get_time() - philo[i].eat_start > data->time_to_die)
+		pthread_mutex_lock(data->print);
+		if (philo->eat_start && ft_get_time() - philo->eat_start > data->time_to_die)
 		{
 			data->is_dead = 1;
-			printf("%ld %d is dead\n", ft_get_time() - data->start_time, i + 1);
+			printf("%ld %d is dead\n", ft_get_time() - data->start_time, philo->id + 1);
 			pthread_mutex_unlock(data->print);
 			return (1);
 		}
+		pthread_mutex_unlock(data->print);
+		philo++;
 		i++;
 	}
-	pthread_mutex_unlock(data->print);
 	return (0);
 }
 
@@ -91,6 +92,21 @@ void	*ft_routine(t_philo *philo)
 	eat_num = 0;
 	data = philo->data;
 	i = philo->id;
+	pthread_mutex_lock(data->init);
+	if (data->nb_of_init + 1 == data->nb_of_philo)
+		data->start_time = ft_get_time();
+	data->nb_of_init++;
+	pthread_mutex_unlock(data->init);
+	while (1)
+	{
+		pthread_mutex_lock(data->init);
+		if (data->nb_of_init == data->nb_of_philo)
+		{
+			pthread_mutex_unlock(data->init);
+			break ;
+		}
+		pthread_mutex_unlock(data->init);
+	}
 	if (i % 2 == 1)
 		usleep(500 * data->time_to_eat);
 	while (1)
@@ -146,7 +162,7 @@ int	main(int argc, char **argv)
 		return (ft_error(data, "Error: Mutex Init Error\n"));
 	philo = malloc(sizeof(t_philo) * data->nb_of_philo);
 	if (ft_init_thread(data, philo))
-		return (ft_error(data, "Error: Thread Error\n"));
+		return (ft_error(data, "Error: Thread Init Error\n"));
 	while (1)
 	{
 		if (monitoring(philo, data))
