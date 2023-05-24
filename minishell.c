@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: sungwook <sungwook@student.42.fr>          +#+  +:+       +#+        */
+/*   By: daijeong <daijeong@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/27 15:58:44 by daijeong          #+#    #+#             */
-/*   Updated: 2023/05/21 13:16:50 by sungwook         ###   ########.fr       */
+/*   Updated: 2023/05/24 11:18:43 by daijeong         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,8 +59,8 @@ int	parse_line(char *str, t_commands *cmds, t_token *token)
 	flag = 0;
 	while (str[++i] && flag == 0)
 	{
-		if (ft_isspace(str[i]) || \
-			str[i] == '\"' || str[i] == '<' || str[i] == '>' || \
+		if (ft_isspace(str[i]) || str[i] == '\"' || \
+			(!token->quote && (str[i] == '<' || str[i] == '>')) || \
 			str[i] == '\'' || str[i] == '$' || str[i] == '?')
 			flag = parse_character(cmds, token, str[i]);
 		else if (str[i] == '|' && !token->quote)
