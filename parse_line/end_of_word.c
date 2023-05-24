@@ -6,7 +6,7 @@
 /*   By: sungwook <sungwook@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/27 15:59:22 by daijeong          #+#    #+#             */
-/*   Updated: 2023/05/24 23:10:58 by sungwook         ###   ########.fr       */
+/*   Updated: 2023/05/24 23:37:38 by sungwook         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -76,15 +76,12 @@ int	end_of_word(t_commands *cmds, t_token *token, char c)
 			token->word = make_word_c(token->word, '$');
 		token->dollar = 0;
 	}
-	if ((c == 0 && (token->quote == '\'' || token->quote == '\"')) || \
-		(token->quote == 0 && token->dollar == 0))
+	if ((c == 0 && token->word && (token->quote == '\'' || \
+		token->quote == '\"')) || (token->quote == 0 && token->dollar == 0))
 	{
-		if (token->word)
-		{
-			make_command(cmds, token);
-			free(token->word);
-			token->word = 0;
-		}
+		make_command(cmds, token);
+		free(token->word);
+		token->word = 0;
 	}
 	token->prev_char = c;
 	if (c == '|')
