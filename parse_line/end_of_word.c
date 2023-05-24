@@ -6,7 +6,7 @@
 /*   By: sungwook <sungwook@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/27 15:59:22 by daijeong          #+#    #+#             */
-/*   Updated: 2023/05/21 15:07:04 by sungwook         ###   ########.fr       */
+/*   Updated: 2023/05/24 23:10:58 by sungwook         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,14 +53,6 @@ int	find_dollar_word_in_envp(t_token *token)
 	int		dollar_word_len;
 	t_envp	*envp_temp;
 
-	if (!token->dollar_word && token->prev_char == '$')
-	{
-		if (token->word)
-			token->word = make_word_c(token->word, '$');
-		else
-			token->word = ft_strdup("$");
-		return (0);
-	}
 	envp_temp = token->envp;
 	dollar_word_len = ft_strlen(token->dollar_word);
 	while (envp_temp)
@@ -76,9 +68,12 @@ int	find_dollar_word_in_envp(t_token *token)
 
 int	end_of_word(t_commands *cmds, t_token *token, char c)
 {
-	if (token->dollar == 1 && (!token->quote || token->quote == '\"'))
+	if (token->dollar == 1 && token->quote != '\'')
 	{
-		find_dollar_word_in_envp(token);
+		if (token->dollar_word)
+			find_dollar_word_in_envp(token);
+		else
+			token->word = make_word_c(token->word, '$');
 		token->dollar = 0;
 	}
 	if ((c == 0 && (token->quote == '\'' || token->quote == '\"')) || \

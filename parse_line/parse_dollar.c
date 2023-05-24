@@ -6,34 +6,15 @@
 /*   By: sungwook <sungwook@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/27 15:59:17 by daijeong          #+#    #+#             */
-/*   Updated: 2023/05/20 22:09:01 by sungwook         ###   ########.fr       */
+/*   Updated: 2023/05/24 23:04:17 by sungwook         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../minishell.h"
 
-void	parse_pid(t_token *token)
-{
-	pid_t	pid;
-	char	*word;
-
-	pid = getpid();
-	word = ft_itoa(pid);
-	if (token->word)
-	{
-		token->word = make_word_str(token->word, word);
-		free(word);
-	}
-	else
-		token->word = word;
-	token->dollar = 0;
-}
-
 int	parse_dollar(t_token *token)
 {
-	if (token->dollar == 1 && token->prev_char == '$')
-		parse_pid(token);
-	else if (token->dollar == 1)
+	if (token->dollar == 1)
 	{
 		find_dollar_word_in_envp(token);
 		token->dollar = 1;
