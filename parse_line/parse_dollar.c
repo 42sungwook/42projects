@@ -6,7 +6,7 @@
 /*   By: sungwook <sungwook@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/27 15:59:17 by daijeong          #+#    #+#             */
-/*   Updated: 2023/05/24 23:38:24 by sungwook         ###   ########.fr       */
+/*   Updated: 2023/05/25 13:29:00 by sungwook         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,8 +16,16 @@ int	parse_dollar(t_token *token)
 {
 	if (token->dollar == 1)
 	{
-		find_dollar_word_in_envp(token);
-		token->dollar = 1;
+		if (token->prev_char == '$')
+		{
+			token->word = make_word_str(token->word, "$$");
+			token->dollar = 0;
+		}
+		else
+		{
+			find_dollar_word_in_envp(token);
+			token->dollar = 1;
+		}
 	}
 	else if (token->quote == 0 || token->quote == '\"')
 		token->dollar = 1;
