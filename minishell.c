@@ -6,7 +6,7 @@
 /*   By: sungwook <sungwook@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/27 15:58:44 by daijeong          #+#    #+#             */
-/*   Updated: 2023/05/25 19:01:23 by sungwook         ###   ########.fr       */
+/*   Updated: 2023/05/25 19:14:55 by sungwook         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,12 +50,10 @@ int	parse_syntax_error(t_commands *cmds, t_token *token, int flag)
 	return (0);
 }
 
-int	parse_line(char *str, t_commands *cmds, t_token *token)
+int	parse_line(char *str, t_commands *cmds, t_token *token, int i)
 {
-	int	i;
 	int	flag;
 
-	i = -1;
 	flag = 0;
 	while (str[++i] && flag == 0)
 	{
@@ -66,10 +64,14 @@ int	parse_line(char *str, t_commands *cmds, t_token *token)
 			flag = parse_character(cmds, token, str[i]);
 		else if (str[i] == '|' && !token->quote)
 			flag = parse_pipe(&cmds, token);
-		else if (token->dollar == 1)
-			token->dollar_word = make_word_c(token->dollar_word, str[i]);
 		else
-			token->word = make_word_c(token->word, str[i]);
+		{
+			if (token->dollar == 1)
+				token->dollar_word = make_word_c(token->dollar_word, str[i]);
+			else
+				token->word = make_word_c(token->word, str[i]);
+			token->prev_char = str[i];
+		}
 	}
 	if (parse_syntax_error(cmds, token, flag))
 		return (1);
@@ -97,7 +99,7 @@ int	main(int argc, char **argv, char **envp)
 			exit(g_exit_status);
 		}
 		del_signal();
-		if (!parse_line(str, cmds, token))
+		if (!parse_line(str, cmds, token, -1))
 			execute_cmds(cmds, token);
 		add_history(str);
 		free_everything(cmds, token, str);
