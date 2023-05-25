@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   heredoc.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: sungwook <sungwook@student.42.fr>          +#+  +:+       +#+        */
+/*   By: daijeong <daijeong@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/15 14:52:26 by sungwook          #+#    #+#             */
-/*   Updated: 2023/05/20 21:34:54 by sungwook         ###   ########.fr       */
+/*   Updated: 2023/05/25 20:35:28 by daijeong         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,33 +31,43 @@ void	write_in_heredoc(int fd, const char *limiter)
 	}
 }
 
-int	check_heredoc_name(char *heredoc_file, t_line *heredoc_temp, int file_fd)
+int	check_heredoc_name(t_line *heredoc_temp, int file_fd)
 {
 	char	*str_temp;
+	char	*heredoc_file;
+	char	*hd_tmp;
 
-	str_temp = ft_itoa((long long)heredoc_temp->line);
 	while (heredoc_temp->line)
 	{
+		heredoc_file = ft_strdup("/tmp/heredoc_temp#");
+		str_temp = ft_itoa((long long)heredoc_temp->line);
+		hd_tmp = heredoc_file;
 		heredoc_file = ft_strjoin(heredoc_file, str_temp);
+		free(hd_tmp);
 		if (access(heredoc_file, F_OK))
 		{
 			file_fd = open(heredoc_file, O_WRONLY | O_CREAT | O_TRUNC, 0644);
 			if (heredoc_temp->next->flag)
 				unlink(heredoc_file);
 			write_in_heredoc(file_fd, heredoc_temp->line);
+			free(str_temp);
+			free(heredoc_file);
 			return (file_fd);
 		}
+		free(str_temp);
+		free(heredoc_file);
 	}
 	return (0);
 }
 
-int	last_heredoc(pid_t pid, t_line *heredoc_temp, char *heredoc_file, \
-int *file_fd)
+int	last_heredoc(pid_t pid, t_line *heredoc_temp, int *file_fd)
 {
 	char	*str_temp;
 	char	*prev_heredoc_file;
+	char	*heredoc_file;
 	int		status;
 
+	heredoc_file = ft_strdup("/tmp/heredoc_temp#");
 	waitpid(pid, &status, 0);
 	if (WEXITSTATUS(status) == 0)
 	{
@@ -80,12 +90,10 @@ int *file_fd)
 int	open_heredoc_fd(t_commands *cmds)
 {
 	t_line	*heredoc_temp;
-	char	*heredoc_file;
 	int		file_fd;
 	pid_t	pid;
 
 	heredoc_temp = cmds->heredoc;
-	heredoc_file = ft_strdup("/tmp/heredoc_temp#");
 	file_fd = 0;
 	pid = fork();
 	if (pid == 0)
@@ -93,13 +101,13 @@ int	open_heredoc_fd(t_commands *cmds)
 		init_heredoc_signal();
 		while (heredoc_temp->flag)
 		{
-			file_fd = check_heredoc_name(heredoc_file, heredoc_temp, file_fd);
+			file_fd = check_heredoc_name(heredoc_temp, file_fd);
 			close(file_fd);
 			heredoc_temp = heredoc_temp->next;
 		}
 		exit(1);
 	}
-	if (last_heredoc(pid, heredoc_temp, heredoc_file, &file_fd))
+	if (last_heredoc(pid, heredoc_temp, &file_fd))
 		return (-1);
 	return (file_fd);
 }
