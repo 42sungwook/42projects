@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parse_double_quote.c                               :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: daijeong <daijeong@student.42.fr>          +#+  +:+       +#+        */
+/*   By: sungwook <sungwook@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/27 15:59:11 by daijeong          #+#    #+#             */
-/*   Updated: 2023/05/25 17:14:00 by daijeong         ###   ########.fr       */
+/*   Updated: 2023/05/25 18:46:33 by sungwook         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,8 @@ void	parse_double_quote_find_envp(t_token *token)
 {
 	if (token->dollar_word)
 		find_dollar_word_in_envp(token);
+	else if (token->quote == '\"')
+		token->word = make_word_c(token->word, '$');
 	if (token->quote)
 		token->quote = 0;
 	else
