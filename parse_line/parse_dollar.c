@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parse_dollar.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: sungwook <sungwook@student.42.fr>          +#+  +:+       +#+        */
+/*   By: daijeong <daijeong@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/27 15:59:17 by daijeong          #+#    #+#             */
-/*   Updated: 2023/05/25 13:29:00 by sungwook         ###   ########.fr       */
+/*   Updated: 2023/05/25 16:27:58 by daijeong         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,10 @@ int	parse_dollar(t_token *token)
 	{
 		if (token->prev_char == '$')
 		{
-			token->word = make_word_str(token->word, "$$");
+			if (token->word)
+				token->word = make_word_str(token->word, "$$");
+			else
+				token->word = ft_strdup("$$");
 			token->dollar = 0;
 		}
 		else

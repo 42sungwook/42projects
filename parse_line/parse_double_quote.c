@@ -3,14 +3,27 @@
 /*                                                        :::      ::::::::   */
 /*   parse_double_quote.c                               :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: sungwook <sungwook@student.42.fr>          +#+  +:+       +#+        */
+/*   By: daijeong <daijeong@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/27 15:59:11 by daijeong          #+#    #+#             */
-/*   Updated: 2023/05/24 23:38:27 by sungwook         ###   ########.fr       */
+/*   Updated: 2023/05/25 17:06:52 by daijeong         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../minishell.h"
+
+void	parse_double_quote_find_envp(t_token *token)
+{
+	if (token->dollar_word)
+		find_dollar_word_in_envp(token);
+	else
+		token->word = make_word_c(token->word, '$');
+	if (token->quote)
+		token->quote = 0;
+	else
+		token->quote = '\"';
+	token->dollar = 0;
+}
 
 int	parse_double_quote(t_commands *cmds, t_token *token)
 {
@@ -26,14 +39,7 @@ int	parse_double_quote(t_commands *cmds, t_token *token)
 		token->quote = 0;
 	else if ((token->quote == '\"' && token->dollar == 1) || \
 			(token->quote == 0 && token->dollar == 1))
-	{
-		find_dollar_word_in_envp(token);
-		if (token->quote)
-			token->quote = 0;
-		else
-			token->quote = '\"';
-		token->dollar = 0;
-	}
+		parse_double_quote_find_envp(token);
 	if (token->quote == '\'')
 		token->word = make_word_c(token->word, '\"');
 	token->prev_char = '\"';
