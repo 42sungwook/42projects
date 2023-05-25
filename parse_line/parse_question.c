@@ -6,11 +6,25 @@
 /*   By: daijeong <daijeong@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/12 16:11:19 by daijeong          #+#    #+#             */
-/*   Updated: 2023/05/12 16:29:39 by daijeong         ###   ########.fr       */
+/*   Updated: 2023/05/25 19:52:19 by daijeong         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../minishell.h"
+
+void	parse_dollar_question(t_token *token)
+{
+	char	*status;
+
+	status = ft_itoa(g_exit_status);
+	if (token->word)
+	{
+		token->word = make_word_str(token->word, status);
+		free(status);
+	}
+	else
+		token->word = status;
+}
 
 int	parse_question(t_token *token)
 {
@@ -23,16 +37,11 @@ int	parse_question(t_token *token)
 			token->word = make_word_c(token->word, '?');
 		}
 		else
-		{
-			if (token->word)
-				token->word = make_word_str(token->word, \
-				ft_itoa(g_exit_status));
-			else
-				token->word = ft_itoa(g_exit_status);
-		}	
+			parse_dollar_question(token);
 		token->dollar = 0;
 	}
 	else
 		token->word = make_word_c(token->word, '?');
+	token->prev_char = '?';
 	return (0);
 }
