@@ -1,5 +1,19 @@
 #include "philo.h"
 
+void	ft_start_mutex(t_data *data)
+{
+	while (1)
+	{
+		pthread_mutex_lock(data->init);
+		if (data->nb_of_init == data->nb_of_philo)
+		{
+			pthread_mutex_unlock(data->init);
+			break ;
+		}
+		pthread_mutex_unlock(data->init);
+	}
+}
+
 int	ft_init_philo(t_data *data, int argc, char **argv)
 {
 	data->nb_of_philo = ft_atoi(argv[1]);
@@ -52,8 +66,8 @@ int	ft_init_thread(t_data *data, t_philo *philo)
 	int		i;
 
 	i = 0;
-	data->philo = malloc(sizeof(pthread_t) * data->nb_of_philo);
-	if (!data->philo)
+	data->philo_thread = malloc(sizeof(pthread_t) * data->nb_of_philo);
+	if (!data->philo_thread)
 		return (1);
 	while (i < data->nb_of_philo)
 	{
@@ -61,19 +75,11 @@ int	ft_init_thread(t_data *data, t_philo *philo)
 		philo[i].id = i;
 		philo[i].eat_time = 0;
 		philo[i].eat_start = 0;
-		if (pthread_create(&data->philo[i], NULL, (void *)ft_routine, philo + i))
+		if (pthread_create(&data->philo_thread[i], NULL, \
+			(void *)ft_routine, philo + i))
 			return (1);
 		i++;
 	}
-	while (1)
-	{
-		pthread_mutex_lock(data->init);
-		if (data->nb_of_init == data->nb_of_philo)
-		{
-			pthread_mutex_unlock(data->init);
-			break ;
-		}
-		pthread_mutex_unlock(data->init);
-	}
+	ft_start_mutex(data);
 	return (0);
 }

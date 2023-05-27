@@ -8,7 +8,8 @@ HEADER_SRCS	= philo.h
 HEADER		= $(addprefix $(HEADER_DIR), $(HEADER_SRCS))
 
 M_DIR		= ./
-M_SRCS      = main.c init_functions.c utils.c
+M_SRCS      = main.c init_functions.c free_functions.c monitoring.c \
+				routine.c utils.c
 M_PATH		= $(addprefix $(M_DIR), $(M_SRCS))
 M_OBJS		= $(M_PATH:c=o)
 
