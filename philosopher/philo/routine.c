@@ -6,7 +6,7 @@
 /*   By: sungwook <sungwook@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/29 16:43:26 by sungwook          #+#    #+#             */
-/*   Updated: 2023/05/29 20:41:44 by sungwook         ###   ########.fr       */
+/*   Updated: 2023/05/30 20:40:21 by sungwook         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -112,6 +112,11 @@ void	*ft_thread_function(t_philo *philo)
 
 	data = philo->data;
 	i = philo->id;
+	if (data->nb_of_philo == 1)
+	{
+		ft_one_philo(data, philo);
+		return (NULL);
+	}
 	pthread_mutex_lock(data->init);
 	if (data->nb_of_init + 1 == data->nb_of_philo)
 		data->start_time = ft_get_time();

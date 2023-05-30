@@ -6,7 +6,7 @@
 #    By: sungwook <sungwook@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/05/29 16:43:22 by sungwook          #+#    #+#              #
-#    Updated: 2023/05/29 16:43:23 by sungwook         ###   ########.fr        #
+#    Updated: 2023/05/30 20:31:12 by sungwook         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -21,7 +21,7 @@ HEADER		= $(addprefix $(HEADER_DIR), $(HEADER_SRCS))
 
 M_DIR		= ./
 M_SRCS      = main.c init_functions.c free_functions.c monitoring.c \
-				routine.c utils.c
+				routine.c utils.c one_philo.c
 M_PATH		= $(addprefix $(M_DIR), $(M_SRCS))
 M_OBJS		= $(M_PATH:c=o)
 

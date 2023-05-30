@@ -6,7 +6,7 @@
 /*   By: sungwook <sungwook@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/29 16:43:19 by sungwook          #+#    #+#             */
-/*   Updated: 2023/05/29 20:33:43 by sungwook         ###   ########.fr       */
+/*   Updated: 2023/05/30 20:53:43 by sungwook         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -97,6 +97,7 @@ int	ft_init_thread(t_data *data, t_philo *philo)
 			return (1);
 		i++;
 	}
-	ft_start_mutex(data);
+	if (data->nb_of_philo > 1)
+		ft_start_mutex(data);
 	return (0);
 }

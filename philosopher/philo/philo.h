@@ -6,7 +6,7 @@
 /*   By: sungwook <sungwook@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/29 16:43:25 by sungwook          #+#    #+#             */
-/*   Updated: 2023/05/29 20:33:59 by sungwook         ###   ########.fr       */
+/*   Updated: 2023/05/30 20:40:15 by sungwook         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,5 +58,6 @@ long	ft_get_time(void);
 size_t	ft_strlen(const char *s);
 int		ft_atoi(const char *str);
 int		ft_strcmp(const char *s1, const char *s2);
+void	ft_one_philo(t_data *data, t_philo *philo);
 
 #endif
