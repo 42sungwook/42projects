@@ -6,7 +6,7 @@
 /*   By: sungwook <sungwook@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/29 16:43:20 by sungwook          #+#    #+#             */
-/*   Updated: 2023/05/30 20:50:55 by sungwook         ###   ########.fr       */
+/*   Updated: 2023/05/31 20:04:26 by sungwook         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,10 +16,7 @@ static int	ft_error(t_data *data, char *str)
 {
 	write(2, str, ft_strlen(str));
 	if (data)
-	{
 		ft_free_data(data);
-		free(data);
-	}
 	return (1);
 }
 

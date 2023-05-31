@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   philo_bonus.h                                      :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: sungwook <sungwook@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2023/05/31 21:25:35 by sungwook          #+#    #+#             */
+/*   Updated: 2023/05/31 22:20:52 by sungwook         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #ifndef PHILO_BONUS_H
 # define PHILO_BONUS_H
 
@@ -17,8 +29,23 @@ typedef struct s_data
 	int				time_to_slp;
 	int				nb_need_eat;
 	int				nb_end_eat;
+	int				id;
+	int				eat_num;
 	long			start_time;
-
+	long			eat_time;
+	long			eat_start;
+	sem_t			*fork;
+	sem_t			*print;
+	pid_t			*pid;
+	pthread_mutex_t	*eat;
 }					t_data;
+
+long	ft_get_time(void);
+size_t	ft_strlen(const char *s);
+int		ft_atoi(const char *str);
+int		ft_strcmp(const char *s1, const char *s2);
+int		ft_init_philo(t_data *data, int argc, char **argv);
+int		ft_init_sem(t_data *data);
+int		ft_init_process(t_data *data);
 
 #endif
