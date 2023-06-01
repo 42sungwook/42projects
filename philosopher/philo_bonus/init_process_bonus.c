@@ -6,7 +6,7 @@
 /*   By: sungwook <sungwook@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/31 21:31:47 by sungwook          #+#    #+#             */
-/*   Updated: 2023/05/31 22:38:04 by sungwook         ###   ########.fr       */
+/*   Updated: 2023/06/01 11:26:54 by sungwook         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,47 +33,52 @@ static void	ft_thread_function(t_data *data)
 	}
 }
 
-static void	ft_philo_process(t_data *data, int i)
+static void	ft_philo_process(t_data *data)
 {
 	pthread_t	thread;
 
 	data->start_time = ft_get_time();
-	pthread_create(thread, NULL, (void *)ft_thread_function, (void *)data);
+	pthread_create(&thread, NULL, (void *)ft_thread_function, (void *)data);
 	while (1)
 	{
 		sem_wait(data->fork);
-		sem_wait(data->print);
-		printf("%ld %d has taken a fork\n", ft_get_time() - \
+		if (!sem_wait(data->fork))
+		{
+			sem_post(data->fork);
+			sem_post(data->fork);
+		}
+		else
+		{
+			sem_wait(data->print);
+			printf("%ld %d has taken a fork\n", ft_get_time() - \
 			data->start_time, data->id);
-		sem_post(data->print);
-		sem_wait(data->fork); // 0이면 포크를 내려놓을것
-		sem_wait(data->print);
-		printf("%ld %d has taken a fork\n", ft_get_time() - \
-			data->start_time, data->id);
-		printf("%ld %d is eating\n", ft_get_time() - \
-			data->start_time, data->id);
-		pthread_mutex_lock(data->eat);
-		data->eat_num++;
-		data->eat_time = ft_get_time() - data->start_time;
-		data->eat_start = ft_get_time();
-		pthread_mutex_unlock(data->eat);
-		sem_post(data->print);
-		while (ft_get_time() - data->start_time < data->eat_time + \
-			data->time_to_eat)
-			usleep(100);
-		sem_post(data->fork);
-		sem_post(data->fork);
-		sem_wait(data->print);
-		printf("%ld %d is sleeping\n", ft_get_time() - \
-			data->start_time, data->id);
-		sem_post(data->print);
-		while (ft_get_time() - data->start_time < data->eat_time + \
-			data->time_to_eat + data->time_to_slp)
-			usleep(100);
-		sem_wait(data->print);
-		printf("%ld %d is thinking\n", ft_get_time() - \
-			data->start_time, data->id);
-		sem_post(data->print);
+			printf("%ld %d has taken a fork\n", ft_get_time() - \
+				data->start_time, data->id);
+			printf("%ld %d is eating\n", ft_get_time() - \
+				data->start_time, data->id);
+			pthread_mutex_lock(data->eat);
+			data->eat_num++;
+			data->eat_time = ft_get_time() - data->start_time;
+			data->eat_start = ft_get_time();
+			pthread_mutex_unlock(data->eat);
+			sem_post(data->print);
+			while (ft_get_time() - data->start_time < data->eat_time + \
+				data->time_to_eat)
+				usleep(100);
+			sem_post(data->fork);
+			sem_post(data->fork);
+			sem_wait(data->print);
+			printf("%ld %d is sleeping\n", ft_get_time() - \
+				data->start_time, data->id);
+			sem_post(data->print);
+			while (ft_get_time() - data->start_time < data->eat_time + \
+				data->time_to_eat + data->time_to_slp)
+				usleep(100);
+			sem_wait(data->print);
+			printf("%ld %d is thinking\n", ft_get_time() - \
+				data->start_time, data->id);
+			sem_post(data->print);
+		}
 	}
 }
 
@@ -89,7 +94,7 @@ int	ft_init_process(t_data *data)
 		if (data->pid[i] < 0)
 			return (1);
 		else if (data->pid[i] == 0)
-			ft_philo_process(data, i);
+			ft_philo_process(data);
 		i++;
 		data->id++;
 	}

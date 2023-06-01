@@ -6,7 +6,7 @@
 /*   By: sungwook <sungwook@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/31 21:25:32 by sungwook          #+#    #+#             */
-/*   Updated: 2023/05/31 22:03:47 by sungwook         ###   ########.fr       */
+/*   Updated: 2023/06/01 11:25:17 by sungwook         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,6 +32,27 @@ static int	ft_error(t_data *data, char *str)
 	return (1);
 }
 
+static void	ft_main_process(t_data *data)
+{
+	int		i;
+	int		status;
+	pid_t	pid;
+
+	i = 0;
+	pid = waitpid(-1, &status, 0);
+	while (data->pid[i] != pid)
+	{
+		kill(data->pid[i], SIGKILL);
+		i++;
+	}
+	i = 0;
+	while (i < data->nb_of_philo - 1)
+	{
+		waitpid(-1, &status, 0);
+		i++;
+	}
+}
+
 int	main(int argc, char **argv)
 {
 	t_data	*data;
@@ -47,7 +68,7 @@ int	main(int argc, char **argv)
 		return (ft_error(data, "Error: Semaphore Init Error\n"));
 	if (ft_init_process(data))
 		return (ft_error(data, "Error: Process Init Error\n"));
-	// ft_main_process(data);
+	ft_main_process(data);
 	ft_free_data(data);
 	return (0);
 }

@@ -6,7 +6,7 @@
 /*   By: sungwook <sungwook@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/31 21:25:35 by sungwook          #+#    #+#             */
-/*   Updated: 2023/05/31 22:20:52 by sungwook         ###   ########.fr       */
+/*   Updated: 2023/06/01 11:28:03 by sungwook         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,6 +20,7 @@
 # include <sys/time.h>
 # include <semaphore.h>
 # include <sys/stat.h>
+# include <signal.h>
 
 typedef struct s_data
 {
