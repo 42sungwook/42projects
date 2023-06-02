@@ -6,13 +6,13 @@
 #    By: sungwook <sungwook@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/05/31 20:56:27 by sungwook          #+#    #+#              #
-#    Updated: 2023/05/31 21:38:04 by sungwook         ###   ########.fr        #
+#    Updated: 2023/06/02 23:05:03 by sungwook         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 NAME		= philo_bonus
 CC          = cc
-CFLAGS      = -Wall -Wextra -Werror
+CFLAGS      = -Wall -Wextra -Werror -fsanitize=thread -g
 RM			= rm -f
 
 HEADER_DIR  = ./

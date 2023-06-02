@@ -6,7 +6,7 @@
 /*   By: sungwook <sungwook@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/31 21:25:35 by sungwook          #+#    #+#             */
-/*   Updated: 2023/06/01 11:28:03 by sungwook         ###   ########.fr       */
+/*   Updated: 2023/06/02 23:05:07 by sungwook         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,21 +24,22 @@
 
 typedef struct s_data
 {
-	int				nb_of_philo;
-	int				time_to_die;
-	int				time_to_eat;
-	int				time_to_slp;
-	int				nb_need_eat;
-	int				nb_end_eat;
-	int				id;
-	int				eat_num;
-	long			start_time;
-	long			eat_time;
-	long			eat_start;
-	sem_t			*fork;
-	sem_t			*print;
-	pid_t			*pid;
-	pthread_mutex_t	*eat;
+	int			nb_of_philo;
+	int			time_to_die;
+	int			time_to_eat;
+	int			time_to_slp;
+	int			nb_need_eat;
+	int			nb_end_eat;
+	int			id;
+	int			eat_num;
+	int			nb_of_init;
+	long		start_time;
+	long		eat_start;
+	sem_t		*fork;
+	sem_t		*print;
+	sem_t		*init;
+	sem_t		*eat;
+	pid_t		*pid;
 }					t_data;
 
 long	ft_get_time(void);
@@ -48,5 +49,4 @@ int		ft_strcmp(const char *s1, const char *s2);
 int		ft_init_philo(t_data *data, int argc, char **argv);
 int		ft_init_sem(t_data *data);
 int		ft_init_process(t_data *data);
-
 #endif

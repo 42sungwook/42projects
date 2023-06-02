@@ -6,7 +6,7 @@
 /*   By: sungwook <sungwook@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/31 21:25:32 by sungwook          #+#    #+#             */
-/*   Updated: 2023/06/01 11:25:17 by sungwook         ###   ########.fr       */
+/*   Updated: 2023/06/02 23:25:24 by sungwook         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,26 +38,24 @@ static void	ft_main_process(t_data *data)
 	int		status;
 	pid_t	pid;
 
-	i = 0;
 	pid = waitpid(-1, &status, 0);
-	while (data->pid[i] != pid)
+	i = -1;
+	while (++i < data->nb_of_philo)
 	{
-		kill(data->pid[i], SIGKILL);
-		i++;
+		if (data->pid[i] != pid)
+			kill(data->pid[i], SIGKILL);
 	}
-	i = 0;
-	while (i < data->nb_of_philo - 1)
-	{
+	i = -1;
+	while (++i < data->nb_of_philo - 1)
 		waitpid(-1, &status, 0);
-		i++;
-	}
+	sem_post(data->print);
 }
 
 int	main(int argc, char **argv)
 {
 	t_data	*data;
 
-	data = malloc(sizeof(t_data));
+	data = (t_data *)malloc(sizeof(t_data));
 	if (!(argc == 5 || argc == 6))
 		return (ft_error(data, "Error: Invalid Arguments\n"));
 	if (!data)

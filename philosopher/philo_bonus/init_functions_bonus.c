@@ -6,7 +6,7 @@
 /*   By: sungwook <sungwook@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/31 21:25:29 by sungwook          #+#    #+#             */
-/*   Updated: 2023/05/31 22:21:16 by sungwook         ###   ########.fr       */
+/*   Updated: 2023/06/02 22:31:58 by sungwook         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,6 +22,11 @@ int	ft_init_sem(t_data *data)
 	sem_unlink("print");
 	data->print = sem_open("print", O_CREAT | O_EXCL, 0644, 1);
 	if (data->print == SEM_FAILED)
+		return (1);
+	sem_unlink("init");
+	data->init = sem_open("init", O_CREAT | O_EXCL, 0644, \
+		data->nb_of_philo);
+	if (data->init == SEM_FAILED)
 		return (1);
 	return (0);
 }
@@ -39,8 +44,9 @@ int	ft_init_philo(t_data *data, int argc, char **argv)
 	data->nb_end_eat = 0;
 	data->id = 0;
 	data->eat_num = 0;
-	data->eat_time = 0;
 	data->eat_start = 0;
+	data->nb_of_init = 0;
+	data->start_time = 0;
 	if (argc == 6)
 	{
 		data->nb_need_eat = ft_atoi(argv[5]);
