@@ -6,7 +6,7 @@
 #    By: sungwook <sungwook@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/05/31 20:56:27 by sungwook          #+#    #+#              #
-#    Updated: 2023/06/03 15:58:33 by sungwook         ###   ########.fr        #
+#    Updated: 2023/06/03 16:33:13 by sungwook         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -21,7 +21,7 @@ HEADER		= $(addprefix $(HEADER_DIR), $(HEADER_SRCS))
 
 M_DIR		= ./
 M_SRCS      = main_bonus.c init_functions_bonus.c utils_bonus.c \
-				init_process_bonus.c
+				init_process_bonus.c one_philo_bonus.c
 M_PATH		= $(addprefix $(M_DIR), $(M_SRCS))
 M_OBJS		= $(M_PATH:c=o)
 

@@ -6,7 +6,7 @@
 /*   By: sungwook <sungwook@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/31 21:25:32 by sungwook          #+#    #+#             */
-/*   Updated: 2023/06/03 15:47:53 by sungwook         ###   ########.fr       */
+/*   Updated: 2023/06/03 16:28:09 by sungwook         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,8 +66,13 @@ int	main(int argc, char **argv)
 		return (ft_error(data, "Error: Invalid Argument Number\n"));
 	if (ft_init_sem(data))
 		return (ft_error(data, "Error: Semaphore Init Error\n"));
-	if (ft_init_process(data))
-		return (ft_error(data, "Error: Process Init Error\n"));
+	if (data->nb_of_philo == 1)
+		ft_one_philo_process(data);
+	else
+	{
+		if (ft_init_process(data))
+			return (ft_error(data, "Error: Process Init Error\n"));
+	}
 	ft_main_process(data);
 	ft_free_data(data);
 	return (0);
