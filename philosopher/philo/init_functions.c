@@ -6,7 +6,7 @@
 /*   By: sungwook <sungwook@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/29 16:43:19 by sungwook          #+#    #+#             */
-/*   Updated: 2023/05/30 20:53:43 by sungwook         ###   ########.fr       */
+/*   Updated: 2023/06/03 15:36:10 by sungwook         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,7 +35,7 @@ int	ft_init_philo(t_data *data, int argc, char **argv)
 	data->nb_of_init = 0;
 	data->is_dead = 0;
 	if (data->nb_of_philo < 1 || data->time_to_die < 0 || \
-		data->time_to_eat < 0 || data->time_to_slp < 0)
+		data->time_to_eat <= 0 || data->time_to_slp <= 0)
 		return (1);
 	data->nb_need_eat = -1;
 	data->nb_end_eat = 0;

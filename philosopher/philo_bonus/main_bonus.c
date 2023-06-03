@@ -6,7 +6,7 @@
 /*   By: sungwook <sungwook@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/31 21:25:32 by sungwook          #+#    #+#             */
-/*   Updated: 2023/06/02 23:25:24 by sungwook         ###   ########.fr       */
+/*   Updated: 2023/06/03 15:47:53 by sungwook         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,8 +18,10 @@ static void	ft_free_data(t_data *data)
 	{
 		sem_close(data->fork);
 		sem_close(data->print);
+		sem_close(data->init);
 		sem_unlink("fork");
 		sem_unlink("print");
+		sem_unlink("init");
 	}
 	free(data);
 }

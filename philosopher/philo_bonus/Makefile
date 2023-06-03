@@ -6,13 +6,13 @@
 #    By: sungwook <sungwook@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/05/31 20:56:27 by sungwook          #+#    #+#              #
-#    Updated: 2023/06/02 23:05:03 by sungwook         ###   ########.fr        #
+#    Updated: 2023/06/03 15:58:33 by sungwook         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 NAME		= philo_bonus
 CC          = cc
-CFLAGS      = -Wall -Wextra -Werror -fsanitize=thread -g
+CFLAGS      = -Wall -Wextra -Werror
 RM			= rm -f
 
 HEADER_DIR  = ./
@@ -39,10 +39,10 @@ OBJS = $(M_OBJS)
 $(NAME): $(OBJS)
 	@$(CC) $(CFLAGS) $(LFLAGS) $(LIBFT) $(OBJS) -o $@
 	@echo "$(GREEN)╔══════════════════════════════════════════╗$(RESET)"
-	@echo "$(GREEN)║          philo  compile finished :)      ║$(RESET)"
+	@echo "$(GREEN)║      philo_bonus  compile finished :)    ║$(RESET)"
 	@echo "$(GREEN)╠══════════════════════════════════════════╣$(RESET)"
 	@echo "$(GREEN)║                                          ║$(RESET)"
-	@echo "$(GREEN)║              Welcome to HELL             ║$(RESET)"
+	@echo "$(GREEN)║                                          ║$(RESET)"
 	@echo "$(GREEN)║                                          ║$(RESET)"
 	@echo "$(GREEN)╚══════════════════════════════════════════╝$(RESET)"
 

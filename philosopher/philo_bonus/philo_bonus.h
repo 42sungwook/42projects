@@ -6,7 +6,7 @@
 /*   By: sungwook <sungwook@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/31 21:25:35 by sungwook          #+#    #+#             */
-/*   Updated: 2023/06/02 23:05:07 by sungwook         ###   ########.fr       */
+/*   Updated: 2023/06/03 15:42:59 by sungwook         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,7 +38,6 @@ typedef struct s_data
 	sem_t		*fork;
 	sem_t		*print;
 	sem_t		*init;
-	sem_t		*eat;
 	pid_t		*pid;
 }					t_data;
 

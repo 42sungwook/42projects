@@ -6,7 +6,7 @@
 #    By: sungwook <sungwook@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/05/29 16:43:22 by sungwook          #+#    #+#              #
-#    Updated: 2023/05/31 20:56:36 by sungwook         ###   ########.fr        #
+#    Updated: 2023/06/03 15:58:08 by sungwook         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -42,7 +42,7 @@ $(NAME): $(OBJS)
 	@echo "$(GREEN)║          philo  compile finished :)      ║$(RESET)"
 	@echo "$(GREEN)╠══════════════════════════════════════════╣$(RESET)"
 	@echo "$(GREEN)║                                          ║$(RESET)"
-	@echo "$(GREEN)║              Welcome to HELL             ║$(RESET)"
+	@echo "$(GREEN)║                                          ║$(RESET)"
 	@echo "$(GREEN)║                                          ║$(RESET)"
 	@echo "$(GREEN)╚══════════════════════════════════════════╝$(RESET)"
 
