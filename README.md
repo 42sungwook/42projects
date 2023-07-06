@@ -9,5 +9,6 @@
 
 ## 참고 문헌
 
+- [Webserv 튜토리얼](https://42seoul.gitbook.io/webserv/)
 - [42seoul, webserv](https://cdn.intra.42.fr/pdf/pdf/86733/en.subject.pdf)
 - [Webserv tutorials](https://42seoul.gitbook.io/webserv/)
