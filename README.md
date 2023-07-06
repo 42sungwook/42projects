@@ -12,3 +12,12 @@
 - [Webserv 튜토리얼](https://42seoul.gitbook.io/webserv/)
 - [42seoul, webserv](https://cdn.intra.42.fr/pdf/pdf/86733/en.subject.pdf)
 - [Webserv tutorials](https://42seoul.gitbook.io/webserv/)
+
+서브젝트에서 RFC를 읽으라고는 되어 있지만 이전처럼 7230 ~ 7235를 읽으라는 문구는 없는 것 같습니다. (확인하시면 수정좀) 그래도 일단 올려놓습니다.
+
+- [RFC 7230](https://www.ietf.org/rfc/rfc7230.txt)
+- [RFC 7231](https://www.ietf.org/rfc/rfc7231.txt)
+- [RFC 7232](https://www.ietf.org/rfc/rfc7232.txt)
+- [RFC 7233](https://www.ietf.org/rfc/rfc7233.txt)
+- [RFC 7234](https://www.ietf.org/rfc/rfc7234.txt)
+- [RFC 7235](https://www.ietf.org/rfc/rfc7235.txt)
