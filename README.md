@@ -1,9 +1,10 @@
 # webserv
 
+## 개요
 멤버 : jaekkang danpark juyojeon yejinam sungwook myko
-
 시작일 : 07.03
 
+## 테스트 실행법
 - TCP / IP 소켓 프로그래밍 책 상의 예제 1번 코드 올렸습니다.  
 ```shell
 # 사용법
@@ -12,6 +13,29 @@
 > ./server port number (ex 1234)
 > ./client 127.0.0.1 1234 (server의 포트번호)
 ```
+
+## 참고 이미지
+
+jaekkang님의 요청으로 추가
+
+### HTTP 멱동성
+![http_idempotent](/images/http_idempotent.png)
+
+---
+
+### Method 구조
+![method_structure](/images/method_structure.png)
+
+---
+
+### Request 형식
+![request_format](/images/request_format.png)
+
+---
+
+### Request 상태 의미
+![request_status](/images/request_status.png)
+
 
 ## 참고 문헌
 
