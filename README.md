@@ -4,8 +4,14 @@
 
 시작일 : 07.03
 
-- TCP / IP 소켓 프로그래밍 책 상의 예제 1번 코드 올렸습니다.
-  test 폴더에서 make 하시고, ./server port number (ex 1234) -> ./client 127.0.0.1 1234 (server의 포트번호) 과 같이 사용해보시면 됩니다.
+- TCP / IP 소켓 프로그래밍 책 상의 예제 1번 코드 올렸습니다.  
+```shell
+# 사용법
+> cd test
+> make
+> ./server port number (ex 1234)
+> ./client 127.0.0.1 1234 (server의 포트번호)
+```
 
 ## 참고 문헌
 
