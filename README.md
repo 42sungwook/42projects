@@ -10,7 +10,7 @@
 ## 참고 문헌
 
 - [42seoul, webserv](reference/webserv.pdf)
-- [42seoul, webserv_ko](reference/webserv.pdf)
+- [42seoul, webserv_ko](reference/webserv_ko.md)
 - [Webserv tutorials](https://42seoul.gitbook.io/webserv/)
 
 서브젝트에서 RFC를 읽으라고는 되어 있지만 이전처럼 7230 ~ 7235를 읽으라는 문구는 없는 것 같습니다. (확인하시면 수정좀) 그래도 일단 올려놓습니다.
