@@ -23,8 +23,8 @@ jaekkang님의 요청으로 추가
 
 ---
 
-### Method 구조
-![method_structure](/images/method_structure.png)
+### Message 구조
+![method_structure](/images/message_structure.png)
 
 ---
 
