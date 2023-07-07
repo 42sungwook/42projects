@@ -16,7 +16,7 @@ int main(int ac, char **av) {
   socklen_t clnt_addr_size;
 
   char message[] = "Hello World!";
-  printf("?");
+
   if (ac != 2) {
     printf("Usage : %s <port>\n", av[0]);
     exit(1);
