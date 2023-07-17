@@ -1,50 +1,77 @@
 #include "Parser.hpp"
 
-Parser::Parser(std::string &line) : _start(0), _pos(0), _key(), _value() {}
+Parser::Parser(std::string &path) : _error(false), _start(0), _pos(0), _key(), _value()
+{
+	readConfig(path);
+	if (_line.empty())
+		return;
+	parseRootBlock();
+}
 
 Parser::~Parser() {}
 
-void Parser::setKey(std::string &line)
+void Parser::readConfig(std::string &path)
 {
-	_key.clear();
-	_start = line.find_first_not_of(ISSPACE, _pos);
-	if (_start == std::string::npos)
-		return;
-	_pos = line.find_first_of(ISSPACE, _start);
-	if (_pos == std::string::npos)
-		return;
-	_key = line.substr(_start, _pos - _start);
+	std::string buf;
+	std::ifstream filestream(path.c_str());
+
+	if (!filestream.is_open())
+	{
+		std::cerr << "Error: " << strerror(errno) << std::endl;
+		;
+	}
+	while (getline(filestream, buf))
+	{
+		if (!filestream.eof())
+			_line += '\n';
+		else
+			break;
+	}
 }
 
-std::string Parser::getKey() const
+void Parser::parseRootBlock()
 {
-	return _key;
-}
+	_root = new RootBlock();
 
-void Parser::setValue(std::string &line)
-{
-	_value.clear();
-	_start = line.find_first_not_of(ISSPACE, _pos);
-	if (_start == std::string::npos)
-		return;
-	_pos = line.find_first_of(SEMICOLON, _start);
-	if (_pos == std::string::npos)
-		return;
-	_value = line.substr(_start, _pos - _start);
-}
-
-std::string getValue() const
-{
-	return _value;
-}
-
-void Parser::parseRootBlock(std::string &line, RootBlock *root)
-{
 	while (true)
 	{
-		setKey(line);
-		setValue(line);
-		root->check(key, value);
-		_pos++;
+		setKey();
+		setValue();
+		if (_key.empty() || _value.empty())
+			break;
 	}
+}
+
+void Parser::setKey()
+{
+	_key.clear();
+	_start = _line.find_first_not_of(ISSPACE, _pos);
+	if (_start == std::string::npos)
+		return;
+	_pos = _line.find_first_of(ISSPACE, _start);
+	if (_pos == std::string::npos)
+		return;
+	_key = _line.substr(_start, _pos - _start);
+}
+
+void Parser::setValue()
+{
+	_value.clear();
+	_start = _line.find_first_not_of(ISSPACE, _pos);
+	if (_start == std::string::npos)
+		return;
+	_pos = _line.find_first_of(SEMICOLON, _start);
+	if (_pos == std::string::npos)
+		return;
+	_value = _line.substr(_start, _pos - _start);
+}
+
+RootBlock *Parser::getRootBlock()
+{
+	return _root;
+}
+
+bool Parser::getState() const
+{
+	return _error;
 }

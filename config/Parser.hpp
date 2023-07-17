@@ -2,9 +2,10 @@
 #define PARSER_HPP
 
 #include <iostream>
-#include "RootBlock.hpp"
-#include "ServerBlock.hpp"
-#include "LocationBlock.hpp"
+#include <fstream>
+#include "./block/RootBlock.hpp"
+#include "./block/ServerBlock.hpp"
+#include "./block/LocationBlock.hpp"
 
 #define ISSPACE " \t\n\r\f\v"
 #define SEMICOLON ";"
@@ -16,18 +17,23 @@ private:
 	std::size_t _start;
 	std::string _key;
 	std::string _value;
+	std::string _line;
+	RootBlock *_root;
+	bool _error;
+
+private:
+	void setKey();
+	void setValue();
+	void readConfig(std::string &path);
+	void parseRootBlock();
+	void parseSeverBlock();
+	void parserLocationBlock();
 
 public:
-	Parser(std::string &line);
+	Parser(std::string &path);
 	~Parser();
-
-	void setKey(std::string &line);
-	std::string getKey() const;
-	void setValue(std::string &line);
-	std::string getValue() const;
-	void parseRootBlock(std::string &line, RootBlock *root);
-	void parseSeverBlock(std::string &line, ServerBlock *server);
-	void parserLocationBlock(std::string &line, LocationBlock *location);
+	RootBlock *getRootBlock();
+	bool getState() const;
 };
 
 #endif

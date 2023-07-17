@@ -1,5 +1,3 @@
 #include "RootBlock.hpp"
 
-RootBlock::RootBlock()
-{
-}
+RootBlock::RootBlock() {}
