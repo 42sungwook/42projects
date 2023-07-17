@@ -16,7 +16,7 @@ abstract class HttpHandler {
 }
 
 
-class HttpRequest {`
+class HttpRequest {
 	+headers : std::map<std::string, std::string>
 	+body : std::string
 	+method : std::string

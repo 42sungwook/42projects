@@ -1,40 +1,46 @@
 #include "Kqueue.hpp"
 
-Kqueue::Kqueue() : _kqFd(kqueue()), _isClosed(false) {
-  if (_kqFd == -1) {
-    std::cerr << "Failed to create kqueue" << std::endl;
-    _isClosed = true;
-    return;
+Kqueue::Kqueue() {}
+
+Kqueue::~Kqueue() {}
+
+int Kqueue::init(int serverSocket) {
+  if ((_kq = kqueue()) == -1) {
+    std::cout << "kqueue() error\n"
+              << std::string(strerror(errno)) << std::endl;
+    return EXIT_FAILURE;
   }
-  std::memset(&_changeList[0], 0, _changeList.size());
+  changeEvents(serverSocket, EVFILT_READ, EV_ADD | EV_ENABLE, 0, 0, NULL);
+  return EXIT_SUCCESS;
 }
 
-int Kqueue::eventRun() {
-  if (kevent(_kqFd, &_changeList[0], _changeList.size(), _eventList, 8, NULL) ==
-      -1) {
-    std::cerr << "Failed to register server socket to kqueue" << std::endl;
-    _isClosed = true;
-    return FAIL;
-  }
-  return SUCCESS;
-}
-
-const int& Kqueue::getKqFd() const { return _kqFd; }
-
-const struct kevent& Kqueue::getEvent() const { return _changeList[0]; }
-
-const bool& Kqueue::getIsClosed() const { return _isClosed; }
-
-void Kqueue::setEvent(int socket, uintptr_t ident, int16_t filter,
-                      uint16_t flags, uint32_t fflags, intptr_t data,
-                      void* udata) {
+void Kqueue::changeEvents(uintptr_t ident, int16_t filter, uint16_t flags,
+                          uint32_t fflags, intptr_t data, void* udata) {
   struct kevent tmp;
 
   EV_SET(&tmp, ident, filter, flags, fflags, data, udata);
-  _changeList.push_back(tmp);
+  _checkList.push_back(tmp);
 }
 
-Kqueue::~Kqueue() {
-  close(_kqFd);
-  _isClosed = true;
+int Kqueue::countEvents() {
+  int cnt;
+  cnt = kevent(_kq, &_checkList[0], _checkList.size(), _eventList, 8, NULL);
+  if (cnt == -1) {
+    std::cout << "kevent() error\n" + std::string(strerror(errno)) << std::endl;
+    return -1;
+  }
+  return cnt;
+}
+
+void Kqueue::clearCheckList() { _checkList.clear(); }
+
+struct kevent* Kqueue::getEventList() { return _eventList; }
+
+std::map<int, std::string>& Kqueue::getClients() { return _clients; }
+
+void Kqueue::disconnectClient(int clientFd,
+                              std::map<int, std::string>& clients) {
+  std::cout << "client disconnected: " << clientFd << std::endl;
+  close(clientFd);
+  clients.erase(clientFd);
 }
