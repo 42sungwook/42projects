@@ -1,17 +1,14 @@
-// root block
-// server block
-// location block
-
-// mime
-//
-
-#include <iostream>
-#include "RootBlock.hpp"
+#include "block/RootBlock.hpp"
 #include "Parser.hpp"
 
-RootBlock *config(std::string path)
-{
+RootBlock *config(std::string path) {
 	Parser parser(path);
 	RootBlock *root = parser.getRootBlock();
-	return (root);
+	return root;
+}
+
+int main() {
+	RootBlock *root = config("default_webserv.conf");
+	root->test();
+	delete root;
 }
