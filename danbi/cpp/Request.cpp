@@ -1,18 +1,17 @@
 #include "Request.hpp"
 
-Request::Request() : _method(-1), _process(-1) {}
+Request::Request() {}
 
 Request::~Request() {}
 
-void Request::parsing(std::string tmp) {
-  _start = int i = 0;
-
-  while (tmp.c_str()[i] && tmp.c_str()[i] != '\r') {
-  }
-}
+void Request::parsing(std::string tmp) { std::cout << "parsing" << std::endl; }
 
 const std::string Request::getMessage() const {};
 
-enum PROCESS Request::getProcess(){};
+enum PROCESS Request::getProcess(){
+
+};
+
+const int &Request::getError() const { return _error; }
 
 enum METHOD Request::getMethod(){};
