@@ -26,8 +26,8 @@ private:
 	void setValue();
 	void readConfig(std::string &path);
 	void parseRootBlock();
-	void parseSeverBlock();
-	void parserLocationBlock();
+	void parseServerBlock();
+	void parseLocationBlock();
 
 public:
 	Parser(std::string &path);

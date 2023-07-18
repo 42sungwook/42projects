@@ -36,10 +36,53 @@ void Parser::parseRootBlock()
 	while (true)
 	{
 		setKey();
+		if (_key == "server")
+		{
+			parseServerBlock();
+			continue;
+		}
 		setValue();
 		if (_key.empty() || _value.empty())
 			break;
+		_root->setKeyVal(_key, _value);
 	}
+}
+
+void Parser::parseServerBlock()
+{
+	ServerBlock *server = new ServerBlock();
+	// 중괄호 
+	while (true)
+	{
+		setKey();
+		if (_key == "location")
+		{
+			parseLocationBlock();
+			continue;
+		}
+		setValue();
+		if (_key.empty() || _value.empty())
+			break;
+		server->setKeyVal(_key, _value);
+	}
+	_root->addServerBlock(server);
+	// 닫는 중괄호 치워주는 동작
+}
+
+void Parser::parseLocationBlock()
+{
+	LocationBlock *location = new LocationBlock();
+	// 여는 중괄호 치워주는 동작
+	while (true)
+	{
+		setKey();
+		setValue();
+		if (_key.empty() || _value.empty())
+			break;
+		location->setKeyVal(_key, _value);
+	}
+	_root->_server->addLocationBlock(location);
+	// 닫는 중괄호 치워주는 동작
 }
 
 void Parser::setKey()
