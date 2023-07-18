@@ -1,6 +1,8 @@
 # Created by https://www.toptal.com/developers/gitignore/api/c,c++,macos,linux,cmake,clion
 # Edit at https://www.toptal.com/developers/gitignore?templates=c,c++,macos,linux,cmake,clion
 
+.vscode
+
 ### C ###
 # Prerequisites
 *.d
