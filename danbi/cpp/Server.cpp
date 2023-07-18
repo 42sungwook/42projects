@@ -97,14 +97,38 @@ int Server::run(Kqueue kq) {
             kq.getClients().find(currEvent->ident);
         if (it != kq.getClients().end()) {
           if (kq.getClients()[currEvent->ident] != "") {
+            
+            Request req;
+            std::string res;
+
+            req.parsing(kq.getClients()[currEvent->ident]);
+             
+            switch (req.getProcess())
+            {
+            case ERROR:
+
+              break;
+              
+            case CGI:
+              if (req.getMethod() == GET)
+
+              else            
+              break;  
+
+            default:
+              if (req.getMethod() == GET)
+              else if (req.getMethod() == POST)
+              else
+              break;
+            }
+            
             int n;
-            if ((n = write(currEvent->ident,
-                           kq.getClients()[currEvent->ident].c_str(),
-                           kq.getClients()[currEvent->ident].size()) == -1)) {
+            if ((n = write(currEvent->ident, tmp.c_str(), tmp.size()) == -1)) {
               std::cerr << "client write error!" << std::endl;
               kq.disconnectClient(currEvent->ident, kq.getClients());
             } else
               kq.getClients()[currEvent->ident].clear();
+
           }
         }
       }

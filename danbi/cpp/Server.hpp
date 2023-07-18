@@ -14,6 +14,7 @@
 #include <vector>
 
 #include "Kqueue.hpp"
+#include "Request.hpp"
 
 class Server {
  private:
