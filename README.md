@@ -42,3 +42,7 @@ jaekkang님의 요청으로 추가
 - [RFC 7233](https://www.ietf.org/rfc/rfc7233.txt)
 - [RFC 7234](https://www.ietf.org/rfc/rfc7234.txt)
 - [RFC 7235](https://www.ietf.org/rfc/rfc7235.txt)
+
+docker 
+- docker build -t nginx:test-nginx .
+- docker run -d -p 80:80 nginx:test-nginx
