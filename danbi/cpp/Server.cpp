@@ -33,9 +33,11 @@ int Server::init(/*config*/) {
   return (EXIT_SUCCESS);
 }
 
-const int &Server::getSocket() const { return (_socket); }
+int Server::run() {
+  /* init kqueue & add event for server socket*/
+  Kqueue kq;
+  if (kq.init(_socket) == EXIT_FAILURE) return EXIT_FAILURE;
 
-int Server::run(Kqueue kq) {
   struct kevent *currEvent;
   int eventNb;
 

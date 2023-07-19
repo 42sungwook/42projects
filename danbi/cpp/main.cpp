@@ -6,12 +6,8 @@ int main() {
   Server server;
   if (server.init() == EXIT_FAILURE) return EXIT_FAILURE;
 
-  /* init kqueue & add event for server socket*/
-  Kqueue kqueue;
-  kqueue.init(server.getSocket());
-
   /* main loop */
-  server.run(kqueue);
+  if (server.run() == EXIT_FAILURE) return EXIT_FAILURE;
 
   return (0);
 }

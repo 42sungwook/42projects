@@ -18,18 +18,16 @@
 #include "Response.hpp"
 
 class Server {
-  private:
-    int _socket;
-    struct sockaddr_in _serverAddr;
+ private:
+  int _socket;
+  struct sockaddr_in _serverAddr;
 
-  public:
-    Server();
-    ~Server();
+ public:
+  Server();
+  ~Server();
 
-    int init();
-    const int &getSocket() const;
-
-    int run(Kqueue kq);
+  int init();
+  int run();
 };
 
 #endif
