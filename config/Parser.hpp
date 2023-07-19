@@ -11,6 +11,13 @@
 #define ISSPACE " \t\n\r\f\v"
 #define SEMICOLON ";"
 
+enum BLOCK
+{
+	ROOT,
+	SERVER,
+	LOCATION
+};
+
 class Parser
 {
 private:
@@ -30,6 +37,8 @@ private:
 	void parseServerBlock();
 	void parseLocationBlock(ServerBlock *server);
 	bool skipBracket();
+
+	void parseBlock(std::stack<enum BLOCK> &stack);
 
 public:
 	Parser(std::string &path);

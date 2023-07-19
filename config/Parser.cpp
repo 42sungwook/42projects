@@ -3,12 +3,16 @@
 
 Parser::Parser(std::string &path) : _key(), _value(), _error(true)
 {
+	std::stack<enum BLOCK> stack;
+
+	_root = new RootBlock();
 	_start = 0;
 	_pos = 0;
 	readConfig(path);
 	if (_line.empty())
 		return;
-	parseRootBlock();
+	stack.push(ROOT);
+	parseBlock(stack);
 }
 
 Parser::~Parser() {}
@@ -145,4 +149,41 @@ RootBlock *Parser::getRootBlock()
 bool Parser::getState() const
 {
 	return _error;
+}
+
+void Parser::parseBlock(std::stack<enum BLOCK> &stack)
+{
+	if (stack.size() == 0)
+		return;
+	enum BLOCK block = stack.top();
+	setKey();
+	switch (block) // key확인 및 block 생성 후 재귀
+	{
+	case ROOT:
+		if (_key == "server")
+		{
+			ServerBlock *server = new ServerBlock();
+			_root->addServerBlock(server);
+			stack.push(SERVER);
+			parseBlock(stack);
+			return;
+		}
+	case SERVER:
+
+	case LOCATION:
+	}
+	setValue();
+	if (_key.empty() || _value.empty())
+	{
+		stack.pop();
+		parseBlock(stack);
+		return;
+	}
+	switch (block) // block에 keyVal 넣기
+	{
+	case ROOT:
+	case SERVER:
+	case LOCATION:
+	}
+	parseBlock(stack);
 }
