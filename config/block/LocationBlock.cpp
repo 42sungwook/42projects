@@ -13,7 +13,7 @@ void LocationBlock::setIndex(std::string value) {
 }
 
 void LocationBlock::setRoot(std::string value) {
-	_index = value;
+	_root = value;
 }
 
 void LocationBlock::setAutoindex(std::string value) {
@@ -41,7 +41,7 @@ void LocationBlock::setKeyVal(std::string key, std::string value) {
 	map["autoindex"] = &LocationBlock::setAutoindex;
 	map["limit_except"] = &LocationBlock::setLimitExcept;
 	map["client_max_body_size"] = &LocationBlock::setClientMaxBodySize;
-
+	std::cout << "key: <" << key << "> value: <" << value << ">" << std::endl;
 	iter = map.find(key);
 	if (iter != map.end())
 		(this->*(iter->second))(value);

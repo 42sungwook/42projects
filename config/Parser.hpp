@@ -4,6 +4,7 @@
 #include <iostream>
 #include <fstream>
 #include <string.h>
+#include <stack>
 #include "./block/RootBlock.hpp"
 #include "./block/ServerBlock.hpp"
 #include "./block/LocationBlock.hpp"

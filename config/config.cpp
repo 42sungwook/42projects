@@ -10,5 +10,5 @@ RootBlock *config(std::string path) {
 int main() {
 	RootBlock *root = config("default_webserv.conf");
 	root->test();
-	delete root;
+	return 0;
 }
