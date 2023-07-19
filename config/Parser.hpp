@@ -39,11 +39,14 @@ private:
 	bool skipBracket();
 
 	void parseBlock(std::stack<enum BLOCK> &stack);
+	void addBlock(enum BLOCK type);
+	void setKeyVal(enum BLOCK type);
 
 public:
 	Parser(std::string &path);
 	~Parser();
 	RootBlock *getRootBlock();
+
 	bool getState() const;
 };
 

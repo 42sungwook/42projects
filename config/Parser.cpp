@@ -43,67 +43,6 @@ void Parser::readConfig(std::string &path)
 	_line = buffer.str();
 }
 
-void Parser::parseRootBlock()
-{
-	_root = new RootBlock();
-	while (true)
-	{
-		setKey();
-		if (_key == "server")
-		{
-			parseServerBlock();
-			continue;
-		}
-		setValue();
-		if (_key.empty() || _value.empty())
-			break;
-		_root->setKeyVal(_key, _value);
-	}
-}
-
-void Parser::parseServerBlock()
-{
-	if (!skipBracket())
-		return;
-	ServerBlock *server = new ServerBlock();
-	while (true)
-	{
-		setKey();
-		if (_key == "}")
-			break;
-		if (_key == "location")
-		{
-			parseLocationBlock(server);
-			continue;
-		}
-		setValue();
-		if (_key.empty() || _value.empty())
-			break;
-		server->setKeyVal(_key, _value);
-	}
-	_root->addServerBlock(server);
-}
-
-void Parser::parseLocationBlock(ServerBlock *server)
-{
-	LocationBlock *location = new LocationBlock();
-	setKey();
-	location->setKeyVal("path", _key);
-	if (!skipBracket())
-		return;
-	while (true)
-	{
-		setKey();
-		if (_key == "}")
-			break;
-		setValue();
-		if (_key.empty() || _value.empty())
-			break;
-		location->setKeyVal(_key, _value);
-	}
-	server->addLocationBlock(location);
-}
-
 bool Parser::skipBracket()
 {
 	_pos = _line.find_first_of("{", _pos);
@@ -146,6 +85,45 @@ RootBlock *Parser::getRootBlock()
 	return _root;
 }
 
+void Parser::addBlock(enum BLOCK type)
+{
+	ServerBlock *serverBlock;
+
+	if (type == ROOT)
+	{
+		serverBlock = new ServerBlock();
+		_root->addServerBlock(serverBlock);
+	}
+	else if (type == SERVER)
+	{
+		serverBlock = (_root->getBlockList()).back();
+		LocationBlock *locationBlock = new LocationBlock();
+		serverBlock->addLocationBlock(locationBlock);
+		setKey();
+		locationBlock->setKeyVal("path", _key);
+	}
+}
+
+void Parser::setKeyVal(enum BLOCK type)
+{
+	ServerBlock *serverBlock;
+	LocationBlock *locationBlock;
+
+	if (type == ROOT)
+		_root->setKeyVal(_key, _value);
+	else if (type == SERVER)
+	{
+		serverBlock = (_root->getBlockList()).back();
+		serverBlock->setKeyVal(_key, _value);
+	}
+	else
+	{
+		serverBlock = (_root->getBlockList()).back();
+		locationBlock = (serverBlock->getBlockList()).back();
+		locationBlock->setKeyVal(_key, _value);
+	}
+}
+
 bool Parser::getState() const
 {
 	return _error;
@@ -153,82 +131,26 @@ bool Parser::getState() const
 
 void Parser::parseBlock(std::stack<enum BLOCK> &stack)
 {
-	ServerBlock *serverBlock;
-	LocationBlock *locationBlock;
-
-	if (stack.size() == 0)
-		return;
-	enum BLOCK block = stack.top();
+	enum BLOCK type = stack.top();
 	while (true)
 	{
 		setKey();
-		switch (block) // key확인 및 block 생성 후 재귀
+		if (type != ROOT && _key == "}")
+			return stack.pop();
+		if ((type == ROOT && _key == "server") || (type == SERVER && _key == "location"))
 		{
-		case ROOT:
-			if (_key == "server")
-			{
-				if (!skipBracket())
-					continue;
-				serverBlock = new ServerBlock();
-				_root->addServerBlock(serverBlock);
-				stack.push(SERVER);
-				parseBlock(stack);
+			if (type == ROOT && !skipBracket())
 				continue;
-			}
-		case SERVER:
-			if (_key == "}")
-			{
-				stack.pop();
-				return;
-			}
-			else if (_key == "location")
-			{
-				locationBlock = new LocationBlock();
-				_root->getServerBlockList().back()->addLocationBlock(locationBlock);
-				stack.push(LOCATION);
-				setKey();
-				locationBlock->setKeyVal("path", _key);
-				if (!skipBracket())
-					continue;
-				parseBlock(stack);
+			addBlock(type);
+			if (type == SERVER && !skipBracket())
 				continue;
-			}
-		case LOCATION:
-			if (_key == "}")
-			{
-				stack.pop();
-				return;
-			}
-		default:
-			break;
+			stack.push(static_cast<enum BLOCK>(type + 1));
+			parseBlock(stack);
+			continue;
 		}
 		setValue();
 		if (_key.empty() || _value.empty())
-		{
-			stack.pop();
-			break;
-		}
-		// keyVal 넣기
-		switch (block)
-		{
-		case ROOT:
-			_root->setKeyVal(_key, _value);
-			continue;
-		case SERVER:
-			serverBlock = _root->getServerBlockList().back();
-			serverBlock->setKeyVal(_key, _value);
-			continue;
-		case LOCATION:
-			serverBlock = _root->getServerBlockList().back();
-			if (serverBlock)
-			{
-				locationBlock = serverBlock->getLocationBlockList().back();
-				if (locationBlock)
-					locationBlock->setKeyVal(_key, _value);
-			}
-			continue;
-		default:
-			break;
-		}
+			return stack.pop();
+		setKeyVal(type);
 	}
 }

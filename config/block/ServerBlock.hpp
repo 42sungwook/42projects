@@ -30,7 +30,7 @@ public:
 	void setKeyVal(std::string key, std::string value);
 	void addLocationBlock(LocationBlock *location);
 
-	std::list<LocationBlock *> getLocationBlockList();
+	std::list<LocationBlock *> getBlockList();
 
 	void test(); // TODO test
 };

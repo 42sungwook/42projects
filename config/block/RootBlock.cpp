@@ -47,7 +47,7 @@ void RootBlock::addServerBlock(ServerBlock *server)
 	_serverList.push_back(server);
 }
 
-std::list<ServerBlock *> RootBlock::getServerBlockList()
+std::list<ServerBlock *> RootBlock::getBlockList()
 {
 	if (_serverList.empty())
 		throw std::runtime_error("server block is empty");

@@ -58,7 +58,7 @@ void ServerBlock::addLocationBlock(LocationBlock *location)
 	_locationList.push_back(location);
 }
 
-std::list<LocationBlock *> ServerBlock::getLocationBlockList()
+std::list<LocationBlock *> ServerBlock::getBlockList()
 {
 	// 비어있는 리스트를 요청할 경우 없음
 	if (_locationList.empty())

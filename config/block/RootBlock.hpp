@@ -26,7 +26,7 @@ public:
 	void setKeyVal(std::string key, std::string value);
 	void addServerBlock(ServerBlock *server);
 
-	std::list<ServerBlock *> getServerBlockList();
+	std::list<ServerBlock *> getBlockList();
 
 	void test(); // TODO test
 };
