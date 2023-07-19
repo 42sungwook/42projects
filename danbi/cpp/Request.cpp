@@ -23,7 +23,11 @@ void Request::parsing(const std::string& raw) {
       _header["method"] != "DELETE") {
     _error = 405;
   }
-  while (std::getline(ss, line)) _body += line + "\n";
+  while (std::getline(ss, line))
+    if (ss.eof() == true)
+      _body += line;
+    else if (line != "")
+      _body += line + "\n";
   // 8KB is default maximum size of request, config로 수정
   if (raw.size() - _body.size() >= 8192) {
     _error = 414;
