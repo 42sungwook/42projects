@@ -1,7 +1,8 @@
 #include "Parser.hpp"
 #include <sstream>
 
-Parser::Parser(std::string &path) : _key(), _value() {
+Parser::Parser(std::string &path) : _key(), _value(), _error(true)
+{
 	_start = 0;
 	_pos = 0;
 	readConfig(path);
@@ -12,22 +13,24 @@ Parser::Parser(std::string &path) : _key(), _value() {
 
 Parser::~Parser() {}
 
-void Parser::readConfig(std::string &path) {
-//	std::string buf;
-//	std::ifstream filestream(path.c_str());
-//
-//	if (!filestream.is_open()) {
-//		std::cerr << "Error: " << strerror(errno) << std::endl;;
-//	}
-//	while (getline(filestream, buf)) {
-//		if (!filestream.eof())
-//			_line += '\n';
-//		else
-//			break;
-//	}
-//	std::cout <<"<" << _line<<">" << std::endl;
+void Parser::readConfig(std::string &path)
+{
+	//	std::string buf;
+	//	std::ifstream filestream(path.c_str());
+	//
+	//	if (!filestream.is_open()) {
+	//		std::cerr << "Error: " << strerror(errno) << std::endl;;
+	//	}
+	//	while (getline(filestream, buf)) {
+	//		if (!filestream.eof())
+	//			_line += '\n';
+	//		else
+	//			break;
+	//	}
+	//	std::cout <<"<" << _line<<">" << std::endl;
 	std::ifstream filestream(path.c_str());
-	if (!filestream.is_open()) {
+	if (!filestream.is_open())
+	{
 		std::cerr << "error" << std::endl;
 		return;
 	}
@@ -36,11 +39,14 @@ void Parser::readConfig(std::string &path) {
 	_line = buffer.str();
 }
 
-void Parser::parseRootBlock() {
+void Parser::parseRootBlock()
+{
 	_root = new RootBlock();
-	while (true) {
+	while (true)
+	{
 		setKey();
-		if (_key == "server") {
+		if (_key == "server")
+		{
 			parseServerBlock();
 			continue;
 		}
@@ -51,15 +57,18 @@ void Parser::parseRootBlock() {
 	}
 }
 
-void Parser::parseServerBlock() {
+void Parser::parseServerBlock()
+{
 	if (!skipBracket())
 		return;
 	ServerBlock *server = new ServerBlock();
-	while (true) {
+	while (true)
+	{
 		setKey();
 		if (_key == "}")
 			break;
-		if (_key == "location") {
+		if (_key == "location")
+		{
 			parseLocationBlock(server);
 			continue;
 		}
@@ -71,13 +80,15 @@ void Parser::parseServerBlock() {
 	_root->addServerBlock(server);
 }
 
-void Parser::parseLocationBlock(ServerBlock *server) {
+void Parser::parseLocationBlock(ServerBlock *server)
+{
 	LocationBlock *location = new LocationBlock();
 	setKey();
 	location->setKeyVal("path", _key);
 	if (!skipBracket())
 		return;
-	while (true) {
+	while (true)
+	{
 		setKey();
 		if (_key == "}")
 			break;
@@ -89,7 +100,8 @@ void Parser::parseLocationBlock(ServerBlock *server) {
 	server->addLocationBlock(location);
 }
 
-bool Parser::skipBracket() {
+bool Parser::skipBracket()
+{
 	_pos = _line.find_first_of("{", _pos);
 	if (_pos == std::string::npos)
 		return false;
@@ -100,7 +112,8 @@ bool Parser::skipBracket() {
 	return true;
 }
 
-void Parser::setKey() {
+void Parser::setKey()
+{
 	_key.clear();
 	_start = _line.find_first_not_of(ISSPACE, _pos);
 	if (_start == std::string::npos)
@@ -111,7 +124,8 @@ void Parser::setKey() {
 	_key = _line.substr(_start, _pos - _start);
 }
 
-void Parser::setValue() {
+void Parser::setValue()
+{
 	_value.clear();
 	_start = _line.find_first_not_of(ISSPACE, _pos);
 	if (_start == std::string::npos)
@@ -123,10 +137,12 @@ void Parser::setValue() {
 	++_pos;
 }
 
-RootBlock *Parser::getRootBlock() {
+RootBlock *Parser::getRootBlock()
+{
 	return _root;
 }
 
-bool Parser::getState() const {
+bool Parser::getState() const
+{
 	return _error;
 }
