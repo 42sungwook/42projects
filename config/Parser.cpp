@@ -153,37 +153,82 @@ bool Parser::getState() const
 
 void Parser::parseBlock(std::stack<enum BLOCK> &stack)
 {
+	ServerBlock *serverBlock;
+	LocationBlock *locationBlock;
+
 	if (stack.size() == 0)
 		return;
 	enum BLOCK block = stack.top();
-	setKey();
-	switch (block) // key확인 및 block 생성 후 재귀
+	while (true)
 	{
-	case ROOT:
-		if (_key == "server")
+		setKey();
+		switch (block) // key확인 및 block 생성 후 재귀
 		{
-			ServerBlock *server = new ServerBlock();
-			_root->addServerBlock(server);
-			stack.push(SERVER);
-			parseBlock(stack);
-			return;
+		case ROOT:
+			if (_key == "server")
+			{
+				if (!skipBracket())
+					continue;
+				serverBlock = new ServerBlock();
+				_root->addServerBlock(serverBlock);
+				stack.push(SERVER);
+				parseBlock(stack);
+				continue;
+			}
+		case SERVER:
+			if (_key == "}")
+			{
+				stack.pop();
+				return;
+			}
+			else if (_key == "location")
+			{
+				locationBlock = new LocationBlock();
+				_root->getServerBlockList().back()->addLocationBlock(locationBlock);
+				stack.push(LOCATION);
+				setKey();
+				locationBlock->setKeyVal("path", _key);
+				if (!skipBracket())
+					continue;
+				parseBlock(stack);
+				continue;
+			}
+		case LOCATION:
+			if (_key == "}")
+			{
+				stack.pop();
+				return;
+			}
+		default:
+			break;
 		}
-	case SERVER:
-
-	case LOCATION:
+		setValue();
+		if (_key.empty() || _value.empty())
+		{
+			stack.pop();
+			break;
+		}
+		// keyVal 넣기
+		switch (block)
+		{
+		case ROOT:
+			_root->setKeyVal(_key, _value);
+			continue;
+		case SERVER:
+			serverBlock = _root->getServerBlockList().back();
+			serverBlock->setKeyVal(_key, _value);
+			continue;
+		case LOCATION:
+			serverBlock = _root->getServerBlockList().back();
+			if (serverBlock)
+			{
+				locationBlock = serverBlock->getLocationBlockList().back();
+				if (locationBlock)
+					locationBlock->setKeyVal(_key, _value);
+			}
+			continue;
+		default:
+			break;
+		}
 	}
-	setValue();
-	if (_key.empty() || _value.empty())
-	{
-		stack.pop();
-		parseBlock(stack);
-		return;
-	}
-	switch (block) // block에 keyVal 넣기
-	{
-	case ROOT:
-	case SERVER:
-	case LOCATION:
-	}
-	parseBlock(stack);
 }
