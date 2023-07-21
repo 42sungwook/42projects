@@ -5,6 +5,8 @@
 #include <map>
 #include <sstream>
 
+#include "RootBlock.hpp"
+
 enum METHOD { GET, POST, DELETE };
 enum PROCESS { CGI, NORMAL };
 

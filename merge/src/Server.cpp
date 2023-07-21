@@ -1,4 +1,4 @@
-#include "Server.hpp"
+#include "../includes/Server.hpp"
 
 Server::Server() {
   _socket = 0;
@@ -7,7 +7,7 @@ Server::Server() {
 
 Server::~Server() {}
 
-int Server::init(/*config*/) {
+int Server::init(ServerBlock *serverBlock) {
   if ((_socket = socket(PF_INET, SOCK_STREAM, 0)) == -1) {
     std::cout << "socket() error\n"
               << std::string(strerror(errno)) << std::endl;
@@ -16,7 +16,7 @@ int Server::init(/*config*/) {
   // config 세팅
   _serverAddr.sin_family = AF_INET;
   _serverAddr.sin_addr.s_addr = htonl(INADDR_ANY);
-  _serverAddr.sin_port = htons(8080);
+  _serverAddr.sin_port = htons(serverBlock->getListen());
 
   if (bind(_socket, (struct sockaddr *)&_serverAddr, sizeof(_serverAddr)) ==
       -1) {
@@ -115,6 +115,7 @@ int Server::run() {
                 std::cout << "NORMAL POST" << std::endl;
               else if (req.getMethod() == DELETE)
                 std::cout << "NORMAL DELETE" << std::endl;
+            } else {
             }
 
             int n;

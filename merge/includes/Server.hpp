@@ -11,11 +11,13 @@
 
 #include <iostream>
 #include <map>
+#include <sstream>
 #include <vector>
 
 #include "Kqueue.hpp"
 #include "Request.hpp"
 #include "Response.hpp"
+#include "ServerBlock.hpp"
 
 class Server {
  private:
@@ -26,7 +28,7 @@ class Server {
   Server();
   ~Server();
 
-  int init();
+  int init(ServerBlock *serverBlock);
   int run();
 };
 
