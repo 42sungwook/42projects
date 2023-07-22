@@ -22,7 +22,11 @@
 class Server {
  private:
   int _socket;
+  int _shutDown;
   struct sockaddr_in _serverAddr;
+  void handleEventError(struct kevent *event, Kqueue kq);
+  void handleReadEvent(struct kevent *event, Kqueue kq);
+  void handleWriteEvent(struct kevent *event, Kqueue kq);
 
  public:
   Server();
