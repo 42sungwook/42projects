@@ -5,9 +5,9 @@
 #include <fstream>
 #include <string.h>
 #include <stack>
-#include "./block/RootBlock.hpp"
-#include "./block/ServerBlock.hpp"
-#include "./block/LocationBlock.hpp"
+#include "./RootBlock.hpp"
+#include "./ServerBlock.hpp"
+#include "./LocationBlock.hpp"
 
 #define ISSPACE " \t\n\r\f\v"
 #define SEMICOLON ";"
