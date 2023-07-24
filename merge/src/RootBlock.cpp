@@ -9,15 +9,18 @@ void RootBlock::setUser(std::string value) { _user = value; }
 
 void RootBlock::setInclude(std::string value) { _include = value; }
 
-void RootBlock::setMaxConnection(std::string value) {
-  _maxConnection = stoi(value);  // TODO stoi() 동작 함수 만들어야 함
+void RootBlock::setMaxConnection(std::string value)
+{
+  _maxConnection = stoi(value); // TODO stoi() 동작 함수 만들어야 함
 }
 
-void RootBlock::setWorkerCnt(std::string value) {
-  _workerCnt = stoi(value);  // TODO stoi() 동작 함수 만들어야 함
+void RootBlock::setWorkerCnt(std::string value)
+{
+  _workerCnt = stoi(value); // TODO stoi() 동작 함수 만들어야 함
 }
 
-void RootBlock::setKeyVal(std::string key, std::string value) {
+void RootBlock::setKeyVal(std::string key, std::string value)
+{
   typedef void (RootBlock::*funcptr)(std::string);
   typedef std::map<std::string, funcptr> funcMap;
   typedef funcMap::iterator funcIter;
@@ -30,10 +33,12 @@ void RootBlock::setKeyVal(std::string key, std::string value) {
   map["worker_cnt"] = &RootBlock::setWorkerCnt;
 
   iter = map.find(key);
-  if (iter != map.end()) (this->*(iter->second))(value);
+  if (iter != map.end())
+    (this->*(iter->second))(value);
 }
 
-void RootBlock::addServerBlock(ServerBlock *server) {
+void RootBlock::addServerBlock(ServerBlock *server)
+{
   _serverList.push_back(server);
 }
 
@@ -45,13 +50,16 @@ const int RootBlock::getMaxConnection() const { return _maxConnection; }
 
 const int RootBlock::getWorkerCnt() const { return _workerCnt; }
 
-std::list<ServerBlock *> RootBlock::getBlockList() {
-  if (_serverList.empty()) throw std::runtime_error("server block is empty");
+std::list<ServerBlock *> RootBlock::getBlockList()
+{
+  if (_serverList.empty())
+    throw std::runtime_error("server block is empty");
   return _serverList;
 }
 
 // TODO test
-void RootBlock::test() {
+void RootBlock::test()
+{
   std::cout << "===========ROOT===========" << std::endl;
   std::cout << "_user: " << _user << std::endl;
   std::cout << "_include: " << _include << std::endl;
@@ -62,5 +70,41 @@ void RootBlock::test() {
 
   std::list<ServerBlock *>::iterator it;
   std::cout << std::endl;
-  for (it = _serverList.begin(); it != _serverList.end(); it++) (*it)->test();
+  for (it = _serverList.begin(); it != _serverList.end(); it++)
+    (*it)->test();
+}
+
+ServerInfo *RootBlock::getServerInfo(std::list<ServerInfo *> infoList, int listen)
+{
+  std::list<ServerInfo *>::iterator it;
+
+  for (it = infoList.begin(); it != infoList.end(); it++)
+  {
+    if ((*it)->_listen == listen)
+      return (*it);
+  }
+  return NULL;
+}
+
+std::list<ServerInfo *> RootBlock::getServerInfoList()
+{
+  std::list<ServerInfo *> infoList;
+
+  std::list<ServerBlock *>::iterator it;
+  std::cout << std::endl;
+  for (it = _serverList.begin(); it != _serverList.end(); it++)
+  {
+    ServerInfo *find = getServerInfo(infoList, (*it)->getListen());
+    if (find != NULL)
+      find->_serverList.push_back((*it));
+    else
+    {
+      ServerInfo *info = new ServerInfo;
+
+      info->_listen = (*it)->getListen();
+      info->_serverList.push_back(*it);
+      infoList.push_back(info);
+    }
+  }
+  return infoList;
 }

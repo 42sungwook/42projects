@@ -7,15 +7,22 @@
 
 #include "ServerBlock.hpp"
 
-class RootBlock {
- private:
+typedef struct s_serverInfo
+{
+  int _listen;
+  std::list<ServerBlock *> _serverList;
+} ServerInfo;
+
+class RootBlock
+{
+private:
   std::string _user;
   std::string _include;
   int _maxConnection;
   int _workerCnt;
   std::list<ServerBlock *> _serverList;
 
- public:
+public:
   RootBlock();
   ~RootBlock();
 
@@ -30,10 +37,12 @@ class RootBlock {
   const std::string getInclude() const;
   const int getMaxConnection() const;
   const int getWorkerCnt() const;
+  ServerInfo *getServerInfo(std::list<ServerInfo *> infoList, int listen);
+  std::list<ServerInfo *> getServerInfoList();
 
   std::list<ServerBlock *> getBlockList();
 
-  void test();  // TODO test
+  void test(); // TODO test
 };
 
 #endif
