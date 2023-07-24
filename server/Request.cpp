@@ -5,7 +5,6 @@ Request::Request() {}
 Request::~Request() {}
 
 void Request::parsing(const std::string& raw) {
-  std::cout << "parsing" << std::endl;
   std::stringstream ss(raw);
   std::string line;
   std::getline(ss, line, '\r');
