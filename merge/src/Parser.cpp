@@ -122,3 +122,9 @@ void Parser::parseBlock(std::stack<enum BLOCK> &stack) {
     setKeyVal(type);
   }
 }
+
+RootBlock *config(std::string path) {
+  Parser parser(path);
+  RootBlock *root = parser.getRootBlock();
+  return root;
+}

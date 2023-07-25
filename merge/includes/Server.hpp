@@ -24,11 +24,11 @@
 class Server {
  private:
   int _socket;
-  std::list<t_serverInfo *> _serverBlockInfo;
+  t_serverInfo *_serverBlockInfo;
   std::map<int, std::string> _clients;
 
  public:
-  Server(std::list<t_serverInfo *> _serverBlockInfo);
+  Server(t_serverInfo *_serverBlockInfo);
   ~Server();
 
   const int getSocket() const;

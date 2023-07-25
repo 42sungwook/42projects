@@ -2,56 +2,38 @@
 #include "../includes/Parser.hpp"
 #include "../includes/RootBlock.hpp"
 #include "../includes/Server.hpp"
+#include "../includes/ServerOperator.hpp"
 
-RootBlock *config(std::string path)
-{
-  Parser parser(path);
-  RootBlock *root = parser.getRootBlock();
-  return root;
-}
-
-void test(ServerInfo *info)
-{
+void test(t_serverInfo *info) {
   std::cout << "===========INFO===========" << std::endl;
-  std::cout << "_listen: " << info->_listen << std::endl;
+  std::cout << "listen: " << info->listen << std::endl;
 
   std::list<ServerBlock *>::iterator it;
   std::cout << std::endl;
-  for (it = info->_serverList.begin(); it != info->_serverList.end(); it++)
+  for (it = info->serverList.begin(); it != info->serverList.end(); it++)
     (*it)->test();
 }
 
-int main(int ac, char **av)
-{
-  if (ac != 2)
-  {
+int main(int ac, char **av) {
+  if (ac != 2) {
     std::cout << "Invalid Arguments" << std::endl;
     return 1;
   }
   RootBlock *root = config(av[1]);
-  //  root->test();
+  root->test();
 
-  std::list<ServerInfo *> info = root->getServerInfoList();
+  std::list<t_serverInfo *> info = root->getServerInfoList();
 
-  std::list<ServerInfo *>::iterator it;
+  std::list<t_serverInfo *>::iterator it;
   std::cout << std::endl;
-  for (it = info.begin(); it != info.end(); it++)
+  std::list<Server *> serverList;
+  for (it = info.begin(); it != info.end(); it++) {
+    Server server((*it));
+    server.init();
+    serverList.push_back(&server);
     test((*it));
-
-<<<<<<< Updated upstream
-  /* init server socket and listen */
-  // Server server;
-  //  if (server.init(root->getBlockList()) == EXIT_FAILURE) return EXIT_FAILURE;
-=======
-  int cntsever = root->getBlockList().size();
-  Server *
-      /* init server socket and listen */
-      Server server;
-  if (server.init(root->getBlockList()) == EXIT_FAILURE) return EXIT_FAILURE;
->>>>>>> Stashed changes
-
-  /* main loop */
-  // if (server.run() == EXIT_FAILURE) return EXIT_FAILURE;
-
+  }
+  ServerOperator op(serverList);
+  op.run();
   return (0);
 }

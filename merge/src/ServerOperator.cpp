@@ -1,7 +1,7 @@
 #include "../includes/ServerOperator.hpp"
 
 ServerOperator::ServerOperator(std::list<Server *> serverList)
-    : _serverList(serverList) {}
+    : _serverList(serverList), _shutDown(false) {}
 
 int ServerOperator::run() {
   /* init kqueue & add event for server socket*/

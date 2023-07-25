@@ -1,6 +1,6 @@
 #include "../includes/Server.hpp"
 
-Server::Server(std::list<t_serverInfo *> serverBlockInfo)
+Server::Server(t_serverInfo *serverBlockInfo)
     : _serverBlockInfo(serverBlockInfo) {
   _socket = -1;
 };
@@ -31,7 +31,7 @@ void Server::disconnectClient(int clientSock) {
 }
 
 std::list<ServerBlock *> Server::getServerBlockList() {
-  return _serverBlockInfo.front()->serverList;
+  return _serverBlockInfo->serverList;
 }
 
 int Server::init() {
@@ -46,7 +46,7 @@ int Server::init() {
   memset(&serverAddr, 0, sizeof(serverAddr));
   serverAddr.sin_family = AF_INET;
   serverAddr.sin_addr.s_addr = htonl(INADDR_ANY);
-  serverAddr.sin_port = htons(_serverBlockInfo.front()->listen);
+  serverAddr.sin_port = htons(_serverBlockInfo->listen);
 
   if (bind(_socket, (struct sockaddr *)&serverAddr, sizeof(serverAddr)) == -1) {
     std::cout << "bind() error\n" << std::string(strerror(errno)) << std::endl;
