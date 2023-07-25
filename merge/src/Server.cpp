@@ -1,8 +1,9 @@
 #include "../includes/Server.hpp"
 
-Server::Server(const int port) : _port(port){};
-
-void Server::setServerBlockList(ServerBlock *serverBlockList) {}
+Server::Server(std::list<t_serverInfo *> serverBlockInfo)
+    : _serverBlockInfo(serverBlockInfo) {
+  _socket = -1;
+};
 
 const int Server::getSocket() const { return _socket; }
 
@@ -15,12 +16,6 @@ bool Server::isExistClient(int clientSock) {
   return true;
 }
 
-void Server::disconnectClient(int clientSock) {
-  std::cout << "client disconnected: " << clientSock << std::endl;
-  close(clientSock);
-  _clients.erase(clientSock);
-}
-
 void Server::setClientContentsClear(int clientSock) {
   _clients[clientSock].clear();
 }
@@ -29,14 +24,17 @@ void Server::setClientContents(int clientSock, std::string buffer) {
   _clients[clientSock] += buffer;
 }
 
-std::vector<ServerBlock *> Server::getServerBlockList() { return _serverBlock; }
+void Server::disconnectClient(int clientSock) {
+  std::cout << "client disconnected: " << clientSock << std::endl;
+  close(clientSock);
+  _clients.erase(clientSock);
+}
 
-int Server::init(std::list<ServerBlock *> serverBlockList) {
-  std::list<ServerBlock *>::iterator it;
-  for (it = serverBlockList.begin(); it != serverBlockList.end(); it++) {
-    if ((*it)->getListen() == _port) _serverBlock.push_back(*it);
-  }
+std::list<ServerBlock *> Server::getServerBlockList() {
+  return _serverBlockInfo.front()->serverList;
+}
 
+int Server::init() {
   if ((_socket = socket(PF_INET, SOCK_STREAM, 0)) == -1) {
     std::cout << "socket() error\n"
               << std::string(strerror(errno)) << std::endl;
@@ -48,7 +46,7 @@ int Server::init(std::list<ServerBlock *> serverBlockList) {
   memset(&serverAddr, 0, sizeof(serverAddr));
   serverAddr.sin_family = AF_INET;
   serverAddr.sin_addr.s_addr = htonl(INADDR_ANY);
-  serverAddr.sin_port = htons(_port);
+  serverAddr.sin_port = htons(_serverBlockInfo.front()->listen);
 
   if (bind(_socket, (struct sockaddr *)&serverAddr, sizeof(serverAddr)) == -1) {
     std::cout << "bind() error\n" << std::string(strerror(errno)) << std::endl;

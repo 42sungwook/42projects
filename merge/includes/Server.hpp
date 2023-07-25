@@ -18,6 +18,7 @@
 #include "Kqueue.hpp"
 #include "Request.hpp"
 #include "Response.hpp"
+#include "RootBlock.hpp"
 #include "ServerBlock.hpp"
 
 /* class Server {
@@ -39,24 +40,24 @@
 
 class Server {
  private:
-  const int _port;
+  std::list<SeverInfo *> serverBlockInfo;
   int _socket;
   std::map<int, std::string> _clients;  // map for client socket:data
-  std::vector<ServerBlock *> _serverBlock;
+  std::list<ServerBlock *> _serverBlockList;
 
  public:
   Server(const int port);
   ~Server();
 
-  void setServerBlockList(ServerBlock *serverBlockList);
+  void setServerBlockList(std::list<ServerBlock *> serverBlockList);
   const int getSocket() const;
   void setClientContents(int clientSock, std::string buffer);
   void setClientContentsClear(int clientSock);
   void disconnectClient(int clientSock);
   const std::string getClientContents(int clientSock);
-  std::vector<ServerBlock *> getServerBlockList();
+  std::list<ServerBlock *> getServerBlockList();
   bool isExistClient(int clientSock);
-  int init(std::list<ServerBlock *> serverBlockList);
+  int init();
 };
 
 #endif
