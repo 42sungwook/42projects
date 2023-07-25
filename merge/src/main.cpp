@@ -38,9 +38,17 @@ int main(int ac, char **av)
   for (it = info.begin(); it != info.end(); it++)
     test((*it));
 
+<<<<<<< Updated upstream
   /* init server socket and listen */
   // Server server;
   //  if (server.init(root->getBlockList()) == EXIT_FAILURE) return EXIT_FAILURE;
+=======
+  int cntsever = root->getBlockList().size();
+  Server *
+      /* init server socket and listen */
+      Server server;
+  if (server.init(root->getBlockList()) == EXIT_FAILURE) return EXIT_FAILURE;
+>>>>>>> Stashed changes
 
   /* main loop */
   // if (server.run() == EXIT_FAILURE) return EXIT_FAILURE;

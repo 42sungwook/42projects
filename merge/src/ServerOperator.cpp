@@ -1,0 +1,120 @@
+#include "../includes/ServerOperator.hpp"
+
+ServerOperator::ServerOperator(std::list<Server *> serverList)
+    : _serverList(serverList) {}
+
+int ServerOperator::run() {
+  /* init kqueue & add event for server socket*/
+  Kqueue kq;
+  if (kq.init(_serverList) == EXIT_FAILURE) return EXIT_FAILURE;
+
+  struct kevent *currEvent;
+  int eventNb;
+  while (1) {
+    /*  apply changes and return new events(pending events) */
+    eventNb = kq.countEvents();
+    kq.clearCheckList();  // clear change_list for new changes
+    for (int i = 0; i < eventNb; ++i) {
+      currEvent = &(kq.getEventList())[i];
+      if (currEvent->flags & EV_ERROR) {
+        handleEventError(currEvent, kq);
+      } else if (currEvent->filter == EVFILT_READ) {
+        handleReadEvent(currEvent, kq);
+      } else if (currEvent->filter == EVFILT_WRITE) {
+        handleWriteEvent(currEvent, kq);
+      }
+      if (_shutDown == true) return EXIT_FAILURE;
+    }
+  }
+}
+
+void ServerOperator::handleEventError(struct kevent *event, Kqueue kq) {
+  std::list<Server *>::iterator it;
+  for (it = _serverList.begin(); it != _serverList.end(); it++) {
+    if (event->ident == _serverList.front()->getSocket()) {
+      std::cerr << "server socket error" << std::endl;
+      _shutDown = true;
+      return;
+    }
+  }
+  std::cerr << "client socket error" << std::endl;
+  _serverList.front()->disconnectClient(event->ident);
+}
+
+void ServerOperator::handleReadEvent(struct kevent *event, Kqueue kq) {
+  std::list<Server *>::iterator it;
+  // 발생한 이벤트가 어느 소켓으로 들어왔는지 찾음
+  for (it = _serverList.begin(); it != _serverList.end(); it++) {
+    // 만약 이벤트가 서버 소켓으로 들어왔다면 새로운 클라이언트 소켓을 만들고,
+    // 초기화 함
+    if (event->ident == _serverList.front()->getSocket()) {
+      int clientSocket;
+      if ((clientSocket =
+               accept(_serverList.front()->getSocket(), NULL, NULL)) == -1) {
+        std::cerr << "accept() error\n";
+        _shutDown = true;
+        return;
+      }
+      std::cout << "accept new client: " << clientSocket << std::endl;
+      fcntl(clientSocket, F_SETFL, O_NONBLOCK);
+
+      /* add event for client socket - add read && write event */
+      kq.changeEvents(clientSocket, EVFILT_READ, EV_ADD | EV_ENABLE, 0, 0,
+                      NULL);
+      kq.changeEvents(clientSocket, EVFILT_WRITE, EV_ADD | EV_ENABLE, 0, 0,
+                      NULL);
+      _serverList.front()->setClientContents(clientSocket, "");
+    } else if (_serverList.front()->isExistClient(event->ident)) {
+      /* read data from client */
+      char buf[1024];
+      int n = read(event->ident, buf, sizeof(buf));
+
+      if (n <= 0) {
+        if (n < 0) std::cerr << "client read error!" << std::endl;
+        _serverList.front()->disconnectClient(event->ident);
+      } else {
+        buf[n] = '\0';
+        _serverList.front()->setClientContents(event->ident, buf);
+        std::cout << "received data from " << event->ident << ": "
+                  << _serverList.front()->getClientContents(event->ident)
+                  << std::endl;
+      }
+    }
+  }
+}
+
+void ServerOperator::handleWriteEvent(struct kevent *event, Kqueue kq) {
+  /* send data to client */
+  if (_serverList.front()->isExistClient(event->ident)) {
+    if (_serverList.front()->getClientContents(event->ident) != "") {
+      Request req;
+      Response res;
+      req.parsing(_serverList.front()->getClientContents(event->ident));
+      if (req.getError() > 0) std::cout << "fill error\n";
+      // res.fillError(req.getError());
+      else if (req.getProcess() == CGI) {
+        if (req.getMethod() == GET)
+          std::cout << "CGI GET" << std::endl;
+        else if (req.getMethod() == POST)
+          std::cout << "CGI POST" << std::endl;
+      } else if (req.getProcess() == NORMAL) {
+        if (req.getMethod() == GET)
+          std::cout << "NORMAL GET" << std::endl;
+        else if (req.getMethod() == POST)
+          std::cout << "NORMAL POST" << std::endl;
+        else if (req.getMethod() == DELETE)
+          std::cout << "NORMAL DELETE" << std::endl;
+      } else {
+      }
+
+      int n;
+      if ((n = write(event->ident, res.getResult().c_str(),
+                     res.getResult().size()) == -1)) {
+        std::cerr << "client write error!" << std::endl;
+        _serverList.front()->disconnectClient(event->ident);
+      } else
+        // 뭐냐고 이거? 비우기만 하고 끝?
+        _serverList.front()->setClientContentsClear(event->ident);
+    }
+  }
+}

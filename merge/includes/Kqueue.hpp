@@ -10,13 +10,15 @@
 #include <unistd.h>
 
 #include <iostream>
+#include <list>
 #include <map>
 #include <vector>
+
+#include "Server.hpp"
 
 class Kqueue {
  private:
   int _kq;                                // Kqueue FD
-  std::map<int, std::string> _clients;    // map for client socket:data
   std::vector<struct kevent> _checkList;  // kevent vector for changelist
   struct kevent _eventList[8];  // kevent array for saving event infomation
 
@@ -24,15 +26,12 @@ class Kqueue {
   Kqueue();
   ~Kqueue();
 
-  int init(int serverSocket);
+  int init(std::list<Server*> serverList);
   void changeEvents(uintptr_t ident, int16_t filter, uint16_t flags,
                     uint32_t fflags, intptr_t data, void* udata);
   int countEvents();
   void clearCheckList();
-
   struct kevent* getEventList();
-  std::map<int, std::string>& getClients();
-  void disconnectClient(int clientFd, std::map<int, std::string>& clients);
 };
 
 #endif
