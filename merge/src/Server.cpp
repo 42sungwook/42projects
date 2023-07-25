@@ -4,7 +4,7 @@ Server::Server(std::list<t_serverInfo *> serverBlockInfo)
     : _serverBlockInfo(serverBlockInfo) {
   _socket = -1;
 };
-
+Server::~Server(){};
 const int Server::getSocket() const { return _socket; }
 
 const std::string Server::getClientContents(int clientSock) {
