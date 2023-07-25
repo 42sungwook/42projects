@@ -18,6 +18,7 @@ class RootBlock {
     std::string _include;
     int _maxConnection;
     int _workerCnt;
+	std::map<std::string, std::string> _statusCodes;
     std::list<ServerBlock *> _serverList;
 
   public:
@@ -38,6 +39,7 @@ class RootBlock {
     t_serverInfo *getServerInfo(std::list<t_serverInfo *> infoList, int listen);
     std::list<t_serverInfo *> getServerInfoList();
 
+	std::string getStatusCode(std::string key);
     std::list<ServerBlock *> getBlockList();
 
     void test(); // TODO test
