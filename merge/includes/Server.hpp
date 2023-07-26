@@ -21,24 +21,26 @@
 #include "RootBlock.hpp"
 #include "ServerBlock.hpp"
 
-class Server {
-  private:
-    int _socket;
-    t_serverInfo *_serverBlockInfo;
-    std::map<int, std::string> _clients;
+class Server
+{
+private:
+  int _socket;
+  t_serverInfo *_serverBlockInfo;
+  std::map<int, std::string> _clients;
 
-  public:
-    Server(t_serverInfo *_serverBlockInfo);
-    ~Server();
+public:
+  Server(t_serverInfo *_serverBlockInfo);
+  ~Server();
 
-    int getSocket() const;
-    void setClientContents(int clientSock, std::string buffer);
-    void setClientContentsClear(int clientSock);
-    void disconnectClient(int clientSock);
-    const std::string getClientContents(int clientSock);
-    std::list<ServerBlock *> getServerBlockList();
-    bool isExistClient(int clientSock);
-    int init();
+  int getSocket() const;
+  void setClientContents(int clientSock, std::string buffer);
+  void setClientContentsClear(int clientSock);
+  void disconnectClient(int clientSock);
+  const std::string getClientContents(int clientSock);
+  std::list<ServerBlock *> getServerBlockList();
+  int getListen();
+  bool isExistClient(int clientSock);
+  int init();
 };
 
 #endif
