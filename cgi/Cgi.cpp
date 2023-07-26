@@ -43,30 +43,9 @@ void Cgi::reqToEnvp(std::map<std::string, std::string> param) {
   _envp[i] = NULL;
 }
 
-std::string Cgi::makeRet() {
-  std::string ret;
-  std::string tmp;
-  std::string::iterator it = _res.begin();
-  while (it != _res.end()) {
-    if (*it == '\n') {
-      if (tmp == "\r") {
-        ret += "\r\n";
-        tmp.clear();
-      } else {
-        ret += tmp + "\r\n";
-        tmp.clear();
-      }
-    } else {
-      tmp += *it;
-    }
-    it++;
-  }
-  return ret;
-}
+std::string& Cgi::getRet() { return _res; }
 
-std::string Cgi::getRet() { return makeRet(); }
-
-void Cgi::excute() {
+void Cgi::excute(std::string body) {
   pid_t pid;
   int fd[2];
   int status;
@@ -81,12 +60,20 @@ void Cgi::excute() {
     std::cerr << "fork error" << std::endl;
     return;
   } else if (pid == 0) {
+    int rd[2];
+    if (pipe(rd) < 0) {
+      std::cerr << "pipe error" << std::endl;
+      return;
+    }
+    write(rd[1], body.c_str(), body.size());
+    close(rd[1]);
+    dup2(rd[0], 0);
     close(fd[0]);
     dup2(fd[1], 1);
-    dup2(fd[1], 2);
     close(fd[1]);
     const char *argv[2] = {_env["PATH_TRANSLATED"].c_str(), NULL};
     execve(_cgiPath.c_str(), const_cast<char **>(argv), _envp);
+    close(rd[0]);
     exit(0);
   } else {
     close(fd[1]);
