@@ -20,7 +20,7 @@ class Request {
   void parsing(const std::string& raw);
   const std::string getMessage() const;
   const int& getError() const;
-  enum PROCESS getProcess();
+  enum PROCESS checkProcess();
   enum METHOD getMethod();
 };
 

@@ -35,8 +35,14 @@ void Request::parsing(const std::string& raw) {
 
 const std::string Request::getMessage() const {};
 
-enum PROCESS Request::getProcess(){
-
+enum PROCESS Request::checkProcess() {
+  if (_header["URI"].find(".php") != _header["URI"].npos ||
+      _header["URI"].find(".py") != _header["URI"].npos ||
+      _header["URI"].find(".cgi") != _header["URI"].npos ||
+      _header["URI"].find(".pl") != _header["URI"].npos)
+    return CGI;
+  else
+    return NORMAL;
 };
 
 const int& Request::getError() const { return _error; }

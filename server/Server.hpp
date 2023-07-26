@@ -13,6 +13,7 @@
 #include <map>
 #include <vector>
 
+#include "Cgi.hpp"
 #include "Kqueue.hpp"
 #include "Request.hpp"
 #include "Response.hpp"

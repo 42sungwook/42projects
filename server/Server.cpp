@@ -61,9 +61,10 @@ int Server::run() {
       } else if (currEvent->filter == EVFILT_READ) {
         if (currEvent->ident == _socket) {
           /* accept new client */
-          int clientSocket;
+          int clientSocket; // -> 저장하시구요
+          sockaddr *clientAddr; // -> 저장하시구요
 
-          if ((clientSocket = accept(_socket, NULL, NULL)) == -1) {
+          if ((clientSocket = accept(_socket, clientAddr, NULL)) == -1) {
             std::cerr << "accept() error\n";
             return EXIT_FAILURE;
           }
@@ -103,12 +104,14 @@ int Server::run() {
             req.parsing(kq.getClients()[currEvent->ident]);
             if (req.getError() > 0) std::cout << "fill error\n";
             // res.fillError(req.getError());
-            else if (req.getProcess() == CGI) {
+            else if (req.checkProcess() == CGI) {
+              Cgi cgi;
+
               if (req.getMethod() == GET)
                 std::cout << "CGI GET" << std::endl;
               else if (req.getMethod() == POST)
                 std::cout << "CGI POST" << std::endl;
-            } else if (req.getProcess() == NORMAL) {
+            } else if (req.checkProcess() == NORMAL) {
               if (req.getMethod() == GET)
                 std::cout << "NORMAL GET" << std::endl;
               else if (req.getMethod() == POST)
