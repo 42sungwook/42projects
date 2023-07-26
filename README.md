@@ -44,5 +44,6 @@ jaekkang님의 요청으로 추가
 - [RFC 7235](https://www.ietf.org/rfc/rfc7235.txt)
 
 docker 
+- cd nginx
 - docker build -t nginx:test-nginx .
 - docker run -d -p 80:80 nginx:test-nginx
