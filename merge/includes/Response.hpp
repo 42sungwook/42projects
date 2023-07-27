@@ -16,7 +16,7 @@ class Response {
 	void setHeader(std::string key, std::string value);
 	void setBody(std::string body);
 
-	const std::string getResponse(std::string status) const;
+	const std::string getResponse() const;
 };
 
 #endif

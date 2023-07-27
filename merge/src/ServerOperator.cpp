@@ -143,8 +143,8 @@ void ServerOperator::handleWriteEvent(struct kevent *event, Kqueue kq)
                         std::cout << "NORMAL DELETE" << std::endl;
                 }
 
-                if (write(event->ident, res.getResult().c_str(),
-                          res.getResult().size()) == -1)
+                if (write(event->ident, res.getResponse().c_str(),
+                          res.getResponse().size()) == -1)
                 {
                     std::cerr << "client write error!" << std::endl;
                     (*it)->disconnectClient(event->ident);
