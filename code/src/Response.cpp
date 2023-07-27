@@ -14,7 +14,7 @@ void Response::setBody(std::string body) {
 }
 
 const std::string Response::getResponse() const {
-	std::string response = "HTTP/1.1 " + "200 OK" + "\n";
+	std::string response = "HTTP/1.1 200 OK\n";
 	std::map<std::string, std::string>::const_iterator it;
 	for (it = _headers.begin(); it != _headers.end(); it++)
 		response += it->first + ": " + it->second + "\n";
