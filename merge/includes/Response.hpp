@@ -1,16 +1,22 @@
 #ifndef RESPONSE_HPP
 #define RESPONSE_HPP
 
+#include <map>
 #include <iostream>
 
 class Response {
   private:
-    std::string _result;
+    std::string _body;
+	std::map<std::string, std::string> _headers;
 
   public:
     Response();
     ~Response();
-    const std::string &getResult() const;
+
+	void setHeader(std::string key, std::string value);
+	void setBody(std::string body);
+
+	const std::string getResponse(std::string status) const;
 };
 
 #endif
