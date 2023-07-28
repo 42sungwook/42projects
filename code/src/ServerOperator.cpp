@@ -100,8 +100,8 @@ void ServerOperator::handleWriteEvent(struct kevent *event, Kqueue kq) {
         req.parsing(getClientContents(event->ident));
         loc = getLocationBlockBy(req.getHost(), req.getPort(), req.getUri());
         (void)loc;
-        if (req.getError() > 0) std::cout << "fill error\n";
-        // res.fillError(req.getError());
+        if (req.getStatus() > 0) std::cout << "fill error\n";
+        // res.fillError(req.getStatus());
         else if (req.getProcess() == CGI) {
           if (req.getMethod() == GET)
             std::cout << "CGI GET" << std::endl;
