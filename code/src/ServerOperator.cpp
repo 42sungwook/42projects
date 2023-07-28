@@ -21,7 +21,7 @@ int ServerOperator::run() {
       } else if (currEvent->filter == EVFILT_READ) {
         handleReadEvent(currEvent, kq);
       } else if (currEvent->filter == EVFILT_WRITE) {
-        handleWriteEvent(currEvent);
+        handleWriteEvent(currEvent, kq);
       }
       if (_shutDown == true) return EXIT_FAILURE;
     }
@@ -39,59 +39,65 @@ void ServerOperator::handleEventError(struct kevent *event, Kqueue kq) {
     }
   }
   std::cerr << "client socket error" << std::endl;
-  (*it)->disconnectClient(event->ident);
+  disconnectClient(event->ident);
+}
+
+bool ServerOperator::findSocketBy(int ident) {
+  std::list<Server *>::iterator it;
+
+  for (it = _serverList.begin(); it != _serverList.end(); it++) {
+    if ((*it)->getSocket() == ident) return true;
+  }
+  return false;
 }
 
 void ServerOperator::handleReadEvent(struct kevent *event, Kqueue kq) {
-  std::list<Server *>::iterator it;
-  // 발생한 이벤트가 어느 소켓으로 들어왔는지 찾음
-  for (it = _serverList.begin(); it != _serverList.end(); it++) {
-    // 만약 이벤트가 서버 소켓으로 들어왔다면 새로운 클라이언트 소켓을
-    // 만들고, 초기화 함
-    if (event->ident == (unsigned int)(*it)->getSocket()) {
-      int clientSocket;
-      if ((clientSocket = accept((*it)->getSocket(), NULL, NULL)) == -1) {
-        std::cerr << "accept() error\n";
-        _shutDown = true;
-        return;
-      }
-      std::cout << "accept new client: " << clientSocket << std::endl;
-      fcntl(clientSocket, F_SETFL, O_NONBLOCK);
+  if (findSocketBy(event->ident)) {
+    std::cout << "ident: " << event->ident << std::endl;
+    int clientSocket;
 
-      /* add event for client socket - add read && write event */
-      kq.changeEvents(clientSocket, EVFILT_READ, EV_ADD | EV_ENABLE, 0, 0,
-                      NULL);
-      kq.changeEvents(clientSocket, EVFILT_WRITE, EV_ADD | EV_ENABLE, 0, 0,
-                      NULL);
-      (*it)->setClientContents(clientSocket, "");
-    } else if ((*it)->isExistClient(event->ident)) {
-      /* read data from client */
-      char buf[1024];
-      int n = read(event->ident, buf, sizeof(buf));
-      if (n <= 0) {
-        if (n < 0) std::cerr << "client read error!" << std::endl;
-        (*it)->disconnectClient(event->ident);
-      } else {
-        buf[n] = '\0';
-        (*it)->setClientContents(event->ident, buf);
-        std::cout << "received data from " << event->ident << ": "
-                  << (*it)->getClientContents(event->ident) << std::endl;
-      }
+    if ((clientSocket = accept(event->ident, NULL, NULL)) == -1) {
+      std::cerr << "accept() error\n";
+      _shutDown = true;
+      return;
+    }
+    std::cout << "accept new client: " << clientSocket << std::endl;
+    fcntl(clientSocket, F_SETFL, O_NONBLOCK);
+
+    /* add event for client socket - add read && write event */
+    kq.changeEvents(clientSocket, EVFILT_READ, EV_ADD | EV_ENABLE, 0, 0, NULL);
+    kq.changeEvents(clientSocket, EVFILT_WRITE, EV_ADD | EV_ENABLE, 0, 0, NULL);
+    setClientContents(clientSocket, "");
+  } else if (isExistClient(event->ident)) {
+    /* read data from client */
+    char buf[1024];
+    std::cout << "5" << std::endl;
+    int n = read(event->ident, buf, sizeof(buf));
+    std::cout << "6" << std::endl;
+    if (n <= 0) {
+      if (n < 0) std::cerr << "client read error!" << std::endl;
+      disconnectClient(event->ident);
+    } else {
+      buf[n] = '\0';
+      setClientContents(event->ident, buf);
+      std::cout << "received data from " << event->ident << ": "
+                << getClientContents(event->ident) << std::endl;
     }
   }
 }
 
-void ServerOperator::handleWriteEvent(struct kevent *event) {
+void ServerOperator::handleWriteEvent(struct kevent *event, Kqueue kq) {
   /* send data to client */
   std::list<Server *>::iterator it;
+  (void)kq;
   for (it = _serverList.begin(); it != _serverList.end(); it++) {
-    if ((*it)->isExistClient(event->ident)) {
-      if ((*it)->getClientContents(event->ident) != "") {
+    if (isExistClient(event->ident)) {
+      if (getClientContents(event->ident) != "") {
         Request req;
         Response res("test");
         LocationBlock *loc;
 
-        req.parsing((*it)->getClientContents(event->ident));
+        req.parsing(getClientContents(event->ident));
         loc = getLocationBlockBy(req.getHost(), req.getPort(), req.getUri());
         (void)loc;
         if (req.getError() > 0) std::cout << "fill error\n";
@@ -103,21 +109,20 @@ void ServerOperator::handleWriteEvent(struct kevent *event) {
             std::cout << "CGI POST" << std::endl;
         } else if (req.getProcess() == NORMAL) {
           if (req.getMethod() == GET)
-            std::cout << (*it)->getClientContents(event->ident) << std::endl;
+            std::cout << getClientContents(event->ident) << std::endl;
           else if (req.getMethod() == POST)
             std::cout << "NORMAL POST" << std::endl;
           else if (req.getMethod() == DELETE)
             std::cout << "NORMAL DELETE" << std::endl;
         }
-        std::cout << _serverList.front()->getClientContents(event->ident)
-                  << std::endl;
+        std::cout << getClientContents(event->ident) << std::endl;
         // write method 작성 전까지 살려두기
-        if (write(event->ident, (*it)->getClientContents(event->ident).c_str(),
-                  (*it)->getClientContents(event->ident).size()) == -1) {
+        if (write(event->ident, getClientContents(event->ident).c_str(),
+                  getClientContents(event->ident).size()) == -1) {
           std::cerr << "client write error!" << std::endl;
-          (*it)->disconnectClient(event->ident);
+          disconnectClient(event->ident);
         } else
-          (*it)->setClientContentsClear(event->ident);
+          setClientContentsClear(event->ident);
       }
     }
   }
@@ -156,4 +161,27 @@ LocationBlock *ServerOperator::getLocationBlockBy(std::string host, int port,
     if ((*it)->getPath() == uri) return (*it);
   }
   return (*locationBlockList.begin());
+}
+
+const std::string ServerOperator::getClientContents(int clientSock) {
+  return _clients[clientSock];
+}
+
+bool ServerOperator::isExistClient(int clientSock) {
+  if (_clients.find(clientSock) == _clients.end()) return false;
+  return true;
+}
+
+void ServerOperator::setClientContentsClear(int clientSock) {
+  _clients[clientSock].clear();
+}
+
+void ServerOperator::setClientContents(int clientSock, std::string buffer) {
+  _clients[clientSock] += buffer;
+}
+
+void ServerOperator::disconnectClient(int clientSock) {
+  std::cout << "client disconnected: " << clientSock << std::endl;
+  close(clientSock);
+  _clients.erase(clientSock);
 }
