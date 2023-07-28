@@ -43,7 +43,7 @@ void Cgi::reqToEnvp(std::map<std::string, std::string> param) {
   _envp[i] = NULL;
 }
 
-std::string& Cgi::getRet() { return _res; }
+std::string &Cgi::getRet() { return _res; }
 
 void Cgi::excute(std::string body) {
   pid_t pid;

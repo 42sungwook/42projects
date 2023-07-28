@@ -1,22 +1,21 @@
 #ifndef RESPONSE_HPP
 #define RESPONSE_HPP
 
-#include <map>
+#include <unistd.h>
+
 #include <iostream>
+#include <map>
 
 class Response {
-  private:
-    std::string _body;
-	std::map<std::string, std::string> _headers;
+ private:
+  std::string _result;
 
-  public:
-    Response();
-    ~Response();
+ public:
+  Response(std::string result);
+  ~Response();
 
-	void setHeader(std::string key, std::string value);
-	void setBody(std::string body);
-
-	const std::string getResponse() const;
+  void convertCGI(std::string cgiResult);
+  int sendResponse(int clientSocket);
 };
 
 #endif
