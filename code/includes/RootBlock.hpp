@@ -4,25 +4,27 @@
 #include <iostream>
 #include <list>
 #include <map>
+#include <vector>
 
-#include "ServerBlock.hpp"
+class ServerBlock;
 
 typedef struct s_serverInfo {
     int listen;
-    std::list<ServerBlock *> serverList;
+    std::vector<ServerBlock *> samePortServerList;
 } t_serverInfo;
 
 class RootBlock {
-  private:
+  protected:
     std::string _user;
     std::string _include;
     int _maxConnection;
     int _workerCnt;
-	std::map<std::string, std::string> _statusCodes;
-    std::list<ServerBlock *> _serverList;
+	  std::map<std::string, std::string> _statusCodes;
+    //std::vector<ServerBlock *> _serverList;
 
   public:
     RootBlock();
+    RootBlock(RootBlock& copy);
     ~RootBlock();
 
     void setUser(std::string value);
@@ -30,17 +32,17 @@ class RootBlock {
     void setMaxConnection(std::string value);
     void setWorkerCnt(std::string value);
     void setKeyVal(std::string key, std::string value);
-    void addServerBlock(ServerBlock *server);
+
 
     const std::string getUser() const;
     const std::string getInclude() const;
     int getMaxConnection() const;
     int getWorkerCnt() const;
-    t_serverInfo *getServerInfo(std::list<t_serverInfo *> infoList, int listen);
-    std::list<t_serverInfo *> getServerInfoList();
+    t_serverInfo *getServerInfo(std::vector<t_serverInfo *> infoList, int listen);
+    std::vector<t_serverInfo *> getServerInfoList();
 
 	std::string getStatusCode(std::string key);
-    std::list<ServerBlock *> getBlockList();
+    //std::vector<ServerBlock *> getBlockList();
 
     void test(); // TODO test
 };

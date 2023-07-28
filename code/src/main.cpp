@@ -8,7 +8,7 @@ void test(t_serverInfo *info) {
   std::cout << "===========INFO===========" << std::endl;
   std::cout << "listen: " << info->listen << std::endl;
 
-  std::list<ServerBlock *>::iterator it;
+  std::vector<ServerBlock *>::iterator it;
   std::cout << std::endl;
   for (it = info->serverList.begin(); it != info->serverList.end(); it++)
     (*it)->test();
@@ -22,11 +22,11 @@ int main(int ac, char **av) {
   RootBlock *root = config(av[1]);
   root->test();
 
-  std::list<t_serverInfo *> info = root->getServerInfoList();
+  std::vector<t_serverInfo *> info = root->getServerInfoList();
 
-  std::list<t_serverInfo *>::iterator it;
+  std::vector<t_serverInfo *>::iterator it;
   std::cout << std::endl;
-  std::list<Server *> serverList;
+  std::vector<Server *> serverList;
   for (it = info.begin(); it != info.end(); it++) {
     Server *server = new Server((*it));
     if (server->init() == EXIT_FAILURE) return EXIT_FAILURE;

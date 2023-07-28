@@ -8,7 +8,7 @@ Server::Server(t_serverInfo *serverBlockInfo)
 Server::~Server(){};
 int Server::getSocket() const { return _socket; }
 
-std::list<ServerBlock *> Server::getServerBlockList()
+std::vector<ServerBlock *> Server::getServerBlockList()
 {
   return _serverBlockInfo->serverList;
 }

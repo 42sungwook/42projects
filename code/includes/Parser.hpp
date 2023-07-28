@@ -6,6 +6,7 @@
 #include <fstream>
 #include <iostream>
 #include <stack>
+#include <vector>
 
 #include "./LocationBlock.hpp"
 #include "./RootBlock.hpp"
@@ -14,29 +15,31 @@
 #define ISSPACE " \t\n\r\f\v"
 #define SEMICOLON ";"
 
+typedef std::pair<enum BLOCK, RootBlock &> BlockPair;
+
 enum BLOCK { ROOT, SERVER, LOCATION };
 
 class Parser {
  private:
   std::size_t _pos;
   std::size_t _start;
-  std::string _key;
-  std::string _value;
   std::string _line;
   RootBlock *_root;
+  std::vector<RootBlock *> _serverBlocks; 
+
   bool _error;
 
  private:
-  void setKey();
-  void setValue();
+  void setKey(std::string &key);
+  void setValue(std::string &value);
   void readConfig(std::string &path);
   void parseRootBlock();
   void parseServerBlock();
   void parseLocationBlock(ServerBlock *server);
   bool skipBracket();
 
-  void parseBlock(std::stack<enum BLOCK> &stack);
-  void addBlock(enum BLOCK type);
+  void parseBlock(std::stack<BlockPair> stack);
+  std::stack<BlockPair> addBlock(std::stack<BlockPair> &stack);
   void setKeyVal(enum BLOCK type);
 
  public:

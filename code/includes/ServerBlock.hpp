@@ -4,21 +4,24 @@
 #include <iostream>
 #include <list>
 #include <map>
+#include <vector>
 
-#include "LocationBlock.hpp"
+#include "RootBlock.hpp"
+class LocationBlock;
 
-class ServerBlock {
-  private:
+class ServerBlock : public RootBlock{
+  protected:
     int _listen;
     std::string _root;
     std::string _index;
     std::string _serverName;
     unsigned long _clientMaxBodySize;
     std::string _cgi;
-    std::list<LocationBlock *> _locationList;
+    std::vector<LocationBlock *> _locationList;
 
   public:
-    ServerBlock();
+    ServerBlock(RootBlock& rootBlock);
+    ServerBlock(ServerBlock& copy);
     ~ServerBlock();
 
     void setListen(std::string value);
@@ -38,7 +41,7 @@ class ServerBlock {
 
     void addLocationBlock(LocationBlock *location);
 
-    std::list<LocationBlock *> getBlockList();
+    std::vector<LocationBlock *> getBlockList();
 
     void test(); // TODO test
 };

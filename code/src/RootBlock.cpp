@@ -25,6 +25,10 @@ RootBlock::RootBlock()
 	_statusCodes["500"] = "Server Error";
 }
 
+RootBlock::RootBlock(RootBlock& copy)
+    : _user(copy._user), _include(copy._include), 
+    _maxConnection(copy._maxConnection), _workerCnt(copy._workerCnt), _statusCodes(copy._statusCodes) {}
+
 RootBlock::~RootBlock() {}
 
 void RootBlock::setUser(std::string value) { _user = value; }
@@ -56,8 +60,8 @@ void RootBlock::setKeyVal(std::string key, std::string value) {
         (this->*(iter->second))(value);
 }
 
-void RootBlock::addServerBlock(ServerBlock *server) {
-    _serverList.push_back(server);
+void RootBlock::addBlock(RootBlock** temp) {
+    *temp = new ServerBlock();
 }
 
 const std::string RootBlock::getUser() const { return _user; }
@@ -68,11 +72,11 @@ int RootBlock::getMaxConnection() const { return _maxConnection; }
 
 int RootBlock::getWorkerCnt() const { return _workerCnt; }
 
-std::list<ServerBlock *> RootBlock::getBlockList() {
-    if (_serverList.empty())
-        throw std::runtime_error("server block is empty");
-    return _serverList;
-}
+// std::vector<ServerBlock *> RootBlock::getBlockList() {
+//     if (_serverList.empty())
+//         throw std::runtime_error("server block is empty");
+//     return _serverList;
+// }
 
 std::string RootBlock::getStatusCode(std::string key)
 {
@@ -92,17 +96,17 @@ void RootBlock::test() {
     std::cout << "_maxConnection: " << _maxConnection << std::endl;
     std::cout << "_workerCnt: " << _workerCnt << std::endl;
 
-    std::cout << "serverList size: " << _serverList.size() << std::endl;
+    // std::cout << "serverList size: " << _serverList.size() << std::endl;
 
-    std::list<ServerBlock *>::iterator it;
-    std::cout << std::endl;
-    for (it = _serverList.begin(); it != _serverList.end(); it++)
-        (*it)->test();
+    // std::vector<ServerBlock *>::iterator it;
+    // std::cout << std::endl;
+    // for (it = _serverList.begin(); it != _serverList.end(); it++)
+    //     (*it)->test();
 }
 
-t_serverInfo *RootBlock::getServerInfo(std::list<t_serverInfo *> infoList,
+t_serverInfo *RootBlock::getServerInfo(std::vector<t_serverInfo *> infoList,
                                        int listen) {
-    std::list<t_serverInfo *>::iterator it;
+    std::vector<t_serverInfo *>::iterator it;
 
     for (it = infoList.begin(); it != infoList.end(); it++) {
         if ((*it)->listen == listen)
@@ -111,10 +115,10 @@ t_serverInfo *RootBlock::getServerInfo(std::list<t_serverInfo *> infoList,
     return NULL;
 }
 
-std::list<t_serverInfo *> RootBlock::getServerInfoList() {
-    std::list<t_serverInfo *> infoList;
+std::vector<t_serverInfo *> RootBlock::getServerInfoList() {
+    std::vector<t_serverInfo *> infoList;
 
-    std::list<ServerBlock *>::iterator it;
+    std::vector<ServerBlock *>::iterator it;
     std::cout << std::endl;
     for (it = _serverList.begin(); it != _serverList.end(); it++) {
         t_serverInfo *find = getServerInfo(infoList, (*it)->getListen());

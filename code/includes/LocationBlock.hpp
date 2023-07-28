@@ -3,34 +3,25 @@
 
 #include <iostream>
 #include <map>
+#include "ServerBlock.hpp"
 
-class LocationBlock {
+class LocationBlock : public ServerBlock {
   private:
     std::string _path;
-    std::string _index;
-    std::string _root;
     std::string _autoindex;
     std::string _limitExcept;
-    unsigned long _clientMaxBodySize;
 
   public:
-    LocationBlock();
+    LocationBlock(ServerBlock& serverBlock);
     ~LocationBlock();
 
     void setPath(std::string value);
-    void setIndex(std::string value);
-    void setRoot(std::string value);
     void setAutoindex(std::string value);
     void setLimitExcept(std::string value);
-    void setClientMaxBodySize(std::string value);
-    void setKeyVal(std::string key, std::string value);
 
     const std::string getPath() const;
-    const std::string getIndex() const;
-    const std::string getRoot() const;
     const std::string getAutoindex() const;
     const std::string getLimitExcept() const;
-    unsigned long getClientMaxBodySize() const;
 
     void test(); // TODO test
 };

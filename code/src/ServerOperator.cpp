@@ -1,6 +1,6 @@
 #include "../includes/ServerOperator.hpp"
 
-ServerOperator::ServerOperator(std::list<Server *> serverList)
+ServerOperator::ServerOperator(std::vector<Server *> serverList)
     : _shutDown(false), _serverList(serverList) {}
 
 int ServerOperator::run() {
@@ -29,7 +29,7 @@ int ServerOperator::run() {
 }
 
 void ServerOperator::handleEventError(struct kevent *event, Kqueue kq) {
-  std::list<Server *>::iterator it;
+  std::vector<Server *>::iterator it;
   (void)kq;
   for (it = _serverList.begin(); it != _serverList.end(); it++) {
     if (event->ident == (unsigned int)(*it)->getSocket()) {
@@ -43,7 +43,7 @@ void ServerOperator::handleEventError(struct kevent *event, Kqueue kq) {
 }
 
 bool ServerOperator::findSocketBy(int ident) {
-  std::list<Server *>::iterator it;
+  std::vector<Server *>::iterator it;
 
   for (it = _serverList.begin(); it != _serverList.end(); it++) {
     if ((*it)->getSocket() == ident) return true;
@@ -88,7 +88,7 @@ void ServerOperator::handleReadEvent(struct kevent *event, Kqueue kq) {
 
 void ServerOperator::handleWriteEvent(struct kevent *event, Kqueue kq) {
   /* send data to client */
-  std::list<Server *>::iterator it;
+  std::vector<Server *>::iterator it;
   (void)kq;
   for (it = _serverList.begin(); it != _serverList.end(); it++) {
     if (isExistClient(event->ident)) {
@@ -128,8 +128,8 @@ void ServerOperator::handleWriteEvent(struct kevent *event, Kqueue kq) {
   }
 }
 
-std::list<ServerBlock *> ServerOperator::getServerBlockListBy(int port) {
-  std::list<Server *>::iterator it;
+std::vector<ServerBlock *> ServerOperator::getServerBlockListBy(int port) {
+  std::vector<Server *>::iterator it;
   for (it = _serverList.begin(); it != _serverList.end(); it++) {
     if ((*it)->getListen() == port) return (*it)->getServerBlockList();
   }
@@ -137,8 +137,8 @@ std::list<ServerBlock *> ServerOperator::getServerBlockListBy(int port) {
 }
 
 ServerBlock *ServerOperator::getServerBlockBy(std::string host, int port) {
-  std::list<ServerBlock *> serverBlockList;
-  std::list<ServerBlock *>::iterator it;
+  std::vector<ServerBlock *> serverBlockList;
+  std::vector<ServerBlock *>::iterator it;
 
   serverBlockList = getServerBlockListBy(port);
   for (it = serverBlockList.begin(); it != serverBlockList.end(); it++) {
@@ -149,8 +149,8 @@ ServerBlock *ServerOperator::getServerBlockBy(std::string host, int port) {
 
 LocationBlock *ServerOperator::getLocationBlockBy(std::string host, int port,
                                                   std::string uri) {
-  std::list<LocationBlock *> locationBlockList;
-  std::list<LocationBlock *>::iterator it;
+  std::vector<LocationBlock *> locationBlockList;
+  std::vector<LocationBlock *>::iterator it;
 
   // 임시로 설정
   port = 8080;

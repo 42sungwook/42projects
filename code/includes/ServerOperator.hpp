@@ -9,7 +9,7 @@ class ServerOperator
 {
 private:
   int _shutDown;
-  std::list<Server *> _serverList;
+  std::vector<Server *> _serverList;
   std::map<int, std::string> _clients;
 
   void setClientContents(int clientSock, std::string buffer);
@@ -22,13 +22,13 @@ private:
   void handleEventError(struct kevent *event, Kqueue kq);
   void handleReadEvent(struct kevent *event, Kqueue kq);
   void handleWriteEvent(struct kevent *event, Kqueue kq);
-  std::list<ServerBlock *> getServerBlockListBy(int port);
+  std::vector<ServerBlock *> getServerBlockListBy(int port);
   ServerBlock *getServerBlockBy(std::string host, int port);
   LocationBlock *getLocationBlockBy(std::string host, int port,
                                     std::string uri);
 
 public:
-  ServerOperator(std::list<Server *> serverList);
+  ServerOperator(std::vector<Server *> serverList);
 
   int run();
 };

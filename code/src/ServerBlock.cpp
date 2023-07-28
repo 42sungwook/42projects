@@ -1,7 +1,12 @@
 #include "../includes/ServerBlock.hpp"
 
-ServerBlock::ServerBlock()
-    : _listen(0), _root(), _index(), _serverName(), _clientMaxBodySize(0) {}
+ServerBlock::ServerBlock(RootBlock& rootBlock)
+    : RootBlock(rootBlock), _listen(0), _root(), _index(), _serverName(), _clientMaxBodySize(0), _cgi(), _locationList() {}
+
+ServerBlock::ServerBlock(ServerBlock& copy)
+    : RootBlock(static_cast<RootBlock&>(copy)), _listen(copy._listen), _root(copy._root), _index(copy._index), 
+    _serverName(copy._serverName), _clientMaxBodySize(copy._clientMaxBodySize), _cgi(copy._cgi), _locationList(copy._locationList) {
+    }
 
 ServerBlock::~ServerBlock() {}
 
@@ -53,7 +58,7 @@ void ServerBlock::addLocationBlock(LocationBlock *location) {
     _locationList.push_back(location);
 }
 
-std::list<LocationBlock *> ServerBlock::getBlockList() {
+std::vector<LocationBlock *> ServerBlock::getBlockList() {
     // 비어있는 리스트를 요청할 경우 없음
     if (_locationList.empty())
         throw std::runtime_error("location block is empty");
@@ -72,7 +77,7 @@ void ServerBlock::test() {
     std::cout << "_cgi: " << _cgi << std::endl;
 
     std::cout << std::endl;
-    std::list<LocationBlock *>::iterator it;
+    std::vector<LocationBlock *>::iterator it;
     for (it = _locationList.begin(); it != _locationList.end(); it++) {
         (*it)->test();
     }

@@ -32,7 +32,7 @@ public:
   ~Server();
 
   int getSocket() const;
-  std::list<ServerBlock *> getServerBlockList();
+  std::vector<ServerBlock *> getServerBlockList();
   int getListen();
   int init();
 };
