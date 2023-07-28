@@ -13,10 +13,7 @@ std::list<ServerBlock *> Server::getServerBlockList()
   return _serverBlockInfo->serverList;
 }
 
-int Server::getListen()
-{
-  return _serverBlockInfo->listen;
-}
+int Server::getListen() { return _serverBlockInfo->listen; }
 
 int Server::init()
 {
@@ -27,12 +24,14 @@ int Server::init()
     return EXIT_FAILURE;
   }
   // config 세팅
+  fcntl(_socket, F_SETFL, O_NONBLOCK);
 
   struct sockaddr_in serverAddr;
   memset(&serverAddr, 0, sizeof(serverAddr));
   serverAddr.sin_family = AF_INET;
   serverAddr.sin_addr.s_addr = htonl(INADDR_ANY);
   serverAddr.sin_port = htons(_serverBlockInfo->listen);
+  std::cout << "listen: " << _serverBlockInfo->listen << std::endl;
 
   if (bind(_socket, (struct sockaddr *)&serverAddr, sizeof(serverAddr)) == -1)
   {
@@ -47,6 +46,5 @@ int Server::init()
               << std::string(strerror(errno)) << std::endl;
     return EXIT_FAILURE;
   }
-  fcntl(_socket, F_SETFL, O_NONBLOCK);
   return (EXIT_SUCCESS);
 }
