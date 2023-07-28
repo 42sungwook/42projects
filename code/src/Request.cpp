@@ -1,6 +1,6 @@
 #include "../includes/Request.hpp"
 
-Request::Request() {}
+Request::Request() : _status(0) {}
 
 Request::~Request() {}
 
@@ -14,14 +14,14 @@ void Request::parsing(const std::string &raw) {
   while (std::getline(ss, line, '\r') && line != "\n") {
     size_t pos = line.find(":");
     if (pos == line.npos) {
-      _error = 400;
+      _status = 400;
       break;
     }
     _header[line.substr(1, pos - 1)] = line.substr(pos + 1, line.length());
   }
   if (_header["method"] != "GET" && _header["method"] != "POST" &&
       _header["method"] != "DELETE") {
-    _error = 405;
+    _status = 405;
   }
   while (std::getline(ss, line))
     if (ss.eof() == true)
@@ -30,7 +30,7 @@ void Request::parsing(const std::string &raw) {
       _body += line + "\n";
   // 8KB is default maximum size of request, config로 수정
   if (raw.size() - _body.size() >= 8192) {
-    _error = 414;
+    _status = 414;
   }
 }
 
@@ -44,6 +44,6 @@ const std::string Request::getMessage() const { return "temp"; };
 
 enum PROCESS Request::getProcess() { return CGI; };
 
-const int &Request::getError() const { return _error; }
+const int &Request::getStatus() const { return _status; }
 
 enum METHOD Request::getMethod() { return GET; };
