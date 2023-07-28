@@ -32,10 +32,7 @@ int main(int ac, char **av) {
     if (server->init() == EXIT_FAILURE) return EXIT_FAILURE;
     serverList.push_back(server);
     // test((*it));
-
-    // std::cout << std::endl << std::endl;
   }
-  std::cout << "server size : " << serverList.size() << std::endl;
   ServerOperator op(serverList);
   op.run();
   return (0);

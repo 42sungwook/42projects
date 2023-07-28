@@ -45,14 +45,11 @@ void ServerOperator::handleEventError(struct kevent *event, Kqueue kq) {
 void ServerOperator::handleReadEvent(struct kevent *event, Kqueue kq) {
   std::list<Server *>::iterator it;
   // 발생한 이벤트가 어느 소켓으로 들어왔는지 찾음
-  std::cout << "read event ident is " << event->ident << std::endl;
   for (it = _serverList.begin(); it != _serverList.end(); it++) {
     // 만약 이벤트가 서버 소켓으로 들어왔다면 새로운 클라이언트 소켓을
     // 만들고, 초기화 함
-    std::cout << "searching server socket: " << (*it)->getSocket() << std::endl;
     if (event->ident == (unsigned int)(*it)->getSocket()) {
       int clientSocket;
-      std::cout << (*it)->getSocket() << std::endl;
       if ((clientSocket = accept((*it)->getSocket(), NULL, NULL)) == -1) {
         std::cerr << "accept() error\n";
         _shutDown = true;
@@ -70,9 +67,7 @@ void ServerOperator::handleReadEvent(struct kevent *event, Kqueue kq) {
     } else if ((*it)->isExistClient(event->ident)) {
       /* read data from client */
       char buf[1024];
-      std::cout << "5" << std::endl;
       int n = read(event->ident, buf, sizeof(buf));
-      std::cout << "6" << std::endl;
       if (n <= 0) {
         if (n < 0) std::cerr << "client read error!" << std::endl;
         (*it)->disconnectClient(event->ident);
@@ -116,12 +111,13 @@ void ServerOperator::handleWriteEvent(struct kevent *event) {
         }
         std::cout << _serverList.front()->getClientContents(event->ident)
                   << std::endl;
-        // if (write(event->ident, res.sendResponse("hello"),
-        //           res.sendResponse("hi")) == -1) {
-        //     std::cerr << "client write error!" << std::endl;
-        //     (*it)->disconnectClient(event->ident);
-        //   } else
-        //     (*it)->setClientContentsClear(event->ident);
+        // write method 작성 전까지 살려두기
+        if (write(event->ident, (*it)->getClientContents(event->ident).c_str(),
+                  (*it)->getClientContents(event->ident).size()) == -1) {
+          std::cerr << "client write error!" << std::endl;
+          (*it)->disconnectClient(event->ident);
+        } else
+          (*it)->setClientContentsClear(event->ident);
       }
     }
   }
@@ -150,6 +146,10 @@ LocationBlock *ServerOperator::getLocationBlockBy(std::string host, int port,
                                                   std::string uri) {
   std::list<LocationBlock *> locationBlockList;
   std::list<LocationBlock *>::iterator it;
+
+  // 임시로 설정
+  port = 8080;
+  uri = "/";
 
   locationBlockList = getServerBlockBy(host, port)->getBlockList();
   for (it = locationBlockList.begin(); it != locationBlockList.end(); it++) {
