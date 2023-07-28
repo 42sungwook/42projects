@@ -1,6 +1,6 @@
 #include "../includes/Kqueue.hpp"
 
-Kqueue::Kqueue() {}
+Kqueue::Kqueue() { _checkList = new std::vector<struct kevent>; }
 
 Kqueue::~Kqueue() {}
 
@@ -23,12 +23,12 @@ void Kqueue::changeEvents(uintptr_t ident, int16_t filter, uint16_t flags,
   struct kevent tmp;
 
   EV_SET(&tmp, ident, filter, flags, fflags, data, udata);
-  _checkList.push_back(tmp);
+  _checkList->push_back(tmp);
 }
 
 int Kqueue::countEvents() {
   int cnt;
-  cnt = kevent(_kq, &_checkList[0], _checkList.size(), _eventList, 8, NULL);
+  cnt = kevent(_kq, &(*_checkList)[0], _checkList->size(), _eventList, 8, NULL);
   if (cnt == -1) {
     std::cout << "kevent() error\n" + std::string(strerror(errno)) << std::endl;
     return -1;
@@ -36,6 +36,6 @@ int Kqueue::countEvents() {
   return cnt;
 }
 
-void Kqueue::clearCheckList() { _checkList.clear(); }
+void Kqueue::clearCheckList() { _checkList->clear(); }
 
 struct kevent *Kqueue::getEventList() { return _eventList; }

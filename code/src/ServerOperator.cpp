@@ -21,7 +21,7 @@ int ServerOperator::run() {
       } else if (currEvent->filter == EVFILT_READ) {
         handleReadEvent(currEvent, kq);
       } else if (currEvent->filter == EVFILT_WRITE) {
-        handleWriteEvent(currEvent, kq);
+        handleWriteEvent(currEvent);
       }
       if (_shutDown == true) return EXIT_FAILURE;
     }
@@ -45,11 +45,14 @@ void ServerOperator::handleEventError(struct kevent *event, Kqueue kq) {
 void ServerOperator::handleReadEvent(struct kevent *event, Kqueue kq) {
   std::list<Server *>::iterator it;
   // 발생한 이벤트가 어느 소켓으로 들어왔는지 찾음
+  std::cout << "read event ident is " << event->ident << std::endl;
   for (it = _serverList.begin(); it != _serverList.end(); it++) {
     // 만약 이벤트가 서버 소켓으로 들어왔다면 새로운 클라이언트 소켓을
     // 만들고, 초기화 함
+    std::cout << "searching server socket: " << (*it)->getSocket() << std::endl;
     if (event->ident == (unsigned int)(*it)->getSocket()) {
       int clientSocket;
+      std::cout << (*it)->getSocket() << std::endl;
       if ((clientSocket = accept((*it)->getSocket(), NULL, NULL)) == -1) {
         std::cerr << "accept() error\n";
         _shutDown = true;
@@ -83,10 +86,9 @@ void ServerOperator::handleReadEvent(struct kevent *event, Kqueue kq) {
   }
 }
 
-void ServerOperator::handleWriteEvent(struct kevent *event, Kqueue kq) {
+void ServerOperator::handleWriteEvent(struct kevent *event) {
   /* send data to client */
   std::list<Server *>::iterator it;
-  (void)kq;
   for (it = _serverList.begin(); it != _serverList.end(); it++) {
     if ((*it)->isExistClient(event->ident)) {
       if ((*it)->getClientContents(event->ident) != "") {
