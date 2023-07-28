@@ -8,35 +8,6 @@ Server::Server(t_serverInfo *serverBlockInfo)
 Server::~Server(){};
 int Server::getSocket() const { return _socket; }
 
-const std::string Server::getClientContents(int clientSock)
-{
-  return _clients[clientSock];
-}
-
-bool Server::isExistClient(int clientSock)
-{
-  if (_clients.find(clientSock) == _clients.end())
-    return false;
-  return true;
-}
-
-void Server::setClientContentsClear(int clientSock)
-{
-  _clients[clientSock].clear();
-}
-
-void Server::setClientContents(int clientSock, std::string buffer)
-{
-  _clients[clientSock] += buffer;
-}
-
-void Server::disconnectClient(int clientSock)
-{
-  std::cout << "client disconnected: " << clientSock << std::endl;
-  close(clientSock);
-  _clients.erase(clientSock);
-}
-
 std::list<ServerBlock *> Server::getServerBlockList()
 {
   return _serverBlockInfo->serverList;

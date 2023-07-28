@@ -10,6 +10,15 @@ class ServerOperator
 private:
   int _shutDown;
   std::list<Server *> _serverList;
+  std::map<int, std::string> _clients;
+
+  void setClientContents(int clientSock, std::string buffer);
+  void setClientContentsClear(int clientSock);
+  void disconnectClient(int clientSock);
+  const std::string getClientContents(int clientSock);
+  bool isExistClient(int clientSock);
+  bool findSocketBy(int ident);
+
   void handleEventError(struct kevent *event, Kqueue kq);
   void handleReadEvent(struct kevent *event, Kqueue kq);
   void handleWriteEvent(struct kevent *event, Kqueue kq);
