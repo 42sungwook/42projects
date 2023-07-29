@@ -4,7 +4,7 @@ ServerBlock::ServerBlock(RootBlock& rootBlock)
     : RootBlock(rootBlock), _listen(0), _root(), _index(), _serverName(), _clientMaxBodySize(0), _cgi(), _locationList() {}
 
 ServerBlock::ServerBlock(ServerBlock& copy)
-    : RootBlock(static_cast<RootBlock&>(copy)), _listen(copy._listen), _root(copy._root), _index(copy._index), 
+    : RootBlock(copy), _listen(copy._listen), _root(copy._root), _index(copy._index), 
     _serverName(copy._serverName), _clientMaxBodySize(copy._clientMaxBodySize), _cgi(copy._cgi), _locationList(copy._locationList) {
     }
 
