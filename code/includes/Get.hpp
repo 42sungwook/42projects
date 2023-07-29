@@ -3,19 +3,20 @@
 
 #include "IMethod.hpp"
 
-class Get : public IMethod
-{
-private:
-public:
-	void process(Request &request, Response &response);
-	Get();
-	~Get();
-	Get(const Get &obj);
-	Get &operator=(const Get &obj);
-	void makeBody(Request &request, Response &response);
-	void makeHeader(Request &request, Response &response);
-	void makeStatusLine(Request &request, Response &response);
-	void openFile(Request &request, Response &response);
+class Get : public IMethod {
+ private:
+  std::string _result;
+  std::string _path;
+
+ public:
+  void process(Request &request, Response &response);
+  Get();
+  ~Get();
+  Get(const Get &obj);
+  Get &operator=(const Get &obj);
+  std::string makeBody(Request &request, Response &response);
+  std::string makeHeader(Request &request, Response &response);
+  std::string makeStatusLine(Request &request, Response &response);
 };
 
 #endif
