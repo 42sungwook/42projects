@@ -16,7 +16,7 @@ class Request {
   std::string _body;
   std::string _host;
   int _port;
-  int _error;
+  int _status;
 
  public:
   Request();
@@ -26,7 +26,7 @@ class Request {
   const int &getPort();
   const std::string getUri();
   const std::string getMessage() const;
-  const int &getError() const;
+  const int &getStatus() const;
   enum PROCESS getProcess();
   enum METHOD getMethod();
 };

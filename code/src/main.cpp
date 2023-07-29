@@ -28,9 +28,9 @@ int main(int ac, char **av) {
   std::cout << std::endl;
   std::list<Server *> serverList;
   for (it = info.begin(); it != info.end(); it++) {
-    Server server((*it));
-    server.init();
-    serverList.push_back(&server);
+    Server *server = new Server((*it));
+    if (server->init() == EXIT_FAILURE) return EXIT_FAILURE;
+    serverList.push_back(server);
     // test((*it));
   }
   ServerOperator op(serverList);
