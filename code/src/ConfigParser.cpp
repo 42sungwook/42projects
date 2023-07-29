@@ -1,24 +1,21 @@
-#include "../includes/Parser.hpp"
-#include "../includes/RootBlock.hpp"
-#include <sstream>
+#include "../includes/ConfigParser.hpp"
 
-
-Parser::Parser(std::string &path) :  _error(true) {
+ConfigParser::ConfigParser(std::string &path) {
   std::stack<BlockPair> stack;
 
-  _root = new RootBlock();
+  _rootBlock = new RootBlock();
   _start = 0;
   _pos = 0;
   readConfig(path);
   if (_line.empty()) return;
 
-  stack.push(std::make_pair(ROOT, _root));
+  stack.push(std::make_pair(ROOT, _rootBlock));
   parseBlock(stack);
 }
 
-Parser::~Parser() {}
+ConfigParser::~ConfigParser() {}
 
-void Parser::readConfig(std::string &path) {
+void ConfigParser::readConfig(std::string &path) {
   //	std::string buf;
   //	std::ifstream filestream(path.c_str());
   //
@@ -42,7 +39,7 @@ void Parser::readConfig(std::string &path) {
   _line = buffer.str();
 }
 
-bool Parser::skipBracket() {
+bool ConfigParser::skipBracket() {
   _pos = _line.find_first_of("{", _pos);
   if (_pos == std::string::npos) return false;
   _start = _line.find_first_of("}", _pos);
@@ -51,7 +48,7 @@ bool Parser::skipBracket() {
   return true;
 }
 
-void Parser::setKey(std::string &key) {
+void ConfigParser::setKey(std::string &key) {
   key.clear();
   _start = _line.find_first_not_of(ISSPACE, _pos);
   if (_start == std::string::npos) return;
@@ -60,7 +57,7 @@ void Parser::setKey(std::string &key) {
   key = _line.substr(_start, _pos - _start);
 }
 
-void Parser::setValue(std::string &value) {
+void ConfigParser::setValue(std::string &value) {
   value.clear();
   _start = _line.find_first_not_of(ISSPACE, _pos);
   if (_start == std::string::npos) return;
@@ -70,26 +67,26 @@ void Parser::setValue(std::string &value) {
   ++_pos;
 }
 
-RootBlock *Parser::getRootBlock() { return _root; }
+RootBlock *ConfigParser::getRootBlock() { return _rootBlock; }
 
-std::stack<BlockPair> Parser::addBlock(std::stack<BlockPair> &stack) {
+std::stack<BlockPair> ConfigParser::addBlock(BlockPair &top) {
   RootBlock *newBlock;
   BlockPair pair;
-  
-  if (stack.top().first == ROOT) {
-    newBlock = new ServerBlock(*_root);
+
+  if (top.first == ROOT) {
+    newBlock = new ServerBlock(top.second);
     _serverBlocks.push_back(newBlock);
-  } else if (stack.top().first == SERVER) {
-    ServerBlock *serverBlock = stack.top().second;
-    newBlock = new LocationBlock(*_root, serverBlock);
-    serverBlock->addLocationBlock(newBlock);
+  } else if (top.first == SERVER) {
+    newblock = static_cast<ServerBlock>(top.second).newLocationBlock();
+
+    newBlock = new LocationBlock(static_cast<ServerBlock &>(top.second));
     setKey();
     newBlock->setKeyVal("path", _key);
   }
   pair = std::make_pair(stack.top().first + 1, newBlock);
 }
 
-void Parser::setKeyVal(enum BLOCK type) {
+void ConfigParser::setKeyVal(enum BLOCK type) {
   ServerBlock *serverBlock;
   LocationBlock *locationBlock;
 
@@ -105,37 +102,31 @@ void Parser::setKeyVal(enum BLOCK type) {
   }
 }
 
-bool Parser::getState() const { return _error; }
-
-void Parser::parseBlock(std::stack<BlockPair> stack) {
+void ConfigParser::parseBlock(std::stack<BlockPair> stack) {
   enum BLOCK type = stack.top().first;
   std::string key;
   std::string value;
 
-  while (true) { 
+  while (true) {
     setKey(key);
     if (type != ROOT && key == "}") return stack.pop();
     if ((type == ROOT && key == "server") ||
-        (type == SERVER && key == "location")) 
-    {
-      
-      if (type == ROOT && !skipBracket()) 
-        continue;
-      std::stack<BlockPair> temp = addBlock(stack);
-      if (type == SERVER && !skipBracket()) 
-        continue;
+        (type == SERVER && key == "location")) {
+      if (type == ROOT && !skipBracket()) continue;
+      std::stack<BlockPair> temp = addBlock(stack.top());
+      if (type == SERVER && !skipBracket()) continue;
       stack.push(static_cast<enum BLOCK>(type + 1));
       parseBlock(stack);
       continue;
     }
     setValue(value);
     if (key.empty() || value.empty()) return stack.pop();
-    block.setKeyVal(key, value);
+    _rootBlock->setKeyVal(key, value);
   }
 }
 
 RootBlock *config(std::string path) {
-  Parser parser(path);
+  ConfigParser parser(path);
   RootBlock *root = parser.getRootBlock();
   return root;
 }
