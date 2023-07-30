@@ -19,9 +19,15 @@ void Request::parsing(const std::string &raw) {
     }
     _header[line.substr(1, pos - 1)] = line.substr(pos + 1, line.length());
   }
-  if (_header["method"] != "GET" && _header["method"] != "POST" &&
+  if (_header.find("Host") == _header.end()) {
+    _status = 400;
+  }
+  else if (_header["method"] != "GET" && _header["method"] != "POST" &&
       _header["method"] != "DELETE") {
     _status = 405;
+  }
+  else {
+    _host = _header["Host"];
   }
   while (std::getline(ss, line))
     if (ss.eof() == true)

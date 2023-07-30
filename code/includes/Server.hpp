@@ -22,23 +22,21 @@
 #include "Request.hpp"
 #include "Response.hpp"
 #include "ConfigParser.hpp"
-
 class Server
 {
 private:
   int         _socket;
   int         _listenPort;
-  std::string _listenHost;
-  SPSBList    &_spsbList;
+  SPSBList    &_sbList;
 
 public:
-  Server(ServerBlockMap *samePortServerBlockMap);
+  Server(const int port, SPSBList &sbList);
   ~Server();
 
-  int getSocket() const;
-  ServerBlockMap getServerBlockMap();
-  int getListen() const;
   int init();
+  int getSocket() const;
+  int getListenPort() const;
+  SPSBList &getSPSBList() const;
 };
 
 #endif

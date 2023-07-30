@@ -50,8 +50,8 @@ public:
   ConfigParser(const char *path);
   ~ConfigParser();
   void parseBlocks(RootBlock *block, enum BLOCK type);
-  ServerBlockMap getServerBlockMap() const;
-  LocationMap getLocationMap() const;
+  ServerBlockMap &getServerBlockMap();
+  LocationMap &getLocationMap();
 };
 
 #endif

@@ -4,17 +4,6 @@
 #include "../includes/Server.hpp"
 #include "../includes/ServerOperator.hpp"
 
-// void test(t_serverInfo *info)
-//{
-//   std::cout << "===========INFO===========" << std::endl;
-//   std::cout << "listen: " << info->listen << std::endl;
-
-//  std::vector<ServerBlock *>::iterator it;
-//  std::cout << std::endl;
-//  for (it = info->serverList.begin(); it != info->serverList.end(); it++)
-//    (*it)->test();
-//}
-
 int main(int ac, char **av)
 {
   if (ac != 2)
@@ -22,29 +11,46 @@ int main(int ac, char **av)
     std::cout << "Invalid Arguments" << std::endl;
     return EXIT_FAILURE;
   }
-  RootBlock *root = new RootBlock;
+  RootBlock root;
   ConfigParser parser(av[1]);
-  parser.parseBlocks(root, ROOT);
+  parser.parseBlocks(&root, ROOT);
   root->test();
 
-  ServerBlockMap serverMap = parser.getServerBlockMap();
-  LocationMap locationMap = parser.getLocationMap();
+  ServerBlockMap sbMap = parser.getServerBlockMap();
+  ServerMap serverMap;
 
-  ServerBlockMap::iterator iter;
-
-  for (iter = serverMap.begin(); iter != serverMap.end(); iter++)
+  for (ServerBlockMap::iterator it = sbMap.begin(); it != sbMap.end(); it++)
   {
-    SPSBList list = *(iter)->second;
-    SPSBList::iterator spsbIter;
-    for (spsbIter = list.begin(); spsbIter != list.end(); spsbIter++)
-    {
-      (*spsbIter)->test();
-      LocationList locList = *locationMap[*spsbIter];
-      LocationList::iterator locIter;
-      for (locIter = locList.begin(); locIter != locList.end(); locIter++)
-        (*locIter)->test();
-    }
+    Server *newserver = new Server((*it).first, (*it).second);
+    if (serverList.back()->init() == EXIT_FAILURE)
+      return EXIT_FAILURE;
+    serverMap[newserver->getSocket()] = newserver;
   }
+
+  ServerOperator op(serverMap, parser.getLocationMap());
+  op.run();
+
+  return (0);
+}
+
+  // ServerBlockMap serverMap = parser.getServerBlockMap();
+  // LocationMap locationMap = parser.getLocationMap();
+
+  // ServerBlockMap::iterator iter;
+
+  // for (iter = serverMap.begin(); iter != serverMap.end(); iter++)
+  // {
+  //   SPSBList list = *(iter)->second;
+  //   SPSBList::iterator spsbIter;
+  //   for (spsbIter = list.begin(); spsbIter != list.end(); spsbIter++)
+  //   {
+  //     (*spsbIter)->test();
+  //     LocationList locList = *locationMap[*spsbIter];
+  //     LocationList::iterator locIter;
+  //     for (locIter = locList.begin(); locIter != locList.end(); locIter++)
+  //       (*locIter)->test();
+  //   }
+  // }
 
   // for (iter = serverMap.begin(); iter != serverMap.end(); iter++)
   //{
@@ -55,15 +61,12 @@ int main(int ac, char **av)
   // std::vector<t_serverInfo *>::iterator it;
   // std::cout << std::endl;
   // std::vector<Server *> serverList;
-  // for (it = info.begin(); it != info.end(); it++)
-  //{
+
+  //   for (it = info.begin(); it != info.end(); it++)
+  // {
   //   Server *server = new Server((*it));
   //   if (server->init() == EXIT_FAILURE)
   //     return EXIT_FAILURE;
   //   serverList.push_back(server);
-  //   // test((*it));
+  //   test((*it));
   // }
-  // ServerOperator op(serverList);
-  // op.run();
-  // return (0);
-}

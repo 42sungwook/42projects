@@ -59,9 +59,9 @@ void ConfigParser::setValue(std::string &value)
   ++_pos;
 }
 
-ServerBlockMap ConfigParser::getServerBlockMap() const { return _serverBlockMap; }
+ServerBlockMap &ConfigParser::getServerBlockMap() { return _serverBlockMap; }
 
-LocationMap ConfigParser::getLocationMap() const { return _locationMap; }
+LocationMap &ConfigParser::getLocationMap() { return _locationMap; }
 
 RootBlock *ConfigParser::addBlock(RootBlock *block, enum BLOCK type)
 {

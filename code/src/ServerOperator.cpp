@@ -1,14 +1,16 @@
 #include "../includes/ServerOperator.hpp"
 
-ServerOperator::ServerOperator(std::vector<Server *> serverList)
-    : _shutDown(false), _serverList(serverList) {}
+ServerOperator::ServerOperator(ServerMap &serverMap, LocationMap &locationMap)
+    : _serverMap(serverMap), _locationMap(locationMap) {}
 
-int ServerOperator::run()
+ServerOperator::~ServerOperator() {}
+
+void ServerOperator::run()
 {
   /* init kqueue & add event for server socket*/
   Kqueue kq;
-  if (kq.init(_serverList) == EXIT_FAILURE)
-    return EXIT_FAILURE;
+  if (kq.init(_serverMap) == EXIT_FAILURE)
+    exit(EXIT_FAILURE);
 
   struct kevent *currEvent;
   int eventNb;
@@ -22,7 +24,7 @@ int ServerOperator::run()
       currEvent = &(kq.getEventList())[i];
       if (currEvent->flags & EV_ERROR)
       {
-        handleEventError(currEvent, kq);
+        handleEventError(currEvent);
       }
       else if (currEvent->filter == EVFILT_READ)
       {
@@ -32,44 +34,25 @@ int ServerOperator::run()
       {
         handleWriteEvent(currEvent, kq);
       }
-      if (_shutDown == true)
-        return EXIT_FAILURE;
     }
   }
 }
 
-void ServerOperator::handleEventError(struct kevent *event, Kqueue kq)
+void ServerOperator::handleEventError(struct kevent *event)
 {
-  std::vector<Server *>::iterator it;
-  (void)kq;
-  for (it = _serverList.begin(); it != _serverList.end(); it++)
-  {
-    if (event->ident == (unsigned int)(*it)->getSocket())
-    {
+
+  if (_serverMap.find(event->ident) != _serverMap.end()) {
       std::cerr << "server socket error" << std::endl;
-      _shutDown = true;
-      return;
-    }
+      exit(EXIT_FAILURE);
   }
   std::cerr << "client socket error" << std::endl;
   disconnectClient(event->ident);
 }
 
-bool ServerOperator::findSocketBy(int ident)
-{
-  std::vector<Server *>::iterator it;
-
-  for (it = _serverList.begin(); it != _serverList.end(); it++)
-  {
-    if ((*it)->getSocket() == ident)
-      return true;
-  }
-  return false;
-}
 
 void ServerOperator::handleReadEvent(struct kevent *event, Kqueue kq)
 {
-  if (findSocketBy(event->ident))
+  if (_serverMap.find(event->ident) != _serverMap.end())
   {
     std::cout << "ident: " << event->ident << std::endl;
     int clientSocket;
@@ -86,15 +69,13 @@ void ServerOperator::handleReadEvent(struct kevent *event, Kqueue kq)
     /* add event for client socket - add read && write event */
     kq.changeEvents(clientSocket, EVFILT_READ, EV_ADD | EV_ENABLE, 0, 0, NULL);
     kq.changeEvents(clientSocket, EVFILT_WRITE, EV_ADD | EV_ENABLE, 0, 0, NULL);
-    setClientContents(clientSocket, "");
+    _clients[clientSocket] = "";
   }
   else if (isExistClient(event->ident))
   {
     /* read data from client */
     char buf[1024];
-    std::cout << "5" << std::endl;
     int n = read(event->ident, buf, sizeof(buf));
-    std::cout << "6" << std::endl;
     if (n <= 0)
     {
       if (n < 0)
@@ -104,63 +85,108 @@ void ServerOperator::handleReadEvent(struct kevent *event, Kqueue kq)
     else
     {
       buf[n] = '\0';
-      setClientContents(event->ident, buf);
+      addClientContents(event->ident, buf);
       std::cout << "received data from " << event->ident << ": "
                 << getClientContents(event->ident) << std::endl;
     }
   }
 }
 
-void ServerOperator::handleWriteEvent(struct kevent *event, Kqueue kq)
+void ServerOperator::handleWriteEvent(struct kevent *event)
 {
   /* send data to client */
-  std::vector<Server *>::iterator it;
-  (void)kq;
-  for (it = _serverList.begin(); it != _serverList.end(); it++)
+  if (getClientContents(event->ident) != "")
   {
-    if (isExistClient(event->ident))
-    {
-      if (getClientContents(event->ident) != "")
-      {
-        Request req;
-        Response res("test");
-        LocationBlock *loc;
+    Request   req;
+    Response  res("test");
 
-        req.parsing(getClientContents(event->ident));
-        // loc = getLocationBlockBy(req.getHost(), req.getPort(), req.getUri());
-        (void)loc;
-        if (req.getStatus() > 0)
-          std::cout << "fill error\n";
-        // res.fillError(req.getStatus());
-        else if (req.getProcess() == CGI)
-        {
-          if (req.getMethod() == GET)
-            std::cout << "CGI GET" << std::endl;
-          else if (req.getMethod() == POST)
-            std::cout << "CGI POST" << std::endl;
-        }
-        else if (req.getProcess() == NORMAL)
-        {
-          if (req.getMethod() == GET)
-            std::cout << getClientContents(event->ident) << std::endl;
-          else if (req.getMethod() == POST)
-            std::cout << "NORMAL POST" << std::endl;
-          else if (req.getMethod() == DELETE)
-            std::cout << "NORMAL DELETE" << std::endl;
-        }
-        std::cout << getClientContents(event->ident) << std::endl;
-        // write method 작성 전까지 살려두기
-        if (write(event->ident, getClientContents(event->ident).c_str(),
-                  getClientContents(event->ident).size()) == -1)
-        {
-          std::cerr << "client write error!" << std::endl;
-          disconnectClient(event->ident);
-        }
-        else
-          setClientContentsClear(event->ident);
+    req.parsing(getClientContents(event->ident));
+
+    RootBlock *locBlock = NULL; // Location Block or Server Block (not match directory)
+    SPSBList temp = _serverMap[event->ident]->getSPSBList();
+    for (SPSBList::iterator it = temp.begin(); it != temp.end(); it++) {
+      if (req.getHost() == (*it)->getServerName()) {
+        locBlock = getLocationBlock(req, (*it));
+        break;
       }
     }
+    if (locBlock == NULL) {
+      locBlock = getLocationBlock(req, temp.front());
+    }
+    if (req.getStatus() > 0)
+      std::cout << "fill error" << std::endl;
+    // res.fillError(req.getStatus());
+    else if (req.getProcess() == CGI)
+    {
+      if (req.getMethod() == GET)
+        std::cout << "CGI GET" << std::endl;
+      else if (req.getMethod() == POST)
+        std::cout << "CGI POST" << std::endl;
+    }
+    else if (req.getProcess() == NORMAL)
+    {
+      if (req.getMethod() == GET)
+        std::cout << getClientContents(event->ident) << std::endl;
+      else if (req.getMethod() == POST)
+        std::cout << "NORMAL POST" << std::endl;
+      else if (req.getMethod() == DELETE)
+        std::cout << "NORMAL DELETE" << std::endl;
+    }
+    std::cout << getClientContents(event->ident) << std::endl;
+    // write method 작성 전까지 살려두기
+    if (write(event->ident, getClientContents(event->ident).c_str(),
+              getClientContents(event->ident).size()) == -1)
+    {
+      std::cerr << "client write error!" << std::endl;
+      disconnectClient(event->ident);
+    }
+    else
+      setClientContentsClear(event->ident);
   }
+}
+
+const std::string ServerOperator::getClientContents(int clientSock)
+{
+  return _clients[clientSock];
+}
+
+
+RootBlock *ServerOperator::getLocationBlock(Request &req, ServerBlock *sb)
+{
+  LocationList  *locList = _locationMap[sb];
+  std::string   dir;
+
+  for (LocationList::iterator it = locList->begin(); it != locList.end(); it++) {
+    dir = req.getUri(); // uri를 쪼개서 처리를 거친 디렉토리 경로를 찾아서 넣기
+    if (dir == (*it)->getPath) {
+      return (*it);
+    }
+  }
+  return sb; // 끝까지 없으면 Server Block 제공
+}
+
+bool ServerOperator::isExistClient(int clientSock)
+{
+  if (_clients.find(clientSock) == _clients.end())
+    return false;
+  return true;
+}
+
+void ServerOperator::setClientContentsClear(int clientSock)
+{
+  _clients[clientSock].clear();
+}
+
+void ServerOperator::addClientContents(int clientSock, std::string buffer)
+{
+  _clients[clientSock] += buffer;
+}
+
+void ServerOperator::disconnectClient(int clientSock)
+{
+  std::cout << "client disconnected: " << clientSock << std::endl;
+  close(clientSock);
+  _clients.erase(clientSock);
 }
 
 // std::vector<ServerBlock *> ServerOperator::getServerBlockListBy(int port)
@@ -203,32 +229,3 @@ void ServerOperator::handleWriteEvent(struct kevent *event, Kqueue kq)
 //  }
 //  return (*locationBlockList.begin());
 //}
-
-const std::string ServerOperator::getClientContents(int clientSock)
-{
-  return _clients[clientSock];
-}
-
-bool ServerOperator::isExistClient(int clientSock)
-{
-  if (_clients.find(clientSock) == _clients.end())
-    return false;
-  return true;
-}
-
-void ServerOperator::setClientContentsClear(int clientSock)
-{
-  _clients[clientSock].clear();
-}
-
-void ServerOperator::setClientContents(int clientSock, std::string buffer)
-{
-  _clients[clientSock] += buffer;
-}
-
-void ServerOperator::disconnectClient(int clientSock)
-{
-  std::cout << "client disconnected: " << clientSock << std::endl;
-  close(clientSock);
-  _clients.erase(clientSock);
-}
