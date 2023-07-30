@@ -1,14 +1,13 @@
 #include "../includes/ServerBlock.hpp"
 
-ServerBlock::ServerBlock(RootBlock& rootBlock)
-    : RootBlock(rootBlock),
+ServerBlock::ServerBlock(RootBlock &rootBlock)
+    : RootBlock(*rootBlock),
       _listen(0),
       _root(),
       _index(),
       _serverName(),
       _clientMaxBodySize(0),
-      _cgi(),
-      _locationList() {}
+      _cgi() {}
 
 ServerBlock::ServerBlock(ServerBlock& copy)
     : RootBlock(copy),
@@ -17,8 +16,7 @@ ServerBlock::ServerBlock(ServerBlock& copy)
       _index(copy._index),
       _serverName(copy._serverName),
       _clientMaxBodySize(copy._clientMaxBodySize),
-      _cgi(copy._cgi),
-      _locationList(copy._locationList) {}
+      _cgi(copy._cgi) {}
 
 ServerBlock::~ServerBlock() {}
 

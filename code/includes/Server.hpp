@@ -15,17 +15,19 @@
 #include <sstream>
 #include <vector>
 
+#include "RootBlock.hpp"
+#include "ServerBlock.hpp"
+#include "ConfigParser.hpp"
 #include "Kqueue.hpp"
 #include "Request.hpp"
 #include "Response.hpp"
-#include "RootBlock.hpp"
-#include "ServerBlock.hpp"
 
 class Server
 {
 private:
-  int _socket;
-  t_serverInfo *_serverBlockInfo;
+  int     _socket;
+  int     _listenPort;
+  SPSBMap &_samePortServerBlockMap;
 
 public:
   Server(t_serverInfo *_serverBlockInfo);
@@ -33,7 +35,7 @@ public:
 
   int getSocket() const;
   std::vector<ServerBlock *> getServerBlockList();
-  int getListen();
+  int getListen() const;
   int init();
 };
 

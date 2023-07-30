@@ -6,19 +6,17 @@
 #include <map>
 #include <vector>
 
-class ServerBlock;
-
-typedef struct s_serverInfo {
-  int listen;
-  std::vector<ServerBlock *> samePortServerList;
-} t_serverInfo;
-
 class RootBlock {
  protected:
   std::string _user;
+  std::string _group;
+  int         _workerProcesses;
+  std::string _errorLog;
+  std::string _pid;
+  int         _workerRlimitNofile;
+  int         _workerConnections;
   std::string _include;
-  int _maxConnection;
-  int _workerCnt;
+  
   std::map<std::string, std::string> _statusCodes;
 
  public:
@@ -27,17 +25,22 @@ class RootBlock {
   ~RootBlock();
 
   void setUser(std::string value);
+  void setWorkerProcesses(std::string value);
+  void setErrorLog(std::string value);
+  void setPid(std::string value);
+  void setWorkerRlimitNofile(std::string value);
+  void setWorkerConnection(std::string value);
   void setInclude(std::string value);
-  void setMaxConnection(std::string value);
-  void setWorkerCnt(std::string value);
   void setKeyVal(std::string key, std::string value);
 
   const std::string getUser() const;
+  const std::string getGroup() const;
   const std::string getInclude() const;
-  int getMaxConnection() const;
-  int getWorkerCnt() const;
-  t_serverInfo *getServerInfo(std::vector<t_serverInfo *> infoList, int listen);
-  std::vector<t_serverInfo *> getServerInfoList();
+  const std::string getErrorLog() const;
+  int getWorkerRlimitNofile() const;
+  const std::string getPid() const;
+  int getWorkerConnection() const;
+  int getWorkerProcesses() const;
 
   std::string getStatusCode(std::string key);
 

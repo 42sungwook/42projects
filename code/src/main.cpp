@@ -17,9 +17,11 @@ void test(t_serverInfo *info) {
 int main(int ac, char **av) {
   if (ac != 2) {
     std::cout << "Invalid Arguments" << std::endl;
-    return 1;
+    return EXIT_FAILURE;
   }
-  RootBlock *root = config(av[1]);
+  RootBlock root;
+  ConfigParser parser(av[1], &root);
+  parser.parseBlocks();
   root->test();
 
   std::vector<t_serverInfo *> info = root->getServerInfoList();
