@@ -29,7 +29,7 @@ class RootBlock {
   void setErrorLog(std::string value);
   void setPid(std::string value);
   void setWorkerRlimitNofile(std::string value);
-  void setWorkerConnection(std::string value);
+  void setWorkerConnections(std::string value);
   void setInclude(std::string value);
   void setKeyVal(std::string key, std::string value);
 

@@ -46,15 +46,23 @@ void RootBlock::setUser(std::string value) {
   }
 }
 
-void RootBlock::setInclude(std::string value) { _include = value; }
-
-void RootBlock::setWorkerConnection(std::string value) {
-  _workerConnections = atoi(value.c_str());
-}
-
 void RootBlock::setWorkerProcesses(std::string value) {
   _workerProcesses = atoi(value.c_str());
 }
+
+void RootBlock::setErrorLog(std::string value) { _errorLog = value; }
+
+void RootBlock::setPid(std::string value) { _pid = value; }
+
+void RootBlock::setWorkerRlimitNofile(std::string value) {
+  _workerRlimitNofile = atoi(value.c_str());
+}
+
+void RootBlock::setWorkerConnections(std::string value) {
+  _workerConnections = atoi(value.c_str());
+}
+
+void RootBlock::setInclude(std::string value) { _include = value; }
 
 void RootBlock::setKeyVal(std::string key, std::string value) {
   typedef void (RootBlock::*funcptr)(std::string);
@@ -66,7 +74,7 @@ void RootBlock::setKeyVal(std::string key, std::string value) {
   map["error_log"] = &RootBlock::setErrorLog;
   map["pid"] = &RootBlock::setPid;
   map["worker_rlimit_nofile"] = &RootBlock::setWorkerRlimitNofile;
-  map["worker_connections"] = &RootBlock::setWorkerConnection;
+  map["worker_connections"] = &RootBlock::setWorkerConnections;
   map["include"] = &RootBlock::setInclude;
 
   if (map.find(key) != map.end())

@@ -7,7 +7,6 @@
 #include <vector>
 
 #include "RootBlock.hpp"
-class LocationBlock;
 
 class ServerBlock : public RootBlock {
  protected:
