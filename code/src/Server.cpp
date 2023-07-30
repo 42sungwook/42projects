@@ -1,19 +1,19 @@
 #include "../includes/Server.hpp"
 
-Server::Server(t_serverInfo *serverBlockInfo)
-    : _serverBlockInfo(serverBlockInfo)
+Server::Server(ServerBlockMap *samePortServerBlockMap)
+    : _samePortServerBlockMap(*samePortServerBlockMap)
 {
   _socket = -1;
 };
 Server::~Server(){};
 int Server::getSocket() const { return _socket; }
 
-std::vector<ServerBlock *> Server::getServerBlockList()
+ServerBlockMap Server::getServerBlockMap()
 {
-  return _serverBlockInfo->serverList;
+  return _samePortServerBlockMap;
 }
 
-int Server::getListen() { return _serverBlockInfo->listen; }
+// int Server::getListen() { return _serverBlockInfo->listen; }
 
 int Server::init()
 {
@@ -30,8 +30,8 @@ int Server::init()
   memset(&serverAddr, 0, sizeof(serverAddr));
   serverAddr.sin_family = AF_INET;
   serverAddr.sin_addr.s_addr = htonl(INADDR_ANY);
-  serverAddr.sin_port = htons(_serverBlockInfo->listen);
-  std::cout << "listen: " << _serverBlockInfo->listen << std::endl;
+  // serverAddr.sin_port = htons(_serverBlockInfo->listen);
+  // std::cout << "listen: " << _serverBlockInfo->listen << std::endl;
 
   if (bind(_socket, (struct sockaddr *)&serverAddr, sizeof(serverAddr)) == -1)
   {

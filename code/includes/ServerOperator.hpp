@@ -23,9 +23,9 @@ private:
   void handleReadEvent(struct kevent *event, Kqueue kq);
   void handleWriteEvent(struct kevent *event, Kqueue kq);
   std::vector<ServerBlock *> getServerBlockListBy(int port);
-  ServerBlock *getServerBlockBy(std::string host, int port);
-  LocationBlock *getLocationBlockBy(std::string host, int port,
-                                    std::string uri);
+  // ServerBlock *getServerBlockBy(std::string host, int port);
+  //  LocationBlock *getLocationBlockBy(std::string host, int port,
+  //                                 //std::string uri);
 
 public:
   ServerOperator(std::vector<Server *> serverList);

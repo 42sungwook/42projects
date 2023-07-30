@@ -16,37 +16,45 @@
 #define ISSPACE " \t\n\r\f\v"
 #define SEMICOLON ";"
 
-enum BLOCK { ROOT, SERVER, LOCATION, EVENT };
+enum BLOCK
+{
+  ROOT,
+  SERVER,
+  LOCATION,
+  EVENT
+};
 
 typedef std::pair<enum BLOCK, RootBlock *> BlockPair;
 
 typedef std::vector<ServerBlock *> SPSBList;
-typedef std::map<int, SPSBList *> ServerBlockMap;
+typedef std::map<std::string, SPSBList *> ServerBlockMap;
 
 typedef std::vector<LocationBlock *> LocationList;
 typedef std::map<ServerBlock *, LocationList *> LocationMap;
 
-class ConfigParser {
- private:
-  std::size_t           _pos;
-  std::size_t           _start;
-  std::string           _line;
+class ConfigParser
+{
+private:
+  std::size_t _pos;
+  std::size_t _start;
+  std::string _line;
   std::stack<BlockPair> _stack;
-  ServerBlockMap        _serverBlockMap;
-  LocationMap           _locationMap;
+  ServerBlockMap _serverBlockMap;
+  LocationMap _locationMap;
 
- private:
+private:
   void setKey(std::string &key);
   void setValue(std::string &value);
   void readConfig(const char *path);
   bool skipBracket();
-  RootBlock *addBlock(BlockPair &top);
+  RootBlock *addBlock(RootBlock *block, enum BLOCK type);
 
- public:
+public:
   ConfigParser(const char *path, RootBlock *root);
   ~ConfigParser();
-  void parseBlocks();
+  void parseBlocks(RootBlock *block, enum BLOCK type);
+  ServerBlockMap getServerBlockMap() const;
+  LocationMap getLocationMap() const;
 };
-
 
 #endif

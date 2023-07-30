@@ -6,20 +6,21 @@
 #include <map>
 #include <vector>
 
-class RootBlock {
- protected:
+class RootBlock
+{
+protected:
   std::string _user;
   std::string _group;
-  int         _workerProcesses;
+  int _workerProcesses;
   std::string _errorLog;
   std::string _pid;
-  int         _workerRlimitNofile;
-  int         _workerConnections;
+  int _workerRlimitNofile;
+  int _workerConnections;
   std::string _include;
-  
+
   std::map<std::string, std::string> _statusCodes;
 
- public:
+public:
   RootBlock();
   RootBlock(RootBlock &copy);
   ~RootBlock();
@@ -31,7 +32,7 @@ class RootBlock {
   void setWorkerRlimitNofile(std::string value);
   void setWorkerConnections(std::string value);
   void setInclude(std::string value);
-  void setKeyVal(std::string key, std::string value);
+  virtual void setKeyVal(std::string key, std::string value);
 
   const std::string getUser() const;
   const std::string getGroup() const;
@@ -44,7 +45,7 @@ class RootBlock {
 
   std::string getStatusCode(std::string key);
 
-  void test();  // TODO test
+  void test(); // TODO test
 };
 
 #endif

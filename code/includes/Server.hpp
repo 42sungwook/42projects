@@ -21,20 +21,21 @@
 #include "Kqueue.hpp"
 #include "Request.hpp"
 #include "Response.hpp"
+#include "ConfigParser.hpp"
 
 class Server
 {
 private:
-  int     _socket;
-  int     _listenPort;
-  SPSBMap &_samePortServerBlockMap;
+  int _socket;
+  int _listenPort;
+  ServerBlockMap &_samePortServerBlockMap;
 
 public:
-  Server(t_serverInfo *_serverBlockInfo);
+  Server(ServerBlockMap *samePortServerBlockMap);
   ~Server();
 
   int getSocket() const;
-  std::vector<ServerBlock *> getServerBlockList();
+  ServerBlockMap getServerBlockMap();
   int getListen() const;
   int init();
 };
