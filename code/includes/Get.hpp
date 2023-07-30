@@ -9,11 +9,13 @@ class Get : public IMethod {
   std::string _path;
 
  public:
-  void process(Request &request, Response &response);
   Get();
   ~Get();
   Get(const Get &obj);
   Get &operator=(const Get &obj);
+
+  void process(Request &request, Response &response);
+
   std::string makeBody(Request &request, Response &response);
   std::string makeHeader(Request &request, Response &response);
   std::string makeStatusLine(Request &request, Response &response);

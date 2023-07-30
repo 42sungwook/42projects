@@ -3,17 +3,22 @@
 
 #include "IMethod.hpp"
 
-class Post : public IMethod
-{
-public:
-	void process(Request &request, Response &response);
-	Post();
-	~Post();
-	Post(const Post &obj);
-	Post &operator=(const Post &obj);
-	void makeHeaders(Request &request, Response &response);
-	void makeStatusLine(Request &request, Response &response);
-	void openFile(Request &request, Response &response);
+class Post : public IMethod {
+ private:
+  std::string _result;
+  std::string _path;
+
+ public:
+  Post();
+  ~Post();
+  Post(const Post &obj);
+  Post &operator=(const Post &obj);
+
+  void process(Request &request, Response &response);
+
+  std::string makeStatusLine(Request &request, Response &response);
+  std::string makeHeader(Request &request, Response &response);
+  std::string makeBody(Request &request, Response &response);
 };
 
 #endif
