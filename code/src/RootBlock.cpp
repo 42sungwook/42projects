@@ -37,14 +37,12 @@ RootBlock::~RootBlock() {}
 void RootBlock::setUser(std::string value)
 {
   size_t tmp = value.find_first_of(" \t\n\r\f\v");
-  if (tmp != std::string::npos)
-  {
+  if (tmp != std::string::npos) {
     _user = value.substr(0, tmp - 1);
     tmp = value.find_first_not_of(" \t\n\r\f\v", tmp);
     _group = value.substr(tmp, value.size() - tmp);
   }
-  else
-  {
+  else {
     _user = value;
     _group = value;
   }
@@ -74,19 +72,18 @@ void RootBlock::setInclude(std::string value) { _include = value; }
 void RootBlock::setKeyVal(std::string key, std::string value)
 {
   typedef void (RootBlock::*funcptr)(std::string);
-  typedef std::map<std::string, funcptr> funcMap;
-  funcMap map;
+  std::map<std::string, funcptr>  funcmap;
 
-  map["user"] = &RootBlock::setUser;
-  map["worker_processes"] = &RootBlock::setWorkerProcesses;
-  map["error_log"] = &RootBlock::setErrorLog;
-  map["pid"] = &RootBlock::setPid;
-  map["worker_rlimit_nofile"] = &RootBlock::setWorkerRlimitNofile;
-  map["worker_connections"] = &RootBlock::setWorkerConnections;
-  map["include"] = &RootBlock::setInclude;
+  funcmap["user"] = &RootBlock::setUser;
+  funcmap["worker_processes"] = &RootBlock::setWorkerProcesses;
+  funcmap["error_log"] = &RootBlock::setErrorLog;
+  funcmap["pid"] = &RootBlock::setPid;
+  funcmap["worker_rlimit_nofile"] = &RootBlock::setWorkerRlimitNofile;
+  funcmap["worker_connections"] = &RootBlock::setWorkerConnections;
+  funcmap["include"] = &RootBlock::setInclude;
 
-  if (map.find(key) != map.end())
-    (this->*(map[key]))(value);
+  if (funcmap.find(key) != funcmap.end())
+    (this->*(funcmap[key]))(value);
 }
 
 const std::string RootBlock::getUser() const { return _user; }

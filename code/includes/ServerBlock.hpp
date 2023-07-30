@@ -11,12 +11,12 @@
 class ServerBlock : public RootBlock
 {
 protected:
-  std::string _listen;
+  int         _listenPort;
+  std::string _listenHost;
   std::string _root;
   std::string _index;
   std::string _serverName;
-  unsigned long _clientMaxBodySize;
-  std::string _cgi;
+  std::string _clientMaxBodySize;
 
 public:
   ServerBlock(RootBlock &rootBlock);
@@ -28,15 +28,14 @@ public:
   void setIndex(std::string value);
   void setServerName(std::string value);
   void setClientMaxBodySize(std::string value);
-  void setCgi(std::string value);
   virtual void setKeyVal(std::string key, std::string value);
 
-  const std::string getListen() const;
+  const int         getListenPort() const;
+  const std::string getListenHost() const;
   const std::string getRoot() const;
   const std::string getIndex() const;
   const std::string getServerName() const;
-  unsigned long getClientMaxBodySize() const;
-  const std::string getCgi() const;
+  const std::string getClientMaxBodySize() const;
 
   void test(); // TODO test
 };

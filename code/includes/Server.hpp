@@ -26,9 +26,10 @@
 class Server
 {
 private:
-  int _socket;
-  int _listenPort;
-  ServerBlockMap &_samePortServerBlockMap;
+  int         _socket;
+  int         _listenPort;
+  std::string _listenHost;
+  SPSBList    &_spsbList;
 
 public:
   Server(ServerBlockMap *samePortServerBlockMap);

@@ -19,23 +19,17 @@ const std::string LocationBlock::getLimitExcept() const { return _limitExcept; }
 
 void LocationBlock::setKeyVal(std::string key, std::string value)
 {
-    typedef void (LocationBlock::*funcptr)(std::string);
-    typedef std::map<std::string, funcptr> funcMap;
-    typedef funcMap::iterator funcIter;
-    funcMap map;
-    funcIter iter;
+  typedef void (LocationBlock::*funcptr)(std::string);
+  std::map<std::string, funcptr>  funcmap;
 
-    map["path"] = &LocationBlock::setPath;
-    map["index"] = &LocationBlock::setIndex;
-    map["root"] = &LocationBlock::setRoot;
-    map["autoindex"] = &LocationBlock::setAutoindex;
-    map["limit_except"] = &LocationBlock::setLimitExcept;
-    map["client_max_body_size"] = &LocationBlock::setClientMaxBodySize;
-    //  std::cout << "key: <" << key << "> value: <" << value << ">" <<
-    //  std::endl;
-    iter = map.find(key);
-    if (iter != map.end())
-        (this->*(iter->second))(value);
+  funcmap["path"] = &LocationBlock::setPath;
+  funcmap["autoindex"] = &LocationBlock::setAutoindex;
+  funcmap["limit_except"] = &LocationBlock::setLimitExcept;
+
+  if (funcmap.find(key) != funcmap.end())
+    (this->*(funcmap[key]))(value);
+  else
+    (this->ServerBlock::setKeyVal(key, value));
 }
 
 // TODO test

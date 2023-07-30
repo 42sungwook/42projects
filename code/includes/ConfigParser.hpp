@@ -24,8 +24,8 @@ enum BLOCK
   EVENT
 };
 
-typedef std::vector<ServerBlock *> SPSBList;
-typedef std::map<std::string, SPSBList *> ServerBlockMap;
+typedef std::vector<ServerBlock *> SPSBList; // Same Port ServerBlock List
+typedef std::map<int, SPSBList *> ServerBlockMap;
 
 typedef std::vector<LocationBlock *> LocationList;
 typedef std::map<ServerBlock *, LocationList *> LocationMap;
