@@ -100,6 +100,7 @@ void ServerOperator::handleWriteEvent(struct kevent *event, Kqueue kq) {
         req.parsing(getClientContents(event->ident));
         loc = getLocationBlockBy(req.getHost(), req.getPort(), req.getUri());
         (void)loc;
+        // autoIndex on off 여부 req에 저장
         if (req.getStatus() > 0) std::cout << "fill error\n";
         // res.fillError(req.getStatus());
         else if (req.getProcess() == CGI) {
@@ -142,6 +143,7 @@ void ServerOperator::handleWriteEvent(struct kevent *event, Kqueue kq) {
         req.parsing(getClientContents(event->ident));
         loc = getLocationBlockBy(req.getHost(), req.getPort(), req.getUri());
         (void)loc;
+        // autoIndex on off 여부 req에 저장
         if (req.getStatus() > 0) std::cout << "fill error\n";
         // res.fillError(req.getStatus());
         else if (req.getProcess() == CGI) {

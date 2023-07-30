@@ -4,6 +4,16 @@ Request::Request() : _status(0) {}
 
 Request::~Request() {}
 
+void Request::parseUrl() {
+  std::string uri = _header["URI"];
+  size_t lastDotPos = uri.rfind('.');
+
+  if (lastDotPos != std::string::npos) {
+    std::string mime = uri.substr(lastDotPos + 1);
+    // enum mime이랑 비교 후 저장
+  }
+}
+
 void Request::parsing(const std::string &raw) {
   std::stringstream ss(raw);
   std::string line;

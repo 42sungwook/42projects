@@ -9,14 +9,19 @@
 
 enum METHOD { GET, POST, DELETE };
 enum PROCESS { CGI, NORMAL };
+enum MIME { DIRECTORY, HTML, CSS, JS, JPG, PNG, GIF, TXT, PDF, JSON };
 
 class Request {
  private:
   std::map<std::string, std::string> _header;
   std::string _body;
   std::string _host;
+  enum MIME _mime;
   int _port;
   int _status;
+
+ private:
+  void parseUrl();
 
  public:
   Request();
