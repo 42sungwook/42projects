@@ -23,7 +23,7 @@ int main(int ac, char **av)
     return EXIT_FAILURE;
   }
   RootBlock *root = new RootBlock;
-  ConfigParser parser(av[1], root);
+  ConfigParser parser(av[1]);
   parser.parseBlocks(root, ROOT);
   root->test();
 
@@ -37,16 +37,13 @@ int main(int ac, char **av)
     SPSBList list = *(iter)->second;
     SPSBList::iterator spsbIter;
     for (spsbIter = list.begin(); spsbIter != list.end(); spsbIter++)
+    {
       (*spsbIter)->test();
-  }
-
-  LocationMap::iterator locIter;
-  for (locIter = locationMap.begin(); locIter != locationMap.end(); locIter++)
-  {
-    LocationList list = *(locIter)->second;
-    LocationList::iterator locIter2;
-    for (locIter2 = list.begin(); locIter2 != list.end(); locIter2++)
-      (*locIter2)->test();
+      LocationList locList = *locationMap[*spsbIter];
+      LocationList::iterator locIter;
+      for (locIter = locList.begin(); locIter != locList.end(); locIter++)
+        (*locIter)->test();
+    }
   }
 
   // for (iter = serverMap.begin(); iter != serverMap.end(); iter++)

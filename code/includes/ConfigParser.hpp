@@ -24,8 +24,6 @@ enum BLOCK
   EVENT
 };
 
-typedef std::pair<enum BLOCK, RootBlock *> BlockPair;
-
 typedef std::vector<ServerBlock *> SPSBList;
 typedef std::map<std::string, SPSBList *> ServerBlockMap;
 
@@ -38,7 +36,6 @@ private:
   std::size_t _pos;
   std::size_t _start;
   std::string _line;
-  std::stack<BlockPair> _stack;
   ServerBlockMap _serverBlockMap;
   LocationMap _locationMap;
 
@@ -50,7 +47,7 @@ private:
   RootBlock *addBlock(RootBlock *block, enum BLOCK type);
 
 public:
-  ConfigParser(const char *path, RootBlock *root);
+  ConfigParser(const char *path);
   ~ConfigParser();
   void parseBlocks(RootBlock *block, enum BLOCK type);
   ServerBlockMap getServerBlockMap() const;

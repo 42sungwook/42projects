@@ -1,12 +1,10 @@
 #include "../includes/ConfigParser.hpp"
 
-ConfigParser::ConfigParser(const char *path, RootBlock *root) : _pos(0), _start(0)
+ConfigParser::ConfigParser(const char *path) : _pos(0), _start(0)
 {
-
   readConfig(path);
   if (_line.empty())
     return;
-  _stack.push(std::make_pair(ROOT, root));
 }
 
 ConfigParser::~ConfigParser() {}
@@ -112,9 +110,11 @@ void ConfigParser::parseBlocks(RootBlock *block, enum BLOCK type)
     setValue(value);
     if (key.empty() || value.empty())
       return;
+    std::cout << key << ": " << value << std::endl;
     block->setKeyVal(key, value); // set data on the Block
     if (type == SERVER && key == "listen")
     { // When ServerBlock's port is determined
+      std::cout << value << std::endl;
       if (_serverBlockMap.find(value) == _serverBlockMap.end())
         _serverBlockMap[value] = new SPSBList;
       _serverBlockMap[value]->push_back(static_cast<ServerBlock *>(block));
