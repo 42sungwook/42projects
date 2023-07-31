@@ -1,19 +1,9 @@
 #include "../includes/Server.hpp"
 
-Server::Server(t_serverInfo *serverBlockInfo)
-    : _serverBlockInfo(serverBlockInfo)
-{
-  _socket = -1;
-};
+Server::Server(int port, SPSBList &sbList) : _socket(-1), _listenPort(port), _sbList(sbList) {};
+
 Server::~Server(){};
-int Server::getSocket() const { return _socket; }
 
-std::list<ServerBlock *> Server::getServerBlockList()
-{
-  return _serverBlockInfo->serverList;
-}
-
-int Server::getListen() { return _serverBlockInfo->listen; }
 
 int Server::init()
 {
@@ -23,6 +13,7 @@ int Server::init()
               << std::string(strerror(errno)) << std::endl;
     return EXIT_FAILURE;
   }
+
   // config 세팅
   fcntl(_socket, F_SETFL, O_NONBLOCK);
 
@@ -30,8 +21,8 @@ int Server::init()
   memset(&serverAddr, 0, sizeof(serverAddr));
   serverAddr.sin_family = AF_INET;
   serverAddr.sin_addr.s_addr = htonl(INADDR_ANY);
-  serverAddr.sin_port = htons(_serverBlockInfo->listen);
-  std::cout << "listen: " << _serverBlockInfo->listen << std::endl;
+  serverAddr.sin_port = htons(this->_listenPort);
+  std::cout << "listen: " << this->_listenPort << std::endl;
 
   if (bind(_socket, (struct sockaddr *)&serverAddr, sizeof(serverAddr)) == -1)
   {
@@ -46,5 +37,9 @@ int Server::init()
               << std::string(strerror(errno)) << std::endl;
     return EXIT_FAILURE;
   }
-  return (EXIT_SUCCESS);
+  return EXIT_SUCCESS;
 }
+
+int Server::getSocket() const { return _socket; }
+int Server::getListenPort() const { return _listenPort; }
+SPSBList &Server::getSPSBList() const { return _sbList; }

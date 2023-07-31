@@ -2,10 +2,10 @@
 # ProgramName && Files                                                         #
 # **************************************************************************** #
 NAME		=	WebServ
-INC_FILES	=	Kqueue.hpp LocationBlock.hpp Parser.hpp Server.hpp \
+INC_FILES	=	Kqueue.hpp LocationBlock.hpp ConfigParser.hpp Server.hpp \
 				Request.hpp Response.hpp RootBlock.hpp ServerBlock.hpp \
 				ServerOperator.hpp 
-SRC_FILES	=	Kqueue.cpp LocationBlock.cpp Parser.cpp Server.cpp \
+SRC_FILES	=	Kqueue.cpp LocationBlock.cpp ConfigParser.cpp Server.cpp \
 				Request.cpp Response.cpp RootBlock.cpp ServerBlock.cpp \
 				ServerOperator.cpp main.cpp
 # **************************************************************************** #
