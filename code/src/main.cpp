@@ -14,7 +14,7 @@ int main(int ac, char **av)
   RootBlock root;
   ConfigParser parser(av[1]);
   parser.parseBlocks(&root, ROOT);
-  root->test();
+  root.test();
 
   ServerBlockMap sbMap = parser.getServerBlockMap();
   ServerMap serverMap;
@@ -22,7 +22,7 @@ int main(int ac, char **av)
   for (ServerBlockMap::iterator it = sbMap.begin(); it != sbMap.end(); it++)
   {
     Server *newserver = new Server((*it).first, (*it).second);
-    if (serverList.back()->init() == EXIT_FAILURE)
+    if (newserver->init() == EXIT_FAILURE)
       return EXIT_FAILURE;
     serverMap[newserver->getSocket()] = newserver;
   }

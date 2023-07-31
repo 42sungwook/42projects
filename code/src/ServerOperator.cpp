@@ -32,7 +32,7 @@ void ServerOperator::run()
       }
       else if (currEvent->filter == EVFILT_WRITE)
       {
-        handleWriteEvent(currEvent, kq);
+        handleWriteEvent(currEvent);
       }
     }
   }
@@ -60,8 +60,7 @@ void ServerOperator::handleReadEvent(struct kevent *event, Kqueue kq)
     if ((clientSocket = accept(event->ident, NULL, NULL)) == -1)
     {
       std::cerr << "accept() error\n";
-      _shutDown = true;
-      return;
+      exit(EXIT_FAILURE);
     }
     std::cout << "accept new client: " << clientSocket << std::endl;
     fcntl(clientSocket, F_SETFL, O_NONBLOCK);
@@ -158,7 +157,7 @@ RootBlock *ServerOperator::getLocationBlock(Request &req, ServerBlock *sb)
 
   for (LocationList::iterator it = locList->begin(); it != locList.end(); it++) {
     dir = req.getUri(); // uri를 쪼개서 처리를 거친 디렉토리 경로를 찾아서 넣기
-    if (dir == (*it)->getPath) {
+    if (dir == (*it)->getPath()) {
       return (*it);
     }
   }

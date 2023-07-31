@@ -4,7 +4,7 @@ ConfigParser::ConfigParser(const char *path) : _pos(0), _start(0)
 {
   readConfig(path);
   if (_line.empty())
-    return;
+    exit(EXIT_FAILURE);
 }
 
 ConfigParser::~ConfigParser() {}

@@ -42,4 +42,4 @@ int Server::init()
 
 int Server::getSocket() const { return _socket; }
 int Server::getListenPort() const { return _listenPort; }
-SPSBList Server::getSPSBList() const { return _sbList; }
+SPSBList &Server::getSPSBList() const { return _sbList; }
