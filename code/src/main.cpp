@@ -18,12 +18,13 @@ int main(int ac, char **av) {
   ServerMap serverMap;
 
   for (ServerBlockMap::iterator it = sbMap.begin(); it != sbMap.end(); it++) {
-    Server *newserver = new Server((*it).first, *((*it).second));
+    Server *newserver = new Server((*it).first, ((*it).second));
     if (newserver->init() == EXIT_FAILURE) return EXIT_FAILURE;
     serverMap[newserver->getSocket()] = newserver;
   }
 
-  ServerOperator op(serverMap, parser.getLocationMap());
+  ServerOperator op(serverMap, parser.getLocationMap(),
+                    parser.getServerBlockMap());
   op.run();
 
   return (0);

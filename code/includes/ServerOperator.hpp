@@ -9,8 +9,10 @@ class ServerOperator {
  private:
   ServerMap &_serverMap;
   LocationMap &_locationMap;
-  std::map<int, std::string>
-      _clients;  // key : client socket, value : read된 client Contents (buf)
+  ServerBlockMap &_serverBlockMap;
+  // key:client socket, value:read된 client Contents
+  std::map<int, std::string> _clients;
+  std::map<int, int> _clientStatus;
 
   void addClientContents(int clientSock, std::string buffer);
   void setClientContentsClear(int clientSock);
@@ -24,7 +26,8 @@ class ServerOperator {
   void handleWriteEvent(struct kevent *event);
 
  public:
-  ServerOperator(ServerMap &serverMap, LocationMap &locationMap);
+  ServerOperator(ServerMap &serverMap, LocationMap &locationMap,
+                 ServerBlockMap &serverBlockMap);
   ~ServerOperator();
 
   void run();

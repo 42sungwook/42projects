@@ -1,6 +1,6 @@
 #include "../includes/Server.hpp"
 
-Server::Server(int port, SPSBList &sbList)
+Server::Server(int port, SPSBList *sbList)
     : _socket(-1), _listenPort(port), _sbList(sbList) {}
 
 Server::~Server() {}
@@ -37,4 +37,4 @@ int Server::init() {
 
 int Server::getSocket() const { return _socket; }
 int Server::getListenPort() const { return _listenPort; }
-SPSBList &Server::getSPSBList() const { return _sbList; }
+SPSBList *Server::getSPSBList() const { return _sbList; }

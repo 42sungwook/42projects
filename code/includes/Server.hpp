@@ -25,16 +25,16 @@ class Server {
  private:
   int _socket;
   int _listenPort;
-  SPSBList &_sbList;
+  SPSBList *_sbList;
 
  public:
-  Server(const int port, SPSBList &sbList);
+  Server(const int port, SPSBList *sbList);
   ~Server();
 
   int init();
   int getSocket() const;
   int getListenPort() const;
-  SPSBList &getSPSBList() const;
+  SPSBList *getSPSBList() const;
 };
 
 #endif

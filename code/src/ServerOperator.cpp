@@ -1,7 +1,10 @@
 #include "../includes/ServerOperator.hpp"
 
-ServerOperator::ServerOperator(ServerMap &serverMap, LocationMap &locationMap)
-    : _serverMap(serverMap), _locationMap(locationMap) {}
+ServerOperator::ServerOperator(ServerMap &serverMap, LocationMap &locationMap,
+                               ServerBlockMap &serverBlockMap)
+    : _serverMap(serverMap),
+      _locationMap(locationMap),
+      _serverBlockMap(serverBlockMap) {}
 
 ServerOperator::~ServerOperator() {}
 
@@ -80,15 +83,18 @@ void ServerOperator::handleWriteEvent(struct kevent *event) {
 
     RootBlock *locBlock =
         NULL;  // Location Block or Server Block (not match directory)
-    SPSBList temp = _serverMap[event->ident]->getSPSBList();
-    for (SPSBList::iterator it = temp.begin(); it != temp.end(); it++) {
+    if (_serverBlockMap.find(req.getPort()) == _serverBlockMap.end()) {
+      std::cout << "server socket error" << std::endl;
+    }
+    SPSBList *temp = _serverBlockMap[req.getPort()];
+    for (SPSBList::iterator it = temp->begin(); it != temp->end(); it++) {
       if (req.getHost() == (*it)->getServerName()) {
         locBlock = getLocationBlock(req, (*it));
         break;
       }
     }
     if (locBlock == NULL) {
-      locBlock = getLocationBlock(req, temp.front());
+      locBlock = getLocationBlock(req, temp->front());
     }
     // autoIndex on off 여부 req에 저장
 
