@@ -144,8 +144,85 @@ void ServerOperator::handleWriteEvent(struct kevent *event)
   }
 }
 
-const std::string ServerOperator::getClientContents(int clientSock)
-{
+void ServerOperator::handleWriteEvent(struct kevent *event, Kqueue kq) {
+  /* send data to client */
+  std::list<Server *>::iterator it;
+  (void)kq;
+  for (it = _serverList.begin(); it != _serverList.end(); it++) {
+    if (isExistClient(event->ident)) {
+      if (getClientContents(event->ident) != "") {
+        Request req;
+        Response res("test");
+        LocationBlock *loc;
+
+        req.parsing(getClientContents(event->ident));
+        loc = getLocationBlockBy(req.getHost(), req.getPort(), req.getUri());
+        (void)loc;
+        // autoIndex on off 여부 req에 저장
+        if (req.getStatus() > 0) std::cout << "fill error\n";
+        // res.fillError(req.getStatus());
+        else if (req.getProcess() == CGI) {
+          if (req.getMethod() == GET)
+            std::cout << "CGI GET" << std::endl;
+          else if (req.getMethod() == POST)
+            std::cout << "CGI POST" << std::endl;
+        } else if (req.getProcess() == NORMAL) {
+          if (req.getMethod() == GET)
+            std::cout << "NORMAL GET" << std::endl;
+          else if (req.getMethod() == POST)
+            std::cout << "NORMAL POST" << std::endl;
+          else if (req.getMethod() == DELETE)
+            std::cout << "NORMAL DELETE" << std::endl;
+        }
+        std::cout << getClientContents(event->ident) << std::endl;
+        // write method 작성 전까지 살려두기
+        if (write(event->ident, getClientContents(event->ident).c_str(),
+                  getClientContents(event->ident).size()) == -1) {
+          std::cerr << "client write error!" << std::endl;
+          disconnectClient(event->ident);
+        } else
+          setClientContentsClear(event->ident);
+      }
+    }
+  }
+}
+
+std::list<ServerBlock *> ServerOperator::getServerBlockListBy(int port) {
+  std::list<Server *>::iterator it;
+  for (it = _serverList.begin(); it != _serverList.end(); it++) {
+    if ((*it)->getListen() == port) return (*it)->getServerBlockList();
+  }
+  throw std::runtime_error("location block is empty");
+}
+
+ServerBlock *ServerOperator::getServerBlockBy(std::string host, int port) {
+  std::list<ServerBlock *> serverBlockList;
+  std::list<ServerBlock *>::iterator it;
+
+  serverBlockList = getServerBlockListBy(port);
+  for (it = serverBlockList.begin(); it != serverBlockList.end(); it++) {
+    if ((*it)->getServerName() == host) return (*it);
+  }
+  return (*serverBlockList.begin());
+}
+
+LocationBlock *ServerOperator::getLocationBlockBy(std::string host, int port,
+                                                  std::string uri) {
+  std::list<LocationBlock *> locationBlockList;
+  std::list<LocationBlock *>::iterator it;
+
+  // 임시로 설정
+  port = 8080;
+  uri = "/";
+
+  locationBlockList = getServerBlockBy(host, port)->getBlockList();
+  for (it = locationBlockList.begin(); it != locationBlockList.end(); it++) {
+    if ((*it)->getPath() == uri) return (*it);
+  }
+  return (*locationBlockList.begin());
+}
+
+const std::string ServerOperator::getClientContents(int clientSock) {
   return _clients[clientSock];
 }
 
