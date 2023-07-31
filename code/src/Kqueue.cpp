@@ -4,16 +4,14 @@ Kqueue::Kqueue() { _checkList = new std::vector<struct kevent>; }
 
 Kqueue::~Kqueue() {}
 
-int Kqueue::init(std::list<Server *> serverList) {
+int Kqueue::init(ServerMap serverMap) {
   if ((_kq = kqueue()) == -1) {
     std::cout << "kqueue() error\n"
               << std::string(strerror(errno)) << std::endl;
-    return EXIT_FAILURE;
+    exit(EXIT_FAILURE);
   }
-  std::list<Server *>::iterator it;
-  for (it = serverList.begin(); it != serverList.end(); it++) {
-    changeEvents((*it)->getSocket(), EVFILT_READ, EV_ADD | EV_ENABLE, 0, 0,
-                 NULL);
+  for (ServerMap::iterator it = serverMap.begin(); it != serverMap.end(); it++) {
+    changeEvents((*it).first, EVFILT_READ, EV_ADD | EV_ENABLE, 0, 0, NULL);
   }
   return EXIT_SUCCESS;
 }

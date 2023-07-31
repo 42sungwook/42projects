@@ -4,45 +4,48 @@
 #include <iostream>
 #include <list>
 #include <map>
+#include <vector>
 
-#include "ServerBlock.hpp"
+class RootBlock
+{
+protected:
+  std::string _user;
+  std::string _group;
+  int _workerProcesses;
+  std::string _errorLog;
+  std::string _pid;
+  int _workerRlimitNofile;
+  int _workerConnections;
+  std::string _include;
 
-typedef struct s_serverInfo {
-    int listen;
-    std::list<ServerBlock *> serverList;
-} t_serverInfo;
+  std::map<std::string, std::string> _statusCodes;
 
-class RootBlock {
-  private:
-    std::string _user;
-    std::string _include;
-    int _maxConnection;
-    int _workerCnt;
-	std::map<std::string, std::string> _statusCodes;
-    std::list<ServerBlock *> _serverList;
+public:
+  RootBlock();
+  RootBlock(RootBlock &copy);
+  ~RootBlock();
 
-  public:
-    RootBlock();
-    ~RootBlock();
+  void setUser(std::string value);
+  void setWorkerProcesses(std::string value);
+  void setErrorLog(std::string value);
+  void setPid(std::string value);
+  void setWorkerRlimitNofile(std::string value);
+  void setWorkerConnections(std::string value);
+  void setInclude(std::string value);
+  virtual void setKeyVal(std::string key, std::string value);
 
-    void setUser(std::string value);
-    void setInclude(std::string value);
-    void setMaxConnection(std::string value);
-    void setWorkerCnt(std::string value);
-    void setKeyVal(std::string key, std::string value);
-    void addServerBlock(ServerBlock *server);
+  const std::string getUser() const;
+  const std::string getGroup() const;
+  const std::string getInclude() const;
+  const std::string getErrorLog() const;
+  int getWorkerRlimitNofile() const;
+  const std::string getPid() const;
+  int getWorkerConnection() const;
+  int getWorkerProcesses() const;
 
-    const std::string getUser() const;
-    const std::string getInclude() const;
-    int getMaxConnection() const;
-    int getWorkerCnt() const;
-    t_serverInfo *getServerInfo(std::list<t_serverInfo *> infoList, int listen);
-    std::list<t_serverInfo *> getServerInfoList();
+  std::string getStatusCode(std::string key);
 
-	std::string getStatusCode(std::string key);
-    std::list<ServerBlock *> getBlockList();
-
-    void test(); // TODO test
+  void test(); // TODO test
 };
 
 #endif
