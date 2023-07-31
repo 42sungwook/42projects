@@ -4,7 +4,7 @@ Request::Request() : _status(0) {}
 
 Request::~Request() {}
 
-void Request::parseUrl() {
+const int Request::parseUrl() {
   std::string uri = _header["URI"];
   size_t lastDotPos = uri.rfind('.');
 
@@ -32,7 +32,7 @@ void Request::parsing(const std::string &raw) {
     _status = 400;
   }
   else if (_header["method"] != "GET" && _header["method"] != "POST" &&
-      _header["method"] != "DELETE") {
+      _header["method"] != "DELETE" && parseUrl()) {
     _status = 405;
   }
   else {
@@ -49,6 +49,8 @@ void Request::parsing(const std::string &raw) {
   }
 }
 
+void Request::setAutoindex(std::string &value) { _autoindex = value; };
+
 const std::string Request::getUri() { return _header["URI"]; };
 
 const std::string Request::getHost() { return _host; };
@@ -56,6 +58,8 @@ const std::string Request::getHost() { return _host; };
 const int &Request::getPort() { return _port; };
 
 const std::string Request::getMessage() const { return "temp"; };
+
+const std::string &Request::getAutoindex() const { return _autoindex; };
 
 enum PROCESS Request::getProcess() { return CGI; };
 
