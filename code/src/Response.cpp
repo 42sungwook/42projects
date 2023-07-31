@@ -1,7 +1,7 @@
 #include "../includes/Response.hpp"
 
 Response::Response(std::string result)
-    : _header(), _body(), _statusLine(), _result(result) {
+    : _result(result), _statusLine(), _header(), _body() {
   _mimeTypes[HTML] = "text/html";
   _mimeTypes[CSS] = "text/css";
   _mimeTypes[JS] = "text/javascript";

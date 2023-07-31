@@ -15,21 +15,19 @@
 #include <sstream>
 #include <vector>
 
-#include "RootBlock.hpp"
-#include "ServerBlock.hpp"
 #include "ConfigParser.hpp"
 #include "Kqueue.hpp"
 #include "Request.hpp"
 #include "Response.hpp"
-#include "ConfigParser.hpp"
-class Server
-{
-private:
-  int         _socket;
-  int         _listenPort;
-  SPSBList    &_sbList;
+#include "RootBlock.hpp"
+#include "ServerBlock.hpp"
+class Server {
+ private:
+  int _socket;
+  int _listenPort;
+  SPSBList &_sbList;
 
-public:
+ public:
   Server(const int port, SPSBList &sbList);
   ~Server();
 

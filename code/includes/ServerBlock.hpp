@@ -31,7 +31,7 @@ class ServerBlock : public RootBlock {
   void setAutoindex(std::string value);
   virtual void setKeyVal(std::string key, std::string value);
 
-  const int getListenPort() const;
+  int getListenPort() const;
   const std::string getListenHost() const;
   const std::string getRoot() const;
   const std::string getIndex() const;
