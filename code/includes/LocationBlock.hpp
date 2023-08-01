@@ -3,16 +3,16 @@
 
 #include <iostream>
 #include <map>
+
 #include "ServerBlock.hpp"
 
-class LocationBlock : public ServerBlock
-{
-private:
+class LocationBlock : public ServerBlock {
+ private:
   std::string _path;
   std::string _autoindex;
   std::string _limitExcept;
 
-public:
+ public:
   LocationBlock(ServerBlock &serverBlock);
   ~LocationBlock();
 
@@ -25,7 +25,7 @@ public:
   const std::string getAutoindex() const;
   const std::string getLimitExcept() const;
 
-  void test(); // TODO test
+  void test();  // TODO test
 };
 
 #endif

@@ -1,7 +1,11 @@
 #include "../includes/RootBlock.hpp"
 
-RootBlock::RootBlock() : _user(), _workerProcesses(0), _workerConnections(0), _include()
-{
+RootBlock::RootBlock()
+    : _user(),
+      _workerProcesses(0),
+      _workerRlimitNofile(0),
+      _workerConnections(0),
+      _include() {
   _statusCodes["200"] = "OK";
   _statusCodes["201"] = "Created";
   _statusCodes["202"] = "Accepted";
@@ -34,22 +38,19 @@ RootBlock::RootBlock(RootBlock &copy)
 
 RootBlock::~RootBlock() {}
 
-void RootBlock::setUser(std::string value)
-{
+void RootBlock::setUser(std::string value) {
   size_t tmp = value.find_first_of(" \t\n\r\f\v");
   if (tmp != std::string::npos) {
     _user = value.substr(0, tmp - 1);
     tmp = value.find_first_not_of(" \t\n\r\f\v", tmp);
     _group = value.substr(tmp, value.size() - tmp);
-  }
-  else {
+  } else {
     _user = value;
     _group = value;
   }
 }
 
-void RootBlock::setWorkerProcesses(std::string value)
-{
+void RootBlock::setWorkerProcesses(std::string value) {
   _workerProcesses = atoi(value.c_str());
 }
 
@@ -57,22 +58,19 @@ void RootBlock::setErrorLog(std::string value) { _errorLog = value; }
 
 void RootBlock::setPid(std::string value) { _pid = value; }
 
-void RootBlock::setWorkerRlimitNofile(std::string value)
-{
+void RootBlock::setWorkerRlimitNofile(std::string value) {
   _workerRlimitNofile = atoi(value.c_str());
 }
 
-void RootBlock::setWorkerConnections(std::string value)
-{
+void RootBlock::setWorkerConnections(std::string value) {
   _workerConnections = atoi(value.c_str());
 }
 
 void RootBlock::setInclude(std::string value) { _include = value; }
 
-void RootBlock::setKeyVal(std::string key, std::string value)
-{
+void RootBlock::setKeyVal(std::string key, std::string value) {
   typedef void (RootBlock::*funcptr)(std::string);
-  std::map<std::string, funcptr>  funcmap;
+  std::map<std::string, funcptr> funcmap;
 
   funcmap["user"] = &RootBlock::setUser;
   funcmap["worker_processes"] = &RootBlock::setWorkerProcesses;
@@ -82,8 +80,7 @@ void RootBlock::setKeyVal(std::string key, std::string value)
   funcmap["worker_connections"] = &RootBlock::setWorkerConnections;
   funcmap["include"] = &RootBlock::setInclude;
 
-  if (funcmap.find(key) != funcmap.end())
-    (this->*(funcmap[key]))(value);
+  if (funcmap.find(key) != funcmap.end()) (this->*(funcmap[key]))(value);
 }
 
 const std::string RootBlock::getUser() const { return _user; }
@@ -102,20 +99,16 @@ int RootBlock::getWorkerConnection() const { return _workerConnections; }
 
 const std::string RootBlock::getInclude() const { return _include; }
 
-std::string RootBlock::getStatusCode(std::string key)
-{
+std::string RootBlock::getStatusCode(std::string key) {
   std::map<std::string, std::string>::iterator it;
-  for (it = _statusCodes.begin(); it != _statusCodes.end(); it++)
-  {
-    if (it->first == key)
-      return _statusCodes[key];
+  for (it = _statusCodes.begin(); it != _statusCodes.end(); it++) {
+    if (it->first == key) return _statusCodes[key];
   }
   throw std::runtime_error("Invalid status code");
 }
 
 // TODO test
-void RootBlock::test()
-{
+void RootBlock::test() {
   std::cout << "===========ROOT===========" << std::endl;
   std::cout << "_user: " << _user << std::endl;
   std::cout << "_group: " << _group << std::endl;

@@ -1,6 +1,8 @@
 #ifndef REQUEST_HPP
 #define REQUEST_HPP
 
+#include <sys/stat.h>
+
 #include <iostream>
 #include <map>
 #include <sstream>
@@ -22,7 +24,7 @@ class Request {
   int _status;
 
  private:
-  const int parseUrl();
+  void parseUrl();
 
  public:
   Request();
