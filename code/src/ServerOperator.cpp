@@ -1,10 +1,8 @@
 #include "../includes/ServerOperator.hpp"
 
-ServerOperator::ServerOperator(ServerMap &serverMap, LocationMap &locationMap,
-                               ServerBlockMap &serverBlockMap)
+ServerOperator::ServerOperator(ServerMap &serverMap, LocationMap &locationMap)
     : _serverMap(serverMap),
-      _locationMap(locationMap),
-      _serverBlockMap(serverBlockMap) {}
+      _locationMap(locationMap) {}
 
 ServerOperator::~ServerOperator() {}
 
@@ -51,6 +49,7 @@ void ServerOperator::handleReadEvent(struct kevent *event, Kqueue kq) {
       exit(EXIT_FAILURE);
     }
     std::cout << "accept new client: " << clientSocket << std::endl;
+    _serverMap[clientSocket] = _serverMap[event->ident];
     fcntl(clientSocket, F_SETFL, O_NONBLOCK);
 
     /* add event for client socket - add read && write event */
@@ -83,10 +82,11 @@ void ServerOperator::handleWriteEvent(struct kevent *event) {
 
     RootBlock *locBlock =
         NULL;  // Location Block or Server Block (not match directory)
-    if (_serverBlockMap.find(req.getPort()) == _serverBlockMap.end()) {
-      std::cout << "server socket error" << std::endl;
+    if (_serverMap.find(event->ident) == _serverMap.end()) {
+      std::cout << "client socket error" << std::endl;
+      return;
     }
-    SPSBList *temp = _serverBlockMap[req.getPort()];
+    SPSBList *temp = (_serverMap[event->ident])->getSPSBList();
     for (SPSBList::iterator it = temp->begin(); it != temp->end(); it++) {
       if (req.getHost() == (*it)->getServerName()) {
         locBlock = getLocationBlock(req, (*it));

@@ -17,7 +17,7 @@
 #include "Server.hpp"
 
 class Server;
-typedef std::map<int, Server *> ServerMap;
+typedef std::map<int, Server *> ServerMap; // key: socket, value: server class pointer
 
 class Kqueue {
  private:
