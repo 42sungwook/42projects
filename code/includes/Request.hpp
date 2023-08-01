@@ -34,10 +34,11 @@ class Request {
   const std::string getUri();
   const std::string getMessage() const;
   const int &getStatus() const;
-	const std::string &getAutoindex() const;
-	enum MIME &getMime() const;
+  const std::string &getAutoindex() const;
+  enum MIME &getMime() const;
   enum PROCESS getProcess();
   enum METHOD getMethod();
+  const std::string getValueByKey(std::string key);
 };
 
 #endif

@@ -30,12 +30,10 @@ void Request::parsing(const std::string &raw) {
   }
   if (_header.find("Host") == _header.end()) {
     _status = 400;
-  }
-  else if (_header["method"] != "GET" && _header["method"] != "POST" &&
-      _header["method"] != "DELETE" && parseUrl()) {
+  } else if (_header["method"] != "GET" && _header["method"] != "POST" &&
+             _header["method"] != "DELETE" && parseUrl()) {
     _status = 405;
-  }
-  else {
+  } else {
     _host = _header["Host"];
   }
   while (std::getline(ss, line))
@@ -63,6 +61,12 @@ const std::string &Request::getAutoindex() const { return _autoindex; };
 
 enum PROCESS Request::getProcess() { return CGI; };
 
-const int &Request::getStatus() const { return _status; }
+const int &Request::getStatus() const { return _status; };
 
 enum METHOD Request::getMethod() { return GET; };
+
+const std::string Request::getValueByKey(std::string key) {
+  if (_header.find(key) == _header.end())
+    throw std::runtime_error("Not Exist key");
+  return _header[key];
+};
