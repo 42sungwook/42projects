@@ -14,6 +14,7 @@ Get &Get::operator=(const Get &obj) {
 std::string Get::makeBody(Request &request, Response &response) {
   std::string uri = request.getUri();
   size_t pos = uri.find("/");
+  // need uri check
   if (pos != std::string::npos)
     _path = uri.substr(uri.find("/"));
   else
@@ -33,7 +34,13 @@ std::string Get::makeBody(Request &request, Response &response) {
 }
 
 std::string Get::makeStatusLine(Request &request, Response &response) {
-  response.setStatusLine("HTTP/1.1 200 OK");
+  std::string line;
+
+  line += "HTTP/1.1 ";
+  line += request.getStatus();
+  line += response.getStatusCode(request.getStatus());
+
+  // status 적절한 값을 넣도록 지게 설정
 }
 
 std::string Get::makeHeader(Request &request, Response &response) {

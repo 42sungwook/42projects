@@ -40,6 +40,7 @@ class Request {
   enum MIME &getMime() const;
   enum PROCESS getProcess();
   enum METHOD getMethod();
+  const std::string getValueByKey(std::string key);
 };
 
 #endif

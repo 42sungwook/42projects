@@ -6,9 +6,8 @@
 #include <map>
 #include <vector>
 
-class RootBlock
-{
-protected:
+class RootBlock {
+ protected:
   std::string _user;
   std::string _group;
   int _workerProcesses;
@@ -20,7 +19,7 @@ protected:
 
   std::map<std::string, std::string> _statusCodes;
 
-public:
+ public:
   RootBlock();
   RootBlock(RootBlock &copy);
   ~RootBlock();
@@ -45,7 +44,7 @@ public:
 
   std::string getStatusCode(std::string key);
 
-  void test(); // TODO test
+  void test();  // TODO test
 };
 
 #endif
