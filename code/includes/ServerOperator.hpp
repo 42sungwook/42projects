@@ -10,7 +10,7 @@ class ServerOperator {
   ServerMap &_serverMap;
   LocationMap &_locationMap;
   std::map<int, std::string> _clients;
-  std::map<int, int> _clientStatus;
+  std::map<int, int> _clientToServer; // key: client socket, value: serversocket
 
   void addClientContents(int clientSock, std::string buffer);
   void setClientContentsClear(int clientSock);

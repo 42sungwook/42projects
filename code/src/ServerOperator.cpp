@@ -49,7 +49,7 @@ void ServerOperator::handleReadEvent(struct kevent *event, Kqueue kq) {
       exit(EXIT_FAILURE);
     }
     std::cout << "accept new client: " << clientSocket << std::endl;
-    _serverMap[clientSocket] = _serverMap[event->ident];
+    _clientToServer[clientSocket] = event->ident;
     fcntl(clientSocket, F_SETFL, O_NONBLOCK);
 
     /* add event for client socket - add read && write event */
@@ -82,11 +82,11 @@ void ServerOperator::handleWriteEvent(struct kevent *event) {
 
     RootBlock *locBlock =
         NULL;  // Location Block or Server Block (not match directory)
-    if (_serverMap.find(event->ident) == _serverMap.end()) {
+    if (_serverMap.find(_clientToServer[event->ident]) == _serverMap.end()) {
       std::cout << "client socket error" << std::endl;
       return;
     }
-    SPSBList *temp = (_serverMap[event->ident])->getSPSBList();
+    SPSBList *temp = _serverMap[_clientToServer[event->ident]]->getSPSBList();
     for (SPSBList::iterator it = temp->begin(); it != temp->end(); it++) {
       if (req.getHost() == (*it)->getServerName()) {
         locBlock = getLocationBlock(req, (*it));

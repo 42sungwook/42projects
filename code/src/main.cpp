@@ -23,8 +23,7 @@ int main(int ac, char **av) {
     serverMap[newserver->getSocket()] = newserver;
   }
 
-  ServerOperator op(serverMap, parser.getLocationMap(),
-                    parser.getServerBlockMap());
+  ServerOperator op(serverMap, parser.getLocationMap());
   op.run();
 
   return (0);
