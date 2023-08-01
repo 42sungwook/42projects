@@ -25,7 +25,7 @@ enum BLOCK
 };
 
 typedef std::vector<ServerBlock *> SPSBList; // Same Port ServerBlock List
-typedef std::map<int, SPSBList *> ServerBlockMap;
+typedef std::map<int, SPSBList *> ServerBlockMap; // key:port, value:SPSBList
 
 typedef std::vector<LocationBlock *> LocationList;
 typedef std::map<ServerBlock *, LocationList *> LocationMap;

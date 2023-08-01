@@ -1,14 +1,12 @@
 #include "../includes/Server.hpp"
 
-Server::Server(int port, SPSBList &sbList) : _socket(-1), _listenPort(port), _sbList(sbList) {};
+Server::Server(int port, SPSBList *sbList)
+    : _socket(-1), _listenPort(port), _sbList(sbList) {}
 
-Server::~Server(){};
+Server::~Server() {}
 
-
-int Server::init()
-{
-  if ((_socket = socket(PF_INET, SOCK_STREAM, 0)) == -1)
-  {
+int Server::init() {
+  if ((_socket = socket(PF_INET, SOCK_STREAM, 0)) == -1) {
     std::cout << "socket() error\n"
               << std::string(strerror(errno)) << std::endl;
     return EXIT_FAILURE;
@@ -24,15 +22,12 @@ int Server::init()
   serverAddr.sin_port = htons(this->_listenPort);
   std::cout << "listen: " << this->_listenPort << std::endl;
 
-  if (bind(_socket, (struct sockaddr *)&serverAddr, sizeof(serverAddr)) == -1)
-  {
-    std::cout << "bind() error\n"
-              << std::string(strerror(errno)) << std::endl;
+  if (bind(_socket, (struct sockaddr *)&serverAddr, sizeof(serverAddr)) == -1) {
+    std::cout << "bind() error\n" << std::string(strerror(errno)) << std::endl;
     return EXIT_FAILURE;
   }
 
-  if (listen(_socket, 5) == -1)
-  {
+  if (listen(_socket, 5) == -1) {
     std::cout << "listen() error\n"
               << std::string(strerror(errno)) << std::endl;
     return EXIT_FAILURE;
@@ -42,4 +37,4 @@ int Server::init()
 
 int Server::getSocket() const { return _socket; }
 int Server::getListenPort() const { return _listenPort; }
-SPSBList &Server::getSPSBList() const { return _sbList; }
+SPSBList *Server::getSPSBList() const { return _sbList; }

@@ -8,7 +8,7 @@ ServerBlock::ServerBlock(RootBlock &rootBlock)
       _root(),
       _index(),
       _serverName(),
-      _clientMaxBodySize(0),
+      _clientMaxBodySize(),
       _autoindex("off") {}
 
 ServerBlock::ServerBlock(ServerBlock &copy)
@@ -66,7 +66,7 @@ void ServerBlock::setKeyVal(std::string key, std::string value) {
     (this->RootBlock::setKeyVal(key, value));
 }
 
-const int ServerBlock::getListenPort() const { return _listenPort; }
+int ServerBlock::getListenPort() const { return _listenPort; }
 const std::string ServerBlock::getListenHost() const { return _listenHost; }
 const std::string ServerBlock::getRoot() const { return _root; }
 const std::string ServerBlock::getIndex() const { return _index; }

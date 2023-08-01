@@ -4,13 +4,25 @@ Request::Request() : _status(0) {}
 
 Request::~Request() {}
 
-const int Request::parseUrl() {
+void Request::parseUrl() {
+  struct stat info;
   std::string uri = _header["URI"];
   size_t lastDotPos = uri.rfind('.');
 
   if (lastDotPos != std::string::npos) {
     std::string mime = uri.substr(lastDotPos + 1);
-    // enum mime이랑 비교 후 저장
+    _mime = static_cast<enum MIME>(
+        (mime == "html") + (mime == "css") * 2 + (mime == "js") * 3 +
+        (mime == "jpg") * 4 + (mime == "png") * 5 + (mime == "gif") * 6 +
+        (mime == "txt") * 7 + (mime == "pdf") * 8 + (mime == "json") * 9);
+    if (!_mime) {
+      if (stat(uri.c_str(), &info) != 0)
+        _status = 404;
+      else if (S_ISDIR(info.st_mode))
+        _mime = DIRECTORY;
+      else
+        _status = 415;
+    }
   }
 }
 
@@ -20,6 +32,7 @@ void Request::parsing(const std::string &raw) {
   std::getline(ss, line, '\r');
   std::stringstream lineStream(line);
   lineStream >> _header["method"] >> _header["URI"] >> _header["protocol"];
+  parseUrl();
   while (std::getline(ss, line, '\r') && line != "\n") {
     size_t pos = line.find(":");
     if (pos == line.npos) {
@@ -30,12 +43,10 @@ void Request::parsing(const std::string &raw) {
   }
   if (_header.find("Host") == _header.end()) {
     _status = 400;
-  }
-  else if (_header["method"] != "GET" && _header["method"] != "POST" &&
-      _header["method"] != "DELETE" && parseUrl()) {
+  } else if (_header["method"] != "GET" && _header["method"] != "POST" &&
+             _header["method"] != "DELETE") {
     _status = 405;
-  }
-  else {
+  } else {
     _host = _header["Host"];
   }
   while (std::getline(ss, line))
@@ -49,20 +60,20 @@ void Request::parsing(const std::string &raw) {
   }
 }
 
-void Request::setAutoindex(std::string &value) { _autoindex = value; };
+void Request::setAutoindex(std::string &value) { _autoindex = value; }
 
-const std::string Request::getUri() { return _header["URI"]; };
+const std::string Request::getUri() { return _header["URI"]; }
 
-const std::string Request::getHost() { return _host; };
+const std::string Request::getHost() { return _host; }
 
-const int &Request::getPort() { return _port; };
+const int &Request::getPort() { return _port; }
 
-const std::string Request::getMessage() const { return "temp"; };
+const std::string Request::getMessage() const { return "temp"; }
 
-const std::string &Request::getAutoindex() const { return _autoindex; };
+const std::string &Request::getAutoindex() const { return _autoindex; }
 
-enum PROCESS Request::getProcess() { return CGI; };
+enum PROCESS Request::getProcess() { return CGI; }
 
 const int &Request::getStatus() const { return _status; }
 
-enum METHOD Request::getMethod() { return GET; };
+enum METHOD Request::getMethod() { return GET; }
