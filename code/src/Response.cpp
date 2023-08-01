@@ -106,9 +106,7 @@ std::string Response::getHeader() { return _header; }
 std::string Response::getStatusLine() { return _statusLine; }
 
 std::string Response::getStatusCode(int key) {
-  std::map<std::string, std::string>::iterator it;
-  for (it = _statusCodes.begin(); it != _statusCodes.end(); it++) {
-    if (it->first == key) return _statusCodes[key];
-  }
-  throw std::runtime_error("Invalid status code");
+  if (_statusCodes.find(key) == _statusCodes.end())
+  	throw std::runtime_error("Invalid status code");
+	return _statusCodes[key];
 }

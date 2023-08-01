@@ -44,7 +44,7 @@ void Request::parsing(const std::string &raw) {
   if (_header.find("Host") == _header.end()) {
     _status = 400;
   } else if (_header["method"] != "GET" && _header["method"] != "POST" &&
-             _header["method"] != "DELETE" && parseUrl()) {
+             _header["method"] != "DELETE") {
         _status = 405;
   } else {
     _host = _header["Host"];
