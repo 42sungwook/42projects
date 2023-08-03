@@ -1,6 +1,6 @@
 #include "../includes/Request.hpp"
 
-Request::Request() : _status(0) {}
+Request::Request() : _mime(OCTET), _status(0), _isFullReq(false) {}
 
 Request::~Request() {}
 
@@ -21,13 +21,16 @@ void Request::parseUrl() {
       else if (S_ISDIR(info.st_mode))
         _mime = DIRECTORY;
       else
-        _status = 415;
+        _mime = OCTET;
     }
   }
 }
 
-void Request::parsing(const std::string &raw) {
-  std::stringstream ss(raw);
+void Request::parsing() {
+  if (_rawContents.find("\r\n\r\n") == std::string::npos) {
+    return;
+  }
+  std::stringstream ss(_rawContents);
   std::string line;
   std::getline(ss, line, '\r');
   std::stringstream lineStream(line);
@@ -45,28 +48,53 @@ void Request::parsing(const std::string &raw) {
     _status = 400;
   } else if (_header["method"] != "GET" && _header["method"] != "POST" &&
              _header["method"] != "DELETE") {
-        _status = 405;
+    _status = 405;
   } else {
     _host = _header["Host"];
   }
-  while (std::getline(ss, line))
+  while (std::getline(ss, line)) {
     if (ss.eof() == true)
       _body += line;
     else if (line != "")
       _body += line + "\n";
+  }
+  if (_header["method"] == "POST" &&
+      static_cast<size_t>(std::stoi(_header["Content-Length"])) !=
+          _body.size()) {
+    return;
+  }
   // 8KB is default maximum size of request, config로 수정
-  if (raw.size() - _body.size() >= 8192) {
+  if (_rawContents.size() - _body.size() >= 8192) {
     _status = 414;
   }
+  _isFullReq = true;
 }
 
 void Request::setAutoindex(std::string &value) { _autoindex = value; }
+
+void Request::clear() {
+  _rawContents.clear();
+  _header.clear();
+  _body.clear();
+  _host.clear();
+  _autoindex.clear();
+  _status = 0;
+  _isFullReq = false;
+}
+
+void Request::addRawContents(const std::string &raw) { _rawContents += raw; }
+
+void Request::addHeader(std::string key, std::string value) {
+  _header[key] = value;
+}
 
 const std::string Request::getUri() { return _header["URI"]; }
 
 const std::string Request::getHost() { return _host; }
 
 const int &Request::getPort() { return _port; }
+
+const std::string Request::getBody() const { return _body; }
 
 const std::string Request::getMessage() const { return "temp"; }
 
@@ -76,10 +104,10 @@ enum PROCESS Request::getProcess() { return CGI; }
 
 const int &Request::getStatus() const { return _status; };
 
-enum METHOD Request::getMethod() { return GET; };
+enum MIME Request::getMime() const { return _mime; }
 
-const std::string Request::getValueByKey(std::string key) {
-  if (_header.find(key) == _header.end())
-    throw std::runtime_error("Not Exist key");
-  return _header[key];
-};
+std::string Request::getMethod() { return _header["method"]; }
+
+bool Request::isFullReq() const { return _isFullReq; }
+
+std::string Request::getRawContents() const { return _rawContents; }

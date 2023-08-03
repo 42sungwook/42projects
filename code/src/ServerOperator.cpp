@@ -1,8 +1,7 @@
 #include "../includes/ServerOperator.hpp"
 
 ServerOperator::ServerOperator(ServerMap &serverMap, LocationMap &locationMap)
-    : _serverMap(serverMap),
-      _locationMap(locationMap) {}
+    : _serverMap(serverMap), _locationMap(locationMap) {}
 
 ServerOperator::~ServerOperator() {}
 
@@ -54,74 +53,74 @@ void ServerOperator::handleReadEvent(struct kevent *event, Kqueue kq) {
 
     /* add event for client socket - add read && write event */
     kq.changeEvents(clientSocket, EVFILT_READ, EV_ADD | EV_ENABLE, 0, 0, NULL);
-    kq.changeEvents(clientSocket, EVFILT_WRITE, EV_ADD | EV_ENABLE, 0, 0, NULL);
-    _clients[clientSocket] = "";
+    _clients[clientSocket].addRawContents("");
   } else if (isExistClient(event->ident)) {
     /* read data from client */
-    char buf[1024];
-    int n = read(event->ident, buf, sizeof(buf));
-    if (n <= 0) {
-      if (n < 0) std::cerr << "client read error!" << std::endl;
+    char buf[2048];
+    int n;
+    n = read(event->ident, buf, sizeof(buf));
+    if (n == 0) {
       disconnectClient(event->ident);
-    } else {
+    } else if (n > 0) {
       buf[n] = '\0';
-      addClientContents(event->ident, buf);
-      std::cout << "received data from " << event->ident << ": "
-                << getClientContents(event->ident) << std::endl;
+      _clients[event->ident].addRawContents(buf);
+      _clients[event->ident].parsing();
+      if (_clients[event->ident].isFullReq()) {
+        kq.changeEvents(event->ident, EVFILT_WRITE, EV_ADD | EV_ENABLE, 0, 0,
+                        NULL);
+      }
     }
   }
 }
 
 void ServerOperator::handleWriteEvent(struct kevent *event) {
   /* send data to client */
-  if (getClientContents(event->ident) != "") {
-    Request req;
-    Response res("test");
+  Response res("test");
 
-    req.parsing(getClientContents(event->ident));
+  ServerBlock *locBlock =
+      NULL;  // Location Block or Server Block (not match directory)
+  if (_serverMap.find(_clientToServer[event->ident]) == _serverMap.end()) {
+    std::cout << "client socket error" << std::endl;
+    return;
+  }
+  SPSBList *temp = _serverMap[_clientToServer[event->ident]]->getSPSBList();
+  for (SPSBList::iterator it = temp->begin(); it != temp->end(); it++) {
+    if (_clients[event->ident].getHost() == (*it)->getServerName()) {
+      locBlock = getLocationBlock(_clients[event->ident], (*it));
+      break;
+    }
+  }
+  if (locBlock == NULL) {
+    locBlock = getLocationBlock(_clients[event->ident], temp->front());
+  }
+  _clients[event->ident].addHeader("RootDir", locBlock->getRoot());
+  // autoIndex on off 여부 req에 저장
 
-    RootBlock *locBlock =
-        NULL;  // Location Block or Server Block (not match directory)
-    if (_serverMap.find(_clientToServer[event->ident]) == _serverMap.end()) {
-      std::cout << "client socket error" << std::endl;
-      return;
-    }
-    SPSBList *temp = _serverMap[_clientToServer[event->ident]]->getSPSBList();
-    for (SPSBList::iterator it = temp->begin(); it != temp->end(); it++) {
-      if (req.getHost() == (*it)->getServerName()) {
-        locBlock = getLocationBlock(req, (*it));
-        break;
-      }
-    }
-    if (locBlock == NULL) {
-      locBlock = getLocationBlock(req, temp->front());
-    }
-    // autoIndex on off 여부 req에 저장
-
-    if (req.getStatus() > 0) std::cout << "fill error" << std::endl;
-    // res.fillError(req.getStatus());
-    if (req.getMethod() == GET)
-      std::cout << "GET" << std::endl;
-    else if (req.getMethod() == POST)
-      std::cout << "POST" << std::endl;
-    else if (req.getMethod() == DELETE)
-      std::cout << "DELETE" << std::endl;
-    std::cout << getClientContents(event->ident) << std::endl;
-    // write method 작성 전까지 살려두기
-    if (write(event->ident, getClientContents(event->ident).c_str(),
-              getClientContents(event->ident).size()) == -1) {
-      std::cerr << "client write error!" << std::endl;
-      disconnectClient(event->ident);
-    } else
-      setClientContentsClear(event->ident);
+  if (_clients[event->ident].getStatus() > 0)
+    std::cout << "_clients[event->ident].status: "
+              << _clients[event->ident].getStatus() << std::endl;
+  // res.fillError(_clients[event->ident].getStatus());
+  if (_clients[event->ident].getMethod() == "GET")
+    std::cout << "GET" << std::endl;
+  else if (_clients[event->ident].getMethod() == "POST")
+    std::cout << "POST" << std::endl;
+  else if (_clients[event->ident].getMethod() == "DELETE")
+    std::cout << "DELETE" << std::endl;
+  // std::cout << getClientContents(event->ident) << std::endl;
+  //  write method 작성 전까지 살려두기
+  std::cout << _clients[event->ident].getRawContents() << std::endl;
+  if (write(event->ident, _clients[event->ident].getRawContents().c_str(),
+            _clients[event->ident].getRawContents().size()) == -1) {
+    std::cerr << "client write error!" << std::endl;
+    disconnectClient(event->ident);
+  } else {
+    _clients[event->ident].clear();
+    // kq.changeEvents(event->ident, EVFILT_WRITE, EV_ADD | EV_ENABLE, 0, 0,
+    //                     NULL);
   }
 }
 
-const std::string ServerOperator::getClientContents(int clientSock) {
-  return _clients[clientSock];
-}
-
-RootBlock *ServerOperator::getLocationBlock(Request &req, ServerBlock *sb) {
+ServerBlock *ServerOperator::getLocationBlock(Request &req, ServerBlock *sb) {
   LocationList *locList = _locationMap[sb];
   std::string dir;
 
@@ -138,14 +137,6 @@ RootBlock *ServerOperator::getLocationBlock(Request &req, ServerBlock *sb) {
 bool ServerOperator::isExistClient(int clientSock) {
   if (_clients.find(clientSock) == _clients.end()) return false;
   return true;
-}
-
-void ServerOperator::setClientContentsClear(int clientSock) {
-  _clients[clientSock].clear();
-}
-
-void ServerOperator::addClientContents(int clientSock, std::string buffer) {
-  _clients[clientSock] += buffer;
 }
 
 void ServerOperator::disconnectClient(int clientSock) {
