@@ -39,7 +39,7 @@ class Request {
   const std::string &getAutoindex() const;
   enum MIME &getMime() const;
   enum PROCESS getProcess();
-  enum METHOD getMethod();
+  std::string getMethod();
 };
 
 #endif

@@ -1,8 +1,7 @@
 #include "../includes/ServerOperator.hpp"
 
 ServerOperator::ServerOperator(ServerMap &serverMap, LocationMap &locationMap)
-    : _serverMap(serverMap),
-      _locationMap(locationMap) {}
+    : _serverMap(serverMap), _locationMap(locationMap) {}
 
 ServerOperator::~ServerOperator() {}
 
@@ -58,16 +57,17 @@ void ServerOperator::handleReadEvent(struct kevent *event, Kqueue kq) {
     _clients[clientSocket] = "";
   } else if (isExistClient(event->ident)) {
     /* read data from client */
-    char buf[1024];
-    int n = read(event->ident, buf, sizeof(buf));
+    char buf[2048];
+    int n;
+    n = read(event->ident, buf, sizeof(buf));
     if (n <= 0) {
       if (n < 0) std::cerr << "client read error!" << std::endl;
       disconnectClient(event->ident);
     } else {
       buf[n] = '\0';
       addClientContents(event->ident, buf);
-      std::cout << "received data from " << event->ident << ": "
-                << getClientContents(event->ident) << std::endl;
+      // std::cout << "received data from " << event->ident << ": "
+      // << getClientContents(event->ident) << std::endl;
     }
   }
 }
@@ -98,13 +98,14 @@ void ServerOperator::handleWriteEvent(struct kevent *event) {
     }
     // autoIndex on off 여부 req에 저장
 
-    if (req.getStatus() > 0) std::cout << "fill error" << std::endl;
+    if (req.getStatus() > 0)
+      std::cout << "req.status: " << req.getStatus() << std::endl;
     // res.fillError(req.getStatus());
-    if (req.getMethod() == GET)
+    if (req.getMethod() == "GET")
       std::cout << "GET" << std::endl;
-    else if (req.getMethod() == POST)
+    else if (req.getMethod() == "POST")
       std::cout << "POST" << std::endl;
-    else if (req.getMethod() == DELETE)
+    else if (req.getMethod() == "DELETE")
       std::cout << "DELETE" << std::endl;
     std::cout << getClientContents(event->ident) << std::endl;
     // write method 작성 전까지 살려두기
@@ -142,6 +143,7 @@ bool ServerOperator::isExistClient(int clientSock) {
 
 void ServerOperator::setClientContentsClear(int clientSock) {
   _clients[clientSock].clear();
+  _clients[clientSock] = "";
 }
 
 void ServerOperator::addClientContents(int clientSock, std::string buffer) {

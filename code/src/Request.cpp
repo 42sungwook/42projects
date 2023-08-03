@@ -76,4 +76,4 @@ enum PROCESS Request::getProcess() { return CGI; }
 
 const int &Request::getStatus() const { return _status; }
 
-enum METHOD Request::getMethod() { return GET; }
+std::string Request::getMethod() { return _header["method"]; }
