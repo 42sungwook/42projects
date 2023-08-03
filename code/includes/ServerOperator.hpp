@@ -20,7 +20,7 @@ class ServerOperator {
 
   void handleEventError(struct kevent *event);
   void handleReadEvent(struct kevent *event, Kqueue kq);
-  void handleWriteEvent(struct kevent *event);
+  void handleWriteEvent(struct kevent *event, Kqueue kq);
 
  public:
   ServerOperator(ServerMap &serverMap, LocationMap &locationMap);
