@@ -1,7 +1,10 @@
 #include "../includes/LocationBlock.hpp"
 
 LocationBlock::LocationBlock(ServerBlock &serverBlock)
-    : ServerBlock(serverBlock), _path(), _autoindex("off"), _limitExcept() {}
+    : ServerBlock(serverBlock),
+      _path(),
+      _autoindex("off"),
+      _limitExcept("all") {}
 
 LocationBlock::~LocationBlock() {}
 

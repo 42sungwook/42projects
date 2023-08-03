@@ -23,7 +23,7 @@ void ServerOperator::run() {
       } else if (currEvent->filter == EVFILT_READ) {
         handleReadEvent(currEvent, kq);
       } else if (currEvent->filter == EVFILT_WRITE) {
-        handleWriteEvent(currEvent);
+        handleWriteEvent(currEvent, kq);
       }
     }
   }
@@ -73,7 +73,7 @@ void ServerOperator::handleReadEvent(struct kevent *event, Kqueue kq) {
   }
 }
 
-void ServerOperator::handleWriteEvent(struct kevent *event) {
+void ServerOperator::handleWriteEvent(struct kevent *event, Kqueue kq) {
   /* send data to client */
   Response res("test");
 
@@ -115,8 +115,8 @@ void ServerOperator::handleWriteEvent(struct kevent *event) {
     disconnectClient(event->ident);
   } else {
     _clients[event->ident].clear();
-    // kq.changeEvents(event->ident, EVFILT_WRITE, EV_ADD | EV_ENABLE, 0, 0,
-    //                     NULL);
+    kq.changeEvents(event->ident, EVFILT_WRITE, EV_ADD | EV_DISABLE, 0, 0,
+                    NULL);
   }
 }
 
