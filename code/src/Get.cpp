@@ -39,15 +39,18 @@ std::string Get::makeStatusLine(Request &request, Response &response) {
   line += "HTTP/1.1 ";
   line += request.getStatus();
   line += response.getStatusCode(request.getStatus());
-
-  // status 적절한 값을 넣도록 지게 설정
 }
 
 std::string Get::makeHeader(Request &request, Response &response) {
   if (response.getBody() != "") {
-    response.setHeader("Content-Type: text/html");  // ToDo content type 구분
-    response.setHeader("Content-Length: " +
-                       std::to_string(response.getBody().length()));
+    if (request.getValueByKey("Content-Type") == "")
+      response.setHeader("Content-Type: text/html");
+    else
+      response.setHeader(std::string("Content-Type: ")
+                             .append(request.getValueByKey("Content-Type")));
+    response.setHeader(
+        std::string("Content-Length: ")
+            .append(std::to_string(response.getBody().length())));
     return (response.getHeader());
   }
 }

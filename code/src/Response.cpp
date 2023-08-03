@@ -11,6 +11,7 @@ Response::Response(std::string result)
   _mimeTypes[TXT] = "text/plain";
   _mimeTypes[PDF] = "application/pdf";
   _mimeTypes[JSON] = "application/json";
+  _mimeTypes[OCTET] = "application/octet-stream";
   _statusCodes[200] = "OK";
   _statusCodes[201] = "Created";
   _statusCodes[202] = "Accepted";
@@ -107,6 +108,6 @@ std::string Response::getStatusLine() { return _statusLine; }
 
 std::string Response::getStatusCode(int key) {
   if (_statusCodes.find(key) == _statusCodes.end())
-  	throw std::runtime_error("Invalid status code");
-	return _statusCodes[key];
+    throw std::runtime_error("Invalid status code");
+  return _statusCodes[key];
 }
