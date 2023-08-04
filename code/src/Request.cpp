@@ -111,3 +111,6 @@ std::string Request::getMethod() { return _header["method"]; }
 bool Request::isFullReq() const { return _isFullReq; }
 
 std::string Request::getRawContents() const { return _rawContents; }
+
+// Warning : always check _header[key] exist
+std::string Request::getHeaderByKey(std::string key) { return _header[key]; }

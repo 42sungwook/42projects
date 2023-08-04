@@ -43,11 +43,11 @@ std::string Get::makeStatusLine(Request &request, Response &response) {
 
 std::string Get::makeHeader(Request &request, Response &response) {
   if (response.getBody() != "") {
-    if (request.getValueByKey("Content-Type") == "")
+    if (request.getHeaderByKey("Content-Type") == "")
       response.setHeader("Content-Type: text/html");
     else
       response.setHeader(std::string("Content-Type: ")
-                             .append(request.getValueByKey("Content-Type")));
+                             .append(request.getHeaderByKey("Content-Type")));
     response.setHeader(
         std::string("Content-Length: ")
             .append(std::to_string(response.getBody().length())));
