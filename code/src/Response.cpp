@@ -53,6 +53,7 @@ void Response::convertCGI(std::string cgiResult) {
       _header += "\r\n";
     } else if (!line.empty()) {
       _body += line;
+	  // TODO 마지막 문장에 개행 없으면 개행 붙이지 않기
       _body += "\n";
     }
   }
