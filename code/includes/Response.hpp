@@ -20,7 +20,7 @@ class Response {
   std::map<int, std::string> _statusCodes;
 
  public:
-  Response(std::string result);
+  Response();
   ~Response();
   void setBody(std::string body);
   void setHeader(std::string header);
@@ -33,7 +33,8 @@ class Response {
   int sendResponse(int clientSocket);
 
   std::string getStatusCode(int key);
-  void Response::setErrorRes(int statusCode);
+  void setErrorRes(int statusCode);
+  const std::string &getResult();
 };
 
 #endif

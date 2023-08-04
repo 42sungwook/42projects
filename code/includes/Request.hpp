@@ -9,8 +9,6 @@
 #include <sstream>
 #include <string>
 
-#include "RootBlock.hpp"
-
 enum METHOD { GET, POST, DELETE };
 enum PROCESS { CGI, NORMAL };
 enum MIME { DIRECTORY, HTML, CSS, JS, JPG, PNG, GIF, TXT, PDF, JSON, OCTET };
@@ -52,7 +50,7 @@ class Request {
 
   // temp
   std::string getRawContents() const;
-  std::string getHeaderByKey(std::string key);
+  const std::string &getHeaderByKey(std::string key);
 };
 
 #endif

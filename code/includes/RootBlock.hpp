@@ -17,8 +17,6 @@ class RootBlock {
   int _workerConnections;
   std::string _include;
 
-  std::map<std::string, std::string> _statusCodes;
-
  public:
   RootBlock();
   RootBlock(RootBlock &copy);
@@ -41,8 +39,6 @@ class RootBlock {
   const std::string getPid() const;
   int getWorkerConnection() const;
   int getWorkerProcesses() const;
-
-  std::string getStatusCode(std::string key);
 
   void test();  // TODO test
 };

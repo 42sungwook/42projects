@@ -5,36 +5,13 @@ RootBlock::RootBlock()
       _workerProcesses(0),
       _workerRlimitNofile(0),
       _workerConnections(0),
-      _include() {
-  _statusCodes["200"] = "OK";
-  _statusCodes["201"] = "Created";
-  _statusCodes["202"] = "Accepted";
-  _statusCodes["204"] = "No Content";
-  _statusCodes["300"] = "Multiple Choice";
-  _statusCodes["301"] = "Moved Permanently";
-  _statusCodes["303"] = "See Other";
-  _statusCodes["304"] = "Not Modified";
-  _statusCodes["307"] = "Temporary Redirect";
-  _statusCodes["400"] = "Bad Request";
-  _statusCodes["401"] = "Unauthorized";
-  _statusCodes["403"] = "Forbidden";
-  _statusCodes["404"] = "Not Found";
-  _statusCodes["405"] = "Method Not Allowed";
-  _statusCodes["406"] = "Not Acceptable";
-  _statusCodes["409"] = "Conflict";
-  _statusCodes["410"] = "Gone";
-  _statusCodes["412"] = "Precondition Failed";
-  _statusCodes["414"] = "URI Too Long";
-  _statusCodes["415"] = "Unsupported Media Type";
-  _statusCodes["500"] = "Server Error";
-}
+      _include() {}
 
 RootBlock::RootBlock(RootBlock &copy)
     : _user(copy._user),
       _workerProcesses(copy._workerProcesses),
       _workerConnections(copy._workerConnections),
-      _include(copy._include),
-      _statusCodes(copy._statusCodes) {}
+      _include(copy._include) {}
 
 RootBlock::~RootBlock() {}
 
@@ -98,14 +75,6 @@ int RootBlock::getWorkerRlimitNofile() const { return _workerRlimitNofile; }
 int RootBlock::getWorkerConnection() const { return _workerConnections; }
 
 const std::string RootBlock::getInclude() const { return _include; }
-
-std::string RootBlock::getStatusCode(std::string key) {
-  std::map<std::string, std::string>::iterator it;
-  for (it = _statusCodes.begin(); it != _statusCodes.end(); it++) {
-    if (it->first == key) return _statusCodes[key];
-  }
-  throw std::runtime_error("Invalid status code");
-}
 
 // TODO test
 void RootBlock::test() {

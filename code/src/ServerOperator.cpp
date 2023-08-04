@@ -75,7 +75,7 @@ void ServerOperator::handleReadEvent(struct kevent *event, Kqueue kq) {
 
 void ServerOperator::handleWriteEvent(struct kevent *event, Kqueue kq) {
   /* send data to client */
-  Response res("test");
+  Response res;
 
   ServerBlock *locBlock =
       NULL;  // Location Block or Server Block (not match directory)
@@ -94,21 +94,27 @@ void ServerOperator::handleWriteEvent(struct kevent *event, Kqueue kq) {
     locBlock = getLocationBlock(_clients[event->ident], temp->front());
   }
   _clients[event->ident].addHeader("RootDir", locBlock->getRoot());
+  _clients[event->ident].addHeader("AutoIndex", locBlock->getAutoindex());
+  _clients[event->ident].addHeader("Index", locBlock->getIndex());
+
   // autoIndex on off 여부 req에 저장
 
-  if (_clients[event->ident].getStatus() > 0) {
+  if (_clients[event->ident].getStatus() != 200) {
     res.setErrorRes(_clients[event->ident].getStatus());
-  } else if (_clients[event->ident].getMethod() == "GET")
-    std::cout << "GET" << std::endl;
-  else if (_clients[event->ident].getMethod() == "POST")
-    std::cout << "POST" << std::endl;
-  else if (_clients[event->ident].getMethod() == "DELETE")
-    std::cout << "DELETE" << std::endl;
-  // std::cout << getClientContents(event->ident) << std::endl;
-  //  write method 작성 전까지 살려두기
-  std::cout << _clients[event->ident].getRawContents() << std::endl;
-  if (write(event->ident, _clients[event->ident].getRawContents().c_str(),
-            _clients[event->ident].getRawContents().size()) == -1) {
+  } else {
+    IMethod *method;
+    if (_clients[event->ident].getMethod() == "GET")
+      method = new Get();
+    else if (_clients[event->ident].getMethod() == "POST")
+      method = new Post();
+    else  // else 부분은 delete (그외에는 parsing에서 에러처리)
+      method = new Delete();
+
+    method->process(_clients[event->ident], res);
+  }
+
+  if (write(event->ident, res.getResult().c_str(), res.getResult().size()) ==
+      -1) {
     std::cerr << "client write error!" << std::endl;
     disconnectClient(event->ident);
   } else {
@@ -120,12 +126,13 @@ void ServerOperator::handleWriteEvent(struct kevent *event, Kqueue kq) {
 
 ServerBlock *ServerOperator::getLocationBlock(Request &req, ServerBlock *sb) {
   LocationList *locList = _locationMap[sb];
-  std::string dir;
+  std::string requestURI;
 
   for (LocationList::iterator it = locList->begin(); it != locList->end();
        it++) {
-    dir = req.getUri();  // uri를 쪼개서 처리를 거친 디렉토리 경로를 찾아서 넣기
-    if (dir == (*it)->getPath()) {
+    requestURI = req.getHeaderByKey(
+        "BasicURI");  // uri를 쪼개서 처리를 거친 디렉토리 경로를 찾아서 넣기
+    if (requestURI.find((*it)->getPath()) != requestURI.npos) {
       return (*it);
     }
   }

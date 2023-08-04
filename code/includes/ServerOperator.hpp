@@ -2,7 +2,11 @@
 #define SERVEROPERATOR_HPP
 #include <list>
 
+#include "Delete.hpp"
+#include "Get.hpp"
+#include "IMethod.hpp"
 #include "Kqueue.hpp"
+#include "Post.hpp"
 #include "Request.hpp"
 #include "Server.hpp"
 
@@ -11,8 +15,8 @@ class ServerOperator {
   ServerMap &_serverMap;
   LocationMap &_locationMap;
   std::map<int, Request> _clients;
+  // key: client socket, value: server socket
   std::map<int, int> _clientToServer;
-  // key: client socket, value: serversocket
 
   void disconnectClient(int clientSock);
   bool isExistClient(int clientSock);

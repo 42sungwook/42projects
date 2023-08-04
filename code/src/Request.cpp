@@ -1,6 +1,6 @@
 #include "../includes/Request.hpp"
 
-Request::Request() : _mime(OCTET), _status(0), _isFullReq(false) {}
+Request::Request() : _mime(OCTET), _status(200), _isFullReq(false) {}
 
 Request::~Request() {}
 
@@ -24,6 +24,14 @@ void Request::parseUrl() {
         _mime = OCTET;
     }
   }
+
+  size_t pos = uri.find("://");
+  if (pos == uri.npos)
+    pos = 0;
+  else
+    pos += 3;
+  pos = uri.find('/', pos);
+  _header["BasicURI"] = uri.substr(pos, uri.find('?', pos) - pos);
 }
 
 void Request::parsing() {
@@ -113,4 +121,6 @@ bool Request::isFullReq() const { return _isFullReq; }
 std::string Request::getRawContents() const { return _rawContents; }
 
 // Warning : always check _header[key] exist
-std::string Request::getHeaderByKey(std::string key) { return _header[key]; }
+const std::string &Request::getHeaderByKey(std::string key) {
+  return _header[key];
+}

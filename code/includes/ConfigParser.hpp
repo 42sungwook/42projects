@@ -3,6 +3,7 @@
 
 #include <string.h>
 
+#include <algorithm>
 #include <fstream>
 #include <iostream>
 #include <sstream>
@@ -16,42 +17,36 @@
 #define ISSPACE " \t\n\r\f\v"
 #define SEMICOLON ";"
 
-enum BLOCK
-{
-  ROOT,
-  SERVER,
-  LOCATION,
-  EVENT
-};
+enum BLOCK { ROOT, SERVER, LOCATION, EVENT };
 
-typedef std::vector<ServerBlock *> SPSBList; // Same Port ServerBlock List
-typedef std::map<int, SPSBList *> ServerBlockMap; // key:port, value:SPSBList
+typedef std::vector<ServerBlock *> SPSBList;       // Same Port ServerBlock List
+typedef std::map<int, SPSBList *> ServerBlockMap;  // key:port, value:SPSBList
 
 typedef std::vector<LocationBlock *> LocationList;
+// key: serverBlock ptr, value: LocationList(LocationBlock * vector)
 typedef std::map<ServerBlock *, LocationList *> LocationMap;
 
-class ConfigParser
-{
-private:
+class ConfigParser {
+ private:
   std::size_t _pos;
   std::size_t _start;
   std::string _line;
   ServerBlockMap _serverBlockMap;
   LocationMap _locationMap;
 
-private:
+ private:
   void setKey(std::string &key);
   void setValue(std::string &value);
   void readConfig(const char *path);
   bool skipBracket();
   RootBlock *addBlock(RootBlock *block, enum BLOCK type);
 
-public:
+ public:
   ConfigParser(const char *path);
   ~ConfigParser();
   void parseBlocks(RootBlock *block, enum BLOCK type);
   ServerBlockMap &getServerBlockMap();
-  LocationMap &getLocationMap();
+  LocationMap &getSortedLocationMap();
 };
 
 #endif

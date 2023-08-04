@@ -1,7 +1,6 @@
 #include "../includes/Response.hpp"
 
-Response::Response(std::string result)
-    : _result(result), _statusLine(), _header(), _body() {
+Response::Response() {
   _mimeTypes[HTML] = "text/html";
   _mimeTypes[CSS] = "text/css";
   _mimeTypes[JS] = "text/javascript";
@@ -85,10 +84,7 @@ int Response::sendResponse(int clientSocket) {
   return (0);
 }
 
-void Response::setBody(std::string body) {
-  _body += body;
-  _body += "\r\n";
-}
+void Response::setBody(std::string body) { _body += body; }
 
 void Response::setHeader(std::string header) {
   _header += header;
@@ -111,6 +107,7 @@ std::string Response::getStatusCode(int key) {
     throw std::runtime_error("Invalid status code");
   return _statusCodes[key];
 }
+
 void Response::setErrorRes(int statusCode) {
   _header.append("HTTP/1.1 ");
   _header.append(std::to_string(statusCode));
@@ -125,4 +122,11 @@ void Response::setErrorRes(int statusCode) {
   _header += "Content-Length: ";
   _header += std::to_string(_body.length());
   _header += "\r\n\r\n";
+  _result += _header;
+  _result += _body;
+}
+
+const std::string &Response::getResult() {
+  std::cout << _result << std::endl;
+  return _result;
 }
