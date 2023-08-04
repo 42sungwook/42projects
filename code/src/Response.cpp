@@ -53,7 +53,7 @@ void Response::convertCGI(std::string cgiResult) {
       _header += "\r\n";
     } else if (!line.empty()) {
       _body += line;
-      _body += "\r\n";
+      _body += "\n";
     }
   }
   if (_statusLine == "") {
@@ -62,7 +62,7 @@ void Response::convertCGI(std::string cgiResult) {
   }
   if (_header.find("Content-Length") == std::string::npos) {
     _header += "Content-Length: ";
-    _header += std::to_string(_body.length() - 2);
+    _header += std::to_string(_body.length());
     _header += "\r\n";
   }
   _result += _statusLine;
