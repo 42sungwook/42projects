@@ -111,3 +111,18 @@ std::string Response::getStatusCode(int key) {
     throw std::runtime_error("Invalid status code");
   return _statusCodes[key];
 }
+void Response::setErrorRes(int statusCode) {
+  _header.append("HTTP/1.1 ");
+  _header.append(std::to_string(statusCode));
+  _header.append(" ");
+  _header.append(getStatusCode(statusCode));
+  _header += "\r\n";
+  _header += "Content-Type: text/plain";
+  _header += "\r\n";
+  _body += getStatusCode(statusCode);
+  _body += " : Error";
+  _body += "\r\n";
+  _header += "Content-Length: ";
+  _header += std::to_string(_body.length());
+  _header += "\r\n\r\n";
+}

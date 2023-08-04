@@ -59,7 +59,7 @@ void Request::parsing() {
       _body += line + "\n";
   }
   if (_header["method"] == "POST" &&
-      static_cast<size_t>(std::stoi(_header["Content-Length"])) !=
+      static_cast<size_t>(std::atoi(_header["Content-Length"].c_str())) !=
           _body.size()) {
     return;
   }

@@ -4,13 +4,6 @@ Get::Get() {}
 
 Get::~Get() {}
 
-Get::Get(const Get &obj) { *this = obj; }
-
-Get &Get::operator=(const Get &obj) {
-  *this = obj;
-  return (*this);
-}
-
 std::string Get::makeBody(Request &request, Response &response) {
   std::string uri = request.getUri();
   size_t pos = uri.find("/");
@@ -39,6 +32,7 @@ std::string Get::makeStatusLine(Request &request, Response &response) {
   line += "HTTP/1.1 ";
   line += request.getStatus();
   line += response.getStatusCode(request.getStatus());
+  return line;
 }
 
 std::string Get::makeHeader(Request &request, Response &response) {
@@ -53,6 +47,7 @@ std::string Get::makeHeader(Request &request, Response &response) {
             .append(std::to_string(response.getBody().length())));
     return (response.getHeader());
   }
+  return "";
 }
 
 void Get::process(Request &request, Response &response) {

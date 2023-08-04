@@ -11,8 +11,8 @@ class ServerOperator {
   ServerMap &_serverMap;
   LocationMap &_locationMap;
   std::map<int, Request> _clients;
-  std::map<int, int>
-      _clientToServer;  // key: client socket, value: serversocket
+  std::map<int, int> _clientToServer;
+  // key: client socket, value: serversocket
 
   void disconnectClient(int clientSock);
   bool isExistClient(int clientSock);

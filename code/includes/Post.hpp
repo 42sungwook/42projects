@@ -11,8 +11,6 @@ class Post : public IMethod {
  public:
   Post();
   ~Post();
-  Post(const Post &obj);
-  Post &operator=(const Post &obj);
 
   void process(Request &request, Response &response);
 

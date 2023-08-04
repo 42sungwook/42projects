@@ -11,8 +11,6 @@ class Get : public IMethod {
  public:
   Get();
   ~Get();
-  Get(const Get &obj);
-  Get &operator=(const Get &obj);
 
   void process(Request &request, Response &response);
 

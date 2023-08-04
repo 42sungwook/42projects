@@ -33,10 +33,3 @@ void Delete::process(Request &request, Response &response) {
 Delete::Delete() {}
 
 Delete::~Delete() {}
-
-Delete::Delete(const Delete &obj) { *this = obj; }
-
-Delete &Delete::operator=(const Delete &obj) {
-  *this = obj;
-  return (*this);
-}

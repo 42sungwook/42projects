@@ -11,8 +11,6 @@ class Delete : public IMethod {
  public:
   Delete();
   ~Delete();
-  Delete(const Delete &obj);
-  Delete &operator=(const Delete &obj);
 
   void process(Request &request, Response &response);
 

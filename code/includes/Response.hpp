@@ -14,6 +14,7 @@ class Response {
   std::string _result;
   std::string _statusLine;
   std::string _header;
+
   std::string _body;
   std::map<enum MIME, std::string> _mimeTypes;
   std::map<int, std::string> _statusCodes;

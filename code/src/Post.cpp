@@ -4,13 +4,6 @@ Post::Post() {}
 
 Post::~Post() {}
 
-Post::Post(const Post &obj) { *this = obj; }
-
-Post &Post::operator=(const Post &obj) {
-  *this = obj;
-  return (*this);
-}
-
 std::string Post::makeBody(Request &request, Response &response) {
   std::string uri = request.getUri();
   size_t pos = uri.find("/");
@@ -33,16 +26,27 @@ std::string Post::makeBody(Request &request, Response &response) {
 }
 
 std::string Post::makeStatusLine(Request &request, Response &response) {
-  response.setStatusLine("HTTP/1.1 200 OK");
+  std::string line;
+
+  line += "HTTP/1.1 ";
+  line += request.getStatus();
+  line += response.getStatusCode(request.getStatus());
+  return line;
 }
 
 std::string Post::makeHeader(Request &request, Response &response) {
   if (response.getBody() != "") {
-    response.setHeader("Content-Type: text/html");
-    response.setHeader("Content-Length: " +
-                       std::to_string(response.getBody().length()));
+    if (request.getHeaderByKey("Content-Type") == "")
+      response.setHeader("Content-Type: text/html");
+    else
+      response.setHeader(std::string("Content-Type: ")
+                             .append(request.getHeaderByKey("Content-Type")));
+    response.setHeader(
+        std::string("Content-Length: ")
+            .append(std::to_string(response.getBody().length())));
     return (response.getHeader());
   }
+  return "";
 }
 
 void Post::process(Request &request, Response &response) {

@@ -96,11 +96,9 @@ void ServerOperator::handleWriteEvent(struct kevent *event, Kqueue kq) {
   _clients[event->ident].addHeader("RootDir", locBlock->getRoot());
   // autoIndex on off 여부 req에 저장
 
-  if (_clients[event->ident].getStatus() > 0)
-    std::cout << "_clients[event->ident].status: "
-              << _clients[event->ident].getStatus() << std::endl;
-  // res.fillError(_clients[event->ident].getStatus());
-  if (_clients[event->ident].getMethod() == "GET")
+  if (_clients[event->ident].getStatus() > 0) {
+    res.setErrorRes(_clients[event->ident].getStatus());
+  } else if (_clients[event->ident].getMethod() == "GET")
     std::cout << "GET" << std::endl;
   else if (_clients[event->ident].getMethod() == "POST")
     std::cout << "POST" << std::endl;
