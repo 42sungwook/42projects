@@ -2,15 +2,16 @@
 #define CGI_HPP
 
 #include <unistd.h>
-#include <sstream>
+
 #include <iostream>
 #include <map>
+#include <sstream>
 #include <string>
 
 class Cgi {
  private:
   char** _envp;
-  std::string _res; // cgi가 보내주는 response
+  std::string _res;  // cgi가 보내주는 response
   std::map<std::string, std::string> _env;
   std::string _cgiPath;
 
@@ -23,7 +24,7 @@ class Cgi {
 
   // client's request를 받아서 execve에 사용할 _envp를 생성
   void reqToEnvp(std::map<std::string, std::string> param);
-  // _envp, body(parsing)를 받아서 cgi를 실행 
+  // _envp, body(parsing)를 받아서 cgi를 실행
   void excute(std::string body);
   std::string& getRet();
 };

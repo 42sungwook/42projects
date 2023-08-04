@@ -14,8 +14,8 @@ class Response {
   std::string _result;
   std::string _statusLine;
   std::string _header;
-
   std::string _body;
+
   std::map<enum MIME, std::string> _mimeTypes;
   std::map<int, std::string> _statusCodes;
 
@@ -33,6 +33,7 @@ class Response {
   int sendResponse(int clientSocket);
 
   std::string getStatusCode(int key);
+  void Response::setErrorRes(int statusCode);
 };
 
 #endif
