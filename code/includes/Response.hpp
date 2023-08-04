@@ -33,7 +33,7 @@ class Response {
   int sendResponse(int clientSocket);
 
   std::string getStatusCode(int key);
-  void Response::setErrorRes(int statusCode);
+  void setErrorRes(int statusCode);
 };
 
 #endif
