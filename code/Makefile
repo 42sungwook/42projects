@@ -4,10 +4,12 @@
 NAME		=	WebServ
 INC_FILES	=	Kqueue.hpp LocationBlock.hpp ConfigParser.hpp Server.hpp \
 				Request.hpp Response.hpp RootBlock.hpp ServerBlock.hpp \
-				ServerOperator.hpp 
+				ServerOperator.hpp Cgi.hpp Get.hpp Post.hpp Delete.hpp \
+				IMethod.hpp
 SRC_FILES	=	Kqueue.cpp LocationBlock.cpp ConfigParser.cpp Server.cpp \
 				Request.cpp Response.cpp RootBlock.cpp ServerBlock.cpp \
-				ServerOperator.cpp main.cpp
+				ServerOperator.cpp Cgi.cpp Get.cpp Post.cpp Delete.cpp \
+				main.cpp
 # **************************************************************************** #
 # Directories && Paths                                                         #
 # **************************************************************************** #
