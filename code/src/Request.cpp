@@ -124,3 +124,5 @@ std::string Request::getRawContents() const { return _rawContents; }
 const std::string &Request::getHeaderByKey(std::string key) {
   return _header[key];
 }
+
+std::map<std::string, std::string> getHeaderMap() { return _header; }

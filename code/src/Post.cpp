@@ -4,54 +4,58 @@ Post::Post() {}
 
 Post::~Post() {}
 
-std::string Post::makeBody(Request &request, Response &response) {
-  std::string uri = request.getUri();
-  size_t pos = uri.find("/");
-  if (pos != std::string::npos)
-    _path = uri.substr(uri.find("/"));
-  else
-    _path = uri + "/index.html";
-  std::fstream file(_path.c_str());
-  if (file.is_open()) {
-    std::string line;
-    while (std::getline(file, line)) {
-      response.setBody(line);
-      if (file.eof() == false) response.setBody("\n");
-    }
-    file.close();
-  } else {
-    response.setStatusLine("HTTP/1.1 404 Not Found");
-  }
-  return (response.getBody());
-}
-
-std::string Post::makeStatusLine(Request &request, Response &response) {
-  std::string line;
-
-  line += "HTTP/1.1 ";
-  line += request.getStatus();
-  line += response.getStatusCode(request.getStatus());
-  return line;
-}
-
-std::string Post::makeHeader(Request &request, Response &response) {
-  if (response.getBody() != "") {
-    if (request.getHeaderByKey("Content-Type") == "")
-      response.setHeader("Content-Type: text/html");
-    else
-      response.setHeader(std::string("Content-Type: ")
-                             .append(request.getHeaderByKey("Content-Type")));
-    response.setHeader(
-        std::string("Content-Length: ")
-            .append(std::to_string(response.getBody().length())));
-    return (response.getHeader());
-  }
-  return "";
-}
-
 void Post::process(Request &request, Response &response) {
-  _result += "\r\n";
-  _result += makeBody(request, response);
-  _result.insert(0, makeHeader(request, response));
-  _result.insert(0, makeStatusLine(request, response));
+  try {
+    std::string fullUri = request.getHeaderByKey("RootDir");
+    fullUri += request.getHeaderByKey("BasicURI");
+    if (fullUri[(fullUri.size() - 1)] == '/') {
+      if (request.getHeaderByKey("Index") != "") {
+        std::stringstream ss(request.getHeaderByKey("Index"));
+        std::string token;
+
+        while (ss >> token) {
+          std::ifstream temp(fullUri.substr().append(token).c_str());
+          if (temp.is_open() == true) {
+            _path = fullUri.substr().append(token).c_str();
+            request.addHeader(
+                "BasicURI",
+                std::string(request.getHeaderByKey("BasicURI")).append(token));
+            Cgi cgi;
+            cgi.reqToEnvp(request.getHeaderMap());
+            cgi.excute(request.getBody());
+            response.convertCGI(cgi.getRes());
+            return;
+          }
+        }
+      }
+      std::ifstream tmp(fullUri.substr().append("index.html").c_str());
+      if (tmp.is_open() == true) {
+        _path = fullUri.substr().append("index.html").c_str();
+        Cgi cgi;
+        cgi.reqToEnvp(request.getHeaderMap());
+        cgi.excute(request.getBody());
+        response.convertCGI(cgi.getRes());
+        return;
+      }
+      if (request.getHeaderByKey("AutoIndex") == "on")
+        response.directoryListing(fullUri);
+      else {
+        throw ErrorException(403);
+      }
+    } else {
+      std::ifstream tempf(fullUri.c_str());
+      if (tempf.is_open() == true) {
+        _path = fullUri.c_str();
+        Cgi cgi;
+        cgi.reqToEnvp(request.getHeaderMap());
+        cgi.excute(request.getBody());
+        response.convertCGI(cgi.getRes());
+        return;
+      } else
+        throw ErrorException(404);
+    }
+    makeResponse(request, response);
+  } catch (ErrorException &e) {
+    response.setErrorRes(e.getErrorCode());
+  }
 }

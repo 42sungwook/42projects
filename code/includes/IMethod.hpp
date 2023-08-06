@@ -5,6 +5,8 @@
 #include <iostream>
 #include <sstream>
 
+#include "Cgi.hpp"
+#include "ErrorException.hpp"
 #include "Request.hpp"
 #include "Response.hpp"
 

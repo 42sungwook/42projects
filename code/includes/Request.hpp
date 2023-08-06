@@ -51,6 +51,7 @@ class Request {
   // temp
   std::string getRawContents() const;
   const std::string &getHeaderByKey(std::string key);
+  std::map<std::string, std::string> getHeaderMap() const;
 };
 
 #endif

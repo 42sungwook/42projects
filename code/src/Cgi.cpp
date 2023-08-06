@@ -9,7 +9,7 @@ void Cgi::makeEnv(std::map<std::string, std::string> param) {
   _env["CONTENT_LENGTH"] = param["Content-Length"];
   _env["CONTENT_TYPE"] = param["Content-Type"];
   _env["GATEWAY_INTERFACE"] = "CGI/1.1";
-  _env["PATH_INFO"] = param["URI"].substr(0, param["URI"].find("?"));
+  _env["PATH_INFO"] = param["BasicURI"];
   _env["PATH_TRANSLATED"] = param["RootDir"] + param["BasicURI"];
   _env["QUERY_STRING"] =
       param["URI"].substr(param["URI"].find("?") + 1, std::string::npos);
@@ -41,9 +41,9 @@ void Cgi::reqToEnvp(std::map<std::string, std::string> param) {
   _envp[i] = NULL;
 }
 
-std::string &Cgi::getRet() { return _res; }
+std::string &Cgi::getRes() { return _res; }
 
-void Cgi::excute(std::string body) {
+void Cgi::excute(const std::string &body) {
   pid_t pid;
   int fd[2];
   int status;
