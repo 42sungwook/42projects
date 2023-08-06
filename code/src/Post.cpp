@@ -54,7 +54,6 @@ void Post::process(Request &request, Response &response) {
       } else
         throw ErrorException(404);
     }
-    makeResponse(request, response);
   } catch (ErrorException &e) {
     response.setErrorRes(e.getErrorCode());
   }

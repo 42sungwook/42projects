@@ -125,4 +125,6 @@ const std::string &Request::getHeaderByKey(std::string key) {
   return _header[key];
 }
 
-std::map<std::string, std::string> getHeaderMap() { return _header; }
+std::map<std::string, std::string> Request::getHeaderMap() const {
+  return _header;
+}

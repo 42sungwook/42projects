@@ -84,9 +84,9 @@ void Get::process(Request &request, Response &response) {
         throw ErrorException(403);
       }
     } else {
-      std::ifstream tempf(fullUri.substr().c_str());
+      std::ifstream tempf(fullUri.c_str());
       if (tempf.is_open() == true) {
-        _path = fullUri.substr().c_str();
+        _path = fullUri.c_str();
         makeResponse(request, response);
         return;
       } else
