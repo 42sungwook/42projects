@@ -1,9 +1,9 @@
 #ifndef POST_HPP
 #define POST_HPP
 
-#include "IMethod.hpp"
+#include "Method.hpp"
 
-class Post : public IMethod {
+class Post : public Method {
  private:
   std::string _result;
   std::string _path;

@@ -103,11 +103,12 @@ void ServerOperator::handleWriteEvent(struct kevent *event, Kqueue kq) {
     res.setErrorRes(_clients[event->ident].getStatus());
   } else {
     IMethod *method;
+
     if (_clients[event->ident].getMethod() == "GET")
       method = new Get();
     else if (_clients[event->ident].getMethod() == "POST")
       method = new Post();
-    else  // else 부분은 delete (그외에는 parsing에서 에러처리)
+    else
       method = new Delete();
 
     method->process(_clients[event->ident], res);

@@ -1,16 +1,17 @@
 #ifndef GET_HPP
 #define GET_HPP
 
-#include "IMethod.hpp"
+#include "ErrorException.hpp"
+#include "Method.hpp"
 
-class Get : public IMethod {
+class Get : public Method {
  private:
-  std::string _result;
   std::string _path;
 
-  std::string makeBody(Request &request, Response &response);
-  std::string makeHeader(Request &request, Response &response);
-  std::string makeStatusLine(Request &request, Response &response);
+  void makeBody(Request &request, Response &response);
+  void makeHeader(Request &request, Response &response);
+  void makeStatusLine(Request &request, Response &response);
+  void makeResponse(Request &request, Response &response);
 
  public:
   Get();

@@ -48,7 +48,6 @@ void Response::directoryListing(std::string path) {
   std::string body;
   std::string header;
   std::string statusLine;
-  std::string result;
 
   if ((dir = opendir(path.c_str())) != NULL) {
     /* print all the files and directories within directory */
@@ -71,11 +70,10 @@ void Response::directoryListing(std::string path) {
   header += "\r\n";
   statusLine += "HTTP/1.1 200 OK";
   statusLine += "\r\n";
-  result += statusLine;
-  result += header;
-  result += "\r\n";
-  result += body;
-  _result = result;
+  _result += statusLine;
+  _result += header;
+  _result += "\r\n";
+  _result += body;
   // ToDo 확인필요
 }
 
@@ -84,24 +82,6 @@ int Response::sendResponse(int clientSocket) {
   return (0);
 }
 
-void Response::setBody(std::string body) { _body += body; }
-
-void Response::setHeader(std::string header) {
-  _header += header;
-  _header += "\r\n";
-}
-
-void Response::setStatusLine(std::string statusLine) {
-  _statusLine += statusLine;
-  _statusLine += "\r\n";
-}
-
-std::string Response::getBody() { return _body; }
-
-std::string Response::getHeader() { return _header; }
-
-std::string Response::getStatusLine() { return _statusLine; }
-
 std::string Response::getStatusCode(int key) {
   if (_statusCodes.find(key) == _statusCodes.end())
     throw std::runtime_error("Invalid status code");
@@ -109,21 +89,32 @@ std::string Response::getStatusCode(int key) {
 }
 
 void Response::setErrorRes(int statusCode) {
-  _header.append("HTTP/1.1 ");
-  _header.append(std::to_string(statusCode));
-  _header.append(" ");
-  _header.append(getStatusCode(statusCode));
-  _header += "\r\n";
-  _header += "Content-Type: text/plain";
-  _header += "\r\n";
-  _body += getStatusCode(statusCode);
-  _body += " : Error";
-  _body += "\r\n";
-  _header += "Content-Length: ";
-  _header += std::to_string(_body.length());
-  _header += "\r\n\r\n";
-  _result += _header;
-  _result += _body;
+  std::string body;
+  std::string header;
+  std::string statusLine;
+
+  header.append("HTTP/1.1 ");
+  header.append(std::to_string(statusCode));
+  header.append(" ");
+  header.append(getStatusCode(statusCode));
+  header += "\r\n";
+  header += "Content-Type: text/plain";
+  header += "\r\n";
+  body += getStatusCode(statusCode);
+  body += " : Error";
+  body += "\r\n";
+  header += "Content-Length: ";
+  header += std::to_string(body.length());
+  header += "\r\n\r\n";
+  _result += header;
+  _result += body;
+}
+
+void Response::setResult(const std::string &statusLine,
+                         const std::string &header, const std::string &body) {
+  _result += statusLine;
+  _result += header;
+  _result += body;
 }
 
 const std::string &Response::getResult() {

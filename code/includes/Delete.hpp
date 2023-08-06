@@ -1,9 +1,9 @@
 #ifndef DELETE_HPP
 #define DELETE_HPP
 
-#include "IMethod.hpp"
+#include "Method.hpp"
 
-class Delete : public IMethod {
+class Delete : public Method {
  private:
   std::string _result;
   std::string _path;
