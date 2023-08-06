@@ -5,9 +5,6 @@
 
 class Post : public Method {
  private:
-  std::string _result;
-  std::string _path;
-
  public:
   Post();
   ~Post();

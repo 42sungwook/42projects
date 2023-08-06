@@ -6,8 +6,6 @@
 
 class Get : public Method {
  private:
-  std::string _path;
-
   void makeBody(Request &request, Response &response);
   void makeHeader(Request &request, Response &response);
   void makeStatusLine(Request &request, Response &response);
