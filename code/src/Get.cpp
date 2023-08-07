@@ -4,21 +4,16 @@ Get::Get() {}
 
 Get::~Get() {}
 
-void Get::makeBody(Request &request, Response &response) {
-  std::fstream file(_path.c_str());
-  if (file.is_open()) {
-    std::stringstream buffer;
+void Get::makeBody(Request &request, Response &response, std::ifstream &file) {
+  std::stringstream buffer;
 
-    buffer << file.rdbuf();
-    if (buffer.good() == false) {
-      throw ErrorException(500);
-      return;
-    }
-    _body = buffer.str();
-    file.close();
-  } else {
-    throw ErrorException(404);
+  buffer << file.rdbuf();
+  if (buffer.good() == false) {
+    throw ErrorException(500);
+    return;
   }
+  _body = buffer.str();
+  file.close();
   return;
 }
 
@@ -47,10 +42,10 @@ void Get::makeHeader(Request &request, Response &response) {
   return;
 }
 
-void Get::makeResponse(Request &request, Response &response) {
-  makeStatusLine(request, response);
+void Get::makeResponse(Request &request, Response &response, std::ifstream &file) {
+  makeBody(request, response, file);
   makeHeader(request, response);
-  makeBody(request, response);
+  makeStatusLine(request, response);
   response.setResult(_statusLine, _header, _body);
 }
 
@@ -67,32 +62,35 @@ void Get::process(Request &request, Response &response) {
           std::ifstream temp(fullUri.substr().append(token).c_str());
           if (temp.is_open() == true) {
             _path = fullUri.substr().append(token).c_str();
-            makeResponse(request, response);
+            makeResponse(request, response, temp);
+          }
+          else
+            temp.close();
             return;
           }
         }
-      }
       std::ifstream tmp(fullUri.substr().append("index.html").c_str());
       if (tmp.is_open() == true) {
         _path = fullUri.substr().append("index.html").c_str();
-        makeResponse(request, response);
+        makeResponse(request, response, tmp);
         return;
       }
+      else
+        tmp.close();
       if (request.getHeaderByKey("AutoIndex") == "on")
         response.directoryListing(fullUri);
-      else {
+      else
         throw ErrorException(403);
       }
-    } else {
+      else {
       std::ifstream tempf(fullUri.c_str());
       if (tempf.is_open() == true) {
         _path = fullUri.c_str();
-        makeResponse(request, response);
+        makeResponse(request, response, tempf);
         return;
       } else
         throw ErrorException(404);
     }
-    makeResponse(request, response);
   } catch (ErrorException &e) {
     response.setErrorRes(e.getErrorCode());
   }

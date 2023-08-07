@@ -31,6 +31,9 @@ void Post::process(Request &request, Response &response) {
       std::ifstream tmp(fullUri.substr().append("index.html").c_str());
       if (tmp.is_open() == true) {
         _path = fullUri.substr().append("index.html").c_str();
+        request.addHeader(
+                "BasicURI",
+                std::string(request.getHeaderByKey("BasicURI")).append("index.html"));
         Cgi cgi;
         cgi.reqToEnvp(request.getHeaderMap());
         cgi.excute(request.getBody());

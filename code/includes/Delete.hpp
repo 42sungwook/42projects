@@ -13,6 +13,7 @@ class Delete : public Method {
 
   void makeStatusLine(Request &request, Response &response);
   void detaultErrorPage();
+  void deleteDenied();
 };
 
 #endif
