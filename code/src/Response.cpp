@@ -38,9 +38,38 @@ Response::Response(std::string result)
 Response::~Response() {}
 
 void Response::convertCGI(std::string cgiResult) {
-  // TODO Content-Type만 무조건 해야 함
-  // 따라서 status line이나 Content-Length는 없으면 우리가 추가
-  _result = cgiResult;
+  std::stringstream ss(cgiResult);
+  std::string line;
+
+  while (std::getline(ss, line)) {
+    if (line.find("Content-Type") != std::string::npos) {
+      _header += line;
+      _header += "\r\n";
+    } else if (line.find("Status") != std::string::npos) {
+      _statusLine += line;
+      _statusLine += "\r\n";
+    } else if (line.find("Content-Length") != std::string::npos) {
+      _header += line;
+      _header += "\r\n";
+    } else if (!line.empty()) {
+      _body += line;
+	  // TODO 마지막 문장에 개행 없으면 개행 붙이지 않기
+      _body += "\n";
+    }
+  }
+  if (_statusLine == "") {
+    _statusLine += "HTTP/1.1 200 OK";
+    _statusLine += "\r\n";
+  }
+  if (_header.find("Content-Length") == std::string::npos) {
+    _header += "Content-Length: ";
+    _header += std::to_string(_body.length());
+    _header += "\r\n";
+  }
+  _result += _statusLine;
+  _result += _header;
+  _result += "\r\n";
+  _result += _body;
 }
 
 void Response::directoryListing(std::string path) {
