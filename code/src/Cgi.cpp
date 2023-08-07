@@ -13,14 +13,14 @@ void Cgi::makeEnv(std::map<std::string, std::string> param) {
   _env["PATH_TRANSLATED"] = param["RootDir"] + param["BasicURI"];
   _env["QUERY_STRING"] =
       param["URI"].substr(param["URI"].find("?") + 1, std::string::npos);
-  _env["REMOTE_ADDR"] = param["ClientIP"];  // 만들기
+  _env["REMOTE_ADDR"] = param["ClientIP"];
   _env["REMOTE_IDENT"] = "";
   _env["REMOTE_USER"] = "";
   _env["REQUEST_METHOD"] = param["Method"];
   _env["REQUEST_URI"] = param["URI"];
   _env["SCRIPT_NAME"] = param["URI"].substr(0, param["URI"].find("?"));
-  _env["SERVER_NAME"] = param["Name"];  // 만들기
-  _env["SERVER_PORT"] = param["Port"];  // 만들기
+  _env["SERVER_NAME"] = param["Name"];
+  _env["SERVER_PORT"] = param["Port"]; 
   _env["SERVER_PROTOCOL"] = "HTTP/1.1";
   _env["SERVER_SOFTWARE"] = "Webserv/1.0";
   _cgiPath = param["Cgi-Path"];  // 만들기 보너스 (multi cgi) 포함됨

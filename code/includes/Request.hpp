@@ -21,13 +21,11 @@ class Request {
   std::string _host;
   std::string _autoindex;
   enum MIME _mime;
-  int _port;
   int _status;
   bool _isFullReq;
 
- private:
   void parseUrl();
-
+ 
  public:
   Request();
   ~Request();
@@ -37,7 +35,6 @@ class Request {
   void addRawContents(const std::string &raw);
   void addHeader(std::string key, std::string value);
   const std::string getHost();
-  const int &getPort();
   const std::string getUri();
   const std::string getMessage() const;
   const std::string getBody() const;

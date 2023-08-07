@@ -13,8 +13,7 @@ class Method : public IMethod {
 
  public:
   virtual ~Method();
-
-  void process(Request &request, Response &response);
+  virtual void process(Request &request, Response &response);
 };
 
 #endif

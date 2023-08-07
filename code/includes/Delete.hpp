@@ -12,8 +12,6 @@ class Delete : public Method {
   void process(Request &request, Response &response);
 
   void makeStatusLine(Request &request, Response &response);
-  void detaultErrorPage();
-  void deleteDenied();
 };
 
 #endif

@@ -100,11 +100,9 @@ const std::string Request::getUri() { return _header["URI"]; }
 
 const std::string Request::getHost() { return _host; }
 
-const int &Request::getPort() { return _port; }
-
 const std::string Request::getBody() const { return _body; }
 
-const std::string Request::getMessage() const { return "temp"; }
+const std::string Request::getMessage() const { return "temp"; } // <<<<
 
 const std::string &Request::getAutoindex() const { return _autoindex; }
 

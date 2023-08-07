@@ -6,12 +6,10 @@ Get::~Get() {}
 
 void Get::makeBody(Request &request, Response &response, std::ifstream &file) {
   std::stringstream buffer;
-
+  
   buffer << file.rdbuf();
-  if (buffer.good() == false) {
+  if (buffer.good() == false)
     throw ErrorException(500);
-    return;
-  }
   _body = buffer.str();
   file.close();
   return;
@@ -64,19 +62,14 @@ void Get::process(Request &request, Response &response) {
             _path = fullUri.substr().append(token).c_str();
             makeResponse(request, response, temp);
           }
-          else
-            temp.close();
-            return;
-          }
         }
+      }
       std::ifstream tmp(fullUri.substr().append("index.html").c_str());
       if (tmp.is_open() == true) {
         _path = fullUri.substr().append("index.html").c_str();
         makeResponse(request, response, tmp);
         return;
       }
-      else
-        tmp.close();
       if (request.getHeaderByKey("AutoIndex") == "on")
         response.directoryListing(fullUri);
       else

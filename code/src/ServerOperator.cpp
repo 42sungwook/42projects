@@ -13,8 +13,8 @@ void ServerOperator::run() {
   struct kevent *currEvent;
   int eventNb;
   while (1) {
-    /*  apply changes and return new events(pending events) */
     eventNb = kq.countEvents();
+    
     kq.clearCheckList();  // clear change_list for new changes
     for (int i = 0; i < eventNb; ++i) {
       currEvent = &(kq.getEventList())[i];
@@ -43,20 +43,24 @@ void ServerOperator::handleReadEvent(struct kevent *event, Kqueue kq) {
     std::cout << "ident: " << event->ident << std::endl;
     int clientSocket;
 
-    if ((clientSocket = accept(event->ident, NULL, NULL)) == -1) {
+    sockaddr_in clientAddr;
+    socklen_t clientAddrLen = sizeof(clientAddr);
+    if ((clientSocket = accept(event->ident, (struct sockaddr *)&clientAddr, &clientAddrLen)) == -1) {
       std::cerr << "accept() error\n";
       exit(EXIT_FAILURE);
     }
     std::cout << "accept new client: " << clientSocket << std::endl;
+    char *clientIp = inet_ntoa(clientAddr.sin_addr);
     _clientToServer[clientSocket] = event->ident;
     fcntl(clientSocket, F_SETFL, O_NONBLOCK);
 
     /* add event for client socket - add read && write event */
     kq.changeEvents(clientSocket, EVFILT_READ, EV_ADD | EV_ENABLE, 0, 0, NULL);
     _clients[clientSocket].addRawContents("");
+    _clients[clientSocket].addHeader("ClientIP", clientIp);
   } else if (isExistClient(event->ident)) {
     /* read data from client */
-    char buf[2048];
+    char buf[1024];
     int n;
     n = read(event->ident, buf, sizeof(buf));
     if (n == 0) {
@@ -96,14 +100,15 @@ void ServerOperator::handleWriteEvent(struct kevent *event, Kqueue kq) {
   _clients[event->ident].addHeader("RootDir", locBlock->getRoot());
   _clients[event->ident].addHeader("AutoIndex", locBlock->getAutoindex());
   _clients[event->ident].addHeader("Index", locBlock->getIndex());
+  _clients[event->ident].addHeader("Name", locBlock->getServerName());
+  _clients[event->ident].addHeader("Port", std::to_string(locBlock->getListenPort()));
 
-  // autoIndex on off 여부 req에 저장
 
   if (_clients[event->ident].getStatus() != 200) {
     res.setErrorRes(_clients[event->ident].getStatus());
   } else {
-    IMethod *method;
-
+    Method *method; 
+    
     if (_clients[event->ident].getMethod() == "GET")
       method = new Get();
     else if (_clients[event->ident].getMethod() == "POST")
@@ -131,8 +136,7 @@ ServerBlock *ServerOperator::getLocationBlock(Request &req, ServerBlock *sb) {
 
   for (LocationList::iterator it = locList->begin(); it != locList->end();
        it++) {
-    requestURI = req.getHeaderByKey(
-        "BasicURI");  // uri를 쪼개서 처리를 거친 디렉토리 경로를 찾아서 넣기
+    requestURI = req.getHeaderByKey("BasicURI");  
     if (requestURI.find((*it)->getPath()) != requestURI.npos) {
       return (*it);
     }

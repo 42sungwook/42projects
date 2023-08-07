@@ -1,6 +1,7 @@
 #ifndef SERVEROPERATOR_HPP
 #define SERVEROPERATOR_HPP
 #include <list>
+#include <arpa/inet.h>
 
 #include "Delete.hpp"
 #include "Get.hpp"

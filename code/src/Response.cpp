@@ -38,37 +38,41 @@ Response::~Response() {}
 
 void Response::convertCGI(std::string cgiResult) {
   std::stringstream ss(cgiResult);
+  std::string body;
+  std::string header;
+  std::string statusLine;
   std::string line;
 
   while (std::getline(ss, line)) {
     if (line.find("Content-Type") != std::string::npos) {
-      _header += line;
-      _header += "\r\n";
+      header += line;
+      header += "\r\n";
     } else if (line.find("Status") != std::string::npos) {
-      _statusLine += line;
-      _statusLine += "\r\n";
+      statusLine += line;
+      statusLine += "\r\n";
     } else if (line.find("Content-Length") != std::string::npos) {
-      _header += line;
-      _header += "\r\n";
+      header += line;
+      header += "\r\n";
     } else if (!line.empty()) {
-      _body += line;
+      body += line;
 	  // TODO 마지막 문장에 개행 없으면 개행 붙이지 않기
-      _body += "\n";
+      body += "\n";
     }
   }
-  if (_statusLine == "") {
-    _statusLine += "HTTP/1.1 200 OK";
-    _statusLine += "\r\n";
+  if (statusLine == "") {
+    statusLine += "HTTP/1.1 200 OK";
+    statusLine += "\r\n";
   }
-  if (_header.find("Content-Length") == std::string::npos) {
-    _header += "Content-Length: ";
-    _header += std::to_string(_body.length());
-    _header += "\r\n";
+  if (header.find("Content-Length") == std::string::npos) {
+    header += "Content-Length: ";
+    header += std::to_string(body.length());
+    header += "\r\n";
   }
-  _result += _statusLine;
-  _result += _header;
+  
+  _result += statusLine;
+  _result += header;
   _result += "\r\n";
-  _result += _body;
+  _result += body;
 }
 
 void Response::directoryListing(std::string path) {
@@ -131,7 +135,6 @@ void Response::setErrorRes(int statusCode) {
   header += "\r\n";
   body += getStatusCode(statusCode);
   body += " : Error";
-  body += "\r\n";
   header += "Content-Length: ";
   header += std::to_string(body.length());
   header += "\r\n\r\n";
