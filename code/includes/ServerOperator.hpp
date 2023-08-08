@@ -1,7 +1,8 @@
 #ifndef SERVEROPERATOR_HPP
 #define SERVEROPERATOR_HPP
-#include <list>
 #include <arpa/inet.h>
+
+#include <list>
 
 #include "Delete.hpp"
 #include "Get.hpp"
@@ -10,6 +11,7 @@
 #include "Post.hpp"
 #include "Request.hpp"
 #include "Server.hpp"
+#include "Utils.hpp"
 
 class ServerOperator {
  private:
@@ -22,6 +24,7 @@ class ServerOperator {
   void disconnectClient(int clientSock);
   bool isExistClient(int clientSock);
   ServerBlock *getLocationBlock(Request &req, ServerBlock *sb);
+  ServerBlock *findLocationBlock(struct kevent *event);
 
   void handleEventError(struct kevent *event);
   void handleReadEvent(struct kevent *event, Kqueue kq);

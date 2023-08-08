@@ -7,6 +7,7 @@ Post::~Post() {}
 void Post::process(Request &request, Response &response) {
   try {
     std::string fullUri = request.getHeaderByKey("RootDir");
+    
     fullUri += request.getHeaderByKey("BasicURI");
     if (fullUri[(fullUri.size() - 1)] == '/') {
       if (request.getHeaderByKey("Index") != "") {

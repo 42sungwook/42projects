@@ -45,7 +45,7 @@ void Delete::makeStatusLine(Request &request, Response &response) {
 
 void Delete::process(Request &request, Response &response) {
   makeStatusLine(request, response);
-  response.setResult(_statusLine, _header, _body);
+  response.setResult();
 }
 
 Delete::Delete() {}

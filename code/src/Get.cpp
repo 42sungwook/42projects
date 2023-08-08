@@ -4,7 +4,8 @@ Get::Get() {}
 
 Get::~Get() {}
 
-void Get::makeBody(Request &request, Response &response, std::ifstream &file) {
+void Get::makeBody(/* Request &request,  */ Response &response,
+                   std::ifstream &file) {
   std::stringstream buffer;
 
   buffer << file.rdbuf();
@@ -15,18 +16,19 @@ void Get::makeBody(Request &request, Response &response, std::ifstream &file) {
 }
 
 void Get::makeHeader(Request &request, Response &response) {
-  if (_body != "")
+  if (_body != "") {
     if (request.getHeaderByKey("Content-Type") == "")
       response.setHeaders("Content-Type", "text/html");
     else
       response.setHeaders("Content-Type",
                           request.getHeaderByKey("Content-Type"));
+  }
   response.setHeaders("Content-Length", ftItos(_body.length()));
 }
 
 void Get::makeResponse(Request &request, Response &response,
                        std::ifstream &file) {
-  makeBody(request, response, file);
+  makeBody(response, file);
   makeHeader(request, response);
   response.setStatusLine(request.getStatus());
   response.setResult();

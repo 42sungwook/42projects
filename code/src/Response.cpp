@@ -40,76 +40,48 @@ Response::~Response() {}
 
 void Response::convertCGI(const std::string &cgiResult) {
   std::stringstream ss(cgiResult);
-  std::string body;
-  std::string header;
-  std::string statusLine;
   std::string line;
 
-  while (std::getline(ss, line)) {
-    if (line.find("Content-Type") != std::string::npos) {
-      header += line;
-      header += "\r\n";
-    } else if (line.find("Status") != std::string::npos) {
-      statusLine += line;
-      statusLine += "\r\n";
-    } else if (line.find("Content-Length") != std::string::npos) {
-      header += line;
-      header += "\r\n";
-    } else if (!line.empty()) {
-      body += line;
-      // TODO 마지막 문장에 개행 없으면 개행 붙이지 않기
-      body += "\n";
+  while (std::getline(ss, line, '\r') && line != "\n") {
+    if (line.find("HTTP/1.1") != std::string::npos)
+      _statusLine += line;
+    else {
+      size_t pos = line.find(":");
+      _headers[line.substr(1, pos - 1)] = line.substr(pos + 1, line.length());
     }
   }
-  if (statusLine == "") {
-    statusLine += "HTTP/1.1 200 OK";
-    statusLine += "\r\n";
+  _body = ss.str();
+  if (_statusLine == "") {
+    setStatusLine(200);
   }
-  if (header.find("Content-Length") == std::string::npos) {
-    header += "Content-Length: ";
-    header += ftItos(body.length());
-    header += "\r\n";
+  if (_headers.find("Content-Length") == _headers.end()) {
+    setHeaders("Content-Length", ftItos(_body.length()));
   }
-
-  _result += statusLine;
-  _result += header;
-  _result += "\r\n";
-  _result += body;
+  setResult();
 }
 
 void Response::directoryListing(std::string path) {
   DIR *dir;
   struct dirent *ent;
-  std::string body;
-  std::string header;
-  std::string statusLine;
 
   if ((dir = opendir(path.c_str())) != NULL) {
     /* print all the files and directories within directory */
     while ((ent = readdir(dir)) != NULL) {
-      body += "<a href=\"";
-      body += ent->d_name;
-      body += "\">";
-      body += ent->d_name;
-      body += "</a><br>";
+      _body += "<a href=\"";
+      _body += ent->d_name;
+      _body += "\">";
+      _body += ent->d_name;
+      _body += "</a><br>";
     }
     closedir(dir);
   } else {
     /* could not open directory */
     return;
   }
-  header += "Content-Type: text/html";
-  header += "\r\n";
-  header += "Content-Length: ";
-  header += ftItos(body.length());
-  header += "\r\n";
-  statusLine += "HTTP/1.1 200 OK";
-  statusLine += "\r\n";
-  _result += statusLine;
-  _result += header;
-  _result += "\r\n";
-  _result += body;
-  // ToDo 확인필요
+  _headers["Content-Type"] = "text/html";
+  _headers["Content-Length"] = ftItos(_body.length());
+  setStatusLine(200);
+  setResult();
 }
 
 int Response::sendResponse(int clientSocket) {
@@ -118,24 +90,17 @@ int Response::sendResponse(int clientSocket) {
 }
 
 void Response::setErrorRes(int statusCode) {
-  std::string body;
-  std::string header;
-  std::string statusLine;
-
-  header.append("HTTP/1.1 ");
-  header.append(ftItos(statusCode));
-  header.append(" ");
-  header.append(_statusCodes[statusCode]);
-  header += "\r\n";
-  header += "Content-Type: text/plain";
-  header += "\r\n";
-  body += _statusCodes[statusCode];
-  body += " : Error";
-  header += "Content-Length: ";
-  header += ftItos(body.length());
-  header += "\r\n\r\n";
-  _result += header;
-  _result += body;
+  _statusLine.clear();
+  _headers.clear();
+  _body.clear();
+  _statusLine += "HTTP/1.1 ";
+  _statusLine += ftItos(statusCode);
+  _statusLine += _statusCodes[statusCode];
+  _headers["Content-Type"] = "text/plain";
+  _body += _statusCodes[statusCode];
+  _body += ": Error";
+  _headers["Content-Length"] = ftItos(_body.length());
+  setResult();
 }
 
 void Response::setResult() {

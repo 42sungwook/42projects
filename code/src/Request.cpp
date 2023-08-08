@@ -60,16 +60,11 @@ void Request::parsing() {
   } else {
     _host = _header["Host"];
   }
-  while (std::getline(ss, line)) {
-    if (ss.eof() == true)
-      _body += line;
-    else if (line != "")
-      _body += line + "\n";
-  }
+  _body = ss.str();
   if (_header["method"] == "POST" &&
       static_cast<size_t>(std::atoi(_header["Content-Length"].c_str())) !=
           _body.size()) {
-    return;
+    _status = 400;
   }
   // 8KB is default maximum size of request, config로 수정
   if (_rawContents.size() - _body.size() >= 8192) {
@@ -102,7 +97,7 @@ const std::string Request::getHost() { return _host; }
 
 const std::string Request::getBody() const { return _body; }
 
-const std::string Request::getMessage() const { return "temp"; } // <<<<
+const std::string Request::getMessage() const { return "temp"; }  // <<<<
 
 const std::string &Request::getAutoindex() const { return _autoindex; }
 

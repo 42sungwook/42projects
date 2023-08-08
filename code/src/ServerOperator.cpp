@@ -14,7 +14,7 @@ void ServerOperator::run() {
   int eventNb;
   while (1) {
     eventNb = kq.countEvents();
-    
+
     kq.clearCheckList();  // clear change_list for new changes
     for (int i = 0; i < eventNb; ++i) {
       currEvent = &(kq.getEventList())[i];
@@ -45,7 +45,8 @@ void ServerOperator::handleReadEvent(struct kevent *event, Kqueue kq) {
 
     sockaddr_in clientAddr;
     socklen_t clientAddrLen = sizeof(clientAddr);
-    if ((clientSocket = accept(event->ident, (struct sockaddr *)&clientAddr, &clientAddrLen)) == -1) {
+    if ((clientSocket = accept(event->ident, (struct sockaddr *)&clientAddr,
+                               &clientAddrLen)) == -1) {
       std::cerr << "accept() error\n";
       exit(EXIT_FAILURE);
     }
@@ -77,15 +78,12 @@ void ServerOperator::handleReadEvent(struct kevent *event, Kqueue kq) {
   }
 }
 
-void ServerOperator::handleWriteEvent(struct kevent *event, Kqueue kq) {
-  /* send data to client */
-  Response res;
-
+ServerBlock *ServerOperator::findLocationBlock(struct kevent *event) {
   ServerBlock *locBlock =
       NULL;  // Location Block or Server Block (not match directory)
   if (_serverMap.find(_clientToServer[event->ident]) == _serverMap.end()) {
     std::cout << "client socket error" << std::endl;
-    return;
+    return NULL;
   }
   SPSBList *temp = _serverMap[_clientToServer[event->ident]]->getSPSBList();
   for (SPSBList::iterator it = temp->begin(); it != temp->end(); it++) {
@@ -101,14 +99,22 @@ void ServerOperator::handleWriteEvent(struct kevent *event, Kqueue kq) {
   _clients[event->ident].addHeader("AutoIndex", locBlock->getAutoindex());
   _clients[event->ident].addHeader("Index", locBlock->getIndex());
   _clients[event->ident].addHeader("Name", locBlock->getServerName());
-  _clients[event->ident].addHeader("Port", std::to_string(locBlock->getListenPort()));
+  _clients[event->ident].addHeader("Port", ftItos(locBlock->getListenPort()));
+  return locBlock;
+}
 
+void ServerOperator::handleWriteEvent(struct kevent *event, Kqueue kq) {
+  /* send data to client */
+  Response res;
+  ServerBlock *locBlock = findLocationBlock(event);
+// TODO method 확인, 그리고 타임아웃 cgi일때 제한된경로일깨
 
+  if (locBlock == NULL) return;
   if (_clients[event->ident].getStatus() != 200) {
     res.setErrorRes(_clients[event->ident].getStatus());
   } else {
-    Method *method; 
-    
+    Method *method;
+
     if (_clients[event->ident].getMethod() == "GET")
       method = new Get();
     else if (_clients[event->ident].getMethod() == "POST")
@@ -117,10 +123,10 @@ void ServerOperator::handleWriteEvent(struct kevent *event, Kqueue kq) {
       method = new Delete();
 
     method->process(_clients[event->ident], res);
+    delete method;
   }
 
-  if (write(event->ident, res.getResult().c_str(), res.getResult().size()) ==
-      -1) {
+  if (res.sendResponse(event->ident) == 1) {
     std::cerr << "client write error!" << std::endl;
     disconnectClient(event->ident);
   } else {
@@ -136,7 +142,7 @@ ServerBlock *ServerOperator::getLocationBlock(Request &req, ServerBlock *sb) {
 
   for (LocationList::iterator it = locList->begin(); it != locList->end();
        it++) {
-    requestURI = req.getHeaderByKey("BasicURI");  
+    requestURI = req.getHeaderByKey("BasicURI");
     if (requestURI.find((*it)->getPath()) != requestURI.npos) {
       return (*it);
     }

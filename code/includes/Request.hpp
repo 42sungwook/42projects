@@ -25,7 +25,7 @@ class Request {
   bool _isFullReq;
 
   void parseUrl();
- 
+
  public:
   Request();
   ~Request();
