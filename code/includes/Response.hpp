@@ -8,10 +8,14 @@
 #include <map>
 
 #include "../includes/Request.hpp"
+#include "../includes/Utils.hpp"
 
 class Response {
  private:
   std::string _result;
+  std::map<std::string, std::string> _headers;
+  std::string _body;
+  std::string _statusLine;
 
   std::map<enum MIME, std::string> _mimeTypes;
   std::map<int, std::string> _statusCodes;
@@ -21,14 +25,14 @@ class Response {
   ~Response();
 
   void directoryListing(std::string path);
-  void convertCGI(std::string cgiResult);
+  void convertCGI(const std::string &cgiResult);
   int sendResponse(int clientSocket);
 
-  std::string getStatusCode(int key);
   void setErrorRes(int statusCode);
-  void setResult(const std::string &statusLine, const std::string &header,
-                 const std::string &body);
-  const std::string &getResult();
+  void setResult();
+  void setStatusLine(int code);
+  void setHeaders(const std::string &key, const std::string &value);
+  void setBody(const std::string &body);
 };
 
 #endif

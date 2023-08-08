@@ -9,6 +9,7 @@
 #include "ErrorException.hpp"
 #include "Request.hpp"
 #include "Response.hpp"
+#include "Utils.hpp"
 
 class IMethod {
  public:

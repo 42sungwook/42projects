@@ -8,7 +8,6 @@ class Get : public Method {
  private:
   void makeBody(Request &request, Response &response, std::ifstream &file);
   void makeHeader(Request &request, Response &response);
-  void makeStatusLine(Request &request, Response &response);
   void makeResponse(Request &request, Response &response, std::ifstream &file);
 
  public:
