@@ -86,7 +86,7 @@ void Request::clear() {
   _header["ClientIP"] = clientIp;
   _body.clear();
   _host.clear();
-  _autoindex.clear();
+  // _autoindex.clear();
   _status = 200;
   _isFullReq = false;
 }

@@ -100,6 +100,7 @@ ServerBlock *ServerOperator::findLocationBlock(struct kevent *event) {
   _clients[event->ident].addHeader("Index", locBlock->getIndex());
   _clients[event->ident].addHeader("Name", locBlock->getServerName());
   _clients[event->ident].addHeader("Port", ftItos(locBlock->getListenPort()));
+
   return locBlock;
 }
 

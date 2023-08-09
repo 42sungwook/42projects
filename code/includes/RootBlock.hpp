@@ -39,8 +39,6 @@ class RootBlock {
   const std::string getPid() const;
   int getWorkerConnection() const;
   int getWorkerProcesses() const;
-
-  void test();  // TODO test
 };
 
 #endif

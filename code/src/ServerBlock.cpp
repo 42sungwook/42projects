@@ -75,16 +75,3 @@ const std::string ServerBlock::getClientMaxBodySize() const {
   return _clientMaxBodySize;
 }
 const std::string ServerBlock::getAutoindex() const { return _autoindex; }
-
-// TODO test
-void ServerBlock::test() {
-  std::cout << "===========SERVER===========" << std::endl;
-  std::cout << "_listenPort: " << _listenPort << std::endl;
-  std::cout << "_listenHost: " << _listenHost << std::endl;
-  std::cout << "_root: " << _root << std::endl;
-  std::cout << "_index: " << _index << std::endl;
-  std::cout << "_serverName: " << _serverName << std::endl;
-  std::cout << "_clientMaxBodySize: " << _clientMaxBodySize << std::endl;
-  std::cout << "============================" << std::endl;
-  std::cout << std::endl;
-}

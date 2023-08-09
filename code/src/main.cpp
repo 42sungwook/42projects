@@ -12,7 +12,6 @@ int main(int ac, char **av) {
   RootBlock root;
   ConfigParser parser(av[1]);
   parser.parseBlocks(&root, ROOT);
-  root.test();
 
   ServerBlockMap sbMap = parser.getServerBlockMap();
   ServerMap serverMap;

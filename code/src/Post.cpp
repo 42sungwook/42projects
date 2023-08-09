@@ -43,9 +43,8 @@ void Post::process(Request &request, Response &response) {
       }
       if (request.getHeaderByKey("AutoIndex") == "on")
         response.directoryListing(fullUri);
-      else {
+      else
         throw ErrorException(403);
-      }
     } else {
       std::ifstream tempf(fullUri.c_str());
       if (tempf.is_open() == true) {

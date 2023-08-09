@@ -57,6 +57,8 @@ void Get::process(Request &request, Response &response) {
         makeResponse(request, response, tmp);
         return;
       }
+      std::cout << "AutoIndex: " << request.getHeaderByKey("AutoIndex")
+                << std::endl;
       if (request.getHeaderByKey("AutoIndex") == "on")
         response.directoryListing(fullUri);
       else

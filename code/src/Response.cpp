@@ -63,8 +63,7 @@ void Response::convertCGI(const std::string &cgiResult) {
     setStatusLine(200);
   }
   if (_headers.find("Content-Length") == _headers.end()) {
-    // setHeaders("Content-Length", ftItos(_body.length()));
-    setHeaders("Content-Length", std::to_string(_body.length()));
+    setHeaders("Content-Length", ftItos(_body.length()));
   }
   setResult();
 }
@@ -83,7 +82,9 @@ void Response::directoryListing(std::string path) {
       _body += "</a><br>";
     }
     closedir(dir);
+    std::cout << "directory listing loop end" << std::endl;
   } else {
+    std::cout << "directory error : " << path.c_str() << std::endl;
     /* could not open directory */
     return;
   }

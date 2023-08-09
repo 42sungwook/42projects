@@ -38,8 +38,6 @@ class ServerBlock : public RootBlock {
   const std::string getServerName() const;
   const std::string getClientMaxBodySize() const;
   const std::string getAutoindex() const;
-
-  void test();  // TODO test
 };
 
 #endif

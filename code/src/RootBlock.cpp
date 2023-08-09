@@ -75,17 +75,3 @@ int RootBlock::getWorkerRlimitNofile() const { return _workerRlimitNofile; }
 int RootBlock::getWorkerConnection() const { return _workerConnections; }
 
 const std::string RootBlock::getInclude() const { return _include; }
-
-// TODO test
-void RootBlock::test() {
-  std::cout << "===========ROOT===========" << std::endl;
-  std::cout << "_user: " << _user << std::endl;
-  std::cout << "_group: " << _group << std::endl;
-  std::cout << "_workerProcesses: " << _workerProcesses << std::endl;
-  std::cout << "_errorLog: " << _errorLog << std::endl;
-  std::cout << "_pid: " << _pid << std::endl;
-  std::cout << "_workerRlimitNofile: " << _workerRlimitNofile << std::endl;
-  std::cout << "_workerConnections: " << _workerConnections << std::endl;
-  std::cout << "_include: " << _include << std::endl;
-  std::cout << "==========================" << std::endl;
-}
