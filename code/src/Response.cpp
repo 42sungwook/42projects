@@ -42,20 +42,29 @@ void Response::convertCGI(const std::string &cgiResult) {
   std::stringstream ss(cgiResult);
   std::string line;
 
+  _headers.clear();
+  _body.clear();
+  _statusLine.clear();
+
   while (std::getline(ss, line, '\r') && line != "\n") {
-    if (line.find("HTTP/1.1") != std::string::npos)
+    if (line.find("HTTP/1.1") != std::string::npos) {
       _statusLine += line;
-    else {
+    } else {
       size_t pos = line.find(":");
-      _headers[line.substr(1, pos - 1)] = line.substr(pos + 1, line.length());
+      if (pos == line.npos) break;
+      _headers[line.substr(0, pos)] = line.substr(pos + 2);
     }
   }
-  _body = ss.str();
+  while (std::getline(ss, line)) {
+    _body += line;
+    if (!ss.eof()) _body += '\n';
+  }
   if (_statusLine == "") {
     setStatusLine(200);
   }
   if (_headers.find("Content-Length") == _headers.end()) {
-    setHeaders("Content-Length", ftItos(_body.length()));
+    // setHeaders("Content-Length", ftItos(_body.length()));
+    setHeaders("Content-Length", std::to_string(_body.length()));
   }
   setResult();
 }

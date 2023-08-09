@@ -23,7 +23,8 @@ void Cgi::makeEnv(std::map<std::string, std::string> param) {
   _env["SERVER_PORT"] = param["Port"];
   _env["SERVER_PROTOCOL"] = "HTTP/1.1";
   _env["SERVER_SOFTWARE"] = "Webserv/1.0";
-  _cgiPath = param["Cgi-Path"];  // 만들기 보너스 (multi cgi) 포함됨
+  // _cgiPath = param["Cgi-Path"];
+  _cgiPath = "./www/cgi/cgi_tester";
 }
 
 void Cgi::reqToEnvp(std::map<std::string, std::string> param) {
@@ -49,6 +50,7 @@ void Cgi::excute(const std::string &body) {
   int status;
   char buf[1024];
   std::string tmp;
+  size_t len;
 
   if (pipe(fd) < 0) {
     std::cerr << "pipe error" << std::endl;
@@ -76,7 +78,8 @@ void Cgi::excute(const std::string &body) {
   } else {
     close(fd[1]);
     waitpid(pid, &status, 0);
-    while (read(fd[0], buf, 1024) > 0) {
+    while ((len = read(fd[0], buf, 1024)) > 0) {
+      buf[len] = '\0';
       tmp += buf;
       memset(buf, 0, 1024);
     }

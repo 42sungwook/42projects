@@ -7,7 +7,7 @@ Post::~Post() {}
 void Post::process(Request &request, Response &response) {
   try {
     std::string fullUri = request.getHeaderByKey("RootDir");
-    
+
     fullUri += request.getHeaderByKey("BasicURI");
     if (fullUri[(fullUri.size() - 1)] == '/') {
       if (request.getHeaderByKey("Index") != "") {
@@ -32,9 +32,9 @@ void Post::process(Request &request, Response &response) {
       std::ifstream tmp(fullUri.substr().append("index.html").c_str());
       if (tmp.is_open() == true) {
         _path = fullUri.substr().append("index.html").c_str();
-        request.addHeader(
-                "BasicURI",
-                std::string(request.getHeaderByKey("BasicURI")).append("index.html"));
+        request.addHeader("BasicURI",
+                          std::string(request.getHeaderByKey("BasicURI"))
+                              .append("index.html"));
         Cgi cgi;
         cgi.reqToEnvp(request.getHeaderMap());
         cgi.excute(request.getBody());

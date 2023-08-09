@@ -60,12 +60,15 @@ void Request::parsing() {
   } else {
     _host = _header["Host"];
   }
-  _body = ss.str();
-  if (_header["method"] == "POST" &&
-      static_cast<size_t>(std::atoi(_header["Content-Length"].c_str())) !=
-          _body.size()) {
-    _status = 400;
+  while (std::getline(ss, line)) {
+    _body += line;
+    if (!ss.eof()) _body += '\n';
   }
+  // if (_header["method"] == "POST" &&
+  //     static_cast<size_t>(std::atoi(_header["Content-Length"].c_str())) !=
+  //         _body.size()) {
+  //   _status = 400;
+  // }
   // 8KB is default maximum size of request, config로 수정
   if (_rawContents.size() - _body.size() >= 8192) {
     _status = 414;
