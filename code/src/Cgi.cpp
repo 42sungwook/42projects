@@ -20,7 +20,7 @@ void Cgi::makeEnv(std::map<std::string, std::string> param) {
   _env["REQUEST_URI"] = param["URI"];
   _env["SCRIPT_NAME"] = param["URI"].substr(0, param["URI"].find("?"));
   _env["SERVER_NAME"] = param["Name"];
-  _env["SERVER_PORT"] = param["Port"]; 
+  _env["SERVER_PORT"] = param["Port"];
   _env["SERVER_PROTOCOL"] = "HTTP/1.1";
   _env["SERVER_SOFTWARE"] = "Webserv/1.0";
   _cgiPath = param["Cgi-Path"];  // 만들기 보너스 (multi cgi) 포함됨
@@ -66,12 +66,12 @@ void Cgi::excute(const std::string &body) {
     write(rd[1], body.c_str(), body.size());
     close(rd[1]);
     dup2(rd[0], 0);
+    close(rd[0]);
     close(fd[0]);
     dup2(fd[1], 1);
     close(fd[1]);
     const char *argv[2] = {_env["PATH_TRANSLATED"].c_str(), NULL};
     execve(_cgiPath.c_str(), const_cast<char **>(argv), _envp);
-    close(rd[0]);
     exit(0);
   } else {
     close(fd[1]);

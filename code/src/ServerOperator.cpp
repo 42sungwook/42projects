@@ -107,7 +107,7 @@ void ServerOperator::handleWriteEvent(struct kevent *event, Kqueue kq) {
   /* send data to client */
   Response res;
   ServerBlock *locBlock = findLocationBlock(event);
-// TODO method 확인, 그리고 타임아웃 cgi일때 제한된경로일깨
+  // TODO method 확인, 그리고 타임아웃 cgi일때 제한된경로일깨
 
   if (locBlock == NULL) return;
   if (_clients[event->ident].getStatus() != 200) {

@@ -77,7 +77,10 @@ void Request::setAutoindex(std::string &value) { _autoindex = value; }
 
 void Request::clear() {
   _rawContents.clear();
+  addRawContents("");
+  std::string clientIp = _header["ClientIP"];
   _header.clear();
+  _header["ClientIP"] = clientIp;
   _body.clear();
   _host.clear();
   _autoindex.clear();
@@ -103,7 +106,7 @@ const std::string &Request::getAutoindex() const { return _autoindex; }
 
 enum PROCESS Request::getProcess() { return CGI; }
 
-const int &Request::getStatus() const { return _status; };
+const int &Request::getStatus() const { return _status; }
 
 enum MIME Request::getMime() const { return _mime; }
 

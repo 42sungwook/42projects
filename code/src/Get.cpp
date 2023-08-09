@@ -48,6 +48,7 @@ void Get::process(Request &request, Response &response) {
           if (temp.is_open() == true) {
             _path = fullUri.substr().append(token).c_str();
             makeResponse(request, response, temp);
+            return;
           }
         }
       }
