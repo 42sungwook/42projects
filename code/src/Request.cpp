@@ -84,7 +84,7 @@ void Request::clear() {
   _body.clear();
   _host.clear();
   _autoindex.clear();
-  _status = 0;
+  _status = 200;
   _isFullReq = false;
 }
 

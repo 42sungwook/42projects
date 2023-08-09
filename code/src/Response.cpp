@@ -115,8 +115,6 @@ void Response::setResult() {
     _result += ": ";
     _result += it->second;
     _result += "\r\n";
-    std::cout << "key & value:" << it->first << " : " << it->second
-              << std::endl;
   }
   _result += "\r\n";
   _result += _body;
