@@ -6,8 +6,7 @@
 
 class Get : public Method {
  private:
-  void makeBody(/* Request &request,  */ Response &response,
-                std::ifstream &file);
+  void makeBody(Response &response, std::ifstream &file);
   void makeHeader(Request &request, Response &response);
   void makeResponse(Request &request, Response &response, std::ifstream &file);
 

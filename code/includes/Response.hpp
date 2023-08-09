@@ -28,6 +28,7 @@ class Response {
   void convertCGI(const std::string &cgiResult);
   int sendResponse(int clientSocket);
 
+  const std::string &getBody() const;
   void setErrorRes(int statusCode);
   void setResult();
   void setStatusLine(int code);

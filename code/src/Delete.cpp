@@ -12,7 +12,7 @@ void Delete::makeStatusLine(Request &request, Response &response) {
         std::ifstream temp(fullUri.substr().append(token).c_str());
         if (temp.is_open() == true) {
           if (remove(fullUri.substr().append(token).c_str()) == 0) {
-            _statusLine = "HTTP/1.1 204 OK\r\n";
+            response.setStatusLine(204);
             return;
           } else {
             response.setErrorRes(403);
@@ -24,7 +24,7 @@ void Delete::makeStatusLine(Request &request, Response &response) {
     std::ifstream tmp(fullUri.substr().append("index.html").c_str());
     if (tmp.is_open() == true) {
       remove(fullUri.substr().append("index.html").c_str());
-      _statusLine = "HTTP/1.1 204 OK\r\n";
+      response.setStatusLine(204);
       return;
     } else  // pure directory
       response.setErrorRes(404);
@@ -32,7 +32,7 @@ void Delete::makeStatusLine(Request &request, Response &response) {
     std::ifstream tempf(fullUri.substr().c_str());
     if (tempf.is_open() == true) {
       if (remove(fullUri.substr().c_str()) == 0) {
-        _statusLine = "HTTP/1.1 204 OK\r\n";
+        response.setStatusLine(204);
         return;
       } else {
         response.setErrorRes(403);

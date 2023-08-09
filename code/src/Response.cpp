@@ -89,6 +89,8 @@ int Response::sendResponse(int clientSocket) {
   return (0);
 }
 
+const std::string &Response::getBody() const { return _body; }
+
 void Response::setErrorRes(int statusCode) {
   _statusLine.clear();
   _headers.clear();
@@ -113,6 +115,8 @@ void Response::setResult() {
     _result += ": ";
     _result += it->second;
     _result += "\r\n";
+    std::cout << "key & value:" << it->first << " : " << it->second
+              << std::endl;
   }
   _result += "\r\n";
   _result += _body;
