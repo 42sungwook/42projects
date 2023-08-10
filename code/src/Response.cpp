@@ -64,8 +64,6 @@ void Response::directoryListing(std::string path) {
 
   if ((dir = opendir(path.c_str())) != NULL) {
     /* print all the files and directories within directory */
-    readdir(dir);
-    readdir(dir);
     while ((ent = readdir(dir)) != NULL) {
       _body += "<a href=\"";
       _body += ent->d_name;

@@ -116,17 +116,20 @@ void ServerOperator::handleWriteEvent(struct kevent *event, Kqueue kq) {
   } else {
     Method *method;
 
-    if (_clients[event->ident].getMethod() == "GET" &&
-        (locBlock->getLimitExcept() == "GET" ||
-         locBlock->getLimitExcept() == "all"))
+    if (_clients[event->ident].getMethod() == "GET"
+        //  && (locBlock->getLimitExcept() == "GET" ||
+        //  locBlock->getLimitExcept() == "all")
+    )
       method = new Get();
-    else if (_clients[event->ident].getMethod() == "POST" &&
-             (locBlock->getLimitExcept() == "POST" ||
-              locBlock->getLimitExcept() == "all"))
+    else if (_clients[event->ident].getMethod() == "POST"
+             // && (locBlock->getLimitExcept() == "POST" ||
+             // locBlock->getLimitExcept() == "all")
+    )
       method = new Post();
-    else if (_clients[event->ident].getMethod() == "DELETE" &&
-             (locBlock->getLimitExcept() == "DELETE" ||
-              locBlock->getLimitExcept() == "all"))
+    else if (_clients[event->ident].getMethod() == "DELETE"
+             // && (locBlock->getLimitExcept() == "DELETE" ||
+             // locBlock->getLimitExcept() == "all")
+    )
       method = new Delete();
     else
       method = new Method();
