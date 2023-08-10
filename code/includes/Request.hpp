@@ -11,7 +11,6 @@
 
 enum METHOD { GET, POST, DELETE };
 enum PROCESS { CGI, NORMAL };
-enum MIME { DIRECTORY, HTML, CSS, JS, JPG, PNG, GIF, TXT, PDF, JSON, OCTET };
 
 class Request {
  private:
@@ -20,9 +19,10 @@ class Request {
   std::string _body;
   std::string _host;
   std::string _autoindex;
-  enum MIME _mime;
+  std::string _mime;
   int _status;
   bool _isFullReq;
+  std::map<std::string, std::string> _mimeTypes;
 
   void parseUrl();
 
@@ -40,7 +40,7 @@ class Request {
   const std::string getBody() const;
   const int &getStatus() const;
   const std::string &getAutoindex() const;
-  enum MIME getMime() const;
+  const std::string &getMime() const;
   enum PROCESS getProcess();
   std::string getMethod();
   bool isFullReq() const;

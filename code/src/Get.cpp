@@ -15,13 +15,9 @@ void Get::makeBody(Response &response, std::ifstream &file) {
 }
 
 void Get::makeHeader(Request &request, Response &response) {
-  if (response.getBody() != "") {
-    if (request.getHeaderByKey("Content-Type") == "")
-      response.setHeaders("Content-Type", "text/html");
-    else
-      response.setHeaders("Content-Type",
-                          request.getHeaderByKey("Content-Type"));
-  }
+  if (response.getBody() != "")
+    if (response.isInHeader("Content-Type") == false)
+      response.setHeaders("Content-Type", request.getMime());
   response.setHeaders("Content-Length", ftItos(response.getBody().length()));
 }
 
@@ -57,8 +53,6 @@ void Get::process(Request &request, Response &response) {
         makeResponse(request, response, tmp);
         return;
       }
-      std::cout << "AutoIndex: " << request.getHeaderByKey("AutoIndex")
-                << std::endl;
       if (request.getHeaderByKey("AutoIndex") == "on")
         response.directoryListing(fullUri);
       else

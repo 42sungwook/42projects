@@ -17,7 +17,6 @@ class Response {
   std::string _body;
   std::string _statusLine;
 
-  std::map<enum MIME, std::string> _mimeTypes;
   std::map<int, std::string> _statusCodes;
 
  public:
@@ -27,6 +26,8 @@ class Response {
   void directoryListing(std::string path);
   void convertCGI(const std::string &cgiResult);
   int sendResponse(int clientSocket);
+
+  bool isInHeader(const std::string &key);
 
   const std::string &getBody() const;
   void setErrorRes(int statusCode);

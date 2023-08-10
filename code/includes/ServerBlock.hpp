@@ -17,6 +17,7 @@ class ServerBlock : public RootBlock {
   std::string _serverName;
   std::string _clientMaxBodySize;
   std::string _autoindex;
+  std::string _limitExcept;
 
  public:
   ServerBlock(RootBlock &rootBlock);
@@ -29,15 +30,17 @@ class ServerBlock : public RootBlock {
   void setServerName(std::string value);
   void setClientMaxBodySize(std::string value);
   void setAutoindex(std::string value);
+  void setLimitExcept(std::string value);
   virtual void setKeyVal(std::string key, std::string value);
 
   int getListenPort() const;
-  const std::string getListenHost() const;
-  const std::string getRoot() const;
-  const std::string getIndex() const;
-  const std::string getServerName() const;
-  const std::string getClientMaxBodySize() const;
-  const std::string getAutoindex() const;
+  const std::string &getListenHost() const;
+  const std::string &getRoot() const;
+  const std::string &getIndex() const;
+  const std::string &getServerName() const;
+  const std::string &getClientMaxBodySize() const;
+  const std::string &getAutoindex() const;
+  const std::string &getLimitExcept() const;
 };
 
 #endif

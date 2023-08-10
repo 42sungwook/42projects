@@ -64,14 +64,14 @@ CLR =	\033[K
 -include $(DEPS)
 all				:	$(NAME)
 $(NAME)			:	$(OBJS)
-						$(CXX) $(CXXFLAGS) -o $@ $(OBJS)
+						@$(CXX) $(CXXFLAGS) -o $@ $(OBJS)
 						@printf "$(CLR)$(GRN)%$Ns is Ready ✅\\n$(RST)" $(NAME)
 
 $(OBJ_DIR)%.o	:	$(SRC_DIR)%.cpp
-						mkdir -p $(OBJ_DIR) $(DEP_DIR)
+						@mkdir -p $(OBJ_DIR) $(DEP_DIR)
 						@printf \
 						"$(CLR)$(GRN)%$Ns is Ready : $<$(RST)$(HOM)\\n" $(NAME)
-						$(CXX) $(DEPFLAGS) $(CXXFLAGS) $(CPPFLAGS) -o $@ -c $<
+						@$(CXX) $(DEPFLAGS) $(CXXFLAGS) $(CPPFLAGS) -o $@ -c $<
 						
 clean			:
 						$Q$(RM) $(OBJ_DIR) $(DEP_DIR) *.dSYM

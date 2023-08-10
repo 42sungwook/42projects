@@ -4,11 +4,24 @@ Post::Post() {}
 
 Post::~Post() {}
 
+std::string Post::generateRandomString() {
+  static std::string charset =
+      "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+  std::string result;
+  std::srand(std::time(0));
+
+  for (int i = 0; i < 32; ++i)
+    result.push_back(charset[std::rand() % charset.size()]);
+  return result;
+}
+
 void Post::process(Request &request, Response &response) {
   try {
     std::string fullUri = request.getHeaderByKey("RootDir");
 
     fullUri += request.getHeaderByKey("BasicURI");
+    std::cout << "full uri ::" << fullUri << std::endl;
+
     if (fullUri[(fullUri.size() - 1)] == '/') {
       if (request.getHeaderByKey("Index") != "") {
         std::stringstream ss(request.getHeaderByKey("Index"));

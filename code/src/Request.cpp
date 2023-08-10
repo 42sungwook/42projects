@@ -1,6 +1,6 @@
 #include "../includes/Request.hpp"
 
-Request::Request() : _mime(OCTET), _status(200), _isFullReq(false) {}
+Request::Request() : _mime("text/html"), _status(200), _isFullReq(false) {}
 
 Request::~Request() {}
 
@@ -9,19 +9,30 @@ void Request::parseUrl() {
   std::string uri = _header["URI"];
   size_t lastDotPos = uri.rfind('.');
 
+  _mimeTypes["html"] = "text/html";
+  _mimeTypes["css"] = "text/css";
+  _mimeTypes["js"] = "text/javascript";
+  _mimeTypes["jpg"] = "image/jpeg";
+  _mimeTypes["png"] = "image/png";
+  _mimeTypes["gif"] = "image/gif";
+  _mimeTypes["txt"] = "text/plain";
+  _mimeTypes["pdf"] = "application/pdf";
+  _mimeTypes["json"] = "application/json";
+  _mimeTypes["else"] = "application/octet-stream";
+  _mimeTypes["directory"] = "directory";
+
   if (lastDotPos != std::string::npos) {
     std::string mime = uri.substr(lastDotPos + 1);
-    _mime = static_cast<enum MIME>(
-        (mime == "html") + (mime == "css") * 2 + (mime == "js") * 3 +
-        (mime == "jpg") * 4 + (mime == "png") * 5 + (mime == "gif") * 6 +
-        (mime == "txt") * 7 + (mime == "pdf") * 8 + (mime == "json") * 9);
-    if (!_mime) {
+
+    if (_mimeTypes.find(mime) != _mimeTypes.end())
+      _mime = _mimeTypes[mime];
+    else {
       if (stat(uri.c_str(), &info) != 0)
         _status = 404;
       else if (S_ISDIR(info.st_mode))
-        _mime = DIRECTORY;
+        _mime = _mimeTypes["directory"];
       else
-        _mime = OCTET;
+        _mime = _mimeTypes["else"];
     }
   }
 
@@ -87,6 +98,7 @@ void Request::clear() {
   _body.clear();
   _host.clear();
   // _autoindex.clear();
+  _mime = "text/html";
   _status = 200;
   _isFullReq = false;
 }
@@ -111,7 +123,7 @@ enum PROCESS Request::getProcess() { return CGI; }
 
 const int &Request::getStatus() const { return _status; }
 
-enum MIME Request::getMime() const { return _mime; }
+const std::string &Request::getMime() const { return _mime; }
 
 std::string Request::getMethod() { return _header["method"]; }
 

@@ -36,6 +36,7 @@ void ServerBlock::setListen(std::string value) {
     }
   }
 }
+void ServerBlock::setLimitExcept(std::string value) { _limitExcept = value; }
 
 void ServerBlock::setRoot(std::string value) { _root = value; }
 
@@ -67,11 +68,14 @@ void ServerBlock::setKeyVal(std::string key, std::string value) {
 }
 
 int ServerBlock::getListenPort() const { return _listenPort; }
-const std::string ServerBlock::getListenHost() const { return _listenHost; }
-const std::string ServerBlock::getRoot() const { return _root; }
-const std::string ServerBlock::getIndex() const { return _index; }
-const std::string ServerBlock::getServerName() const { return _serverName; }
-const std::string ServerBlock::getClientMaxBodySize() const {
+const std::string &ServerBlock::getListenHost() const { return _listenHost; }
+const std::string &ServerBlock::getRoot() const { return _root; }
+const std::string &ServerBlock::getIndex() const { return _index; }
+const std::string &ServerBlock::getServerName() const { return _serverName; }
+const std::string &ServerBlock::getClientMaxBodySize() const {
   return _clientMaxBodySize;
 }
-const std::string ServerBlock::getAutoindex() const { return _autoindex; }
+
+const std::string &ServerBlock::getLimitExcept() const { return _limitExcept; }
+
+const std::string &ServerBlock::getAutoindex() const { return _autoindex; }

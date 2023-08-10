@@ -10,6 +10,7 @@ class Post : public Method {
   ~Post();
 
   void process(Request &request, Response &response);
+  std::string generateRandomString();
 };
 
 #endif

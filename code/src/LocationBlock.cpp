@@ -1,17 +1,13 @@
 #include "../includes/LocationBlock.hpp"
 
 LocationBlock::LocationBlock(ServerBlock &serverBlock)
-    : ServerBlock(serverBlock), _path(), _limitExcept("all") {}
+    : ServerBlock(serverBlock), _path() {}
 
 LocationBlock::~LocationBlock() {}
 
 void LocationBlock::setPath(std::string value) { _path = value; }
 
-void LocationBlock::setLimitExcept(std::string value) { _limitExcept = value; }
-
-const std::string LocationBlock::getPath() const { return _path; }
-
-const std::string LocationBlock::getLimitExcept() const { return _limitExcept; }
+const std::string &LocationBlock::getPath() const { return _path; }
 
 void LocationBlock::setKeyVal(std::string key, std::string value) {
   typedef void (LocationBlock::*funcptr)(std::string);

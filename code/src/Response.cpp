@@ -3,16 +3,6 @@
 #include "../includes/Utils.hpp"
 
 Response::Response() {
-  _mimeTypes[HTML] = "text/html";
-  _mimeTypes[CSS] = "text/css";
-  _mimeTypes[JS] = "text/javascript";
-  _mimeTypes[JPG] = "image/jpeg";
-  _mimeTypes[PNG] = "image/png";
-  _mimeTypes[GIF] = "image/gif";
-  _mimeTypes[TXT] = "text/plain";
-  _mimeTypes[PDF] = "application/pdf";
-  _mimeTypes[JSON] = "application/json";
-  _mimeTypes[OCTET] = "application/octet-stream";
   _statusCodes[200] = " OK";
   _statusCodes[201] = " Created";
   _statusCodes[202] = " Accepted";
@@ -74,15 +64,21 @@ void Response::directoryListing(std::string path) {
 
   if ((dir = opendir(path.c_str())) != NULL) {
     /* print all the files and directories within directory */
+    readdir(dir);
+    readdir(dir);
     while ((ent = readdir(dir)) != NULL) {
       _body += "<a href=\"";
       _body += ent->d_name;
-      _body += "\">";
+      if (ent->d_type == DT_DIR)
+        _body += "/\">";
+      else if (std::string(&ent->d_name[ent->d_namlen - 5]) != ".html")
+        _body += "\" download>";
+      else
+        _body += "\">";
       _body += ent->d_name;
       _body += "</a><br>";
     }
     closedir(dir);
-    std::cout << "directory listing loop end" << std::endl;
   } else {
     std::cout << "directory error : " << path.c_str() << std::endl;
     /* could not open directory */
@@ -115,6 +111,11 @@ void Response::setErrorRes(int statusCode) {
   setResult();
 }
 
+bool Response::isInHeader(const std::string &key) {
+  if (_headers.find(key) == _headers.end()) return false;
+  return true;
+}
+
 void Response::setResult() {
   _result += _statusLine;
   _result += "\r\n";
@@ -135,8 +136,23 @@ void Response::setStatusLine(int code) {
   _statusLine += ftItos(code);
   _statusLine += _statusCodes[code];
 }
+// std::string getFileExtension(const std::string &fileName) {
+//   size_t dotPos = fileName.rfind('.');
+//   if (dotPos == std::string::npos) return "";
+//   return fileName.substr(dotPos + 1);
+// }
 
 void Response::setHeaders(const std::string &key, const std::string &value) {
+  // std::string contentType = "text/html";  // default
+
+  // if (ext == "css") {
+  //   std::cout << "css file" << std::endl;
+  //   contentType = "text/css";
+  // }
+  // if (ext == "js") {
+  //   std::cout << "js file" << std::endl;
+  //   contentType = "text/javascript";
+  // }
   _headers[key] = value;
 }
 

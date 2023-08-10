@@ -4,6 +4,6 @@ Method::~Method() {}
 
 void Method::process(Request &request, Response &response) {
   (void)request;
-  (void)response;
+  response.setErrorRes(405);
   return;
 }
