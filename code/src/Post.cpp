@@ -20,7 +20,6 @@ void Post::process(Request &request, Response &response) {
     std::string fullUri = request.getHeaderByKey("RootDir");
 
     fullUri += request.getHeaderByKey("BasicURI");
-    std::cout << "full uri ::" << fullUri << std::endl;
 
     if (fullUri[(fullUri.size() - 1)] == '/') {
       if (request.getHeaderByKey("Index") != "") {
@@ -54,21 +53,22 @@ void Post::process(Request &request, Response &response) {
         response.convertCGI(cgi.getRes());
         return;
       }
-      if (request.getHeaderByKey("AutoIndex") == "on")
-        response.directoryListing(fullUri);
-      else
-        throw ErrorException(403);
+      throw ErrorException(403);
     } else {
-      std::ifstream tempf(fullUri.c_str());
-      if (tempf.is_open() == true) {
-        _path = fullUri.c_str();
-        Cgi cgi;
-        cgi.reqToEnvp(request.getHeaderMap());
-        cgi.excute(request.getBody());
-        response.convertCGI(cgi.getRes());
-        return;
-      } else
-        throw ErrorException(404);
+      std::string filename = fullUri.c_str();
+      std::ifstream tempif(filename);
+      while (tempif.is_open() == true) {
+        tempif.close();
+        filename = generateRandomString();
+        tempif.open(filename);
+      }
+      std::ofstream tempof(filename);
+      _path = filename;
+      Cgi cgi;
+      cgi.reqToEnvp(request.getHeaderMap());
+      cgi.excute(request.getBody());
+      response.convertCGI(cgi.getRes());
+      return;
     }
   } catch (ErrorException &e) {
     response.setErrorRes(e.getErrorCode());

@@ -33,6 +33,7 @@ void Get::process(Request &request, Response &response) {
   try {
     std::string fullUri = request.getHeaderByKey("RootDir");
     fullUri += request.getHeaderByKey("BasicURI");
+    std::cout << "fullUri: \"" << fullUri << "\"" << std::endl;
     if (fullUri[(fullUri.size() - 1)] == '/') {
       if (request.getHeaderByKey("Index") != "") {
         std::stringstream ss(request.getHeaderByKey("Index"));
@@ -57,6 +58,9 @@ void Get::process(Request &request, Response &response) {
         response.directoryListing(fullUri);
       else
         throw ErrorException(403);
+    } else if (DIR *dir = opendir(fullUri.c_str())) {
+      closedir(dir);
+      throw ErrorException(301);
     } else {
       std::ifstream tempf(fullUri.c_str());
       if (tempf.is_open() == true) {

@@ -96,16 +96,30 @@ int Response::sendResponse(int clientSocket) {
 const std::string &Response::getBody() const { return _body; }
 
 void Response::setErrorRes(int statusCode) {
+  std::ifstream tmp("./error.html");
+  std::stringstream ss;
+
   _statusLine.clear();
   _headers.clear();
   _body.clear();
   _statusLine += "HTTP/1.1 ";
   _statusLine += ftItos(statusCode);
   _statusLine += _statusCodes[statusCode];
-  _headers["Content-Type"] = "text/plain";
-  _body += _statusCodes[statusCode];
-  _body += ": Error";
+  _headers["Content-Type"] = "text/html";
+  if (tmp.is_open() == false) {
+    std::cout << "handle error 500" << std::endl;
+    _headers["Content-Type"] = "text/plain";
+    statusCode = 500;
+  }
+  if (tmp.is_open()) {
+    ss << tmp.rdbuf();
+    _body = ss.str();
+  } else {
+    _body += _statusCodes[statusCode];
+    _body += ": Error";
+  }
   _headers["Content-Length"] = ftItos(_body.length());
+  std::cout << "length: " << ftItos(_body.length()) << std::endl;
   setResult();
 }
 

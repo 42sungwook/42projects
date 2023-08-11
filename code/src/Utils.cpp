@@ -20,6 +20,7 @@ std::string ftItos(int num) {
   std::string ret;
   bool neg = false;
 
+  if (num == 0) return "0";
   if (num < 0) {
     neg = true;
     num = -num;
