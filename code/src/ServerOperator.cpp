@@ -40,7 +40,6 @@ void ServerOperator::handleEventError(struct kevent *event) {
 
 void ServerOperator::handleReadEvent(struct kevent *event, Kqueue kq) {
   if (_serverMap.find(event->ident) != _serverMap.end()) {
-    std::cout << "ident: " << event->ident << std::endl;
     int clientSocket;
 
     sockaddr_in clientAddr;

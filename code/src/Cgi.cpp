@@ -24,7 +24,7 @@ void Cgi::makeEnv(std::map<std::string, std::string> param) {
   _env["SERVER_PROTOCOL"] = "HTTP/1.1";
   _env["SERVER_SOFTWARE"] = "Webserv/1.0";
   // _cgiPath = param["Cgi-Path"];
-  _cgiPath = "./www/cgi/cgi_tester";
+  _cgiPath = "www/cgi/cgi_tester";
 }
 
 void Cgi::reqToEnvp(std::map<std::string, std::string> param) {

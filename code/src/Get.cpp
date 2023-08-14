@@ -16,8 +16,9 @@ void Get::makeBody(Response &response, std::ifstream &file) {
 
 void Get::makeHeader(Request &request, Response &response) {
   if (response.getBody() != "")
-    if (response.isInHeader("Content-Type") == false)
+    if (response.isInHeader("Content-Type") == false) {
       response.setHeaders("Content-Type", request.getMime());
+    }
   response.setHeaders("Content-Length", ftItos(response.getBody().length()));
 }
 
@@ -33,7 +34,6 @@ void Get::process(Request &request, Response &response) {
   try {
     std::string fullUri = request.getHeaderByKey("RootDir");
     fullUri += request.getHeaderByKey("BasicURI");
-    std::cout << "fullUri: \"" << fullUri << "\"" << std::endl;
     if (fullUri[(fullUri.size() - 1)] == '/') {
       if (request.getHeaderByKey("Index") != "") {
         std::stringstream ss(request.getHeaderByKey("Index"));

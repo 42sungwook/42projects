@@ -18,6 +18,10 @@ void Request::parseUrl() {
   _mimeTypes["txt"] = "text/plain";
   _mimeTypes["pdf"] = "application/pdf";
   _mimeTypes["json"] = "application/json";
+  _mimeTypes["ttf"] = "font/ttf";
+  _mimeTypes["woff"] = "font/woff";
+  _mimeTypes["woff2"] = "font/woff2";
+  _mimeTypes["otf"] = "font/otf";
   _mimeTypes["else"] = "application/octet-stream";
   _mimeTypes["directory"] = "directory";
 
@@ -53,7 +57,7 @@ void Request::parsing() {
   std::string line;
   std::getline(ss, line, '\r');
   std::stringstream lineStream(line);
-  lineStream >> _header["method"] >> _header["URI"] >> _header["protocol"];
+  lineStream >> _header["Method"] >> _header["URI"] >> _header["protocol"];
   parseUrl();
   while (std::getline(ss, line, '\r') && line != "\n") {
     size_t pos = line.find(":");
@@ -61,21 +65,25 @@ void Request::parsing() {
       _status = 400;
       break;
     }
-    _header[line.substr(1, pos - 1)] = line.substr(pos + 1, line.length());
+    size_t valueStartPos = line.find_first_not_of(" ", pos + 1);
+    size_t keyStartPos = line.find_first_not_of("\n", 0);
+    _header[line.substr(keyStartPos, pos - keyStartPos)] =
+        line.substr(valueStartPos);
   }
   if (_header.find("Host") == _header.end()) {
     _status = 400;
-  } else if (_header["method"] != "GET" && _header["method"] != "POST" &&
-             _header["method"] != "DELETE") {
+  } else if (_header["Method"] != "GET" && _header["Method"] != "POST" &&
+             _header["Method"] != "DELETE") {
     _status = 405;
   } else {
     _host = _header["Host"];
   }
+  std::getline(ss, line);
   while (std::getline(ss, line)) {
     _body += line;
     if (!ss.eof()) _body += '\n';
   }
-  // if (_header["method"] == "POST" &&
+  // if (_header["Method"] == "POST" &&
   //     static_cast<size_t>(std::atoi(_header["Content-Length"].c_str())) !=
   //         _body.size()) {
   //   _status = 400;
@@ -125,7 +133,7 @@ const int &Request::getStatus() const { return _status; }
 
 const std::string &Request::getMime() const { return _mime; }
 
-std::string Request::getMethod() { return _header["method"]; }
+std::string Request::getMethod() { return _header["Method"]; }
 
 bool Request::isFullReq() const { return _isFullReq; }
 

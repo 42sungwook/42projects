@@ -35,22 +35,32 @@ void Response::convertCGI(const std::string &cgiResult) {
   _headers.clear();
   _body.clear();
   _statusLine.clear();
-
   while (std::getline(ss, line, '\r') && line != "\n") {
     if (line.find("HTTP/1.1") != std::string::npos) {
       _statusLine += line;
     } else {
       size_t pos = line.find(":");
       if (pos == line.npos) break;
-      _headers[line.substr(0, pos)] = line.substr(pos + 2);
+      size_t valueStartPos = line.find_first_not_of(" ", pos + 1);
+      size_t keyStartPos = line.find_first_not_of("\n", 0);
+      _headers[line.substr(keyStartPos, pos - keyStartPos)] =
+          line.substr(valueStartPos);
     }
   }
+  std::getline(ss, line);
   while (std::getline(ss, line)) {
     _body += line;
     if (!ss.eof()) _body += '\n';
   }
+
   if (_statusLine == "") {
-    setStatusLine(200);
+    if (_headers.find("Status") != _headers.end()) {
+      _statusLine += "HTTP/1.1 ";
+      _statusLine += _headers["Status"];
+      _headers.erase("Status");
+    } else {
+      setStatusLine(200);
+    }
   }
   if (_headers.find("Content-Length") == _headers.end()) {
     setHeaders("Content-Length", ftItos(_body.length()));
@@ -119,7 +129,6 @@ void Response::setErrorRes(int statusCode) {
     _body += ": Error";
   }
   _headers["Content-Length"] = ftItos(_body.length());
-  std::cout << "length: " << ftItos(_body.length()) << std::endl;
   setResult();
 }
 

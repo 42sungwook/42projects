@@ -107,11 +107,9 @@ void ConfigParser::parseBlocks(RootBlock *block, enum BLOCK type) {
     }
     setValue(value);
     if (key.empty() || value.empty()) return;
-    std::cout << key << ": " << value << std::endl;
     block->setKeyVal(key, value);  // set data on the Block
     if (type == SERVER &&
         key == "listen") {  // When ServerBlock's port is determined
-      std::cout << value << std::endl;
       int listenPort = static_cast<ServerBlock *>(block)->getListenPort();
       if (_serverBlockMap.find(listenPort) == _serverBlockMap.end())
         _serverBlockMap[listenPort] = new SPSBList;
