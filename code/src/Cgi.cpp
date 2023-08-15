@@ -25,6 +25,7 @@ void Cgi::makeEnv(std::map<std::string, std::string> param) {
   _env["SERVER_SOFTWARE"] = "Webserv/1.0";
   _cgiPath = param["RootDir"];
   _cgiPath += param["Cgi-Path"];
+  
 }
 
 void Cgi::reqToEnvp(std::map<std::string, std::string> param) {

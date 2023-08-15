@@ -25,19 +25,20 @@ void Request::parseUrl() {
   _mimeTypes["else"] = "application/octet-stream";
   _mimeTypes["directory"] = "directory";
 
-  if (lastDotPos != std::string::npos) {
+  if (lastDotPos != std::string::npos) {  // . 찾기가 문제
     std::string mime = uri.substr(lastDotPos + 1);
 
     if (_mimeTypes.find(mime) != _mimeTypes.end())
       _mime = _mimeTypes[mime];
-    else {
-      if (stat(uri.c_str(), &info) != 0)
-        _status = 404;
-      else if (S_ISDIR(info.st_mode))
-        _mime = _mimeTypes["directory"];
-      else
-        _mime = _mimeTypes["else"];
-    }
+    else
+      _mime = _mimeTypes["else"];
+  } else {
+    if (stat(uri.c_str(), &info) != 0)  // 문제있음 (Uri)
+      _status = 404;
+    else if (S_ISDIR(info.st_mode))
+      _mime = _mimeTypes["directory"];
+    else
+      _mime = _mimeTypes["else"];
   }
 
   size_t pos = uri.find("://");

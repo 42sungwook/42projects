@@ -110,6 +110,7 @@ void ServerOperator::handleWriteEvent(struct kevent *event, Kqueue kq) {
   // TODO method 확인, 그리고 타임아웃 cgi일때 제한된경로일깨
 
   if (locBlock == NULL) return;
+  
   if (_clients[event->ident].getStatus() != 200) {
     res.setErrorRes(_clients[event->ident].getStatus());
   } else {
