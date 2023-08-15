@@ -27,6 +27,8 @@ class Cgi {
   // _envp, body(parsing)를 받아서 cgi를 실행
   void excute(const std::string& body);
   std::string& getRes();
+  void setCGIPath(const std::string& cgiPath);
+  const std::string getCGIPath() const;
 };
 
 #endif

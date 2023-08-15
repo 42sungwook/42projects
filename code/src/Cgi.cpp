@@ -23,8 +23,8 @@ void Cgi::makeEnv(std::map<std::string, std::string> param) {
   _env["SERVER_PORT"] = param["Port"];
   _env["SERVER_PROTOCOL"] = "HTTP/1.1";
   _env["SERVER_SOFTWARE"] = "Webserv/1.0";
-  // _cgiPath = param["Cgi-Path"];
-  _cgiPath = "www/cgi/cgi_tester";
+  _cgiPath = param["RootDir"];
+  _cgiPath += param["Cgi-Path"];
 }
 
 void Cgi::reqToEnvp(std::map<std::string, std::string> param) {
@@ -87,3 +87,7 @@ void Cgi::excute(const std::string &body) {
     close(fd[0]);
   }
 }
+
+void Cgi::setCGIPath(const std::string &cgiPath) { _cgiPath = cgiPath; }
+
+const std::string Cgi::getCGIPath() const { return _cgiPath; }

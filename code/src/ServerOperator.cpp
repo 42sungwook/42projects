@@ -78,8 +78,8 @@ void ServerOperator::handleReadEvent(struct kevent *event, Kqueue kq) {
 }
 
 ServerBlock *ServerOperator::findLocationBlock(struct kevent *event) {
-  ServerBlock *locBlock =
-      NULL;  // Location Block or Server Block (not match directory)
+  ServerBlock *locBlock = NULL; 
+      // Location Block or Server Block (not match directory)
   if (_serverMap.find(_clientToServer[event->ident]) == _serverMap.end()) {
     std::cout << "client socket error" << std::endl;
     return NULL;
@@ -115,19 +115,20 @@ void ServerOperator::handleWriteEvent(struct kevent *event, Kqueue kq) {
   } else {
     Method *method;
 
+	std::cout << "locBlock Index: " << locBlock->getIndex() << std::endl;
     if (_clients[event->ident].getMethod() == "GET"
         //  && (locBlock->getLimitExcept() == "GET" ||
         //  locBlock->getLimitExcept() == "all")
     )
       method = new Get();
     else if (_clients[event->ident].getMethod() == "POST"
-             // && (locBlock->getLimitExcept() == "POST" ||
-             // locBlock->getLimitExcept() == "all")
+            //  && (locBlock->getLimitExcept() == "POST" ||
+            //  locBlock->getLimitExcept() == "all")
     )
       method = new Post();
     else if (_clients[event->ident].getMethod() == "DELETE"
-             // && (locBlock->getLimitExcept() == "DELETE" ||
-             // locBlock->getLimitExcept() == "all")
+            //  && (locBlock->getLimitExcept() == "DELETE" ||
+            //  locBlock->getLimitExcept() == "all")
     )
       method = new Delete();
     else
@@ -153,11 +154,12 @@ ServerBlock *ServerOperator::getLocationBlock(Request &req, ServerBlock *sb) {
   for (LocationList::iterator it = locList->begin(); it != locList->end();
        it++) {
     requestURI = req.getHeaderByKey("BasicURI");
+
     if (requestURI.find((*it)->getPath()) != requestURI.npos) {
       return (*it);
     }
-  }
-  return sb;  // 끝까지 없으면 Server Block 제공
+  }  
+  return sb;
 }
 
 bool ServerOperator::isExistClient(int clientSock) {

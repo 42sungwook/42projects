@@ -11,6 +11,7 @@ class Post : public Method {
 
   void process(Request &request, Response &response);
   std::string generateRandomString();
+  void createResource(Response &response, std::string &fileName, std::string &fullUri) ;
 };
 
 #endif
