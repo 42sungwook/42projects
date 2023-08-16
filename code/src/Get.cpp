@@ -59,8 +59,9 @@ void Get::process(Request &request, Response &response) {
       else
         throw ErrorException(403);
     } else if (request.getMime() == "directory") {
-      fullUri += "/";
-      response.setHeaders("Location", fullUri);
+      std::string tmp = request.getHeaderByKey("BasicURI");
+      tmp += "/";
+      response.setHeaders("Location", tmp);
       throw ErrorException(301);
     } else {
       std::ifstream tempf(fullUri.c_str());

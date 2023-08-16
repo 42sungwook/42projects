@@ -1,12 +1,7 @@
 /**
- * 1. POST 기본 동작
- *   - 없는 파일: 에러 404(임시)
- *   - 폴더 경로: 랜덤한 이름으로 생성 후, 응답에 생성 파일 이름 헤더로 전송 201
- *   - 없는 폴더: (없는 경로로 요청이 들어옴) 400
- *   - 있는 파일: append 200
- * 2. cgi cgi path 내용이 들어올 때 분기 처리 그외 에러처리
- * 3. chuncked 인코딩으로 들어왔을 때
- * 4. '/' 끝에 없고 폴더일 경우 301
+ * TODO
+ * 1. cgi cgi path 내용이 들어올 때 분기 처리 그외 에러처리
+ * 2. chuncked 인코딩으로 들어왔을 때
  **/
 
 #include "../includes/Post.hpp"
@@ -16,8 +11,7 @@ Post::Post() {}
 Post::~Post() {}
 
 bool Post::isCgi(const std::string &fullUri, Request &request) {
-  (void)fullUri;
-  (void)request;
+  
   return false;
   // findCgi function fullUri.find(".cgi") != std::string::npos
 }
@@ -76,8 +70,9 @@ void Post::process(Request &request, Response &response) {
       } else {
         std::cout << "none / mime: " << request.getMime() << std::endl;
         if (request.getMime() == "directory") {
-          fileName += '/';
-          response.setHeaders("Location", fileName);
+          std::string tmp = request.getHeaderByKey("BasicURI");
+          tmp += "/";
+          response.setHeaders("Location", tmp);
           throw ErrorException(301);
         }
         std::ifstream tempif(fileName);

@@ -21,31 +21,9 @@ Request::Request() : _mime("text/html"), _status(200), _isFullReq(false) {
 Request::~Request() {}
 
 void Request::parseUrl() {
-  struct stat info;
   std::string uri = _header["URI"];
-  size_t lastDotPos = uri.rfind('.');
-
-  if (lastDotPos != std::string::npos) {  // . 찾기가 문제임
-    std::string mime = uri.substr(lastDotPos + 1);
-
-    if (_mimeTypes.find(mime) != _mimeTypes.end())
-      _mime = _mimeTypes[mime];
-    else
-      _mime = _mimeTypes["else"];
-  } else {
-    // 현재 uri: /tmp1로 들어옴 -> stat에서 무조건 파일 못 찾음
-    // 상대경로를 잘 지정해야 함, 밑에 "www" 붙인건 다른 테스트를 위한 임시방편
-    // 주영이가 해줄거임
-    if (stat(("www" + uri).c_str(), &info) != 0) { // 문제있음 (Uri)
-	  _status = 404;
-	}
-    else if (S_ISDIR(info.st_mode))
-      _mime = _mimeTypes["directory"];
-    else
-      _mime = _mimeTypes["else"];
-  }
-
   size_t pos = uri.find("://");
+
   if (pos == uri.npos)
     pos = 0;
   else
@@ -95,7 +73,7 @@ void Request::parsing() {
   // }
   // 8KB is default maximum size of request, config로 수정
   if (_rawContents.size() - _body.size() >= 8192) {
-    _status = 414;
+    _status = 413;
   }
   _isFullReq = true;
 }
@@ -119,7 +97,27 @@ void Request::clear() {
 void Request::addRawContents(const std::string &raw) { _rawContents += raw; }
 
 int Request::setMime() {
-  std::string uri = _header["fullURI"];
+  struct stat info;
+  std::string fullUri = _header["RootDir"];
+  fullUri += _header["BasicURI"];
+  size_t lastDotPos = fullUri.rfind('.');
+
+  if (lastDotPos != std::string::npos) {
+    std::string mime = fullUri.substr(lastDotPos + 1);
+    if (_mimeTypes.find(mime) != _mimeTypes.end())
+      _mime = _mimeTypes[mime];
+    else
+      _mime = _mimeTypes["else"];
+  } else {
+    if (stat(fullUri.c_str(), &info) != 0) {
+	    _status = 404;
+      return (EXIT_FAILURE);
+    }
+    else if (S_ISDIR(info.st_mode))
+      _mime = _mimeTypes["directory"];
+    else
+      _mime = _mimeTypes["else"];
+  }
   return (EXIT_SUCCESS);
 }
 

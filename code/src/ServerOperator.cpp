@@ -102,7 +102,6 @@ ServerBlock *ServerOperator::findLocationBlock(struct kevent *event) {
     locBlock = getLocationBlock(_clients[event->ident], temp->front());
   }
 
-  // 찾은 로케이션 경로를 바탕으로 요청 메세지의 basicURI 수정해야 함
   _clients[event->ident].addHeader("RootDir", locBlock->getRoot());
   _clients[event->ident].addHeader("AutoIndex", locBlock->getAutoindex());
   _clients[event->ident].addHeader("Index", locBlock->getIndex());
@@ -167,6 +166,7 @@ ServerBlock *ServerOperator::getLocationBlock(Request &req, ServerBlock *sb) {
     requestURI = req.getHeaderByKey("BasicURI");
 
     if (requestURI.find((*it)->getPath()) != requestURI.npos) {
+      req.addHeader("BasicURI", requestURI.erase(1, (*it)->getPath().length() - 1));
       return (*it);
     }
   }  
