@@ -8,7 +8,7 @@
 
 class LocationBlock : public ServerBlock {
  private:
-  std::string _path;
+  std::string _path; // config location * {} 의 * 부분
 
  public:
   LocationBlock(ServerBlock &serverBlock);

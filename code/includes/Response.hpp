@@ -31,6 +31,7 @@ class Response {
   bool isInHeader(const std::string &key);
 
   const std::string &getBody() const;
+  void setRedirectRes(int statusCode);
   void setErrorRes(int statusCode);
   void setResult();
   void setStatusLine(int code);

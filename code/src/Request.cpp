@@ -1,14 +1,6 @@
 #include "../includes/Request.hpp"
 
-Request::Request() : _mime("text/html"), _status(200), _isFullReq(false) {}
-
-Request::~Request() {}
-
-void Request::parseUrl() {
-  struct stat info;
-  std::string uri = _header["URI"];
-  size_t lastDotPos = uri.rfind('.');
-
+Request::Request() : _mime("text/html"), _status(200), _isFullReq(false) {
   _mimeTypes["html"] = "text/html";
   _mimeTypes["css"] = "text/css";
   _mimeTypes["js"] = "text/javascript";
@@ -24,8 +16,16 @@ void Request::parseUrl() {
   _mimeTypes["otf"] = "font/otf";
   _mimeTypes["else"] = "application/octet-stream";
   _mimeTypes["directory"] = "directory";
+}
 
-  if (lastDotPos != std::string::npos) {  // . 찾기가 문제
+Request::~Request() {}
+
+void Request::parseUrl() {
+  struct stat info;
+  std::string uri = _header["URI"];
+  size_t lastDotPos = uri.rfind('.');
+
+  if (lastDotPos != std::string::npos) {  // . 찾기가 문제임
     std::string mime = uri.substr(lastDotPos + 1);
 
     if (_mimeTypes.find(mime) != _mimeTypes.end())
@@ -33,8 +33,12 @@ void Request::parseUrl() {
     else
       _mime = _mimeTypes["else"];
   } else {
-    if (stat(uri.c_str(), &info) != 0)  // 문제있음 (Uri)
-      _status = 404;
+    // 현재 uri: /tmp1로 들어옴 -> stat에서 무조건 파일 못 찾음
+    // 상대경로를 잘 지정해야 함, 밑에 "www" 붙인건 다른 테스트를 위한 임시방편
+    // 주영이가 해줄거임
+    if (stat(("www" + uri).c_str(), &info) != 0) { // 문제있음 (Uri)
+	  _status = 404;
+	}
     else if (S_ISDIR(info.st_mode))
       _mime = _mimeTypes["directory"];
     else
@@ -113,6 +117,11 @@ void Request::clear() {
 }
 
 void Request::addRawContents(const std::string &raw) { _rawContents += raw; }
+
+int Request::setMime() {
+  std::string uri = _header["fullURI"];
+  return (EXIT_SUCCESS);
+}
 
 void Request::addHeader(std::string key, std::string value) {
   _header[key] = value;

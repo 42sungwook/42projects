@@ -41,7 +41,8 @@ void Post::createResource(Response &response, std::string &fileName,
     tempif.close();
     fileName = fullUri;
     fileName += generateRandomString();
-    tempif = std::ifstream(fileName);
+	  std::ifstream temif(fileName);
+//    tempif = std::ifstream(fileName); // TODO 클러스터 맥에서 대입연산자 에러
   }
   response.setHeaders("Location", fileName);
   response.setStatusLine(201);
@@ -67,14 +68,16 @@ void Post::process(Request &request, Response &response) {
       response.convertCGI(cgi.getRes());
     } else {
       if (fileName.back() == '/') {
-        std::cout << "mime: " << request.getMime() << std::endl;
+        std::cout << "/ mime: " << request.getMime() << std::endl;
         if (request.getMime() != "directory") {
           throw ErrorException(400);
         }
         createResource(response, fileName, fullUri);
       } else {
-        std::cout << "mime: " << request.getMime() << std::endl;
+        std::cout << "none / mime: " << request.getMime() << std::endl;
         if (request.getMime() == "directory") {
+          fileName += '/';
+          response.setHeaders("Location", fileName);
           throw ErrorException(301);
         }
         std::ifstream tempif(fileName);
@@ -86,7 +89,7 @@ void Post::process(Request &request, Response &response) {
 
       // TODO 임시
       response.setBody(
-          "임시 response 입니다. 기본 동작 시, bodyㅁ를 생성하지 않습니다.");
+          "POST 동작의 임시 response 입니다.\n기본 동작 시, body를 생성하지 않는다고 합니다.\n만약 생성한다면 알려주세요.");
       response.setHeaders("Content-Length",
                           ftItos(response.getBody().length()));
       // response.setHeaders("Content-Type", "text/html");
@@ -94,10 +97,11 @@ void Post::process(Request &request, Response &response) {
       response.setResult();
     }
   } catch (ErrorException &e) {
-    if (e.getErrorCode() >= 400) response.setErrorRes(e.getErrorCode());
-    // else
-    //   response.setRedirectRes(e.getErrorCode()); // TODO 300번대 body 따로
-    //   처리
-    // TODO location 헤더 추가
+    if (e.getErrorCode() >= 400) {
+	    response.setErrorRes(e.getErrorCode());
+    }
+	  else { // TODO 300번대 에러에 대해서 더 알아보기
+	    response.setRedirectRes(e.getErrorCode());
+    }
   }
 }

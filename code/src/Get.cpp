@@ -34,7 +34,7 @@ void Get::process(Request &request, Response &response) {
   try {
     std::string fullUri = request.getHeaderByKey("RootDir");
     fullUri += request.getHeaderByKey("BasicURI");
-    if (fullUri[(fullUri.size() - 1)] == '/') {
+    if (fullUri.back() == '/') {
       if (request.getHeaderByKey("Index") != "") {
         std::stringstream ss(request.getHeaderByKey("Index"));
         std::string token;
@@ -58,8 +58,9 @@ void Get::process(Request &request, Response &response) {
         response.directoryListing(fullUri);
       else
         throw ErrorException(403);
-    } else if (DIR *dir = opendir(fullUri.c_str())) {
-      closedir(dir);
+    } else if (request.getMime() == "directory") {
+      fullUri += "/";
+      response.setHeaders("Location", fullUri);
       throw ErrorException(301);
     } else {
       std::ifstream tempf(fullUri.c_str());
@@ -71,6 +72,11 @@ void Get::process(Request &request, Response &response) {
         throw ErrorException(404);
     }
   } catch (ErrorException &e) {
-    response.setErrorRes(e.getErrorCode());
+    if (e.getErrorCode() >= 400) {
+	    response.setErrorRes(e.getErrorCode());
+    }
+	  else { // TODO 300번대 에러에 대해서 더 알아보기
+	    response.setRedirectRes(e.getErrorCode());
+    }
   }
 }

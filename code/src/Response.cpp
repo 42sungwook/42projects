@@ -99,11 +99,34 @@ void Response::directoryListing(std::string path) {
 }
 
 int Response::sendResponse(int clientSocket) {
+  std::cout << "status: " << _statusLine << std::endl;
   if (write(clientSocket, _result.c_str(), _result.length()) == -1) return (1);
   return (0);
 }
 
 const std::string &Response::getBody() const { return _body; }
+
+void Response::setRedirectRes(int statusCode) {
+  std::string location = _headers["Location"];
+  _statusLine.clear();
+  _headers.clear();
+  _body.clear();
+
+  _statusLine += "HTTP/1.1 ";
+  _statusLine += ftItos(statusCode);
+  _statusLine += _statusCodes[statusCode];
+  _headers["Content-Type"] = "text/html";
+  _headers["Location"] = location;
+  _body += "<html>\n<head><title>";
+  _body += ftItos(statusCode);
+  _body += _statusCodes[statusCode];
+  _body += "</title></head>\n<body>\n<center><h1>";
+  _body += ftItos(statusCode);
+  _body += _statusCodes[statusCode];
+  _body += "</h1></center>\n<hr><center>webserver/1.0.0</center>\n</body>\n</html>";
+  _headers["Content-Length"] = ftItos(_body.length());
+  setResult();
+}
 
 void Response::setErrorRes(int statusCode) {
   std::ifstream tmp("./error.html");

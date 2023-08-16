@@ -33,6 +33,7 @@ class Request {
   void setAutoindex(std::string &value);
   void clear();
   void addRawContents(const std::string &raw);
+  int  setMime();
   void addHeader(std::string key, std::string value);
   const std::string getHost();
   const std::string getUri();
