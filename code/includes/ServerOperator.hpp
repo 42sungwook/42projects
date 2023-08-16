@@ -20,7 +20,6 @@ class ServerOperator {
   std::map<int, Request> _clients;
   // key: client socket, value: server socket
   std::map<int, int> _clientToServer;
-
   void disconnectClient(int clientSock);
   bool isExistClient(int clientSock);
   ServerBlock *getLocationBlock(Request &req, ServerBlock *sb);

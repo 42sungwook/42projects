@@ -20,6 +20,8 @@ Request::Request() : _mime("text/html"), _status(200), _isFullReq(false) {
 
 Request::~Request() {}
 
+ServerBlock *getLocationBlock(ServerBlock *serverBlock) {}
+
 void Request::parseUrl() {
   std::string uri = _header["URI"];
   size_t pos = uri.find("://");
@@ -32,7 +34,7 @@ void Request::parseUrl() {
   _header["BasicURI"] = uri.substr(pos, uri.find('?', pos) - pos);
 }
 
-void Request::parsing() {
+void Request::parsing(SPSBList *serverBlockList, LocationMap &locationMap) {
   if (_rawContents.find("\r\n\r\n") == std::string::npos) {
     return;
   }
@@ -61,6 +63,36 @@ void Request::parsing() {
   } else {
     _host = _header["Host"];
   }
+
+  if (_status == 200) {
+    std::string requestURI = getHeaderByKey("BasicURI");
+    ServerBlock *sb = NULL;
+    for (SPSBList::iterator it = serverBlockList->begin();
+         it != serverBlockList->end(); it++) {
+      if (_host == (*it)->getServerName()) {
+        sb = *it;
+        break;
+      }
+    }
+    if (sb == NULL) sb = *(serverBlockList->begin());
+
+    if (locationMap.find(sb) == locationMap.end())
+      _locBlock = sb;
+    else {
+      LocationList *locList = locationMap[sb];
+      for (LocationList::iterator it = locList->begin(); it != locList->end();
+           it++) {
+        if (requestURI.find((*it)->getPath()) != requestURI.npos) {
+          addHeader("BasicURI",
+                    requestURI.erase(1, (*it)->getPath().length() - 1));
+          _locBlock = *it;
+          break;
+        }
+      }
+    }
+  }
+  setMime();  // 셋마임 위치 정하기
+
   std::getline(ss, line);
   while (std::getline(ss, line)) {
     _body += line;
@@ -71,9 +103,10 @@ void Request::parsing() {
   //         _body.size()) {
   //   _status = 400;
   // }
-  // 8KB is default maximum size of request, config로 수정
+
+  if (_body.size() >= _locBlock->getClientMaxBodySize()) _status = 413;
   if (_rawContents.size() - _body.size() >= 8192) {
-    _status = 413;
+    _status = 414;
   }
   _isFullReq = true;
 }
@@ -98,7 +131,7 @@ void Request::addRawContents(const std::string &raw) { _rawContents += raw; }
 
 int Request::setMime() {
   struct stat info;
-  std::string fullUri = _header["RootDir"];
+  std::string fullUri = _locBlock->getRoot();
   fullUri += _header["BasicURI"];
   size_t lastDotPos = fullUri.rfind('.');
 
@@ -110,10 +143,9 @@ int Request::setMime() {
       _mime = _mimeTypes["else"];
   } else {
     if (stat(fullUri.c_str(), &info) != 0) {
-	    _status = 404;
+      _status = 404;
       return (EXIT_FAILURE);
-    }
-    else if (S_ISDIR(info.st_mode))
+    } else if (S_ISDIR(info.st_mode))
       _mime = _mimeTypes["directory"];
     else
       _mime = _mimeTypes["else"];

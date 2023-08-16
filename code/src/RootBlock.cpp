@@ -45,6 +45,12 @@ void RootBlock::setWorkerConnections(std::string value) {
 
 void RootBlock::setInclude(std::string value) { _include = value; }
 
+void RootBlock::setTimeOut(std::string value) {}
+
+void RootBlock::setClientMaxBodySize(std::string value) {
+  _clientMaxBodySize = convertByteUnits(value);
+}
+
 void RootBlock::setKeyVal(std::string key, std::string value) {
   typedef void (RootBlock::*funcptr)(std::string);
   std::map<std::string, funcptr> funcmap;
@@ -56,6 +62,8 @@ void RootBlock::setKeyVal(std::string key, std::string value) {
   funcmap["worker_rlimit_nofile"] = &RootBlock::setWorkerRlimitNofile;
   funcmap["worker_connections"] = &RootBlock::setWorkerConnections;
   funcmap["include"] = &RootBlock::setInclude;
+  funcmap["client_max_body_size"] = &RootBlock::setClientMaxBodySize;
+  funcmap["keepalive_timeout"] = &RootBlock::setTimeOut;
 
   if (funcmap.find(key) != funcmap.end()) (this->*(funcmap[key]))(value);
 }
@@ -75,3 +83,9 @@ int RootBlock::getWorkerRlimitNofile() const { return _workerRlimitNofile; }
 int RootBlock::getWorkerConnection() const { return _workerConnections; }
 
 const std::string RootBlock::getInclude() const { return _include; }
+
+const size_t &RootBlock::getClientMaxBodySize() const {
+  return _clientMaxBodySize;
+}
+
+const size_t &RootBlock::getTimeOut() const { return _timeOut; }

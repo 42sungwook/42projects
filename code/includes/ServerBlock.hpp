@@ -15,7 +15,6 @@ class ServerBlock : public RootBlock {
   std::string _root;
   std::string _index;
   std::string _serverName;
-  std::string _clientMaxBodySize;
   std::string _autoindex;
   std::string _limitExcept;
 
@@ -28,7 +27,6 @@ class ServerBlock : public RootBlock {
   void setRoot(std::string value);
   void setIndex(std::string value);
   void setServerName(std::string value);
-  void setClientMaxBodySize(std::string value);
   void setAutoindex(std::string value);
   void setLimitExcept(std::string value);
   virtual void setKeyVal(std::string key, std::string value);
@@ -38,7 +36,6 @@ class ServerBlock : public RootBlock {
   const std::string &getRoot() const;
   const std::string &getIndex() const;
   const std::string &getServerName() const;
-  const std::string &getClientMaxBodySize() const;
   const std::string &getAutoindex() const;
   const std::string &getLimitExcept() const;
 };

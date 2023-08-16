@@ -1,4 +1,4 @@
-#include "Utils.hpp"
+#include "../includes/Utils.hpp"
 
 int ftStoi(std::string str) {
   int ret = 0;
@@ -32,4 +32,50 @@ std::string ftItos(int num) {
   std::reverse(ret.begin(), ret.end());
   if (neg) ret = "-" + ret;
   return ret;
+}
+
+void ftToupper(std::string &str) {
+  std::string res;
+
+  for (int i = 0; i < str.length(); i++) {
+    res += static_cast<char>(std::toupper(str.at(i)));
+  }
+  str = res;
+}
+
+size_t convertTimeUnits(std::string value) {
+  std::stringstream ss(value);
+  size_t sum = 0;
+  std::string timeUnits[4] = {"", "MS", "S", "M"};
+  int times[4] = {1, 1, 1000, 60000};
+
+  while (true) {
+    int num = 0;
+    std::string unit;
+    ss >> num >> unit;
+    if (num == 0) break;
+    ftToupper(unit);
+    for (int index = 0; index < 4; index++) {
+      if (unit == timeUnits[index]) {
+        sum += num * times[index];
+        break;
+      }
+    }
+  }
+  return sum;
+}
+
+size_t convertByteUnits(std::string value) {
+  int num;
+  std::string unit;
+  std::stringstream ss(value);
+  const std::string byteUnits[4] = {"", "K", "M", "G"};
+  int index;
+
+  ss >> num >> unit;
+  ftToupper(unit);
+  for (index = 0; index < 4; index++)
+    if (unit == byteUnits[index]) break;
+
+  return (num * std::pow(1024, index));
 }

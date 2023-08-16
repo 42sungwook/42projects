@@ -3,9 +3,15 @@
 
 #include <algorithm>
 #include <iostream>
+#include <sstream>
 #include <string>
+#include <utility>
+#include <vector>
 
 int ftStoi(std::string str);
 std::string ftItos(int num);
+void ftToupper(std::string &str);
+size_t convertTimeUnits(std::string value);
+size_t convertByteUnits(std::string value);
 
 #endif

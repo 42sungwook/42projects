@@ -8,7 +8,6 @@ ServerBlock::ServerBlock(RootBlock &rootBlock)
       _root(),
       _index(),
       _serverName(),
-      _clientMaxBodySize(),
       _autoindex("off") {}
 
 ServerBlock::ServerBlock(ServerBlock &copy)
@@ -17,8 +16,7 @@ ServerBlock::ServerBlock(ServerBlock &copy)
       _listenHost(copy._listenHost),
       _root(copy._root),
       _index(copy._index),
-      _serverName(copy._serverName),
-      _clientMaxBodySize(copy._clientMaxBodySize) {}
+      _serverName(copy._serverName) {}
 
 ServerBlock::~ServerBlock() {}
 
@@ -44,10 +42,6 @@ void ServerBlock::setIndex(std::string value) { _index = value; }
 
 void ServerBlock::setServerName(std::string value) { _serverName = value; }
 
-void ServerBlock::setClientMaxBodySize(std::string value) {
-  _clientMaxBodySize = value;
-}
-
 void ServerBlock::setAutoindex(std::string value) { _autoindex = value; }
 
 void ServerBlock::setKeyVal(std::string key, std::string value) {
@@ -72,9 +66,6 @@ const std::string &ServerBlock::getListenHost() const { return _listenHost; }
 const std::string &ServerBlock::getRoot() const { return _root; }
 const std::string &ServerBlock::getIndex() const { return _index; }
 const std::string &ServerBlock::getServerName() const { return _serverName; }
-const std::string &ServerBlock::getClientMaxBodySize() const {
-  return _clientMaxBodySize;
-}
 
 const std::string &ServerBlock::getLimitExcept() const { return _limitExcept; }
 

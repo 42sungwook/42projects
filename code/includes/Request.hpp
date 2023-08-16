@@ -9,6 +9,10 @@
 #include <sstream>
 #include <string>
 
+#include "../includes/LocationBlock.hpp"
+#include "ConfigParser.hpp"
+#include "Utils.hpp"
+
 enum METHOD { GET, POST, DELETE };
 enum PROCESS { CGI, NORMAL };
 
@@ -23,17 +27,18 @@ class Request {
   int _status;
   bool _isFullReq;
   std::map<std::string, std::string> _mimeTypes;
+  ServerBlock *_locBlock;
 
   void parseUrl();
 
  public:
   Request();
   ~Request();
-  void parsing();
+  void parsing(SPSBList *serverBlockList, LocationMap &locationMap);
   void setAutoindex(std::string &value);
   void clear();
   void addRawContents(const std::string &raw);
-  int  setMime();
+  int setMime();
   void addHeader(std::string key, std::string value);
   const std::string getHost();
   const std::string getUri();
@@ -45,7 +50,7 @@ class Request {
   enum PROCESS getProcess();
   std::string getMethod();
   bool isFullReq() const;
-
+  ServerBlock *getLocationBlock(ServerBlock *);
   // temp
   std::string getRawContents() const;
   const std::string &getHeaderByKey(std::string key);
