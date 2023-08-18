@@ -42,12 +42,12 @@ void ftToupper(std::string &str) {
   }
   str = res;
 }
-
+/*convert to seconde unit, defualt is second*/
 size_t convertTimeUnits(std::string value) {
   std::stringstream ss(value);
   size_t sum = 0;
   std::string timeUnits[4] = {"", "MS", "S", "M"};
-  int times[4] = {1, 1, 1000, 60000};
+  float times[4] = {1, 0.001, 1, 60000};
 
   while (true) {
     int num = 0;
