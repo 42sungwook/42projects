@@ -20,17 +20,13 @@ void ServerOperator::run() {
     for (int i = 0; i < eventNb; ++i) {
       currEvent = &(kq.getEventList())[i];
       if (currEvent->flags & EV_ERROR) {
-        std::cout << "error" << std::endl;
         handleEventError(currEvent);
       } else if (currEvent->filter == EVFILT_READ) {
         handleReadEvent(currEvent, kq);
       } else if (currEvent->filter == EVFILT_WRITE) {
         handleWriteEvent(currEvent, kq);
       } else if (currEvent->filter == EVFILT_TIMER) {
-        std::cout << "timeout" << std::endl;
-        kq.changeEvents(currEvent->ident, EVFILT_TIMER, EV_DELETE, 0, 0, NULL);
-        // TODO: 요청이 남았는데 들어오면 에러 처리
-        disconnectClient(currEvent->ident);
+        handleRequestTimeOut(currEvent->ident, kq);
       }
     }
   }
@@ -45,6 +41,15 @@ void ServerOperator::handleEventError(struct kevent *event) {
   disconnectClient(event->ident);
 }
 
+void ServerOperator::handleRequestTimeOut(int clientSock, Kqueue &kq) {
+  kq.changeEvents(clientSock, EVFILT_TIMER, EV_DELETE, 0, 0, NULL);
+  Response res;
+  res.setErrorRes(408);
+  res.sendResponse(clientSock);
+  disconnectClient(clientSock);
+}
+
+// TODO TCP 연결 관리
 // void ServerOperator::setKeepAlive(int &fd, Server *server) {
 //   int optVal = 1;
 
@@ -72,7 +77,7 @@ void ServerOperator::handleEventError(struct kevent *event) {
 //   }
 // }
 
-void ServerOperator::handleReadEvent(struct kevent *event, Kqueue kq) {
+void ServerOperator::handleReadEvent(struct kevent *event, Kqueue &kq) {
   if (_serverMap.find(event->ident) != _serverMap.end()) {
     int clientSocket;
 
@@ -111,7 +116,6 @@ void ServerOperator::handleReadEvent(struct kevent *event, Kqueue kq) {
       req.addRawContents(buf);
       req.parsing(_serverMap[_clientToServer[event->ident]]->getSPSBList(),
                   _locationMap);
-
       if (req.isFullReq()) {
         kq.changeEvents(event->ident, EVFILT_TIMER, EV_ENABLE, 0,
                         _serverMap[_clientToServer[event->ident]]
@@ -142,7 +146,8 @@ ServerBlock *ServerOperator::findLocationBlock(struct kevent *event) {
   SPSBList *temp = _serverMap[_clientToServer[event->ident]]->getSPSBList();
 
   // 요청 호스트와 일치하는 가상호스트가 있다면 그 가상호스트에 있는
-  // 로케이션블락을 찾아옴, 해당되는 로케이션 블락이 없으면 서버블락 받아옴
+  // 로케이션블락을 찾아옴, 해당되는 로케이션 블락이 없으면 서버블락
+  // 받아옴
   for (SPSBList::iterator it = temp->begin(); it != temp->end(); it++) {
     if (req.getHost() == (*it)->getServerName()) {
       locBlock = getLocationBlock(req, (*it));
@@ -150,8 +155,8 @@ ServerBlock *ServerOperator::findLocationBlock(struct kevent *event) {
     }
   }
 
-  // 만약 매칭되는 가상호스트가 없다면 디폴트 서버 블락에서 로케이션 블락을
-  // 가져옴, 해당되는 로케이션 블락이 없으면 서버블락 받아옴
+  // 만약 매칭되는 가상호스트가 없다면 디폴트 서버 블락에서 로케이션
+  // 블락을 가져옴, 해당되는 로케이션 블락이 없으면 서버블락 받아옴
   if (locBlock == NULL) {
     locBlock = getLocationBlock(req, temp->front());
   }
@@ -161,11 +166,12 @@ ServerBlock *ServerOperator::findLocationBlock(struct kevent *event) {
   req.addHeader("Index", locBlock->getIndex());
   req.addHeader("Name", locBlock->getServerName());
   req.addHeader("Port", ftItos(locBlock->getListenPort()));
+  req.addHeader("cgi", locBlock->getCgi());
 
   return locBlock;
 }
 
-void ServerOperator::handleWriteEvent(struct kevent *event, Kqueue kq) {
+void ServerOperator::handleWriteEvent(struct kevent *event, Kqueue &kq) {
   /* send data to client */
   Response res;
   // Request &req = _clients[event->ident];
@@ -203,7 +209,7 @@ void ServerOperator::handleWriteEvent(struct kevent *event, Kqueue kq) {
 
   if (res.sendResponse(event->ident) == EXIT_FAILURE) {
     std::cerr << "client write error!" << std::endl;
-    disconnectClient(event->ident);
+    disconnectClient(event->ident);  // 몇번에러 때리지?
   } else {
     _clients[event->ident].clear();
     kq.changeEvents(event->ident, EVFILT_TIMER, EV_ENABLE, 0,

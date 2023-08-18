@@ -40,6 +40,7 @@ class ServerBlock : public RootBlock {
   const std::string &getServerName() const;
   const std::string &getAutoindex() const;
   const std::string &getLimitExcept() const;
+  const std::string &getCgi() const;
 };
 
 #endif

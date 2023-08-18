@@ -18,6 +18,7 @@ Response::Response() {
   _statusCodes[404] = " Not Found";
   _statusCodes[405] = " Method Not Allowed";
   _statusCodes[406] = " Not Acceptable";
+  _statusCodes[408] = " Request Timeout";
   _statusCodes[409] = " Conflict";
   _statusCodes[410] = " Gone";
   _statusCodes[412] = " Precondition Failed";
@@ -123,7 +124,8 @@ void Response::setRedirectRes(int statusCode) {
   _body += "</title></head>\n<body>\n<center><h1>";
   _body += ftItos(statusCode);
   _body += _statusCodes[statusCode];
-  _body += "</h1></center>\n<hr><center>webserver/1.0.0</center>\n</body>\n</html>";
+  _body +=
+      "</h1></center>\n<hr><center>webserver/1.0.0</center>\n</body>\n</html>";
   _headers["Content-Length"] = ftItos(_body.length());
   setResult();
 }
@@ -151,6 +153,9 @@ void Response::setErrorRes(int statusCode) {
     _body += _statusCodes[statusCode];
     _body += ": Error";
   }
+  if (statusCode == 408) {
+    _headers["Connection"] = "close";
+  }
   _headers["Content-Length"] = ftItos(_body.length());
   setResult();
 }
@@ -161,6 +166,7 @@ bool Response::isInHeader(const std::string &key) {
 }
 
 void Response::setResult() {
+  _result.clear();
   _result += _statusLine;
   _result += "\r\n";
 

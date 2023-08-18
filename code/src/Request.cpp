@@ -73,11 +73,11 @@ void Request::parsing(SPSBList *serverBlockList, LocationMap &locationMap) {
     _body += line;
     if (!ss.eof()) _body += '\n';
   }
-  // if (_header["Method"] == "POST" &&
-  //     static_cast<size_t>(std::atoi(_header["Content-Length"].c_str())) !=
-  //         _body.size()) {
-  //   _status = 400;
-  // }
+  if (_header["Method"] == "POST" &&
+      static_cast<size_t>(std::atoi(_header["Content-Length"].c_str())) !=
+          _body.size()) {
+    return;
+  }
 
   if (_body.size() >= _locBlock->getClientMaxBodySize()) _status = 413;
   if (_rawContents.size() - _body.size() >= 8192) {

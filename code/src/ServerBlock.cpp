@@ -72,3 +72,5 @@ const std::string &ServerBlock::getServerName() const { return _serverName; }
 const std::string &ServerBlock::getLimitExcept() const { return _limitExcept; }
 
 const std::string &ServerBlock::getAutoindex() const { return _autoindex; }
+
+const std::string &ServerBlock::getCgi() const { return _cgi; };

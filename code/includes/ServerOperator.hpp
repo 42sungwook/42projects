@@ -30,16 +30,17 @@ class ServerOperator {
   ServerMap &_serverMap;
   LocationMap &_locationMap;
   std::map<int, Request> _clients;
-  // key: client socket, value: server socket
-  std::map<int, int> _clientToServer;
-  void disconnectClient(int clientSock);
+  std::map<int, int>
+      _clientToServer;  // key: client socket, value: server socket
   bool isExistClient(int clientSock);
   ServerBlock *getLocationBlock(Request &req, ServerBlock *sb);
   ServerBlock *findLocationBlock(struct kevent *event);
-  // void setKeepAlive(int &fd, Server *server);
+  // void setKeepAlive(int &fd, Server *server); //TCP 연결 관리
   void handleEventError(struct kevent *event);
-  void handleReadEvent(struct kevent *event, Kqueue kq);
-  void handleWriteEvent(struct kevent *event, Kqueue kq);
+  void handleReadEvent(struct kevent *event, Kqueue &kq);
+  void handleWriteEvent(struct kevent *event, Kqueue &kq);
+  void handleRequestTimeOut(int clientSock, Kqueue &kq);
+  void disconnectClient(int clientSock);
 
  public:
   ServerOperator(ServerMap &serverMap, LocationMap &locationMap);

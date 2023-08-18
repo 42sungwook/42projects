@@ -11,6 +11,7 @@ Post::Post() {}
 Post::~Post() {}
 
 bool Post::isCgi(const std::string &fullUri, Request &request) {
+  return false;  // TODO cgi 안 되서
   if (request.getHeaderMap().find("cgi") == request.getHeaderMap().end())
     return false;
   else if (fullUri.find(request.getHeaderByKey("cgi")) == fullUri.npos)
@@ -38,7 +39,8 @@ void Post::createResource(Response &response, std::string &fileName,
     tempif.close();
     fileName = fullUri;
     fileName += generateRandomString();
-    std::ifstream temif(fileName);
+    std::cout << "filename: " << fileName << std::endl;
+    std::ifstream tempif(fileName);
     //    tempif = std::ifstream(fileName); // TODO 클러스터 맥에서 대입연산자
     //    에러
   }
@@ -58,6 +60,7 @@ void Post::process(Request &request, Response &response) {
     std::string fullUri = request.getHeaderByKey("RootDir");
     fullUri += request.getHeaderByKey("BasicURI");
     std::string fileName = fullUri;
+    std::cout << "POST start" << std::endl;
 
     if (isCgi(fullUri, request) == true) {
       Cgi cgi;
