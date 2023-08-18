@@ -10,7 +10,8 @@ int Kqueue::init(ServerMap serverMap) {
               << std::string(strerror(errno)) << std::endl;
     exit(EXIT_FAILURE);
   }
-  for (ServerMap::iterator it = serverMap.begin(); it != serverMap.end(); it++) {
+  for (ServerMap::iterator it = serverMap.begin(); it != serverMap.end();
+       it++) {
     changeEvents((*it).first, EVFILT_READ, EV_ADD | EV_ENABLE, 0, 0, NULL);
   }
   return EXIT_SUCCESS;
@@ -26,6 +27,10 @@ void Kqueue::changeEvents(uintptr_t ident, int16_t filter, uint16_t flags,
 
 int Kqueue::countEvents() {
   int cnt;
+  // TODO 임시값
+  // struct timespec timeout;
+  // timeout.tv_nsec = 0;
+  // timeout.tv_sec = 10;
   cnt = kevent(_kq, &(*_checkList)[0], _checkList->size(), _eventList, 8, NULL);
   if (cnt == -1) {
     std::cout << "kevent() error\n" + std::string(strerror(errno)) << std::endl;

@@ -37,7 +37,7 @@ std::string ftItos(int num) {
 void ftToupper(std::string &str) {
   std::string res;
 
-  for (int i = 0; i < str.length(); i++) {
+  for (size_t i = 0; i < str.length(); i++) {
     res += static_cast<char>(std::toupper(str.at(i)));
   }
   str = res;

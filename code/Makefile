@@ -33,7 +33,7 @@ RM			=	rm -rf
 # Debug options                                                                #
 # **************************************************************************** #
 ifdef DEBUG
-	CXXFLAGS += -pedantic -g -fsanitize=address,undefined
+	CXXFLAGS += -g -fsanitize=address,undefined
 endif
 ifdef C
 	CXX = c++-7

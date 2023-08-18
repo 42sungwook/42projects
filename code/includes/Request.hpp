@@ -35,11 +35,12 @@ class Request {
   Request();
   ~Request();
   void parsing(SPSBList *serverBlockList, LocationMap &locationMap);
+  int  setMime();
+  void setLocBlock(SPSBList *serverBlockList, LocationMap &locationMap);
   void setAutoindex(std::string &value);
-  void clear();
   void addRawContents(const std::string &raw);
-  int setMime();
   void addHeader(std::string key, std::string value);
+  void clear();
   const std::string getHost();
   const std::string getUri();
   const std::string getMessage() const;
@@ -50,8 +51,6 @@ class Request {
   enum PROCESS getProcess();
   std::string getMethod();
   bool isFullReq() const;
-  ServerBlock *getLocationBlock(ServerBlock *);
-  // temp
   std::string getRawContents() const;
   const std::string &getHeaderByKey(std::string key);
   std::map<std::string, std::string> getHeaderMap() const;

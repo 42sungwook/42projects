@@ -25,6 +25,7 @@ class Server {
  private:
   int _socket;
   int _listenPort;
+  size_t _keepAliveTime;
   SPSBList *_sbList;
 
  public:
@@ -34,6 +35,7 @@ class Server {
   int init();
   int getSocket() const;
   int getListenPort() const;
+  size_t getkeepAliveTime() const;
   SPSBList *getSPSBList() const;
 };
 

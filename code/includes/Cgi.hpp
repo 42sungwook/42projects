@@ -13,7 +13,6 @@ class Cgi {
   char** _envp;
   std::string _res;  // cgi가 보내주는 response
   std::map<std::string, std::string> _env;
-  std::string _cgiPath;
 
   // header parsing data를 받아서 _env 생성
   void makeEnv(std::map<std::string, std::string> param);
@@ -27,8 +26,6 @@ class Cgi {
   // _envp, body(parsing)를 받아서 cgi를 실행
   void excute(const std::string& body);
   std::string& getRes();
-  void setCGIPath(const std::string& cgiPath);
-  const std::string getCGIPath() const;
 };
 
 #endif

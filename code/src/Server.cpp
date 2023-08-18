@@ -1,7 +1,9 @@
 #include "../includes/Server.hpp"
 
-Server::Server(int port, SPSBList *sbList)
-    : _socket(-1), _listenPort(port), _sbList(sbList) {}
+Server::Server(const int port, SPSBList *sbList)
+    : _socket(-1), _listenPort(port), _sbList(sbList) {
+  _keepAliveTime = sbList->front()->getKeepAliveTime();
+}
 
 Server::~Server() {}
 
@@ -44,3 +46,4 @@ int Server::init() {
 int Server::getSocket() const { return _socket; }
 int Server::getListenPort() const { return _listenPort; }
 SPSBList *Server::getSPSBList() const { return _sbList; }
+size_t Server::getkeepAliveTime() const { return _keepAliveTime; }

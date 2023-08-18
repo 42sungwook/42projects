@@ -9,7 +9,7 @@ void Cgi::makeEnv(std::map<std::string, std::string> param) {
   _env["CONTENT_LENGTH"] = param["Content-Length"];
   _env["CONTENT_TYPE"] = param["Content-Type"];
   _env["GATEWAY_INTERFACE"] = "CGI/1.1";
-  _env["PATH_INFO"] = param["BasicURI"];
+  _env["PATH_INFO"] = param["RootDir"] + param["BasicURI"];
   _env["PATH_TRANSLATED"] = param["RootDir"] + param["BasicURI"];
   _env["QUERY_STRING"] =
       param["URI"].substr(param["URI"].find("?") + 1, std::string::npos);
@@ -23,9 +23,6 @@ void Cgi::makeEnv(std::map<std::string, std::string> param) {
   _env["SERVER_PORT"] = param["Port"];
   _env["SERVER_PROTOCOL"] = "HTTP/1.1";
   _env["SERVER_SOFTWARE"] = "Webserv/1.0";
-  _cgiPath = param["RootDir"];
-  _cgiPath += param["Cgi-Path"];
-  
 }
 
 void Cgi::reqToEnvp(std::map<std::string, std::string> param) {
@@ -73,8 +70,8 @@ void Cgi::excute(const std::string &body) {
     close(fd[0]);
     dup2(fd[1], 1);
     close(fd[1]);
-    const char *argv[2] = {_env["PATH_TRANSLATED"].c_str(), NULL};
-    execve(_cgiPath.c_str(), const_cast<char **>(argv), _envp);
+    const char *argv[2] = {_env["PATH_INFO"].c_str(), NULL};
+    execve(_env["PATH_INFO"].c_str(), const_cast<char **>(argv), _envp);
     exit(0);
   } else {
     close(fd[1]);
@@ -89,6 +86,6 @@ void Cgi::excute(const std::string &body) {
   }
 }
 
-void Cgi::setCGIPath(const std::string &cgiPath) { _cgiPath = cgiPath; }
+// void Cgi::setCGIPath(const std::string &cgiPath) { _cgiPath = cgiPath; }
 
-const std::string Cgi::getCGIPath() const { return _cgiPath; }
+// const std::string Cgi::getCGIPath() const { return _cgiPath; }

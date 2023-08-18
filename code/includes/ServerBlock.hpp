@@ -17,6 +17,7 @@ class ServerBlock : public RootBlock {
   std::string _serverName;
   std::string _autoindex;
   std::string _limitExcept;
+  std::string _cgi;
 
  public:
   ServerBlock(RootBlock &rootBlock);
@@ -29,6 +30,7 @@ class ServerBlock : public RootBlock {
   void setServerName(std::string value);
   void setAutoindex(std::string value);
   void setLimitExcept(std::string value);
+  void setCgi(std::string value);
   virtual void setKeyVal(std::string key, std::string value);
 
   int getListenPort() const;

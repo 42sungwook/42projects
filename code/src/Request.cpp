@@ -20,8 +20,6 @@ Request::Request() : _mime("text/html"), _status(200), _isFullReq(false) {
 
 Request::~Request() {}
 
-ServerBlock *getLocationBlock(ServerBlock *serverBlock) {}
-
 void Request::parseUrl() {
   std::string uri = _header["URI"];
   size_t pos = uri.find("://");
@@ -65,32 +63,9 @@ void Request::parsing(SPSBList *serverBlockList, LocationMap &locationMap) {
   }
 
   if (_status == 200) {
-    std::string requestURI = getHeaderByKey("BasicURI");
-    ServerBlock *sb = NULL;
-    for (SPSBList::iterator it = serverBlockList->begin();
-         it != serverBlockList->end(); it++) {
-      if (_host == (*it)->getServerName()) {
-        sb = *it;
-        break;
-      }
-    }
-    if (sb == NULL) sb = *(serverBlockList->begin());
-
-    if (locationMap.find(sb) == locationMap.end())
-      _locBlock = sb;
-    else {
-      LocationList *locList = locationMap[sb];
-      for (LocationList::iterator it = locList->begin(); it != locList->end();
-           it++) {
-        if (requestURI.find((*it)->getPath()) != requestURI.npos) {
-          addHeader("BasicURI",
-                    requestURI.erase(1, (*it)->getPath().length() - 1));
-          _locBlock = *it;
-          break;
-        }
-      }
-    }
+    setLocBlock(serverBlockList, locationMap);
   }
+
   setMime();  // 셋마임 위치 정하기
 
   std::getline(ss, line);
@@ -110,6 +85,35 @@ void Request::parsing(SPSBList *serverBlockList, LocationMap &locationMap) {
   }
   _isFullReq = true;
 }
+
+void Request::setLocBlock(SPSBList *serverBlockList, LocationMap &locationMap) {
+  std::string requestURI = getHeaderByKey("BasicURI");
+  ServerBlock *sb = NULL;
+
+  for (SPSBList::iterator it = serverBlockList->begin();
+       it != serverBlockList->end(); it++) {
+    if (_host == (*it)->getServerName()) {
+      sb = *it;
+      break;
+    }
+  }
+  if (sb == NULL) sb = *(serverBlockList->begin());
+
+  if (locationMap.find(sb) == locationMap.end())
+    _locBlock = sb;
+  else {
+    LocationList *locList = locationMap[sb];
+    for (LocationList::iterator it = locList->begin(); it != locList->end();
+         it++) {
+      if (requestURI.find((*it)->getPath()) != requestURI.npos) {
+        addHeader("BasicURI",
+                  requestURI.erase(1, (*it)->getPath().length() - 1));
+        _locBlock = *it;
+        break;
+      }
+    }
+  }
+};
 
 void Request::setAutoindex(std::string &value) { _autoindex = value; }
 

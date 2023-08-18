@@ -1,17 +1,23 @@
 #include "../includes/RootBlock.hpp"
 
 RootBlock::RootBlock()
-    : _user(),
-      _workerProcesses(0),
+    : _workerProcesses(0),
       _workerRlimitNofile(0),
       _workerConnections(0),
-      _include() {}
+      _clientMaxBodySize(4096),
+      _keepAliveTime(0) {}
 
 RootBlock::RootBlock(RootBlock &copy)
     : _user(copy._user),
+      _group(copy._group),
       _workerProcesses(copy._workerProcesses),
+      _errorLog(copy._errorLog),
+      _pid(copy._pid),
+      _workerRlimitNofile(copy._workerRlimitNofile),
       _workerConnections(copy._workerConnections),
-      _include(copy._include) {}
+      _include(copy._include),
+      _clientMaxBodySize(copy._clientMaxBodySize),
+      _keepAliveTime(copy._keepAliveTime) {}
 
 RootBlock::~RootBlock() {}
 
@@ -45,7 +51,9 @@ void RootBlock::setWorkerConnections(std::string value) {
 
 void RootBlock::setInclude(std::string value) { _include = value; }
 
-void RootBlock::setTimeOut(std::string value) {}
+void RootBlock::setKeepAliveTime(std::string value) {
+  _keepAliveTime = convertTimeUnits(value);
+}
 
 void RootBlock::setClientMaxBodySize(std::string value) {
   _clientMaxBodySize = convertByteUnits(value);
@@ -63,7 +71,7 @@ void RootBlock::setKeyVal(std::string key, std::string value) {
   funcmap["worker_connections"] = &RootBlock::setWorkerConnections;
   funcmap["include"] = &RootBlock::setInclude;
   funcmap["client_max_body_size"] = &RootBlock::setClientMaxBodySize;
-  funcmap["keepalive_timeout"] = &RootBlock::setTimeOut;
+  funcmap["keepalive_timeout"] = &RootBlock::setKeepAliveTime;
 
   if (funcmap.find(key) != funcmap.end()) (this->*(funcmap[key]))(value);
 }
@@ -88,4 +96,4 @@ const size_t &RootBlock::getClientMaxBodySize() const {
   return _clientMaxBodySize;
 }
 
-const size_t &RootBlock::getTimeOut() const { return _timeOut; }
+const size_t &RootBlock::getKeepAliveTime() const {return _keepAliveTime; }

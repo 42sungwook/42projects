@@ -19,7 +19,7 @@ class RootBlock {
   int _workerConnections;
   std::string _include;
   size_t _clientMaxBodySize;
-  size_t _timeOut;
+  size_t _keepAliveTime;
 
  public:
   RootBlock();
@@ -33,7 +33,7 @@ class RootBlock {
   void setWorkerRlimitNofile(std::string value);
   void setWorkerConnections(std::string value);
   void setClientMaxBodySize(std::string value);
-  void setTimeOut(std::string value);
+  void setKeepAliveTime(std::string value);
   void setInclude(std::string value);
   virtual void setKeyVal(std::string key, std::string value);
 
@@ -46,7 +46,7 @@ class RootBlock {
   int getWorkerConnection() const;
   int getWorkerProcesses() const;
   const size_t &getClientMaxBodySize() const;
-  const size_t &getTimeOut() const;
+  const size_t &getKeepAliveTime() const;
 };
 
 #endif

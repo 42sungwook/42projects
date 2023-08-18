@@ -1,7 +1,19 @@
 #ifndef SERVEROPERATOR_HPP
 #define SERVEROPERATOR_HPP
 #include <arpa/inet.h>
+#include <netinet/in.h>
+#include <netinet/tcp.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <sys/event.h>
+#include <sys/signal.h>
+#include <sys/socket.h>
+#include <sys/types.h>
+#include <unistd.h>
 
+#include <cerrno>
+#include <cstring>
+#include <iostream>
 #include <list>
 
 #include "Delete.hpp"
@@ -24,7 +36,7 @@ class ServerOperator {
   bool isExistClient(int clientSock);
   ServerBlock *getLocationBlock(Request &req, ServerBlock *sb);
   ServerBlock *findLocationBlock(struct kevent *event);
-
+  // void setKeepAlive(int &fd, Server *server);
   void handleEventError(struct kevent *event);
   void handleReadEvent(struct kevent *event, Kqueue kq);
   void handleWriteEvent(struct kevent *event, Kqueue kq);

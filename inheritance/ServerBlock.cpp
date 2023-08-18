@@ -5,8 +5,7 @@ ServerBlock::ServerBlock(RootBlock &rootBlockRef)
       _listen(8080),
       _root(),
       _index(),
-      _serverName(),
-      _clientMaxBodySize(8192) {}
+      _serverName() {}
 
 ServerBlock::~ServerBlock() {}
 
@@ -17,11 +16,7 @@ void ServerBlock::setListen(std::string value) {
 void ServerBlock::setRoot(std::string value) { _root = value; }
 
 void ServerBlock::setIndex(std::string value) { _index = value; }
-ㄴ void ServerBlock::setServerName(std::string value) { _serverName = value; }
-
-void ServerBlock::setClientMaxBodySize(std::string value) {
-  _clientMaxBodySize = stoul(value);  // TODO stoul() 동작 함수 만들어야 함
-}
+void ServerBlock::setServerName(std::string value) { _serverName = value; }
 
 void ServerBlock::setCgi(std::string value) { _cgi = value; }
 

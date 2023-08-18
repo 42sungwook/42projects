@@ -44,6 +44,8 @@ void ServerBlock::setServerName(std::string value) { _serverName = value; }
 
 void ServerBlock::setAutoindex(std::string value) { _autoindex = value; }
 
+void ServerBlock::setCgi(std::string value) { _cgi = value; }
+
 void ServerBlock::setKeyVal(std::string key, std::string value) {
   typedef void (ServerBlock::*funcptr)(std::string);
   std::map<std::string, funcptr> funcmap;

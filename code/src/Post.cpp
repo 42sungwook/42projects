@@ -11,9 +11,12 @@ Post::Post() {}
 Post::~Post() {}
 
 bool Post::isCgi(const std::string &fullUri, Request &request) {
-  
-  return false;
-  // findCgi function fullUri.find(".cgi") != std::string::npos
+  if (request.getHeaderMap().find("cgi") == request.getHeaderMap().end())
+    return false;
+  else if (fullUri.find(request.getHeaderByKey("cgi")) == fullUri.npos)
+    return false;
+  else
+    return true;
 }
 
 std::string Post::generateRandomString() {
@@ -35,8 +38,9 @@ void Post::createResource(Response &response, std::string &fileName,
     tempif.close();
     fileName = fullUri;
     fileName += generateRandomString();
-	  std::ifstream temif(fileName);
-//    tempif = std::ifstream(fileName); // TODO 클러스터 맥에서 대입연산자 에러
+    std::ifstream temif(fileName);
+    //    tempif = std::ifstream(fileName); // TODO 클러스터 맥에서 대입연산자
+    //    에러
   }
   response.setHeaders("Location", fileName);
   response.setStatusLine(201);
@@ -84,7 +88,8 @@ void Post::process(Request &request, Response &response) {
 
       // TODO 임시
       response.setBody(
-          "POST 동작의 임시 response 입니다.\n기본 동작 시, body를 생성하지 않는다고 합니다.\n만약 생성한다면 알려주세요.");
+          "POST 동작의 임시 response 입니다.\n기본 동작 시, body를 생성하지 "
+          "않는다고 합니다.\n만약 생성한다면 알려주세요.");
       response.setHeaders("Content-Length",
                           ftItos(response.getBody().length()));
       // response.setHeaders("Content-Type", "text/html");
@@ -93,10 +98,9 @@ void Post::process(Request &request, Response &response) {
     }
   } catch (ErrorException &e) {
     if (e.getErrorCode() >= 400) {
-	    response.setErrorRes(e.getErrorCode());
-    }
-	  else { // TODO 300번대 에러에 대해서 더 알아보기
-	    response.setRedirectRes(e.getErrorCode());
+      response.setErrorRes(e.getErrorCode());
+    } else {  // TODO 300번대 에러에 대해서 더 알아보기
+      response.setRedirectRes(e.getErrorCode());
     }
   }
 }
