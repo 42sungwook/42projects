@@ -91,9 +91,7 @@ void Request::parsing(SPSBList *serverBlockList, LocationMap &locationMap) {
 
   setMime();  // 셋마임 위치 정하기
   if (_header["method"] != "POST") _isFullReq = true;
-  std::cout << "근본인 ss에 아무것도 없나 1: " << ss.str() << std::endl;
-  std::getline(ss, line, '\r');
-  std::cout << "근본인 ss에 아무것도 없나 2: " << ss.str() << std::endl;
+  std::getline(ss, line); // '\n'지우는듯?
   if (isChunked) {
     getChunkedBody(ss);
   } else {
