@@ -42,6 +42,11 @@ void Request::parsing(SPSBList *serverBlockList, LocationMap &locationMap) {
   std::stringstream lineStream(line);
   lineStream >> _header["Method"] >> _header["URI"] >> _header["protocol"];
   parseUrl();
+  bool isChunked = false;
+  if (_header.find("Transfer-encoding") != _header.end()) {
+    isChunked = true;
+    _header.erase("Transfer-encoding");
+  }
   while (std::getline(ss, line, '\r') && line != "\n") {
     size_t pos = line.find(":");
     if (pos == line.npos) {
@@ -67,25 +72,52 @@ void Request::parsing(SPSBList *serverBlockList, LocationMap &locationMap) {
   }
 
   setMime();  // 셋마임 위치 정하기
-
+  if (_header["method"] != "POST") _isFullReq = true;
   std::getline(ss, line);
-  while (std::getline(ss, line)) {
-    _body += line;
-    if (!ss.eof()) _body += '\n';
+  if (isChunked)
+    getChunkedBody(ss);
+  else {
+    getBody(ss);
   }
-  if (_header["Method"] == "POST" &&
-      static_cast<size_t>(std::atoi(_header["Content-Length"].c_str())) !=
-          _body.size()) {
-    return;
-  }
-
   if (_body.size() >= _locBlock->getClientMaxBodySize()) _status = 413;
   if (_rawContents.size() - _body.size() >= 8192) {
     _status = 414;
   }
+  if (_status != 200) _isFullReq;
+}
+
+void Request::getBody(std::stringstream &ss) {
+  std::string line;
+
+  while (std::getline(ss, line)) {
+    _body += line;
+    if (!ss.eof()) _body += '\n';
+  }
+  if (_header.find("Content-Length") != _header.end() &&
+      static_cast<size_t>(std::atoi(_header["Content-Length"].c_str())) !=
+          _body.size()) {
+    return;
+  }
   _isFullReq = true;
 }
 
+void Request::getChunkedBody(std::stringstream &ss) {
+  if ((_header.find("Transfer-encoding") == _header.end()) ||
+      (_header["Transfer-encoding"] != "chunked" ||
+       _header["method"] != "POST")) {
+    _status = 400;
+    _isFullReq = true;
+    return;
+  }
+  std::string line;
+  std::getline(ss, line);
+  if (line == "0") _isFullReq = true;
+  while (std::getline(ss, line)) {
+    _body += line;
+    if (!ss.eof()) _body += '\n';
+  }
+  // error
+}
 void Request::setLocBlock(SPSBList *serverBlockList, LocationMap &locationMap) {
   std::string requestURI = getHeaderByKey("BasicURI");
   ServerBlock *sb = NULL;

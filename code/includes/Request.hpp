@@ -35,7 +35,7 @@ class Request {
   Request();
   ~Request();
   void parsing(SPSBList *serverBlockList, LocationMap &locationMap);
-  int  setMime();
+  int setMime();
   void setLocBlock(SPSBList *serverBlockList, LocationMap &locationMap);
   void setAutoindex(std::string &value);
   void addRawContents(const std::string &raw);
@@ -54,6 +54,8 @@ class Request {
   std::string getRawContents() const;
   const std::string &getHeaderByKey(std::string key);
   std::map<std::string, std::string> getHeaderMap() const;
+  void getBody(std::stringstream &ss);
+  void getChunkedBody(std::stringstream &ss);
 };
 
 #endif
