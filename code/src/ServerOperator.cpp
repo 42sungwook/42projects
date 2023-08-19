@@ -108,12 +108,15 @@ void ServerOperator::handleReadEvent(struct kevent *event, Kqueue &kq) {
     /* read data from client */
     char buf[1024];
     int n;
-    n = read(event->ident, buf, sizeof(buf));
+    
+    n = read(event->ident, buf, sizeof(buf) - 1);
     if (n == 0) {
       disconnectClient(event->ident);
     } else if (n > 0) {
       buf[n] = '\0';
+      std::cout << buf << std::endl;
       req.addRawContents(buf);
+      std::cout << "here?" << std::endl;
       req.parsing(_serverMap[_clientToServer[event->ident]]->getSPSBList(),
                   _locationMap);
       if (req.isFullReq()) {
@@ -126,7 +129,7 @@ void ServerOperator::handleReadEvent(struct kevent *event, Kqueue &kq) {
                         NULL);
         kq.changeEvents(event->ident, EVFILT_READ, EV_DELETE, 0, 0, NULL);
         kq.changeEvents(event->ident, EVFILT_WRITE, EV_ADD | EV_ENABLE, 0, 0,
-                        NULL);  // TODO 임시값
+                        NULL);
       }
     }
   }
@@ -210,6 +213,8 @@ void ServerOperator::handleWriteEvent(struct kevent *event, Kqueue &kq) {
   if (res.sendResponse(event->ident) == EXIT_FAILURE) {
     std::cerr << "client write error!" << std::endl;
     disconnectClient(event->ident);  // 몇번에러 때리지?
+  } else if (_clients[event->ident].getStatus() == 413) {
+    disconnectClient(event->ident);
   } else {
     _clients[event->ident].clear();
     kq.changeEvents(event->ident, EVFILT_TIMER, EV_ENABLE, 0,

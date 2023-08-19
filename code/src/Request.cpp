@@ -1,5 +1,7 @@
 #include "../includes/Request.hpp"
 
+#include "../includes/ErrorException.hpp"
+
 Request::Request() : _mime("text/html"), _status(200), _isFullReq(false) {
   _mimeTypes["html"] = "text/html";
   _mimeTypes["css"] = "text/css";
@@ -22,14 +24,24 @@ Request::~Request() {}
 
 void Request::parseUrl() {
   std::string uri = _header["URI"];
+  std::cout << "uri: " << uri << std::endl;
   size_t pos = uri.find("://");
 
   if (pos == uri.npos)
     pos = 0;
   else
     pos += 3;
+  std::cout << "pos1 : " << pos << std::endl;
   pos = uri.find('/', pos);
-  _header["BasicURI"] = uri.substr(pos, uri.find('?', pos) - pos);
+  if (pos == uri.npos) pos = 0;
+  std::cout << "pos2 : " << pos << std::endl;
+  try {
+    _header["BasicURI"] =
+        uri.substr(pos, uri.find('?', pos) - pos);  // 문제차자땅
+  } catch (const std::exception &e) {
+    std::cerr << e.what() << '\n';
+    std::cerr << "substr err" << std::endl;
+  }
 }
 
 void Request::parsing(SPSBList *serverBlockList, LocationMap &locationMap) {
@@ -41,12 +53,10 @@ void Request::parsing(SPSBList *serverBlockList, LocationMap &locationMap) {
   std::getline(ss, line, '\r');
   std::stringstream lineStream(line);
   lineStream >> _header["Method"] >> _header["URI"] >> _header["protocol"];
+  std::cout << _header["URI"] << _header["protocol"] << _header["Method"]
+            << std::endl;
   parseUrl();
   bool isChunked = false;
-  if (_header.find("Transfer-encoding") != _header.end()) {
-    isChunked = true;
-    _header.erase("Transfer-encoding");
-  }
   while (std::getline(ss, line, '\r') && line != "\n") {
     size_t pos = line.find(":");
     if (pos == line.npos) {
@@ -55,8 +65,16 @@ void Request::parsing(SPSBList *serverBlockList, LocationMap &locationMap) {
     }
     size_t valueStartPos = line.find_first_not_of(" ", pos + 1);
     size_t keyStartPos = line.find_first_not_of("\n", 0);
+
     _header[line.substr(keyStartPos, pos - keyStartPos)] =
         line.substr(valueStartPos);
+    std::cout << "key: " << line.substr(keyStartPos, pos - keyStartPos)
+              << std::endl;
+  }
+  if (_header.find("Transfer-Encoding") != _header.end()) {
+    isChunked = true;
+    std::cout << "HERE" << std::endl;
+    _header.erase("Transfer-Encoding");
   }
   if (_header.find("Host") == _header.end()) {
     _status = 400;
@@ -73,20 +91,33 @@ void Request::parsing(SPSBList *serverBlockList, LocationMap &locationMap) {
 
   setMime();  // 셋마임 위치 정하기
   if (_header["method"] != "POST") _isFullReq = true;
-  std::getline(ss, line);
-  if (isChunked)
+  std::cout << "근본인 ss에 아무것도 없나 1: " << ss.str() << std::endl;
+  std::getline(ss, line, '\r');
+  std::cout << "근본인 ss에 아무것도 없나 2: " << ss.str() << std::endl;
+  if (isChunked) {
     getChunkedBody(ss);
-  else {
-    getBody(ss);
+  } else {
+    std::cout << "그럼 셋바디 하나?" << std::endl;
+    setBody(ss);
+    std::cout << "body: " << _body << std::endl;
   }
-  if (_body.size() >= _locBlock->getClientMaxBodySize()) _status = 413;
+  std::cout << "언제 터지나????" << std::endl;
+  std::cout << "body size: " << _header["Content-Length"] << std::endl;
+  std::cout << "max body size: " << _locBlock->getClientMaxBodySize()
+            << std::endl;
+  if ((size_t)ftStoi(_header["Content-Length"]) >=
+      _locBlock->getClientMaxBodySize()) {
+    std::cout << "터졌다ㅏㅏㅏㅏㅏㅏㅏㅏ 예ㅔㅔㅔㅔㅔ" << std::endl;
+    _status = 413;
+    _isFullReq = true;  // check!
+    return;
+  }
   if (_rawContents.size() - _body.size() >= 8192) {
     _status = 414;
   }
-  if (_status != 200) _isFullReq;
 }
 
-void Request::getBody(std::stringstream &ss) {
+void Request::setBody(std::stringstream &ss) {
   std::string line;
 
   while (std::getline(ss, line)) {
@@ -106,7 +137,6 @@ void Request::getChunkedBody(std::stringstream &ss) {
       (_header["Transfer-encoding"] != "chunked" ||
        _header["method"] != "POST")) {
     _status = 400;
-    _isFullReq = true;
     return;
   }
   std::string line;
@@ -116,7 +146,6 @@ void Request::getChunkedBody(std::stringstream &ss) {
     _body += line;
     if (!ss.eof()) _body += '\n';
   }
-  // error
 }
 void Request::setLocBlock(SPSBList *serverBlockList, LocationMap &locationMap) {
   std::string requestURI = getHeaderByKey("BasicURI");
@@ -193,13 +222,11 @@ void Request::addHeader(std::string key, std::string value) {
   _header[key] = value;
 }
 
-const std::string Request::getUri() { return _header["URI"]; }
+const std::string &Request::getUri() { return _header["URI"]; }
 
-const std::string Request::getHost() { return _host; }
+const std::string &Request::getHost() { return _host; }
 
-const std::string Request::getBody() const { return _body; }
-
-const std::string Request::getMessage() const { return "temp"; }  // <<<<
+const std::string &Request::getBody() const { return _body; }
 
 const std::string &Request::getAutoindex() const { return _autoindex; }
 
@@ -209,11 +236,11 @@ const int &Request::getStatus() const { return _status; }
 
 const std::string &Request::getMime() const { return _mime; }
 
-std::string Request::getMethod() { return _header["Method"]; }
+const std::string &Request::getMethod() { return _header["Method"]; }
 
 bool Request::isFullReq() const { return _isFullReq; }
 
-std::string Request::getRawContents() const { return _rawContents; }
+const std::string &Request::getRawContents() const { return _rawContents; }
 
 // Warning : always check _header[key] exist
 const std::string &Request::getHeaderByKey(std::string key) {

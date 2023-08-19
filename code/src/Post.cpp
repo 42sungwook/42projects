@@ -51,6 +51,7 @@ void Post::createResource(Response &response, std::string &fileName,
 void Post::appendResource(const std::string &fileName, const Request &request) {
   std::ofstream tempof(fileName, std::ios::app);
   _path = fileName;
+  std::cout << "어디로 사라진 우리 겟바디씨: " << request.getBody() << std::endl; // ㅠㅠ ..?
   tempof << request.getBody();
   tempof.close();
 }

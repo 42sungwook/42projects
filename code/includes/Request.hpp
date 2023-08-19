@@ -41,20 +41,19 @@ class Request {
   void addRawContents(const std::string &raw);
   void addHeader(std::string key, std::string value);
   void clear();
-  const std::string getHost();
-  const std::string getUri();
-  const std::string getMessage() const;
-  const std::string getBody() const;
+  const std::string &getHost();
+  const std::string &getUri();
+  const std::string &getBody() const;
   const int &getStatus() const;
   const std::string &getAutoindex() const;
   const std::string &getMime() const;
   enum PROCESS getProcess();
-  std::string getMethod();
+  const std::string &getMethod();
   bool isFullReq() const;
-  std::string getRawContents() const;
+  const std::string &getRawContents() const;
   const std::string &getHeaderByKey(std::string key);
   std::map<std::string, std::string> getHeaderMap() const;
-  void getBody(std::stringstream &ss);
+  void setBody(std::stringstream &ss);
   void getChunkedBody(std::stringstream &ss);
 };
 
