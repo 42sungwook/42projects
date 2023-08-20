@@ -34,10 +34,6 @@ void Get::process(Request &request, Response &response) {
   try {
     std::string fullUri = request.getHeaderByKey("RootDir");
     fullUri += request.getHeaderByKey("CuttedURI");
-    std::cout << "RootDir : " << request.getHeaderByKey("RootDir") << std::endl;
-    std::cout << "CuttedURI : " << request.getHeaderByKey("CuttedURI")
-              << std::endl;
-    std::cout << "fullUri : " << fullUri << std::endl;
     if (fullUri.back() == '/') {
       if (request.getHeaderByKey("Index") != "") {
         std::stringstream ss(request.getHeaderByKey("Index"));

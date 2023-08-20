@@ -100,7 +100,6 @@ void Response::directoryListing(std::string path) {
 }
 
 int Response::sendResponse(int clientSocket) {
-  std::cout << "status: " << _statusLine << std::endl;
   if (write(clientSocket, _result.c_str(), _result.length()) == -1) return (1);
   return (0);
 }
@@ -201,7 +200,7 @@ void Response::setHeaders(const std::string &key, const std::string &value) {
   //   contentType = "text/css";
   // }
   // if (ext == "js") {
-  //   std::cout << "js file" << std::endl;
+  //    << "js file" << std::endl;
   //   contentType = "text/javascript";
   // }
   _headers[key] = value;

@@ -2,7 +2,11 @@
 
 #include "../includes/ErrorException.hpp"
 
-Request::Request() : _mime("text/html"), _status(200), _isFullReq(false) {
+Request::Request()
+    : _mime("text/html"),
+      _status(200),
+      _isFullHeader(false),
+      _isFullReq(false) {
   _mimeTypes["html"] = "text/html";
   _mimeTypes["css"] = "text/css";
   _mimeTypes["js"] = "text/javascript";
@@ -49,8 +53,8 @@ void Request::parsing(SPSBList *serverBlockList, LocationMap &locationMap) {
   std::getline(ss, line, '\r');
   std::stringstream lineStream(line);
   lineStream >> _header["Method"] >> _header["URI"] >> _header["protocol"];
-  std::cout << "Method : " << _header["Method"] << std::endl;
   parseUrl();
+  _isFullHeader = false;
   bool isChunked = false;
   while (std::getline(ss, line, '\r') && line != "\n") {
     size_t pos = line.find(":");
@@ -114,9 +118,8 @@ void Request::setBody(std::stringstream &ss) {
 }
 
 void Request::setChunkedBody(std::stringstream &ss) {
-  if ((_header.find("Transfer-Encoding") == _header.end()) ||
-      (_header["Transfer-Encoding"] != "chunked" ||
-       _header["Method"] != "POST")) {
+  if (_header["Transfer-Encoding"] != "chunked" ||
+      (_header["Method"] != "POST" && _header["Method"] != "PUT")) {
     _status = 405;
     return;
   }
@@ -170,9 +173,6 @@ void Request::setLocBlock(SPSBList *serverBlockList, LocationMap &locationMap) {
   addHeader("Name", _locBlock->getServerName());
   addHeader("Port", ftItos(_locBlock->getListenPort()));
   addHeader("cgi", _locBlock->getCgi());
-  std::cout << "::::::: Loc :::::::\n";
-  std::cout << "uri: " << requestURI << " Root: " << _locBlock->getRoot()
-            << std::endl;
 };
 
 void Request::setAutoindex(std::string &value) { _autoindex = value; }
@@ -208,8 +208,12 @@ int Request::setMime() {
   } else {
     if (stat(fullUri.c_str(), &info) != 0) {
       std::cout << "stat error: " << fullUri << std::endl;
-      _status = 404;
-      return (EXIT_FAILURE);
+      if (_header["Method"] == "PUT")
+        _status = 201;
+      else
+        _status = 404;
+      // return (EXIT_FAILURE);
+      return (EXIT_SUCCESS);
     } else if (S_ISDIR(info.st_mode)) {
       _mime = _mimeTypes["directory"];
     } else

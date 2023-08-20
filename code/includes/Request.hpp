@@ -25,6 +25,7 @@ class Request {
   std::string _autoindex;
   std::string _mime;
   int _status;
+  bool _isFullHeader;
   bool _isFullReq;
   std::map<std::string, std::string> _mimeTypes;
   ServerBlock *_locBlock;
