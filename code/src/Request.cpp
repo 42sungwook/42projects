@@ -24,17 +24,14 @@ Request::~Request() {}
 
 void Request::parseUrl() {
   std::string uri = _header["URI"];
-  std::cout << "uri: " << uri << std::endl;
   size_t pos = uri.find("://");
 
   if (pos == uri.npos)
     pos = 0;
   else
     pos += 3;
-  std::cout << "pos1 : " << pos << std::endl;
   pos = uri.find('/', pos);
   if (pos == uri.npos) pos = 0;
-  std::cout << "pos2 : " << pos << std::endl;
   try {
     _header["BasicURI"] =
         uri.substr(pos, uri.find('?', pos) - pos);  // 문제차자땅
@@ -53,63 +50,50 @@ void Request::parsing(SPSBList *serverBlockList, LocationMap &locationMap) {
   std::getline(ss, line, '\r');
   std::stringstream lineStream(line);
   lineStream >> _header["Method"] >> _header["URI"] >> _header["protocol"];
-  std::cout << _header["URI"] << _header["protocol"] << _header["Method"]
-            << std::endl;
+
   parseUrl();
   bool isChunked = false;
   while (std::getline(ss, line, '\r') && line != "\n") {
     size_t pos = line.find(":");
     if (pos == line.npos) {
       _status = 400;
-      break;
     }
     size_t valueStartPos = line.find_first_not_of(" ", pos + 1);
     size_t keyStartPos = line.find_first_not_of("\n", 0);
 
     _header[line.substr(keyStartPos, pos - keyStartPos)] =
         line.substr(valueStartPos);
-    std::cout << "key: " << line.substr(keyStartPos, pos - keyStartPos)
-              << std::endl;
   }
   if (_header.find("Transfer-Encoding") != _header.end()) {
     isChunked = true;
-    std::cout << "HERE" << std::endl;
-    _header.erase("Transfer-Encoding");
   }
   if (_header.find("Host") == _header.end()) {
     _status = 400;
+
   } else if (_header["Method"] != "GET" && _header["Method"] != "POST" &&
              _header["Method"] != "DELETE") {
     _status = 405;
+
   } else {
     _host = _header["Host"];
   }
 
-  if (_status == 200) {
-    setLocBlock(serverBlockList, locationMap);
-  }
+  setLocBlock(serverBlockList, locationMap);
+  setMime();
 
-  setMime();  // 셋마임 위치 정하기
-  if (_header["method"] != "POST") _isFullReq = true;
-  std::getline(ss, line); // '\n'지우는듯?
+  if (_header["Method"] != "POST") _isFullReq = true;
+  std::getline(ss, line);
   if (isChunked) {
     getChunkedBody(ss);
   } else {
-    std::cout << "그럼 셋바디 하나?" << std::endl;
+    if ((size_t)ftStoi(_header["Content-Length"]) >=
+        _locBlock->getClientMaxBodySize()) {
+      _status = 413;
+      _isFullReq = true;
+    }
     setBody(ss);
-    std::cout << "body: " << _body << std::endl;
   }
-  std::cout << "언제 터지나????" << std::endl;
-  std::cout << "body size: " << _header["Content-Length"] << std::endl;
-  std::cout << "max body size: " << _locBlock->getClientMaxBodySize()
-            << std::endl;
-  if ((size_t)ftStoi(_header["Content-Length"]) >=
-      _locBlock->getClientMaxBodySize()) {
-    std::cout << "터졌다ㅏㅏㅏㅏㅏㅏㅏㅏ 예ㅔㅔㅔㅔㅔ" << std::endl;
-    _status = 413;
-    _isFullReq = true;  // check!
-    return;
-  }
+
   if (_rawContents.size() - _body.size() >= 8192) {
     _status = 414;
   }
@@ -131,20 +115,26 @@ void Request::setBody(std::stringstream &ss) {
 }
 
 void Request::getChunkedBody(std::stringstream &ss) {
-  if ((_header.find("Transfer-encoding") == _header.end()) ||
-      (_header["Transfer-encoding"] != "chunked" ||
-       _header["method"] != "POST")) {
-    _status = 400;
+  if ((_header.find("Transfer-Encoding") == _header.end()) ||
+      (_header["Transfer-Encoding"] != "chunked" ||
+       _header["Method"] != "POST")) {
+    _status = 405;
     return;
   }
   std::string line;
   std::getline(ss, line);
-  if (line == "0") _isFullReq = true;
+  if (line == "0\r") {
+    _isFullReq = true;
+    _header.erase("Transfer-Encoding");
+  }
+
   while (std::getline(ss, line)) {
     _body += line;
     if (!ss.eof()) _body += '\n';
   }
 }
+
+// 같은 포트를 공유하는 가상 호스트 리스트
 void Request::setLocBlock(SPSBList *serverBlockList, LocationMap &locationMap) {
   std::string requestURI = getHeaderByKey("BasicURI");
   ServerBlock *sb = NULL;
@@ -158,6 +148,9 @@ void Request::setLocBlock(SPSBList *serverBlockList, LocationMap &locationMap) {
   }
   if (sb == NULL) sb = *(serverBlockList->begin());
 
+  // 요청 호스트와 일치하는 가상호스트가 있다면 그 가상호스트에 있는
+  // 로케이션블락을 찾아옴, 해당되는 로케이션 블락이 없으면 서버블락
+  // 받아옴
   if (locationMap.find(sb) == locationMap.end())
     _locBlock = sb;
   else {
@@ -172,6 +165,14 @@ void Request::setLocBlock(SPSBList *serverBlockList, LocationMap &locationMap) {
       }
     }
   }
+  addHeader("RootDir", _locBlock->getRoot());
+  addHeader("AutoIndex", _locBlock->getAutoindex());
+  addHeader("Index", _locBlock->getIndex());
+  addHeader("Name", _locBlock->getServerName());
+  addHeader("Port", ftItos(_locBlock->getListenPort()));
+  addHeader("cgi", _locBlock->getCgi());
+  std::cout << "::::::: Loc :::::::\n";
+  std::cout << "Root: " << _locBlock->getRoot() << std::endl;
 };
 
 void Request::setAutoindex(std::string &value) { _autoindex = value; }
@@ -206,11 +207,12 @@ int Request::setMime() {
       _mime = _mimeTypes["else"];
   } else {
     if (stat(fullUri.c_str(), &info) != 0) {
+      std::cout << "stat error: " << fullUri << std::endl;
       _status = 404;
       return (EXIT_FAILURE);
-    } else if (S_ISDIR(info.st_mode))
+    } else if (S_ISDIR(info.st_mode)) {
       _mime = _mimeTypes["directory"];
-    else
+    } else
       _mime = _mimeTypes["else"];
   }
   return (EXIT_SUCCESS);
@@ -225,6 +227,8 @@ const std::string &Request::getUri() { return _header["URI"]; }
 const std::string &Request::getHost() { return _host; }
 
 const std::string &Request::getBody() const { return _body; }
+
+ServerBlock *Request::getLocBlock() const { return _locBlock; }
 
 const std::string &Request::getAutoindex() const { return _autoindex; }
 

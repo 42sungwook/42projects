@@ -137,6 +137,7 @@ void Response::setErrorRes(int statusCode) {
   _statusLine.clear();
   _headers.clear();
   _body.clear();
+
   _statusLine += "HTTP/1.1 ";
   _statusLine += ftItos(statusCode);
   _statusLine += _statusCodes[statusCode];

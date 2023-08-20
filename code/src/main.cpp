@@ -1,3 +1,5 @@
+#include <cerrno>
+
 #include "../includes/ConfigParser.hpp"
 #include "../includes/Kqueue.hpp"
 #include "../includes/RootBlock.hpp"
@@ -18,7 +20,10 @@ int main(int ac, char **av) {
 
   for (ServerBlockMap::iterator it = sbMap.begin(); it != sbMap.end(); it++) {
     Server *newserver = new Server((*it).first, ((*it).second));
-    if (newserver->init() == EXIT_FAILURE) return EXIT_FAILURE;
+    if (newserver->init() == EXIT_FAILURE) {
+      std::cout << "server init error" << std::endl;
+      return EXIT_FAILURE;
+    }
     serverMap[newserver->getSocket()] = newserver;
   }
 

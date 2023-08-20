@@ -45,6 +45,7 @@ class Request {
   const std::string &getUri();
   const std::string &getBody() const;
   const int &getStatus() const;
+  ServerBlock *getLocBlock() const;
   const std::string &getAutoindex() const;
   const std::string &getMime() const;
   enum PROCESS getProcess();

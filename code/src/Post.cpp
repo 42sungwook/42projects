@@ -39,7 +39,6 @@ void Post::createResource(Response &response, std::string &fileName,
     tempif.close();
     fileName = fullUri;
     fileName += generateRandomString();
-    std::cout << "filename: " << fileName << std::endl;
     std::ifstream tempif(fileName);
     //    tempif = std::ifstream(fileName); // TODO 클러스터 맥에서 대입연산자
     //    에러
@@ -51,7 +50,6 @@ void Post::createResource(Response &response, std::string &fileName,
 void Post::appendResource(const std::string &fileName, const Request &request) {
   std::ofstream tempof(fileName, std::ios::app);
   _path = fileName;
-  std::cout << "어디로 사라진 우리 겟바디씨: " << request.getBody() << std::endl; // ㅠㅠ ..?
   tempof << request.getBody();
   tempof.close();
 }
@@ -61,7 +59,6 @@ void Post::process(Request &request, Response &response) {
     std::string fullUri = request.getHeaderByKey("RootDir");
     fullUri += request.getHeaderByKey("BasicURI");
     std::string fileName = fullUri;
-    std::cout << "POST start" << std::endl;
 
     if (isCgi(fullUri, request) == true) {
       Cgi cgi;
@@ -70,13 +67,11 @@ void Post::process(Request &request, Response &response) {
       response.convertCGI(cgi.getRes());
     } else {
       if (fileName.back() == '/') {
-        std::cout << "/ mime: " << request.getMime() << std::endl;
         if (request.getMime() != "directory") {
           throw ErrorException(400);
         }
         createResource(response, fileName, fullUri);
       } else {
-        std::cout << "none / mime: " << request.getMime() << std::endl;
         if (request.getMime() == "directory") {
           std::string tmp = request.getHeaderByKey("BasicURI");
           tmp += "/";

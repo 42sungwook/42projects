@@ -34,6 +34,10 @@ void Get::process(Request &request, Response &response) {
   try {
     std::string fullUri = request.getHeaderByKey("RootDir");
     fullUri += request.getHeaderByKey("BasicURI");
+    std::cout << "RootDir : " << request.getHeaderByKey("RootDir") << std::endl;
+    std::cout << "BasicURI : " << request.getHeaderByKey("BasicURI")
+              << std::endl;
+    std::cout << "fullUri : " << fullUri << std::endl;
     if (fullUri.back() == '/') {
       if (request.getHeaderByKey("Index") != "") {
         std::stringstream ss(request.getHeaderByKey("Index"));
@@ -74,10 +78,9 @@ void Get::process(Request &request, Response &response) {
     }
   } catch (ErrorException &e) {
     if (e.getErrorCode() >= 400) {
-	    response.setErrorRes(e.getErrorCode());
-    }
-	  else { // TODO 300번대 에러에 대해서 더 알아보기
-	    response.setRedirectRes(e.getErrorCode());
+      response.setErrorRes(e.getErrorCode());
+    } else {  // TODO 300번대 에러에 대해서 더 알아보기
+      response.setRedirectRes(e.getErrorCode());
     }
   }
 }
