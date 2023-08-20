@@ -1,5 +1,29 @@
 #include "../includes/Utils.hpp"
 
+size_t hexToDecimal(const std::string& hex) {
+  size_t decimal = 0;
+  int len = hex.length();
+
+  for (int i = 0; i < len; i++) {
+    char c = hex[i];
+
+    // Convert current character to corresponding decimal value
+    int val;
+    if ('0' <= c && c <= '9') {
+      val = c - '0';
+    } else if ('a' <= c && c <= 'f') {
+      val = c - 'a' + 10;
+    } else if ('A' <= c && c <= 'F') {
+      val = c - 'A' + 10;
+    } else
+      val = 0;
+
+    decimal += val * pow(16, len - 1 - i);
+  }
+
+  return decimal;
+}
+
 int ftStoi(std::string str) {
   int ret = 0;
   bool neg = false;
@@ -34,7 +58,7 @@ std::string ftItos(int num) {
   return ret;
 }
 
-void ftToupper(std::string &str) {
+void ftToupper(std::string& str) {
   std::string res;
 
   for (size_t i = 0; i < str.length(); i++) {

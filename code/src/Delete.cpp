@@ -2,7 +2,7 @@
 
 void Delete::makeStatusLine(Request &request, Response &response) {
   std::string fullUri = request.getHeaderByKey("RootDir");
-  fullUri += request.getHeaderByKey("BasicURI");
+  fullUri += request.getHeaderByKey("CuttedURI");
   if (fullUri[(fullUri.size() - 1)] == '/') {
     if (request.getHeaderByKey("Index") != "") {
       std::stringstream ss(request.getHeaderByKey("Index"));

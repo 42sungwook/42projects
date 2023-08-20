@@ -2,6 +2,7 @@
 #define UTILS_HPP
 
 #include <algorithm>
+#include <cmath>
 #include <iostream>
 #include <sstream>
 #include <string>
@@ -10,8 +11,9 @@
 
 int ftStoi(std::string str);
 std::string ftItos(int num);
-void ftToupper(std::string &str);
+void ftToupper(std::string& str);
 size_t convertTimeUnits(std::string value);
 size_t convertByteUnits(std::string value);
+size_t hexToDecimal(const std::string& hex);
 
 #endif

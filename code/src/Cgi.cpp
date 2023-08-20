@@ -9,8 +9,8 @@ void Cgi::makeEnv(std::map<std::string, std::string> param) {
   _env["CONTENT_LENGTH"] = param["Content-Length"];
   _env["CONTENT_TYPE"] = param["Content-Type"];
   _env["GATEWAY_INTERFACE"] = "CGI/1.1";
-  _env["PATH_INFO"] = param["RootDir"] + param["BasicURI"];
-  _env["PATH_TRANSLATED"] = param["RootDir"] + param["BasicURI"];
+  _env["PATH_INFO"] = param["RootDir"] + param["CuttedURI"];
+  _env["PATH_TRANSLATED"] = param["RootDir"] + param["CuttedURI"];
   _env["QUERY_STRING"] =
       param["URI"].substr(param["URI"].find("?") + 1, std::string::npos);
   _env["REMOTE_ADDR"] = param["ClientIP"];

@@ -33,8 +33,7 @@ void Request::parseUrl() {
   pos = uri.find('/', pos);
   if (pos == uri.npos) pos = 0;
   try {
-    _header["BasicURI"] =
-        uri.substr(pos, uri.find('?', pos) - pos);  // 문제차자땅
+    _header["RawURI"] = uri.substr(pos, uri.find('?', pos) - pos);
   } catch (const std::exception &e) {
     std::cerr << e.what() << '\n';
     std::cerr << "substr err" << std::endl;
@@ -50,7 +49,7 @@ void Request::parsing(SPSBList *serverBlockList, LocationMap &locationMap) {
   std::getline(ss, line, '\r');
   std::stringstream lineStream(line);
   lineStream >> _header["Method"] >> _header["URI"] >> _header["protocol"];
-
+  std::cout << "Method : " << _header["Method"] << std::endl;
   parseUrl();
   bool isChunked = false;
   while (std::getline(ss, line, '\r') && line != "\n") {
@@ -71,7 +70,7 @@ void Request::parsing(SPSBList *serverBlockList, LocationMap &locationMap) {
     _status = 400;
 
   } else if (_header["Method"] != "GET" && _header["Method"] != "POST" &&
-             _header["Method"] != "DELETE") {
+             _header["Method"] != "DELETE" && _header["Method"] != "PUT") {
     _status = 405;
 
   } else {
@@ -84,7 +83,7 @@ void Request::parsing(SPSBList *serverBlockList, LocationMap &locationMap) {
   if (_header["Method"] != "POST") _isFullReq = true;
   std::getline(ss, line);
   if (isChunked) {
-    getChunkedBody(ss);
+    setChunkedBody(ss);
   } else {
     if ((size_t)ftStoi(_header["Content-Length"]) >=
         _locBlock->getClientMaxBodySize()) {
@@ -114,7 +113,7 @@ void Request::setBody(std::stringstream &ss) {
   _isFullReq = true;
 }
 
-void Request::getChunkedBody(std::stringstream &ss) {
+void Request::setChunkedBody(std::stringstream &ss) {
   if ((_header.find("Transfer-Encoding") == _header.end()) ||
       (_header["Transfer-Encoding"] != "chunked" ||
        _header["Method"] != "POST")) {
@@ -136,7 +135,7 @@ void Request::getChunkedBody(std::stringstream &ss) {
 
 // 같은 포트를 공유하는 가상 호스트 리스트
 void Request::setLocBlock(SPSBList *serverBlockList, LocationMap &locationMap) {
-  std::string requestURI = getHeaderByKey("BasicURI");
+  std::string requestURI = getHeaderByKey("RawURI");
   ServerBlock *sb = NULL;
 
   for (SPSBList::iterator it = serverBlockList->begin();
@@ -158,7 +157,7 @@ void Request::setLocBlock(SPSBList *serverBlockList, LocationMap &locationMap) {
     for (LocationList::iterator it = locList->begin(); it != locList->end();
          it++) {
       if (requestURI.find((*it)->getPath()) != requestURI.npos) {
-        addHeader("BasicURI",
+        addHeader("CuttedURI",
                   requestURI.erase(1, (*it)->getPath().length() - 1));
         _locBlock = *it;
         break;
@@ -172,7 +171,8 @@ void Request::setLocBlock(SPSBList *serverBlockList, LocationMap &locationMap) {
   addHeader("Port", ftItos(_locBlock->getListenPort()));
   addHeader("cgi", _locBlock->getCgi());
   std::cout << "::::::: Loc :::::::\n";
-  std::cout << "Root: " << _locBlock->getRoot() << std::endl;
+  std::cout << "uri: " << requestURI << " Root: " << _locBlock->getRoot()
+            << std::endl;
 };
 
 void Request::setAutoindex(std::string &value) { _autoindex = value; }
@@ -196,7 +196,7 @@ void Request::addRawContents(const std::string &raw) { _rawContents += raw; }
 int Request::setMime() {
   struct stat info;
   std::string fullUri = _locBlock->getRoot();
-  fullUri += _header["BasicURI"];
+  fullUri += _header["CuttedURI"];
   size_t lastDotPos = fullUri.rfind('.');
 
   if (lastDotPos != std::string::npos) {

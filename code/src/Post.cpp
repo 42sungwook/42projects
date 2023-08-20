@@ -57,7 +57,7 @@ void Post::appendResource(const std::string &fileName, const Request &request) {
 void Post::process(Request &request, Response &response) {
   try {
     std::string fullUri = request.getHeaderByKey("RootDir");
-    fullUri += request.getHeaderByKey("BasicURI");
+    fullUri += request.getHeaderByKey("CuttedURI");
     std::string fileName = fullUri;
 
     if (isCgi(fullUri, request) == true) {
@@ -73,7 +73,7 @@ void Post::process(Request &request, Response &response) {
         createResource(response, fileName, fullUri);
       } else {
         if (request.getMime() == "directory") {
-          std::string tmp = request.getHeaderByKey("BasicURI");
+          std::string tmp = request.getHeaderByKey("RawURI");
           tmp += "/";
           response.setHeaders("Location", tmp);
           throw ErrorException(301);

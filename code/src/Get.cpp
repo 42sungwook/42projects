@@ -33,9 +33,9 @@ void Get::makeResponse(Request &request, Response &response,
 void Get::process(Request &request, Response &response) {
   try {
     std::string fullUri = request.getHeaderByKey("RootDir");
-    fullUri += request.getHeaderByKey("BasicURI");
+    fullUri += request.getHeaderByKey("CuttedURI");
     std::cout << "RootDir : " << request.getHeaderByKey("RootDir") << std::endl;
-    std::cout << "BasicURI : " << request.getHeaderByKey("BasicURI")
+    std::cout << "CuttedURI : " << request.getHeaderByKey("CuttedURI")
               << std::endl;
     std::cout << "fullUri : " << fullUri << std::endl;
     if (fullUri.back() == '/') {
@@ -61,9 +61,9 @@ void Get::process(Request &request, Response &response) {
       if (request.getHeaderByKey("AutoIndex") == "on")
         response.directoryListing(fullUri);
       else
-        throw ErrorException(403);
+        throw ErrorException(404);
     } else if (request.getMime() == "directory") {
-      std::string tmp = request.getHeaderByKey("BasicURI");
+      std::string tmp = request.getHeaderByKey("RawURI");
       tmp += "/";
       response.setHeaders("Location", tmp);
       throw ErrorException(301);
