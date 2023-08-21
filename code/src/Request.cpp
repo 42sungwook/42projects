@@ -46,6 +46,7 @@ void Request::parseUrl() {
 }
 
 void Request::parsing(SPSBList *serverBlockList, LocationMap &locationMap) {
+  std::cout << "parsing?\n";
   if (_isFullHeader == false &&
       _rawContents.find("\r\n\r\n") == std::string::npos) {
     return;
@@ -96,6 +97,8 @@ void Request::parsing(SPSBList *serverBlockList, LocationMap &locationMap) {
 
     if (_header["Method"] != "POST") _isFullReq = true;
     _isFullHeader = true;
+
+    _rawContents.clear();
   }
 
   if (_isFullHeader == true && _isFullReq == false) {
@@ -111,6 +114,7 @@ void Request::parsing(SPSBList *serverBlockList, LocationMap &locationMap) {
 
       setBody(ss);
     }
+    _rawContents.clear();
   }
 }
 
@@ -121,9 +125,8 @@ void Request::setBody(std::stringstream &ss) {
     _body += line;
     if (!ss.eof()) _body += '\n';
   }
-  if (_header.find("Content-Length") != _header.end() &&
-      static_cast<size_t>(std::atoi(_header["Content-Length"].c_str())) !=
-          _body.size()) {
+  if (static_cast<size_t>(std::atoi(_header["Content-Length"].c_str())) !=
+      _body.size()) {
     return;
   }
   _isFullReq = true;
@@ -200,6 +203,8 @@ void Request::clear() {
   _mime = "text/html";
   _status = 200;
   _isFullReq = false;
+  _isChunked = false;
+  _isFullHeader = false;
 }
 
 void Request::addRawContents(const std::string &raw) { _rawContents += raw; }

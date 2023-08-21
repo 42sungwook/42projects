@@ -20,12 +20,10 @@ void ServerOperator::run() {
     for (int i = 0; i < eventNb; ++i) {
       currEvent = &(kq.getEventList())[i];
       if (currEvent->flags & EV_ERROR) {
-        std::cout << "eventerror" << std::endl;
         handleEventError(currEvent);
       } else if (currEvent->filter == EVFILT_READ) {
         handleReadEvent(currEvent, kq);
       } else if (currEvent->filter == EVFILT_WRITE) {
-        std::cout << "write event" << std::endl;
         handleWriteEvent(currEvent, kq);
       } else if (currEvent->filter == EVFILT_TIMER) {
         handleRequestTimeOut(currEvent->ident, kq);
@@ -80,7 +78,6 @@ void ServerOperator::handleRequestTimeOut(int clientSock, Kqueue &kq) {
 // }
 
 void ServerOperator::handleReadEvent(struct kevent *event, Kqueue &kq) {
-  std::cout << "READ EVENT\n";
   if (_serverMap.find(event->ident) != _serverMap.end()) {
     int clientSocket;
 
@@ -113,6 +110,7 @@ void ServerOperator::handleReadEvent(struct kevent *event, Kqueue &kq) {
     int n;
 
     n = read(event->ident, buf, sizeof(buf) - 1);
+    std::cout << "read: " << n << std::endl;
     if (n == 0) {
       disconnectClient(event->ident);
     } else if (n > 0) {
@@ -121,8 +119,8 @@ void ServerOperator::handleReadEvent(struct kevent *event, Kqueue &kq) {
 
       req.parsing(_serverMap[_clientToServer[event->ident]]->getSPSBList(),
                   _locationMap);
+      std::cout << "write METHOD: " << req.getMethod() << std::endl;
       if (req.isFullReq() && n != sizeof(buf) - 1) {
-        std::cout << "changeEvent" << std::endl;
         kq.changeEvents(event->ident, EVFILT_TIMER, EV_ENABLE, 0,
                         _serverMap[_clientToServer[event->ident]]
                                 ->getSPSBList()
@@ -146,20 +144,16 @@ void ServerOperator::handleWriteEvent(struct kevent *event, Kqueue &kq) {
   // TODO method 확인, 그리고 타임아웃 cgi일때 제한된경로일깨
 
   if (req.getStatus() != 200) {
-    std::cout << "error" << std::endl;
     res.setErrorRes(req.getStatus());
   } else {
     Method *method;
 
-    std::cout << "LIMIT : " << locBlock->getLimitExcept()
-              << " METHOD: " << req.getHeaderByKey("Method") << std::endl;
     if (req.getMethod() == "GET" && (locBlock->getLimitExcept() == "GET" ||
                                      locBlock->getLimitExcept() == ""))
       method = new Get();
     else if ((req.getMethod() == "POST" || req.getMethod() == "PUT") &&
              (locBlock->getLimitExcept() == "POST" ||
               locBlock->getLimitExcept() == "")) {
-      std::cout << "post" << std::endl;
       method = new Post();
     } else if (req.getMethod() == "DELETE" &&
                (locBlock->getLimitExcept() == "DELETE" ||
@@ -167,7 +161,6 @@ void ServerOperator::handleWriteEvent(struct kevent *event, Kqueue &kq) {
       method = new Delete();
     else {
       method = new Method();
-      std::cout << "error" << std::endl;
     }
     method->process(req, res);
     delete method;
