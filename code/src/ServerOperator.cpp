@@ -80,6 +80,7 @@ void ServerOperator::handleRequestTimeOut(int clientSock, Kqueue &kq) {
 // }
 
 void ServerOperator::handleReadEvent(struct kevent *event, Kqueue &kq) {
+  std::cout << "READ EVENT\n";
   if (_serverMap.find(event->ident) != _serverMap.end()) {
     int clientSocket;
 
@@ -145,6 +146,7 @@ void ServerOperator::handleWriteEvent(struct kevent *event, Kqueue &kq) {
   // TODO method 확인, 그리고 타임아웃 cgi일때 제한된경로일깨
 
   if (req.getStatus() != 200) {
+    std::cout << "error" << std::endl;
     res.setErrorRes(req.getStatus());
   } else {
     Method *method;
@@ -157,13 +159,16 @@ void ServerOperator::handleWriteEvent(struct kevent *event, Kqueue &kq) {
     else if ((req.getMethod() == "POST" || req.getMethod() == "PUT") &&
              (locBlock->getLimitExcept() == "POST" ||
               locBlock->getLimitExcept() == "")) {
+      std::cout << "post" << std::endl;
       method = new Post();
     } else if (req.getMethod() == "DELETE" &&
                (locBlock->getLimitExcept() == "DELETE" ||
                 locBlock->getLimitExcept() == ""))
       method = new Delete();
-    else
+    else {
       method = new Method();
+      std::cout << "error" << std::endl;
+    }
     method->process(req, res);
     delete method;
   }
