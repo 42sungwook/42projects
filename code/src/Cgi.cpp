@@ -10,6 +10,7 @@ void Cgi::makeEnv(std::map<std::string, std::string> param) {
   _env["CONTENT_TYPE"] = param["Content-Type"];
   _env["GATEWAY_INTERFACE"] = "CGI/1.1";
   _env["PATH_INFO"] = param["RootDir"] + param["CuttedURI"];
+  // _env["PATH_INFO"] = "www/test-cgi/cgi_tester"; // TODO test용
   _env["PATH_TRANSLATED"] = param["RootDir"] + param["CuttedURI"];
   _env["QUERY_STRING"] =
       param["URI"].substr(param["URI"].find("?") + 1, std::string::npos);
@@ -50,6 +51,7 @@ void Cgi::excute(const std::string &body) {
   std::string tmp;
   size_t len;
 
+  std::cout << "excute\n";
   if (pipe(fd) < 0) {
     std::cerr << "pipe error" << std::endl;
     return;
@@ -67,7 +69,9 @@ void Cgi::excute(const std::string &body) {
     int n = 0;
     while (totalBodySize < (int)body.size()) {
       n = write(rd[1], body.c_str(), body.size());
+      std::cerr << "n : " << n << std::endl;
       if (n != -1) totalBodySize += n;
+      break;
     }
     close(rd[1]);
     dup2(rd[0], 0);
