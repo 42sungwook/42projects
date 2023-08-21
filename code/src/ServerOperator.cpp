@@ -106,31 +106,38 @@ void ServerOperator::handleReadEvent(struct kevent *event, Kqueue &kq) {
   } else if (isExistClient(event->ident)) {
     Request &req = _clients[event->ident];
     /* read data from client */
-    char buf[1024];
+    char buf[8092];
     int n;
 
-    n = read(event->ident, buf, sizeof(buf) - 1);
-    std::cout << "read: " << n << std::endl;
-    if (n == 0) {
-      disconnectClient(event->ident);
-    } else if (n > 0) {
-      buf[n] = '\0';
-      req.addRawContents(buf);
-
-      req.parsing(_serverMap[_clientToServer[event->ident]]->getSPSBList(),
-                  _locationMap);
-      std::cout << "write METHOD: " << req.getMethod() << std::endl;
-      if (req.isFullReq() && n != sizeof(buf) - 1) {
-        kq.changeEvents(event->ident, EVFILT_TIMER, EV_ENABLE, 0,
-                        _serverMap[_clientToServer[event->ident]]
-                                ->getSPSBList()
-                                ->front()
-                                ->getKeepAliveTime() *
-                            1000,
-                        NULL);
-        kq.changeEvents(event->ident, EVFILT_READ, EV_DELETE, 0, 0, NULL);
-        kq.changeEvents(event->ident, EVFILT_WRITE, EV_ADD | EV_ENABLE, 0, 0,
-                        NULL);
+    while (true) {
+      n = read(event->ident, buf, sizeof(buf) - 1);
+      if (n == 0) {
+        disconnectClient(event->ident);
+        return;
+      } else if (n == -1) {
+        continue;
+      } else {
+        buf[n] = '\0';
+        req.addRawContents(buf);
+        memset(buf, 0, sizeof(buf));
+        if (n < (int)sizeof(buf) - 1 ||
+            recv(event->ident, buf, sizeof(buf) - 1, MSG_PEEK) == -1) {
+          req.parsing(_serverMap[_clientToServer[event->ident]]->getSPSBList(),
+                      _locationMap);
+        }
+        if (req.isFullReq() && n != (int)sizeof(buf) - 1) {
+          kq.changeEvents(event->ident, EVFILT_TIMER, EV_ENABLE, 0,
+                          _serverMap[_clientToServer[event->ident]]
+                                  ->getSPSBList()
+                                  ->front()
+                                  ->getKeepAliveTime() *
+                              1000,
+                          NULL);
+          kq.changeEvents(event->ident, EVFILT_READ, EV_DELETE, 0, 0, NULL);
+          kq.changeEvents(event->ident, EVFILT_WRITE, EV_ADD | EV_ENABLE, 0, 0,
+                          NULL);
+          return;
+        }
       }
     }
   }

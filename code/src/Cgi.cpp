@@ -46,7 +46,7 @@ void Cgi::excute(const std::string &body) {
   pid_t pid;
   int fd[2];
   int status;
-  char buf[1024];
+  char buf[8092];
   std::string tmp;
   size_t len;
 
@@ -63,7 +63,12 @@ void Cgi::excute(const std::string &body) {
       std::cerr << "pipe error" << std::endl;
       return;
     }
-    write(rd[1], body.c_str(), body.size());
+    int totalBodySize = 0;
+    int n = 0;
+    while (totalBodySize < (int)body.size()) {
+      n = write(rd[1], body.c_str(), body.size());
+      if (n != -1) totalBodySize += n;
+    }
     close(rd[1]);
     dup2(rd[0], 0);
     close(rd[0]);
@@ -76,10 +81,10 @@ void Cgi::excute(const std::string &body) {
   } else {
     close(fd[1]);
     waitpid(pid, &status, 0);
-    while ((len = read(fd[0], buf, 1024)) > 0) {
+    while ((len = read(fd[0], buf, 8091)) > 0) {
       buf[len] = '\0';
       tmp += buf;
-      memset(buf, 0, 1024);
+      memset(buf, 0, 8092);
     }
     _res = tmp;
     close(fd[0]);

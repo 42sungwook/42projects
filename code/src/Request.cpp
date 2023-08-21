@@ -46,9 +46,7 @@ void Request::parseUrl() {
 }
 
 void Request::parsing(SPSBList *serverBlockList, LocationMap &locationMap) {
-  std::cout << "parsing?\n";
-  if (_isFullHeader == false &&
-      _rawContents.find("\r\n\r\n") == std::string::npos) {
+  if (_rawContents.find("\r\n\r\n") == std::string::npos) {
     return;
   }
 
@@ -199,7 +197,7 @@ void Request::clear() {
   _header["ClientIP"] = clientIp;
   _body.clear();
   _host.clear();
-  // _autoindex.clear();
+  //_autoindex.clear();
   _mime = "text/html";
   _status = 200;
   _isFullReq = false;

@@ -11,10 +11,9 @@ Post::Post() {}
 Post::~Post() {}
 
 bool Post::isCgi(const std::string &fullUri, Request &request) {
-  return false;  // TODO cgi 안 되서 << ?? 왜 안되게 됬지
-  if (request.getHeaderMap().find("cgi") == request.getHeaderMap().end())
+  if (request.getHeaderMap().find("Cgi") == request.getHeaderMap().end())
     return false;
-  else if (fullUri.find(request.getHeaderByKey("cgi")) == fullUri.npos)
+  else if (fullUri.find(request.getHeaderByKey("Cgi")) == fullUri.npos)
     return false;
   else
     return true;
@@ -55,12 +54,14 @@ void Post::appendResource(const std::string &fileName, const Request &request) {
 }
 
 void Post::process(Request &request, Response &response) {
+  std::cout << "POST in" << std::endl;
   try {
     std::string fullUri = request.getHeaderByKey("RootDir");
     fullUri += request.getHeaderByKey("CuttedURI");
     std::string fileName = fullUri;
 
     if (isCgi(fullUri, request) == true) {
+      std::cout << "cgi" << std::endl;
       Cgi cgi;
       cgi.reqToEnvp(request.getHeaderMap());
       cgi.excute(request.getBody());
