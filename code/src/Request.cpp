@@ -6,6 +6,7 @@ Request::Request()
     : _mime("text/html"),
       _status(200),
       _isFullHeader(false),
+      _isChunked(false),
       _isFullReq(false) {
   _mimeTypes["html"] = "text/html";
   _mimeTypes["css"] = "text/css";
@@ -45,60 +46,71 @@ void Request::parseUrl() {
 }
 
 void Request::parsing(SPSBList *serverBlockList, LocationMap &locationMap) {
-  if (_rawContents.find("\r\n\r\n") == std::string::npos) {
+  if (_isFullHeader == false &&
+      _rawContents.find("\r\n\r\n") == std::string::npos) {
     return;
   }
+
   std::stringstream ss(_rawContents);
   std::string line;
-  std::getline(ss, line, '\r');
-  std::stringstream lineStream(line);
-  lineStream >> _header["Method"] >> _header["URI"] >> _header["protocol"];
-  parseUrl();
-  _isFullHeader = false;
-  bool isChunked = false;
-  while (std::getline(ss, line, '\r') && line != "\n") {
-    size_t pos = line.find(":");
-    if (pos == line.npos) {
-      _status = 400;
-    }
-    size_t valueStartPos = line.find_first_not_of(" ", pos + 1);
-    size_t keyStartPos = line.find_first_not_of("\n", 0);
 
-    _header[line.substr(keyStartPos, pos - keyStartPos)] =
-        line.substr(valueStartPos);
-  }
-  if (_header.find("Transfer-Encoding") != _header.end()) {
-    isChunked = true;
-  }
-  if (_header.find("Host") == _header.end()) {
-    _status = 400;
-
-  } else if (_header["Method"] != "GET" && _header["Method"] != "POST" &&
-             _header["Method"] != "DELETE" && _header["Method"] != "PUT") {
-    _status = 405;
-
-  } else {
-    _host = _header["Host"];
-  }
-
-  setLocBlock(serverBlockList, locationMap);
-  setMime();
-
-  if (_header["Method"] != "POST") _isFullReq = true;
-  std::getline(ss, line);
-  if (isChunked) {
-    setChunkedBody(ss);
-  } else {
-    if ((size_t)ftStoi(_header["Content-Length"]) >=
-        _locBlock->getClientMaxBodySize()) {
-      _status = 413;
+  if (_isFullHeader == false) {
+    if (_rawContents.size() - _rawContents.find("\r\n\r\n") + 3 >= 8192) {
+      _status = 414;
       _isFullReq = true;
+      return;
     }
-    setBody(ss);
+    std::getline(ss, line, '\r');
+    std::stringstream lineStream(line);
+    lineStream >> _header["Method"] >> _header["URI"] >> _header["protocol"];
+    parseUrl();
+
+    while (std::getline(ss, line, '\r') && line != "\n") {
+      size_t pos = line.find(":");
+      if (pos == line.npos) {
+        _status = 400;
+      }
+      size_t valueStartPos = line.find_first_not_of(" ", pos + 1);
+      size_t keyStartPos = line.find_first_not_of("\n", 0);
+
+      _header[line.substr(keyStartPos, pos - keyStartPos)] =
+          line.substr(valueStartPos);
+    }
+    std::getline(ss, line);
+    if (_header.find("Transfer-Encoding") != _header.end()) {
+      _isChunked = true;
+    }
+    if (_header.find("Host") == _header.end()) {
+      _status = 400;
+
+    } else if (_header["Method"] != "GET" && _header["Method"] != "POST" &&
+               _header["Method"] != "DELETE" && _header["Method"] != "PUT") {
+      _status = 405;
+
+    } else {
+      _host = _header["Host"];
+    }
+
+    setLocBlock(serverBlockList, locationMap);
+    setMime();
+
+    if (_header["Method"] != "POST") _isFullReq = true;
+    _isFullHeader = true;
   }
 
-  if (_rawContents.size() - _body.size() >= 8192) {
-    _status = 414;
+  if (_isFullHeader == true && _isFullReq == false) {
+    if (_isChunked) {
+      setChunkedBody(ss);
+
+    } else {
+      if ((size_t)ftStoi(_header["Content-Length"]) >=
+          _locBlock->getClientMaxBodySize()) {
+        _status = 413;
+        _isFullReq = true;
+      }
+
+      setBody(ss);
+    }
   }
 }
 
@@ -124,14 +136,13 @@ void Request::setChunkedBody(std::stringstream &ss) {
     return;
   }
   std::string line;
-  std::getline(ss, line);
-  if (line == "0\r") {
-    _isFullReq = true;
-    _header.erase("Transfer-Encoding");
-  }
-
+  // std::getline(ss, line);
   while (std::getline(ss, line)) {
     _body += line;
+    if (line == "0\r") {
+      _isFullReq = true;
+      _header.erase("Transfer-Encoding");
+    }
     if (!ss.eof()) _body += '\n';
   }
 }

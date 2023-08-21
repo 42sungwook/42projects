@@ -11,7 +11,7 @@ Post::Post() {}
 Post::~Post() {}
 
 bool Post::isCgi(const std::string &fullUri, Request &request) {
-  return false;  // TODO cgi 안 되서
+  return false;  // TODO cgi 안 되서 << ?? 왜 안되게 됬지
   if (request.getHeaderMap().find("cgi") == request.getHeaderMap().end())
     return false;
   else if (fullUri.find(request.getHeaderByKey("cgi")) == fullUri.npos)
@@ -84,16 +84,9 @@ void Post::process(Request &request, Response &response) {
         response.setStatusLine(200);
       }
       appendResource(fileName, request);
-
-      // TODO 임시
-      // response.setBody(
-      //     "POST 동작의 임시 response 입니다.\n기본 동작 시, body를 생성하지 "
-      //     "않는다고 합니다.\n만약 생성한다면 알려주세요.");
-      // response.setHeaders("Content-Length",
-      //                     ftItos(response.getBody().length()));
-      // // response.setHeaders("Content-Type", "text/html");
-      // response.setHeaders("Content-Type", "application/octet-stream");
-      // response.setResult();
+      response.setHeaders("Content-Length", "0");
+      response.setHeaders("Content-Type", "application/octet-stream");
+      response.setResult();
     }
   } catch (ErrorException &e) {
     if (e.getErrorCode() >= 400) {

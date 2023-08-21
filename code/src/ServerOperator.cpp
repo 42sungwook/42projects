@@ -25,6 +25,7 @@ void ServerOperator::run() {
       } else if (currEvent->filter == EVFILT_READ) {
         handleReadEvent(currEvent, kq);
       } else if (currEvent->filter == EVFILT_WRITE) {
+        std::cout << "write event" << std::endl;
         handleWriteEvent(currEvent, kq);
       } else if (currEvent->filter == EVFILT_TIMER) {
         handleRequestTimeOut(currEvent->ident, kq);
@@ -115,12 +116,12 @@ void ServerOperator::handleReadEvent(struct kevent *event, Kqueue &kq) {
       disconnectClient(event->ident);
     } else if (n > 0) {
       buf[n] = '\0';
-
       req.addRawContents(buf);
 
       req.parsing(_serverMap[_clientToServer[event->ident]]->getSPSBList(),
                   _locationMap);
-      if (req.isFullReq()) {
+      if (req.isFullReq() && n != sizeof(buf) - 1) {
+        std::cout << "changeEvent" << std::endl;
         kq.changeEvents(event->ident, EVFILT_TIMER, EV_ENABLE, 0,
                         _serverMap[_clientToServer[event->ident]]
                                 ->getSPSBList()
@@ -148,16 +149,18 @@ void ServerOperator::handleWriteEvent(struct kevent *event, Kqueue &kq) {
   } else {
     Method *method;
 
+    std::cout << "LIMIT : " << locBlock->getLimitExcept()
+              << " METHOD: " << req.getHeaderByKey("Method") << std::endl;
     if (req.getMethod() == "GET" && (locBlock->getLimitExcept() == "GET" ||
                                      locBlock->getLimitExcept() == ""))
       method = new Get();
     else if ((req.getMethod() == "POST" || req.getMethod() == "PUT") &&
              (locBlock->getLimitExcept() == "POST" ||
-              locBlock->getLimitExcept() == ""))
+              locBlock->getLimitExcept() == "")) {
       method = new Post();
-    else if (req.getMethod() == "DELETE" &&
-             (locBlock->getLimitExcept() == "DELETE" ||
-              locBlock->getLimitExcept() == ""))
+    } else if (req.getMethod() == "DELETE" &&
+               (locBlock->getLimitExcept() == "DELETE" ||
+                locBlock->getLimitExcept() == ""))
       method = new Delete();
     else
       method = new Method();

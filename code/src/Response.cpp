@@ -100,7 +100,9 @@ void Response::directoryListing(std::string path) {
 }
 
 int Response::sendResponse(int clientSocket) {
-  if (write(clientSocket, _result.c_str(), _result.length()) == -1) return (1);
+  if (write(clientSocket, _result.c_str(), _result.length()) == -1) {
+    return (1);
+  }
   return (0);
 }
 
