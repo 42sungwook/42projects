@@ -207,7 +207,6 @@ int Request::setMime() {
       _mime = _mimeTypes["else"];
   } else {
     if (stat(fullUri.c_str(), &info) != 0) {
-      std::cout << "stat error: " << fullUri << std::endl;
       if (_header["Method"] == "PUT")
         _status = 201;
       else

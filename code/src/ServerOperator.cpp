@@ -25,7 +25,6 @@ void ServerOperator::run() {
       } else if (currEvent->filter == EVFILT_READ) {
         handleReadEvent(currEvent, kq);
       } else if (currEvent->filter == EVFILT_WRITE) {
-        std::cout << "write" << std::endl;
         handleWriteEvent(currEvent, kq);
       } else if (currEvent->filter == EVFILT_TIMER) {
         handleRequestTimeOut(currEvent->ident, kq);
@@ -116,7 +115,7 @@ void ServerOperator::handleReadEvent(struct kevent *event, Kqueue &kq) {
       disconnectClient(event->ident);
     } else if (n > 0) {
       buf[n] = '\0';
-      // std::cout << "buf here : " << buf << std::endl;
+
       req.addRawContents(buf);
 
       req.parsing(_serverMap[_clientToServer[event->ident]]->getSPSBList(),
@@ -144,20 +143,15 @@ void ServerOperator::handleWriteEvent(struct kevent *event, Kqueue &kq) {
   ServerBlock *locBlock = req.getLocBlock();
   // TODO method 확인, 그리고 타임아웃 cgi일때 제한된경로일깨
 
-  if (locBlock == NULL) return;
-
-  if (_clients[event->ident].getStatus() != 200) {
-    res.setErrorRes(_clients[event->ident].getStatus());
+  if (req.getStatus() != 200) {
+    res.setErrorRes(req.getStatus());
   } else {
     Method *method;
 
-    std::cout << "locBlock Index: " << locBlock->getIndex() << std::endl;
-    std::cout << "locBlock limit except: " << locBlock->getLimitExcept()
-              << std::endl;
     if (req.getMethod() == "GET" && (locBlock->getLimitExcept() == "GET" ||
                                      locBlock->getLimitExcept() == ""))
       method = new Get();
-    else if (req.getMethod() == "POST" &&
+    else if ((req.getMethod() == "POST" || req.getMethod() == "PUT") &&
              (locBlock->getLimitExcept() == "POST" ||
               locBlock->getLimitExcept() == ""))
       method = new Post();

@@ -86,14 +86,14 @@ void Post::process(Request &request, Response &response) {
       appendResource(fileName, request);
 
       // TODO 임시
-      response.setBody(
-          "POST 동작의 임시 response 입니다.\n기본 동작 시, body를 생성하지 "
-          "않는다고 합니다.\n만약 생성한다면 알려주세요.");
-      response.setHeaders("Content-Length",
-                          ftItos(response.getBody().length()));
-      // response.setHeaders("Content-Type", "text/html");
-      response.setHeaders("Content-Type", "application/octet-stream");
-      response.setResult();
+      // response.setBody(
+      //     "POST 동작의 임시 response 입니다.\n기본 동작 시, body를 생성하지 "
+      //     "않는다고 합니다.\n만약 생성한다면 알려주세요.");
+      // response.setHeaders("Content-Length",
+      //                     ftItos(response.getBody().length()));
+      // // response.setHeaders("Content-Type", "text/html");
+      // response.setHeaders("Content-Type", "application/octet-stream");
+      // response.setResult();
     }
   } catch (ErrorException &e) {
     if (e.getErrorCode() >= 400) {
