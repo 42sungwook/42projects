@@ -1,17 +1,11 @@
-/**
- * TODO
- * 1. cgi cgi path 내용이 들어올 때 분기 처리 그외 에러처리
- * 2. chuncked 인코딩으로 들어왔을 때
- **/
-
 #include "../includes/Post.hpp"
 
 Post::Post() {}
 
 Post::~Post() {}
-
+// 수건, 안경, 렌즈통, 기침약, 잠옷, 약,
 bool Post::isCgi(const std::string &fullUri, Request &request) {
-  if (request.getHeaderMap().find("Cgi") == request.getHeaderMap().end())
+  if (request.getHeaderByKey("Cgi") == "")
     return false;
   else if (fullUri.find(request.getHeaderByKey("Cgi")) == fullUri.npos)
     return false;
@@ -54,14 +48,12 @@ void Post::appendResource(const std::string &fileName, const Request &request) {
 }
 
 void Post::process(Request &request, Response &response) {
-  std::cout << "POST in" << std::endl;
   try {
     std::string fullUri = request.getHeaderByKey("RootDir");
     fullUri += request.getHeaderByKey("CuttedURI");
     std::string fileName = fullUri;
 
     if (isCgi(fullUri, request) == true) {
-      std::cout << "cgi" << std::endl;
       Cgi cgi;
       cgi.reqToEnvp(request.getHeaderMap());
       cgi.excute(request.getBody());

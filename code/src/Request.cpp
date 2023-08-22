@@ -81,7 +81,6 @@ void Request::parsing(SPSBList *serverBlockList, LocationMap &locationMap) {
     }
     if (_header.find("Host") == _header.end()) {
       _status = 400;
-
     } else if (_header["Method"] != "GET" && _header["Method"] != "POST" &&
                _header["Method"] != "DELETE" && _header["Method"] != "PUT") {
       _status = 405;
@@ -95,8 +94,6 @@ void Request::parsing(SPSBList *serverBlockList, LocationMap &locationMap) {
 
     if (_header["Method"] != "POST") _isFullReq = true;
     _isFullHeader = true;
-
-    _rawContents.clear();
   }
 
   if (_isFullHeader == true && _isFullReq == false) {
@@ -138,13 +135,19 @@ void Request::setChunkedBody(std::stringstream &ss) {
   }
   std::string line;
   // std::getline(ss, line);
-  while (std::getline(ss, line)) {
-    _body += line;
-    if (line == "0\r") {
+  while (std::getline(ss, line)) {  // 한줄읽고
+    int len = hexToDecimal(line.substr(
+        0, line.size() - 1));  // 읽은것중 맨마지막 \r 빼고 hex로 변환
+    std::cout << "chunked len: " << len << std::endl;
+    if (line == "0\r") {  // 0이면 chunked 끝
       _isFullReq = true;
       _header.erase("Transfer-Encoding");
+      break;  // 탈출 ^0^
     }
-    if (!ss.eof()) _body += '\n';
+    std::getline(ss, line, '\r');  // \r전까지읽어서 바디에 저장
+    _body += line;
+    std::getline(ss, line);        // \n 지워주기
+    if (!ss.eof()) _body += '\n';  // 얜 머지?
   }
 }
 
@@ -184,7 +187,8 @@ void Request::setLocBlock(SPSBList *serverBlockList, LocationMap &locationMap) {
   addHeader("Index", _locBlock->getIndex());
   addHeader("Name", _locBlock->getServerName());
   addHeader("Port", ftItos(_locBlock->getListenPort()));
-  addHeader("cgi", _locBlock->getCgi());
+  addHeader("Cgi", _locBlock->getCgi());
+  addHeader("Cgi_Redir", _locBlock->getCgiRedir());
 };
 
 void Request::setAutoindex(std::string &value) { _autoindex = value; }
@@ -213,6 +217,8 @@ int Request::setMime() {
   fullUri += _header["CuttedURI"];
   size_t lastDotPos = fullUri.rfind('.');
 
+  std::cout << "fulluri: " << fullUri << std::endl;
+
   if (lastDotPos != std::string::npos) {
     std::string mime = fullUri.substr(lastDotPos + 1);
     if (_mimeTypes.find(mime) != _mimeTypes.end())
@@ -223,7 +229,9 @@ int Request::setMime() {
     if (stat(fullUri.c_str(), &info) != 0) {
       if (_header["Method"] == "PUT")
         _status = 201;
-      else
+      else if {
+        fullUri += "/";
+      } else
         _status = 404;
       // return (EXIT_FAILURE);
       return (EXIT_SUCCESS);

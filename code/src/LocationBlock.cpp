@@ -17,6 +17,7 @@ void LocationBlock::setKeyVal(std::string key, std::string value) {
   funcmap["autoindex"] = &LocationBlock::setAutoindex;
   funcmap["limit_except"] = &LocationBlock::setLimitExcept;
   funcmap["cgi"] = &LocationBlock::setCgi;
+  funcmap["cgi_Redir"] = &LocationBlock::setCgiRedir;
 
   if (funcmap.find(key) != funcmap.end())
     (this->*(funcmap[key]))(value);

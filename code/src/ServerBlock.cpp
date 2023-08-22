@@ -46,6 +46,8 @@ void ServerBlock::setAutoindex(std::string value) { _autoindex = value; }
 
 void ServerBlock::setCgi(std::string value) { _cgi = value; }
 
+void ServerBlock::setCgiRedir(std::string value) { _cgiRedir = value; }
+
 void ServerBlock::setKeyVal(std::string key, std::string value) {
   typedef void (ServerBlock::*funcptr)(std::string);
   std::map<std::string, funcptr> funcmap;
@@ -73,4 +75,6 @@ const std::string &ServerBlock::getLimitExcept() const { return _limitExcept; }
 
 const std::string &ServerBlock::getAutoindex() const { return _autoindex; }
 
-const std::string &ServerBlock::getCgi() const { return _cgi; };
+const std::string &ServerBlock::getCgi() const { return _cgi; }
+
+const std::string &ServerBlock::getCgiRedir() const { return _cgiRedir; }
