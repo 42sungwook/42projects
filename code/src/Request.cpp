@@ -146,8 +146,8 @@ void Request::setChunkedBody(std::stringstream &ss) {
     }
     std::getline(ss, line, '\r');  // \r전까지읽어서 바디에 저장
     _body += line;
-    std::getline(ss, line);        // \n 지워주기
-    if (!ss.eof()) _body += '\n';  // 얜 머지?
+    std::getline(ss, line);  // \n 지워주기
+    // if (!ss.eof()) _body += '\n';  // 얜 머지?
   }
 }
 
@@ -217,8 +217,6 @@ int Request::setMime() {
   fullUri += _header["CuttedURI"];
   size_t lastDotPos = fullUri.rfind('.');
 
-  std::cout << "fulluri: " << fullUri << std::endl;
-
   if (lastDotPos != std::string::npos) {
     std::string mime = fullUri.substr(lastDotPos + 1);
     if (_mimeTypes.find(mime) != _mimeTypes.end())
@@ -229,9 +227,7 @@ int Request::setMime() {
     if (stat(fullUri.c_str(), &info) != 0) {
       if (_header["Method"] == "PUT")
         _status = 201;
-      else if {
-        fullUri += "/";
-      } else
+      else
         _status = 404;
       // return (EXIT_FAILURE);
       return (EXIT_SUCCESS);

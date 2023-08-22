@@ -3,7 +3,7 @@
 Post::Post() {}
 
 Post::~Post() {}
-// 수건, 안경, 렌즈통, 기침약, 잠옷, 약,
+
 bool Post::isCgi(const std::string &fullUri, Request &request) {
   if (request.getHeaderByKey("Cgi") == "")
     return false;
