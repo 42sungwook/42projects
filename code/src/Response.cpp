@@ -42,7 +42,6 @@ void Response::convertCGI(const char *cgiResult) {
 
   _headers.clear();
   _statusLine.clear();
-  std::cout << "cgiResult : " << cgiResult << std::endl;
   while (std::getline(ss, line, '\r') && line != "\n") {
     if (line.find("HTTP/1.1") != std::string::npos) {
       _statusLine += line;
@@ -107,10 +106,22 @@ void Response::directoryListing(std::string path) {
 }
 
 int Response::sendResponse(int clientSocket) {
-  if (write(clientSocket, _result, strlen(_result)) == -1) {
-    return (1);
+  const char *dataToSend = _result;         // 시작 위치
+  ssize_t remainingData = strlen(_result);  // 남은 데이터의 크기
+  ssize_t chunk = 32768;
+
+  while (remainingData > 0) {
+    if (remainingData < chunk) chunk = remainingData;
+    ssize_t bytesWritten = write(clientSocket, dataToSend, chunk);
+
+    if (bytesWritten == -1) {
+      continue;
+    }
+    dataToSend += bytesWritten;
+    remainingData -= bytesWritten;
   }
-  return (0);
+
+  return 0;
 }
 
 const char *Response::getBody() const { return _body; }
@@ -187,7 +198,6 @@ void Response::setResult() {
     strcat(_result, "\r\n");
   }
   strcat(_result, "\r\n");
-  std::cout << "almost done\n";
   strcat(_result, _body);
 }
 

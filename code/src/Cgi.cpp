@@ -99,7 +99,7 @@ void Cgi::execute(const std::string &body) {
     ssize_t bodySize = body.size();
     ssize_t bytesWritten = 0;
     ssize_t totalBytesWritten = 0;
-    ssize_t chunk = 4096;
+    ssize_t chunk = 32768;
 
     while (totalBytesWritten < bodySize) {
       if (totalBytesWritten + chunk > bodySize)
@@ -132,7 +132,7 @@ void Cgi::execute(const std::string &body) {
   std::cerr << "cgi finished" << std::endl;
   remove(path.c_str());
   fileFd = open(path2.c_str(), O_RDONLY);
-  char buf[4096];
+  char buf[32768];
   int n;
   while (true) {
     n = read(fileFd, buf, sizeof(buf) - 1);
@@ -144,7 +144,7 @@ void Cgi::execute(const std::string &body) {
     } else {
       buf[n] = '\0';
       strcat(_res, buf);
-      memset(buf, 0, 4096);
+      memset(buf, 0, 32768);
     }
   }
   close(fileFd);
