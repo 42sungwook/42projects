@@ -1,8 +1,11 @@
 #include "../includes/Cgi.hpp"
 
-Cgi::Cgi() { _res = new char[200000000]; }
+Cgi::Cgi() {
+  _res = new char[200000000];
+  memset(_res, 0, 200000000);
+}
 
-Cgi::~Cgi() {}
+Cgi::~Cgi() { delete[] _res; }
 
 void Cgi::makeEnv(std::map<std::string, std::string> param) {
   _env["AUTH_TYPE"] = param["Authorization"];
@@ -140,7 +143,7 @@ void Cgi::execute(const std::string &body) {
       continue;
     } else {
       buf[n] = '\0';
-      memcpy(_res, buf, n);
+      strcat(_res, buf);
       memset(buf, 0, 4096);
     }
   }

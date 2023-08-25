@@ -9,17 +9,17 @@ void Get::makeBody(Response &response, std::ifstream &file) {
 
   buffer << file.rdbuf();
   if (buffer.good() == false) throw ErrorException(500);
-  response.setBody(buffer.str());
+  response.setBody(buffer.str().c_str());
   file.close();
   return;
 }
 
 void Get::makeHeader(Request &request, Response &response) {
-  if (response.getBody() != "")
+  if (response.getBody()[0] != '\0')
     if (response.isInHeader("Content-Type") == false) {
       response.setHeaders("Content-Type", request.getMime());
     }
-  response.setHeaders("Content-Length", ftItos(response.getBody().length()));
+  response.setHeaders("Content-Length", ftItos(strlen(response.getBody())));
 }
 
 void Get::makeResponse(Request &request, Response &response,
