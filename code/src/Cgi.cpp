@@ -1,5 +1,7 @@
 #include "../includes/Cgi.hpp"
 
+#include "../includes/Utils.hpp"
+
 Cgi::Cgi() {
   _res = new char[200000000];
   memset(_res, 0, 200000000);
@@ -29,6 +31,21 @@ void Cgi::makeEnv(std::map<std::string, std::string> param) {
   _env["SERVER_PORT"] = param["Port"];
   _env["SERVER_PROTOCOL"] = "HTTP/1.1";
   _env["SERVER_SOFTWARE"] = "Webserv/1.0";
+  for (std::map<std::string, std::string>::iterator it = param.begin();
+       it != param.end(); it++) {
+    if (it->first.find("X-") != std::string::npos) {
+      std::string key = "HTTP_";
+      key += it->first;
+      size_t pos = key.find("-");
+      while (pos != std::string::npos) {
+        key.replace(pos, 1, "_");
+        pos = key.find("-");
+      }
+      ftToupper(key);
+      _env[key] = it->second;
+      std::cout << "x: " << it->first << " : " << it->second << std::endl;
+    }
+  }
 }
 
 void Cgi::reqToEnvp(std::map<std::string, std::string> param) {

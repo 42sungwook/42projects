@@ -111,7 +111,7 @@ void Request::parsing(SPSBList *serverBlockList, LocationMap &locationMap) {
 
       setBody(ss);
     }
-    std::cout << "data: " << _body << ".";
+    // std::cout << "data: " << _body << ".";
     _rawContents.clear();
   }
 }
@@ -139,10 +139,9 @@ void Request::setChunkedBody(std::stringstream &ss) {
   std::string line;
   // std::getline(ss, line);
   while (std::getline(ss, line)) {  // 한줄읽고
-    int len = hexToDecimal(line.substr(
+    hexToDecimal(line.substr(
         0, line.size() - 1));  // 읽은것중 맨마지막 \r 빼고 hex로 변환
-    std::cout << "chunked len: " << len << std::endl;
-    if (line == "0\r") {  // 0이면 chunked 끝
+    if (line == "0\r") {       // 0이면 chunked 끝
       _isFullReq = true;
       _header.erase("Transfer-Encoding");
       break;  // 탈출 ^0^
