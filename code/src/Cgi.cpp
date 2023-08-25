@@ -46,53 +46,71 @@ void Cgi::reqToEnvp(std::map<std::string, std::string> param) {
 std::string &Cgi::getRes() { return _res; }
 
 void Cgi::excute(const std::string &body) {
-  pid_t pid;
   int fd[2];
-  int status;
-  char buf[8092];
+  //int status;
+  //char buf[8092];
   std::string tmp;
-  size_t len;
-
+  //size_t len;
+	pid_t childPid;
+	
   if (pipe(fd) < 0) {
     std::cerr << "pipe error" << std::endl;
     return;
   }
-  if ((pid = fork()) < 0) {
-    std::cerr << "fork error" << std::endl;
-    return;
-  } else if (pid == 0) {
-    int rd[2];
-    if (pipe(rd) < 0) {
-      std::cerr << "pipe error" << std::endl;
-      return;
+	childPid = fork();
+	if (childPid == 0) {
+			// 자식 프로세스에서 실행할 로직
+			write(fd[1], body.c_str(), body.size());
+			close(fd[1]);
+			const char *argv[2] = {_env["PATH_TRANSLATED"].c_str(), NULL};
+			execve(_env["PATH_TRANSLATED"].c_str(), const_cast<char **>(argv), _envp);
+			std::cerr << "execve error" << std::endl;
+			exit(1);
+	} else if (childPid == -1) {
+			std::cerr << "fork error" << std::endl;
+			exit (1);
+	}
+
+    char buffer[8092];
+    ssize_t bytesRead;
+
+		close(fd[1]);
+    int kq = kqueue();
+    if (kq == -1) {
+        std::cerr << "kqueue error" << std::endl;
+        return ;
     }
-    int totalBodySize = 0;
-    int n = 0;
-    while (totalBodySize < (int)body.size()) {
-      n = write(rd[1], body.c_str(), body.size());
-      if (n != -1) totalBodySize += n;
-      break;
+
+    struct kevent kev[2];
+    EV_SET(&kev[0], fd[0], EVFILT_READ, EV_ADD | EV_ONESHOT, 0, 0, NULL);
+
+    int nev = kevent(kq, kev, 1, NULL, 0, NULL);
+    if (nev == -1) {
+        std::cerr << "kevent error" << std::endl;
+        return ;
     }
-    close(rd[1]);
-    dup2(rd[0], 0);
-    close(rd[0]);
+
+    while (true) {
+        int events = kevent(kq, NULL, 0, kev, 1, NULL);
+        if (events == -1) {
+            std::cerr << "kevent error" << std::endl;
+            return ;
+        }
+
+        if (events > 0 && (kev[0].flags & EV_EOF)) {
+            // EOF 이벤트가 발생하면 더 이상 읽을 데이터가 없음
+            break ;
+        }
+
+        bytesRead = read(fd[0], buffer, sizeof(buffer));
+        if (bytesRead <= 0) {
+            break ; // 더 이상 읽을 데이터가 없음
+        }
+
+        _res.append(buffer, bytesRead);
+				memset(buffer, 0, 8092);
+    }
     close(fd[0]);
-    dup2(fd[1], 1);
-    close(fd[1]);
-    const char *argv[2] = {_env["PATH_TRANSLATED"].c_str(), NULL};
-    execve(_env["PATH_TRANSLATED"].c_str(), const_cast<char **>(argv), _envp);
-    exit(0);
-  } else {
-    close(fd[1]);
-    waitpid(pid, &status, 0);
-    while ((len = read(fd[0], buf, 8091)) > 0) {
-      buf[len] = '\0';
-      tmp += buf;
-      memset(buf, 0, 8092);
-    }
-    _res = tmp;
-    close(fd[0]);
-  }
 }
 
 // void Cgi::setCGIPath(const std::string &cgiPath) { _cgiPath = cgiPath; }

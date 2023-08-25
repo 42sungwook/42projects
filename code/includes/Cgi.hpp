@@ -2,11 +2,13 @@
 #define CGI_HPP
 
 #include <unistd.h>
-
 #include <iostream>
 #include <map>
 #include <sstream>
 #include <string>
+#include <sys/types.h>
+#include <sys/event.h>
+#include <sys/time.h>
 
 class Cgi {
  private:
