@@ -29,6 +29,7 @@ class Request {
   bool _isChunked;
   bool _isFullReq;
   std::map<std::string, std::string> _mimeTypes;
+  LocationList *_locList;
   ServerBlock *_locBlock;
 
   void parseUrl();
@@ -37,7 +38,7 @@ class Request {
   Request();
   ~Request();
   void parsing(SPSBList *serverBlockList, LocationMap &locationMap);
-  int setMime();
+  void setMime();
   void setLocBlock(SPSBList *serverBlockList, LocationMap &locationMap);
   void setAutoindex(std::string &value);
   void addRawContents(const std::string &raw);
