@@ -26,6 +26,7 @@ Response::Response() {
   _statusCodes[409] = " Conflict";
   _statusCodes[410] = " Gone";
   _statusCodes[412] = " Precondition Failed";
+  _statusCodes[413] = " Request Entity Too Large";
   _statusCodes[414] = " URI Too Long";
   _statusCodes[415] = " Unsupported Media Type";
   _statusCodes[500] = " Server Error";
@@ -110,6 +111,7 @@ int Response::sendResponse(int clientSocket) {
   ssize_t remainingData = strlen(_result);  // 남은 데이터의 크기
   ssize_t chunk = 32768;
 
+  std::cout << "status line: " << _statusLine << std::endl;
   while (remainingData > 0) {
     if (remainingData < chunk) chunk = remainingData;
     ssize_t bytesWritten = write(clientSocket, dataToSend, chunk);
