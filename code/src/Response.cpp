@@ -29,13 +29,14 @@ Response::Response() {
 
 Response::~Response() {}
 
-void Response::convertCGI(const std::string &cgiResult) {
+void Response::convertCGI(const char *cgiResult) {
   std::stringstream ss(cgiResult);
   std::string line;
 
   _headers.clear();
   _body.clear();
   _statusLine.clear();
+  std::cout << "cgiResult : " << cgiResult << std::endl;
   while (std::getline(ss, line, '\r') && line != "\n") {
     if (line.find("HTTP/1.1") != std::string::npos) {
       _statusLine += line;

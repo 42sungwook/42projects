@@ -1,6 +1,6 @@
 #include "../includes/Cgi.hpp"
 
-Cgi::Cgi() {}
+Cgi::Cgi() { _res = new char[200000000]; }
 
 Cgi::~Cgi() {}
 
@@ -43,7 +43,7 @@ void Cgi::reqToEnvp(std::map<std::string, std::string> param) {
   _envp[i] = NULL;
 }
 
-std::string &Cgi::getRes() { return _res; }
+char *Cgi::getRes() { return _res; }
 
 std::string Cgi::mkTemp() {
   int fd[2];
@@ -68,6 +68,7 @@ std::string Cgi::mkTemp() {
     std::cerr << "fork error" << std::endl;
     return "";
   }
+  waitpid(-1, NULL, 0);
   close(fd[1]);
   len = read(fd[0], buffer, 100);
   path.append(buffer, len);
@@ -75,7 +76,7 @@ std::string Cgi::mkTemp() {
   return path;
 }
 
-void Cgi::excute(const std::string &body) {
+void Cgi::execute(const std::string &body) {
   pid_t childPid;
   int fileFd;
 
@@ -87,7 +88,28 @@ void Cgi::excute(const std::string &body) {
   if (childPid == 0) {
     // 자식 프로세스에서 실행할 로직
     fileFd = open(path.c_str(), O_CREAT | O_RDWR, 0777);
-    write(fileFd, body.c_str(), body.size());
+    if (fileFd == -1) {
+      std::cerr << "open error" << std::endl;
+      exit(1);
+    }
+    const char *bodyData = body.c_str();
+    ssize_t bodySize = body.size();
+    ssize_t bytesWritten = 0;
+    ssize_t totalBytesWritten = 0;
+    ssize_t chunk = 4096;
+
+    while (totalBytesWritten < bodySize) {
+      if (totalBytesWritten + chunk > bodySize)
+        chunk = bodySize - totalBytesWritten;
+      bytesWritten = write(fileFd, bodyData + totalBytesWritten, chunk);
+      if (bytesWritten == -1) {
+        std::cerr << "write error" << std::endl;
+        close(fileFd);
+        exit(1);
+      }
+      std::cerr << "bytesWritten: " << bytesWritten << std::endl;
+      totalBytesWritten += bytesWritten;
+    }
     close(fileFd);
     fileFd = open(path.c_str(), O_RDONLY);
     dup2(fileFd, 0);
@@ -104,20 +126,22 @@ void Cgi::excute(const std::string &body) {
     return;
   }
   waitpid(childPid, NULL, 0);
+  std::cerr << "cgi finished" << std::endl;
   remove(path.c_str());
   fileFd = open(path2.c_str(), O_RDONLY);
-  char buf[8092];
+  char buf[4096];
   int n;
   while (true) {
     n = read(fileFd, buf, sizeof(buf) - 1);
+    std::cerr << "n: " << n << std::endl;
     if (n == 0) {
       break;
     } else if (n == -1) {
       continue;
     } else {
       buf[n] = '\0';
-      _res += buf;
-      memset(buf, 0, sizeof(buf));
+      memcpy(_res, buf, n);
+      memset(buf, 0, 4096);
     }
   }
   close(fileFd);

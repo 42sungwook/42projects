@@ -25,7 +25,7 @@ class Response {
   ~Response();
 
   void directoryListing(std::string path);
-  void convertCGI(const std::string &cgiResult);
+  void convertCGI(const char *cgiResult);
   int sendResponse(int clientSocket);
 
   bool isInHeader(const std::string &key);

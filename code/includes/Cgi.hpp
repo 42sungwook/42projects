@@ -13,7 +13,7 @@
 class Cgi {
  private:
   char** _envp;
-  std::string _res;  // cgi가 보내주는 response
+  char* _res;  // cgi가 보내주는 response
   std::map<std::string, std::string> _env;
 
   // header parsing data를 받아서 _env 생성
@@ -27,8 +27,8 @@ class Cgi {
   // client's request를 받아서 execve에 사용할 _envp를 생성
   void reqToEnvp(std::map<std::string, std::string> param);
   // _envp, body(parsing)를 받아서 cgi를 실행
-  void excute(const std::string& body);
-  std::string& getRes();
+  void execute(const std::string& body);
+  char* getRes();
 };
 
 #endif
