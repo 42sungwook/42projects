@@ -233,8 +233,10 @@ void Request::setMime() {
 			 it != _locList->end();
 			 it++) {
 		  if (requestURI.find((*it)->getPath()) != requestURI.npos) {
-			addHeader("CuttedURI",
-					  requestURI.erase(1, (*it)->getPath().length() - 1));
+			requestURI.erase(1, (*it)->getPath().length() - 1);
+			if (requestURI.back() == '/')
+				requestURI.erase(requestURI.length() - 1);
+			addHeader("CuttedURI", requestURI);
 			_locBlock = *it;
 			fullUri = _locBlock->getRoot() + _header["CuttedURI"];
 			break;
