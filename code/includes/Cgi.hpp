@@ -1,14 +1,14 @@
 #ifndef CGI_HPP
 #define CGI_HPP
 
+#include <fcntl.h>
 #include <unistd.h>
+
+#include <fstream>
 #include <iostream>
 #include <map>
 #include <sstream>
 #include <string>
-#include <sys/types.h>
-#include <sys/event.h>
-#include <sys/time.h>
 
 class Cgi {
  private:
@@ -18,6 +18,7 @@ class Cgi {
 
   // header parsing data를 받아서 _env 생성
   void makeEnv(std::map<std::string, std::string> param);
+  std::string mkTemp();
 
  public:
   Cgi();

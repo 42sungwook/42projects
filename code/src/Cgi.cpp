@@ -45,72 +45,83 @@ void Cgi::reqToEnvp(std::map<std::string, std::string> param) {
 
 std::string &Cgi::getRes() { return _res; }
 
-void Cgi::excute(const std::string &body) {
+std::string Cgi::mkTemp() {
   int fd[2];
-  //int status;
-  //char buf[8092];
-  std::string tmp;
-  //size_t len;
-	pid_t childPid;
-	
+  std::string path;
+  char buffer[100];
+  pid_t childPid;
+  size_t len;
+
   if (pipe(fd) < 0) {
     std::cerr << "pipe error" << std::endl;
+    return "";
+  }
+  childPid = fork();
+  if (childPid == 0) {
+    close(fd[0]);
+    dup2(fd[1], 1);
+    close(fd[1]);
+    execve("/usr/bin/mktemp", NULL, NULL);
+    std::cerr << "execve error111" << std::endl;
+    exit(1);
+  } else if (childPid == -1) {
+    std::cerr << "fork error" << std::endl;
+    return "";
+  }
+  close(fd[1]);
+  len = read(fd[0], buffer, 100);
+  path.append(buffer, len);
+  close(fd[0]);
+  return path;
+}
+
+void Cgi::excute(const std::string &body) {
+  pid_t childPid;
+  int fileFd;
+
+  std::string path = mkTemp();
+  std::string path2 = mkTemp();
+  if (path.empty()) return;
+
+  childPid = fork();
+  if (childPid == 0) {
+    // 자식 프로세스에서 실행할 로직
+    fileFd = open(path.c_str(), O_CREAT | O_RDWR, 0777);
+    write(fileFd, body.c_str(), body.size());
+    close(fileFd);
+    fileFd = open(path.c_str(), O_RDONLY);
+    dup2(fileFd, 0);
+    close(fileFd);
+    fileFd = open(path2.c_str(), O_CREAT | O_WRONLY, 0777);
+    dup2(fileFd, 1);
+    close(fileFd);
+    const char *argv[2] = {_env["PATH_TRANSLATED"].c_str(), NULL};
+    execve(_env["PATH_TRANSLATED"].c_str(), const_cast<char **>(argv), _envp);
+    std::cerr << "execve error" << std::endl;
+    exit(1);
+  } else if (childPid == -1) {
+    std::cerr << "fork error" << std::endl;
     return;
   }
-	childPid = fork();
-	if (childPid == 0) {
-			// 자식 프로세스에서 실행할 로직
-			write(fd[1], body.c_str(), body.size());
-			close(fd[1]);
-			const char *argv[2] = {_env["PATH_TRANSLATED"].c_str(), NULL};
-			execve(_env["PATH_TRANSLATED"].c_str(), const_cast<char **>(argv), _envp);
-			std::cerr << "execve error" << std::endl;
-			exit(1);
-	} else if (childPid == -1) {
-			std::cerr << "fork error" << std::endl;
-			exit (1);
-	}
-
-    char buffer[8092];
-    ssize_t bytesRead;
-
-		close(fd[1]);
-    int kq = kqueue();
-    if (kq == -1) {
-        std::cerr << "kqueue error" << std::endl;
-        return ;
+  waitpid(childPid, NULL, 0);
+  remove(path.c_str());
+  fileFd = open(path2.c_str(), O_RDONLY);
+  char buf[8092];
+  int n;
+  while (true) {
+    n = read(fileFd, buf, sizeof(buf) - 1);
+    if (n == 0) {
+      break;
+    } else if (n == -1) {
+      continue;
+    } else {
+      buf[n] = '\0';
+      _res += buf;
+      memset(buf, 0, sizeof(buf));
     }
-
-    struct kevent kev[2];
-    EV_SET(&kev[0], fd[0], EVFILT_READ, EV_ADD | EV_ONESHOT, 0, 0, NULL);
-
-    int nev = kevent(kq, kev, 1, NULL, 0, NULL);
-    if (nev == -1) {
-        std::cerr << "kevent error" << std::endl;
-        return ;
-    }
-
-    while (true) {
-        int events = kevent(kq, NULL, 0, kev, 1, NULL);
-        if (events == -1) {
-            std::cerr << "kevent error" << std::endl;
-            return ;
-        }
-
-        if (events > 0 && (kev[0].flags & EV_EOF)) {
-            // EOF 이벤트가 발생하면 더 이상 읽을 데이터가 없음
-            break ;
-        }
-
-        bytesRead = read(fd[0], buffer, sizeof(buffer));
-        if (bytesRead <= 0) {
-            break ; // 더 이상 읽을 데이터가 없음
-        }
-
-        _res.append(buffer, bytesRead);
-				memset(buffer, 0, 8092);
-    }
-    close(fd[0]);
+  }
+  close(fileFd);
+  remove(path2.c_str());
 }
 
 // void Cgi::setCGIPath(const std::string &cgiPath) { _cgiPath = cgiPath; }
