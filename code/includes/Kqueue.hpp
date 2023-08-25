@@ -16,14 +16,18 @@
 
 #include "Server.hpp"
 
+#define MAX_EVENTS 1000
+
 class Server;
-typedef std::map<int, Server *> ServerMap; // key: socket, value: server class pointer
+typedef std::map<int, Server *>
+    ServerMap;  // key: socket, value: server class pointer
 
 class Kqueue {
  private:
   int _kq;                                 // Kqueue FD
   std::vector<struct kevent> *_checkList;  // kevent vector for changelist
-  struct kevent _eventList[8];  // kevent array for saving event infomation
+  struct kevent
+      _eventList[MAX_EVENTS];  // kevent array for saving event infomation
 
  public:
   Kqueue();

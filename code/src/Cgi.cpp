@@ -43,7 +43,7 @@ void Cgi::makeEnv(std::map<std::string, std::string> param) {
       }
       ftToupper(key);
       _env[key] = it->second;
-      std::cout << "x: " << it->first << " : " << it->second << std::endl;
+      // std::cout << "x: " << it->first << " : " << it->second << std::endl;
     }
   }
 }
@@ -82,7 +82,7 @@ std::string Cgi::mkTemp() {
     dup2(fd[1], 1);
     close(fd[1]);
     execve("/usr/bin/mktemp", NULL, NULL);
-    std::cerr << "execve error111" << std::endl;
+    std::cerr << "execve error" << std::endl;
     exit(1);
   } else if (childPid == -1) {
     std::cerr << "fork error" << std::endl;
@@ -153,7 +153,6 @@ void Cgi::execute(const std::string &body) {
   int n;
   while (true) {
     n = read(fileFd, buf, sizeof(buf) - 1);
-    std::cerr << "n: " << n << std::endl;
     if (n == 0) {
       break;
     } else if (n == -1) {

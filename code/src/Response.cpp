@@ -2,6 +2,8 @@
 
 #include "../includes/Utils.hpp"
 
+int Response::_id = 0;
+
 Response::Response() {
   _body = new char[200000000];
   _result = new char[200000000];
@@ -107,11 +109,13 @@ void Response::directoryListing(std::string path) {
 }
 
 int Response::sendResponse(int clientSocket) {
+  _id++;  // ToDo : delete
+  std::cout << "완료 갯수 : " << _id << std::endl;
   const char *dataToSend = _result;         // 시작 위치
   ssize_t remainingData = strlen(_result);  // 남은 데이터의 크기
   ssize_t chunk = 32768;
 
-  std::cout << "status line: " << _statusLine << std::endl;
+  // std::cout << "status line: " << _statusLine << std::endl;
   while (remainingData > 0) {
     if (remainingData < chunk) chunk = remainingData;
     ssize_t bytesWritten = write(clientSocket, dataToSend, chunk);

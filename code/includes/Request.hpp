@@ -58,7 +58,7 @@ class Request {
   const std::string &getHeaderByKey(std::string key);
   std::map<std::string, std::string> getHeaderMap() const;
   void setBody(std::stringstream &ss);
-  void setChunkedBody(std::stringstream &ss);
+  void setChunkedBody(std::stringstream &ss, std::string &line);
 };
 
 #endif

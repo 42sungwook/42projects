@@ -31,7 +31,8 @@ int Kqueue::countEvents() {
   // struct timespec timeout;
   // timeout.tv_nsec = 0;
   // timeout.tv_sec = 10;
-  cnt = kevent(_kq, &(*_checkList)[0], _checkList->size(), _eventList, 8, NULL);
+  cnt = kevent(_kq, &(*_checkList)[0], _checkList->size(), _eventList,
+               MAX_EVENTS, NULL);
   if (cnt == -1) {
     std::cout << "kevent() error\n" + std::string(strerror(errno)) << std::endl;
     return -1;
