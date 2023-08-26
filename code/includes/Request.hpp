@@ -13,11 +13,21 @@
 #include "ConfigParser.hpp"
 #include "Utils.hpp"
 
-enum METHOD { GET, POST, DELETE };
-enum PROCESS { CGI, NORMAL };
+enum METHOD
+{
+  GET,
+  POST,
+  DELETE
+};
+enum PROCESS
+{
+  CGI,
+  NORMAL
+};
 
-class Request {
- private:
+class Request
+{
+private:
   std::string _rawContents;
   std::map<std::string, std::string> _header;
   std::string _body;
@@ -34,7 +44,7 @@ class Request {
 
   void parseUrl();
 
- public:
+public:
   Request();
   ~Request();
   void parsing(SPSBList *serverBlockList, LocationMap &locationMap);
@@ -59,6 +69,7 @@ class Request {
   std::map<std::string, std::string> getHeaderMap() const;
   void setBody(std::stringstream &ss);
   void setChunkedBody(std::stringstream &ss, std::string &line);
+  void setHeader();
 };
 
 #endif
