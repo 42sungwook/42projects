@@ -282,10 +282,7 @@ void Request::setMime()
           return;
         }
       }
-      if (_header["Method"] == "PUT")
-        _status = 201;
-      else
-        _status = 404;
+      _status = 404;
       return;
     }
     else if (S_ISDIR(info.st_mode))
