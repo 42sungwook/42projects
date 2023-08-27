@@ -2,13 +2,9 @@
 
 #include "../includes/Utils.hpp"
 
-Cgi::Cgi()
-{
-  _res = new char[200000000];
-  memset(_res, 0, 200000000);
-}
+Cgi::Cgi() {}
 
-Cgi::~Cgi() { delete[] _res; }
+Cgi::~Cgi() {}
 
 void Cgi::makeEnv(std::map<std::string, std::string> param)
 {
@@ -70,7 +66,7 @@ void Cgi::reqToEnvp(std::map<std::string, std::string> param)
   _envp[i] = NULL;
 }
 
-char *Cgi::getRes() { return _res; }
+const std::string &Cgi::getRes() const { return _res; }
 
 std::string Cgi::mkTemp()
 {
@@ -169,24 +165,20 @@ void Cgi::execute(const std::string &body)
   std::cerr << "cgi finished" << std::endl;
   remove(path.c_str());
   fileFd = open(path2.c_str(), O_RDONLY);
-  char buf[32768];
+
+  static char buf[32768];
   int n;
+
   while (true)
   {
     n = read(fileFd, buf, sizeof(buf) - 1);
     if (n == 0)
-    {
       break;
-    }
     else if (n == -1)
-    {
       continue;
-    }
-    else
-    {
+    else {
       buf[n] = '\0';
-      strcat(_res, buf);
-      memset(buf, 0, 32768);
+      _res.append(buf, n);
     }
   }
   close(fileFd);

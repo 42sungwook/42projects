@@ -5,10 +5,7 @@
 int Response::_id = 0;
 
 Response::Response() {
-  _body = new char[200000000];
-  _result = new char[200000000];
-  memset(_body, 0, 200000000);
-  memset(_result, 0, 200000000);
+  _result = NULL;
   _statusCodes[200] = " OK";
   _statusCodes[201] = " Created";
   _statusCodes[202] = " Accepted";
@@ -35,17 +32,25 @@ Response::Response() {
 }
 
 Response::~Response() {
-  delete[] _body;
-  delete[] _result;
+  if (_result != NULL)
+    delete[] _result;
 }
 
-void Response::convertCGI(const char *cgiResult) {
-  std::stringstream ss(cgiResult);
+void Response::convertCGI(const std::string &cgiResult) {
+  size_t bodystart = cgiResult.find("\r\n\r\n");
+  if (bodystart == std::string::npos) {
+    std::cerr << "CGI result error" << std::endl;
+    setStatusLine(500);
+  } else {
+    bodystart += 4;
+  }
+
+  std::stringstream headerStream(cgiResult.substr(0, bodystart));
   std::string line;
 
   _headers.clear();
   _statusLine.clear();
-  while (std::getline(ss, line, '\r') && line != "\n") {
+  while (std::getline(headerStream, line, '\r') && line != "\n") {
     if (line.find("HTTP/1.1") != std::string::npos) {
       _statusLine += line;
     } else {
@@ -57,11 +62,7 @@ void Response::convertCGI(const char *cgiResult) {
           line.substr(valueStartPos);
     }
   }
-  std::getline(ss, line);
-  while (std::getline(ss, line)) {
-    strcat(_body, line.c_str());
-    if (!ss.eof()) strcat(_body, "\n");
-  }
+  _body = cgiResult.substr(bodystart);
 
   if (_statusLine == "") {
     if (_headers.find("Status") != _headers.end()) {
@@ -73,7 +74,7 @@ void Response::convertCGI(const char *cgiResult) {
     }
   }
   if (_headers.find("Content-Length") == _headers.end()) {
-    setHeaders("Content-Length", ftItos(strlen(_body)));
+    setHeaders("Content-Length", ftItos(_body.size()));
   }
   setResult();
 }
@@ -85,16 +86,16 @@ void Response::directoryListing(std::string path) {
   if ((dir = opendir(path.c_str())) != NULL) {
     /* print all the files and directories within directory */
     while ((ent = readdir(dir)) != NULL) {
-      strcat(_body, "<a href=\"");
-      strcat(_body, ent->d_name);
+      _body += "<a href=\"";
+      _body += ent->d_name;
       if (ent->d_type == DT_DIR)
-        strcat(_body, "/\">");
+        _body += "/\">";
       else if (std::string(&ent->d_name[ent->d_namlen - 5]) != ".html")
-        strcat(_body, "\" download>");
+        _body += "\" download>";
       else
-        strcat(_body, "\">");
-      strcat(_body, ent->d_name);
-      strcat(_body, "</a><br>");
+        _body += "\">";
+      _body += ent->d_name;
+      _body += "</a><br>";
     }
     closedir(dir);
   } else {
@@ -103,7 +104,7 @@ void Response::directoryListing(std::string path) {
     return;
   }
   _headers["Content-Type"] = "text/html";
-  _headers["Content-Length"] = ftItos(strlen(_body));
+  _headers["Content-Length"] = ftItos(_body.size());
   setStatusLine(200);
   setResult();
 }
@@ -115,7 +116,6 @@ int Response::sendResponse(int clientSocket) {
   ssize_t remainingData = strlen(_result);  // 남은 데이터의 크기
   ssize_t chunk = 32768;
 
-  // std::cout << "status line: " << _statusLine << std::endl;
   while (remainingData > 0) {
     if (remainingData < chunk) chunk = remainingData;
     ssize_t bytesWritten = write(clientSocket, dataToSend, chunk);
@@ -130,29 +130,28 @@ int Response::sendResponse(int clientSocket) {
   return 0;
 }
 
-const char *Response::getBody() const { return _body; }
+const std::string &Response::getBody() const { return _body; }
 
 void Response::setRedirectRes(int statusCode) {
   std::string location = _headers["Location"];
   _statusLine.clear();
   _headers.clear();
-  memset(_body, 0, 200000000);
+  _body.clear();
 
   _statusLine += "HTTP/1.1 ";
   _statusLine += ftItos(statusCode).c_str();
   _statusLine += _statusCodes[statusCode];
   _headers["Content-Type"] = "text/html";
   _headers["Location"] = location;
-  strcat(_body, "<html>\n<head><title>");
-  strcat(_body, ftItos(statusCode).c_str());
-  strcat(_body, _statusCodes[statusCode].c_str());
-  strcat(_body, "</title></head>\n<body>\n<center><h1>");
-  strcat(_body, ftItos(statusCode).c_str());
-  strcat(_body, _statusCodes[statusCode].c_str());
-  strcat(
-      _body,
-      "</h1></center>\n<hr><center>webserver/1.0.0</center>\n</body>\n</html>");
-  _headers["Content-Length"] = ftItos(strlen(_body));
+  _body += "<html>\n<head><title>";
+  _body += ftItos(statusCode);
+  _body += _statusCodes[statusCode];
+  _body += "</title></head>\n<body>\n<center><h1>";
+  _body += ftItos(statusCode);
+  _body += _statusCodes[statusCode];
+  _body +=
+      "</h1></center>\n<hr><center>webserver/1.0.0</center>\n</body>\n</html>";
+  _headers["Content-Length"] = ftItos(_body.size());
   setResult();
 }
 
@@ -162,7 +161,7 @@ void Response::setErrorRes(int statusCode) {
 
   _statusLine.clear();
   _headers.clear();
-  memset(_body, 0, 200000000);
+  _body.clear();
 
   _statusLine += "HTTP/1.1 ";
   _statusLine += ftItos(statusCode);
@@ -175,15 +174,15 @@ void Response::setErrorRes(int statusCode) {
   }
   if (tmp.is_open()) {
     ss << tmp.rdbuf();
-    strcat(_body, ss.str().c_str());
+    setBody(ss);
   } else {
-    strcat(_body, _statusCodes[statusCode].c_str());
-    strcat(_body, ": Error");
+    _body += _statusCodes[statusCode];
+    _body += ": Error";
   }
   if (statusCode == 408) {
     _headers["Connection"] = "close";
   }
-  _headers["Content-Length"] = ftItos(strlen(_body));
+  _headers["Content-Length"] = ftItos(_body.size());
   setResult();
 }
 
@@ -193,18 +192,25 @@ bool Response::isInHeader(const std::string &key) {
 }
 
 void Response::setResult() {
-  strcat(_result, _statusLine.c_str());
-  strcat(_result, "\r\n");
+  std::string resultHeader;
+
+  resultHeader += _statusLine;
+  resultHeader += "\r\n";
 
   std::map<std::string, std::string>::iterator it;
   for (it = _headers.begin(); _headers.end() != it; it++) {
-    strcat(_result, it->first.c_str());
-    strcat(_result, ": ");
-    strcat(_result, it->second.c_str());
-    strcat(_result, "\r\n");
+    resultHeader += it->first;
+    resultHeader += ": ";
+    resultHeader += it->second;
+    resultHeader += "\r\n";
   }
-  strcat(_result, "\r\n");
-  strcat(_result, _body);
+  resultHeader += "\r\n";
+
+  _resultSize = resultHeader.size() + _body.size();
+  _result = new char[_resultSize + 1];
+  memcpy(_result, resultHeader.c_str(), resultHeader.size());
+  memcpy(_result + resultHeader.size(), _body.c_str(), _body.size());
+  _result[_resultSize] = '\0';
 }
 
 void Response::setStatusLine(int code) {
@@ -232,4 +238,6 @@ void Response::setHeaders(const std::string &key, const std::string &value) {
   _headers[key] = value;
 }
 
-void Response::setBody(const char *body) { strcat(_body, body); }
+void Response::setBody(std::stringstream &buffer) {
+  _body = buffer.str();
+  }
