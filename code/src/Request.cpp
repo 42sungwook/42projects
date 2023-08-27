@@ -108,24 +108,19 @@ void Request::setHeader()
 void Request::parsing(SPSBList *serverBlockList, LocationMap &locationMap)
 {
   if (_isFullHeader == false && _rawContents.find("\r\n\r\n") == std::string::npos)
-  {
     return;
-  }
-  if (_isFullHeader == false)
+  else if (_isFullHeader == false)
   {
     setHeader();
     _rawContents = _rawContents.substr(_rawContents.find("\r\n\r\n") + 4);
     setLocBlock(serverBlockList, locationMap);
     setMime();
   }
-
-  if ((_header.find("Content-Length") != _header.end() && static_cast<int>(_rawContents.size()) != ftStoi(_header["Content-Length"])) ||
-      (_isChunked == 1 && _rawContents.find("0\r\n\r\n") == std::string::npos))
-  {
+  else if (_header.find("Content-Length") != _header.end() && static_cast<int>(_rawContents.size()) != ftStoi(_header["Content-Length"]))
     return;
-  }
+  else if (_isChunked == true && _rawContents.find("0\r\n\r\n") == std::string::npos)
+    return;
 
-  // std::cout << "out!" << std::endl;
   std::stringstream ss(_rawContents);
   std::string line;
 
@@ -261,7 +256,7 @@ void Request::setAutoindex(std::string &value) { _autoindex = value; }
 void Request::clear()
 {
   _rawContents.clear();
-  addRawContents("");
+  // addRawContents("");
   std::string clientIp = _header["ClientIP"];
   _header.clear();
   _header["ClientIP"] = clientIp;
@@ -275,7 +270,9 @@ void Request::clear()
   _isFullHeader = false;
 }
 
-void Request::addRawContents(const std::string &raw) { _rawContents += raw; }
+void Request::addRawContents(const char *raw, size_t size) {
+  _rawContents.append(raw, size);
+  }
 
 void Request::setMime()
 {

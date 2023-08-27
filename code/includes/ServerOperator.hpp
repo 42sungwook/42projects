@@ -29,7 +29,7 @@ class ServerOperator {
  private:
   ServerMap &_serverMap;
   LocationMap &_locationMap;
-  std::map<int, Request> _clients;
+  std::map<int, Request> _clients; // key: client socket, value: Request
   std::map<int, int>
       _clientToServer;  // key: client socket, value: server socket
   bool isExistClient(int clientSock);

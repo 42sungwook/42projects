@@ -118,14 +118,14 @@ void ServerOperator::handleReadEvent(struct kevent *event, Kqueue &kq)
             1000,
         NULL);
     kq.changeEvents(clientSocket, EVFILT_READ, EV_ADD | EV_ENABLE, 0, 0, NULL);
-    _clients[clientSocket].addRawContents("");
+    // _clients[clientSocket].addRawContents("");
     _clients[clientSocket].addHeader("ClientIP", clientIp);
   }
   else if (isExistClient(event->ident))
   {
     Request &req = _clients[event->ident];
     /* read data from client */
-    char buf[8092];
+    static char buf[8092]; // reuse for every request
     int n;
 
     while (true)
@@ -142,11 +142,11 @@ void ServerOperator::handleReadEvent(struct kevent *event, Kqueue &kq)
       }
       else
       {
-        buf[n] = '\0';
-        req.addRawContents(buf);
-        memset(buf, 0, sizeof(buf));
+        // buf[n] = '\0'; char * buffer have to be null terminated 이긴한데, addRawContents에서 n 명시적 추가했음
+        req.addRawContents(buf, n); // buf가 binary('\0'포함 일수 있으니, n 명시적 추가)
+        // memset(buf, 0, sizeof(buf)); 재활용 안하는듯?
         if (n < (int)sizeof(buf) - 1 ||
-            recv(event->ident, buf, sizeof(buf) - 1, MSG_PEEK) == -1)
+            recv(event->ident, buf, sizeof(int), MSG_PEEK) == -1)
         {
           req.parsing(_serverMap[_clientToServer[event->ident]]->getSPSBList(),
                       _locationMap);

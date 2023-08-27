@@ -51,7 +51,7 @@ public:
   void setMime();
   void setLocBlock(SPSBList *serverBlockList, LocationMap &locationMap);
   void setAutoindex(std::string &value);
-  void addRawContents(const std::string &raw);
+  void addRawContents(const char *raw, size_t size);
   void addHeader(std::string key, std::string value);
   void clear();
   const std::string &getHost();
