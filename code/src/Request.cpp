@@ -100,8 +100,6 @@ void Request::setHeader()
   {
     _host = _header["Host"];
   }
-  if (_header["Method"] != "POST")
-    _isFullReq = true;
   _isFullHeader = true;
 }
 
