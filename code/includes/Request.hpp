@@ -37,6 +37,7 @@ private:
   int _status;
   bool _isFullHeader;
   bool _isChunked;
+  size_t  _chunkedSize; // \r\n 포함한 길이
   bool _isFullReq;
   std::map<std::string, std::string> _mimeTypes;
   LocationList *_locList;
@@ -51,7 +52,7 @@ public:
   void setMime();
   void setLocBlock(SPSBList *serverBlockList, LocationMap &locationMap);
   void setAutoindex(std::string &value);
-  void addRawContents(const std::string &raw);
+  void addRawContents(const char *raw, size_t size);
   void addHeader(std::string key, std::string value);
   void clear();
   const std::string &getHost();
@@ -67,8 +68,6 @@ public:
   const std::string &getRawContents() const;
   const std::string &getHeaderByKey(std::string key);
   std::map<std::string, std::string> getHeaderMap() const;
-  void setBody(std::stringstream &ss);
-  void setChunkedBody(std::stringstream &ss, std::string &line);
   void setHeader();
 };
 

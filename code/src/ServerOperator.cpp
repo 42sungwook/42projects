@@ -100,8 +100,7 @@ void ServerOperator::handleReadEvent(struct kevent *event, Kqueue &kq)
     sockaddr_in clientAddr;
     socklen_t clientAddrLen = sizeof(clientAddr);
     if ((clientSocket = accept(event->ident, (struct sockaddr *)&clientAddr,
-                               &clientAddrLen)) == -1)
-    {
+                               &clientAddrLen)) == -1) {
       std::cerr << "accept() error\n";
       exit(EXIT_FAILURE);
     }
@@ -118,53 +117,49 @@ void ServerOperator::handleReadEvent(struct kevent *event, Kqueue &kq)
             1000,
         NULL);
     kq.changeEvents(clientSocket, EVFILT_READ, EV_ADD | EV_ENABLE, 0, 0, NULL);
-    _clients[clientSocket].addRawContents("");
-    _clients[clientSocket].addHeader("ClientIP", clientIp);
+    // _clients[clientSocket].addRawContents("");
+    _clients[clientSocket] = new Request();
+    _clients[clientSocket]->addHeader("ClientIP", clientIp);
   }
   else if (isExistClient(event->ident))
   {
-    Request &req = _clients[event->ident];
+    Request *req = _clients[event->ident];
     /* read data from client */
-    char buf[8092];
+    static char buf[8092]; // reuse for every request
     int n;
 
-    while (true)
-    {
-      n = read(event->ident, buf, sizeof(buf) - 1);
-      if (n == 0)
+    n = read(event->ident, buf, sizeof(buf) - 1);
+    if (n == 0) {
+      disconnectClient(event->ident);
+      return;
+    }
+    else if (n == -1) {
+      return;
+    }
+    else {
+      // buf[n] = '\0'; char * buffer have to be null terminated 이긴한데, addRawContents에서 n 명시적 추가했음
+      req->addRawContents(buf, n); // buf가 binary('\0'포함 일수 있으니, n 명시적 추가)
+      // memset(buf, 0, sizeof(buf)); 재활용 안하는듯?
+      if (n < (int)sizeof(buf) - 1 ||
+          recv(event->ident, buf, sizeof(int), MSG_PEEK) == -1)
       {
-        disconnectClient(event->ident);
+        req->parsing(_serverMap[_clientToServer[event->ident]]->getSPSBList(),
+                    _locationMap);
+      }
+
+      if (req->isFullReq())
+      {
+        kq.changeEvents(event->ident, EVFILT_TIMER, EV_ENABLE, 0,
+                        _serverMap[_clientToServer[event->ident]]
+                                ->getSPSBList()
+                                ->front()
+                                ->getKeepAliveTime() *
+                            1000,
+                        NULL);
+        kq.changeEvents(event->ident, EVFILT_READ, EV_DELETE, 0, 0, NULL);
+        kq.changeEvents(event->ident, EVFILT_WRITE, EV_ADD | EV_ENABLE, 0, 0,
+                        NULL);
         return;
-      }
-      else if (n == -1)
-      {
-        continue;
-      }
-      else
-      {
-        buf[n] = '\0';
-        req.addRawContents(buf);
-        memset(buf, 0, sizeof(buf));
-        if (n < (int)sizeof(buf) - 1 ||
-            recv(event->ident, buf, sizeof(buf) - 1, MSG_PEEK) == -1)
-        {
-          req.parsing(_serverMap[_clientToServer[event->ident]]->getSPSBList(),
-                      _locationMap);
-        }
-        if (req.isFullReq() && n != (int)sizeof(buf) - 1)
-        {
-          kq.changeEvents(event->ident, EVFILT_TIMER, EV_ENABLE, 0,
-                          _serverMap[_clientToServer[event->ident]]
-                                  ->getSPSBList()
-                                  ->front()
-                                  ->getKeepAliveTime() *
-                              1000,
-                          NULL);
-          kq.changeEvents(event->ident, EVFILT_READ, EV_DELETE, 0, 0, NULL);
-          kq.changeEvents(event->ident, EVFILT_WRITE, EV_ADD | EV_ENABLE, 0, 0,
-                          NULL);
-          return;
-        }
       }
     }
   }
@@ -173,57 +168,57 @@ void ServerOperator::handleReadEvent(struct kevent *event, Kqueue &kq)
 void ServerOperator::handleWriteEvent(struct kevent *event, Kqueue &kq)
 {
   /* send data to client */
-  Response res;
-  Request &req = _clients[event->ident];
-  ServerBlock *locBlock = req.getLocBlock();
+  Response *res = new Response();
+  Request *req = _clients[event->ident];
+  ServerBlock *locBlock = req->getLocBlock();
   // TODO method 확인, 그리고 타임아웃 cgi일때 제한된경로일깨
 
-  if (req.getStatus() != 200)
+  if (req->getStatus() != 200)
   {
-    res.setErrorRes(req.getStatus());
+    res->setErrorRes(req->getStatus());
   }
   else
   {
     Method *method;
+    const std::string &limit = locBlock->getLimitExcept();
 
-    if (req.getMethod() == "GET" && (locBlock->getLimitExcept() == "GET" ||
-                                     locBlock->getLimitExcept() == ""))
+    if ((req->getMethod() == "GET" || req->getMethod() == "HEAD") && (limit == "GET" || limit == ""))
       method = new Get();
-    else if ((req.getMethod() == "POST" || req.getMethod() == "PUT") &&
-             (locBlock->getLimitExcept() == "POST" ||
-              locBlock->getLimitExcept() == ""))
+    else if ((req->getMethod() == "POST" || req->getMethod() == "PUT") &&
+             (limit == "POST" || limit == ""))
     {
       method = new Post();
     }
-    else if (req.getMethod() == "DELETE" &&
-             (locBlock->getLimitExcept() == "DELETE" ||
-              locBlock->getLimitExcept() == ""))
+    else if (req->getMethod() == "DELETE" &&
+             (limit == "DELETE" ||
+              limit == ""))
       method = new Delete();
     else
     {
       method = new Method();
     }
-    method->process(req, res);
+    method->process(*req, *res);
     delete method;
   }
 
-  if (res.sendResponse(event->ident) == EXIT_FAILURE)
+  if (res->sendResponse(event->ident) == EXIT_FAILURE)
   {
     std::cerr << "client write error!" << std::endl;
     disconnectClient(event->ident); // 몇번에러 때리지?
   }
-  else if (req.getStatus() == 413)
+  else if (req->getStatus() == 413)
   {
     disconnectClient(event->ident);
   }
   else
   {
     kq.changeEvents(event->ident, EVFILT_TIMER, EV_ENABLE, 0,
-                    req.getLocBlock()->getKeepAliveTime() * 1000, NULL);
-    req.clear();
+                    req->getLocBlock()->getKeepAliveTime() * 1000, NULL);
+    req->clear();
     kq.changeEvents(event->ident, EVFILT_WRITE, EV_DELETE, 0, 0, NULL);
     kq.changeEvents(event->ident, EVFILT_READ, EV_ADD | EV_ENABLE, 0, 0, NULL);
   }
+  delete res;
 }
 
 bool ServerOperator::isExistClient(int clientSock)
@@ -237,6 +232,7 @@ void ServerOperator::disconnectClient(int clientSock)
 {
   std::cout << "client disconnected: " << clientSock << std::endl;
   close(clientSock);
+  delete _clients[clientSock];
   _clients.erase(clientSock);
   _clientToServer.erase(clientSock);
 }

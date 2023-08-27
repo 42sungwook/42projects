@@ -54,10 +54,11 @@ void Post::process(Request &request, Response &response) {
     std::string fileName = fullUri;
 
     if (isCgi(fullUri, request) == true) {
-      Cgi cgi;
-      cgi.reqToEnvp(request.getHeaderMap());
-      cgi.execute(request.getBody());
-      response.convertCGI(cgi.getRes());
+      Cgi *cgi = new Cgi();
+      cgi->reqToEnvp(request.getHeaderMap());
+      cgi->execute(request.getBody());
+      response.convertCGI(cgi->getRes());
+      delete cgi;
     } else {
       if (fileName.back() == '/') {
         if (request.getMime() != "directory") {

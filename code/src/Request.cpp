@@ -8,6 +8,7 @@ Request::Request()
       _status(200),
       _isFullHeader(false),
       _isChunked(false),
+      _chunkedSize(0),
       _isFullReq(false),
       _locList(NULL),
       _locBlock(NULL)
@@ -99,7 +100,6 @@ void Request::setHeader()
   {
     _host = _header["Host"];
   }
-
   if (_header["Method"] != "POST")
     _isFullReq = true;
   _isFullHeader = true;
@@ -108,104 +108,64 @@ void Request::setHeader()
 void Request::parsing(SPSBList *serverBlockList, LocationMap &locationMap)
 {
   if (_isFullHeader == false && _rawContents.find("\r\n\r\n") == std::string::npos)
-  {
     return;
-  }
-  if (_isFullHeader == false)
+  else if (_isFullHeader == false)
   {
     setHeader();
-    _rawContents = _rawContents.substr(_rawContents.find("\r\n\r\n") + 4);
+    _rawContents.erase(0, _rawContents.find("\r\n\r\n") + 4);
     setLocBlock(serverBlockList, locationMap);
     setMime();
   }
-
-  if ((_header.find("Content-Length") != _header.end() && static_cast<int>(_rawContents.size()) != ftStoi(_header["Content-Length"])) ||
-      (_isChunked == 1 && _rawContents.find("0\r\n\r\n") == std::string::npos))
-  {
+  else if (_header.find("Content-Length") != _header.end() && static_cast<int>(_rawContents.size()) != ftStoi(_header["Content-Length"]))
     return;
-  }
-
-  // std::cout << "out!" << std::endl;
-  std::stringstream ss(_rawContents);
-  std::string line;
+  else if (_isChunked == true && _rawContents.size() < _chunkedSize)
+    return;
 
   if (_isFullHeader == true && _isFullReq == false)
   {
     if (_isChunked)
     {
-      // getline(ss, line);
-      // if (hexToDecimal(line.substr(0, line.size() - 1)) >
-      //     _locBlock->getClientMaxBodySize()) {
-      //   _status = 413;
-      //   _header.erase("Transfer-Encoding");
-      //   _isFullReq = true;
-      // } else
-      setChunkedBody(ss, line);
-    }
-    else
-    {
-      if ((size_t)ftStoi(_header["Content-Length"]) >
-          _locBlock->getClientMaxBodySize())
+      if (_chunkedSize == 0)
       {
+        if (_rawContents.find("\r\n") == std::string::npos)
+          return;
+        _chunkedSize = hexToDecimal(_rawContents.substr(0, _rawContents.find("\r\n"))) + 2;
+        _rawContents.erase(0, _rawContents.find("\r\n") + 2);
+      }
+      while (_rawContents.size() >= _chunkedSize) {
+        _body.append(_rawContents.c_str(), _chunkedSize - 2); // CRLF 제외
+        _rawContents.erase(0, _chunkedSize);
+        if (_chunkedSize == 2) {
+          _isFullReq = true;
+          _header.erase("Transfer-Encoding");
+          break;
+        }
+        else if (_rawContents.find("\r\n") != std::string::npos) {
+          _chunkedSize = hexToDecimal(_rawContents.substr(0, _rawContents.find("\r\n"))) + 2;
+          _rawContents.erase(0, _rawContents.find("\r\n") + 2);
+        }
+        else {
+          _chunkedSize = 0;
+          break;
+        }
+      }
+      if (_body.size() > _locBlock->getClientMaxBodySize()) {
         _status = 413;
         _isFullReq = true;
       }
-
-      setBody(ss);
     }
-    // std::cout << "data: " << _body << ".";
-    _rawContents.clear();
-  }
-}
-
-void Request::setBody(std::stringstream &ss)
-{
-  std::string line;
-
-  while (std::getline(ss, line))
-  {
-    _body += line;
-    if (!ss.eof())
-      _body += '\n';
-  }
-  if (static_cast<size_t>(std::atoi(_header["Content-Length"].c_str())) !=
-      _body.size())
-  {
-    return;
-  }
-  _isFullReq = true;
-}
-
-void Request::setChunkedBody(std::stringstream &ss, std::string &line)
-{
-  if (_header["Transfer-Encoding"] != "chunked" ||
-      (_header["Method"] != "POST" && _header["Method"] != "PUT"))
-  {
-    _status = 405;
-    return;
-  }
-  // if (line == "0\r") {
-  //   _isFullReq = true;
-  //   _header.erase("Transfer-Encoding");
-  //   return;
-  // }
-  // std::getline(ss, line);
-  while (std::getline(ss, line))
-  {
-    if (line == "0\r")
+    else
     {
-      _isFullReq = true;
-      _header.erase("Transfer-Encoding");
-      break;
+      size_t conLen = ftStoi(_header["Content-Length"]);
+      if (conLen > _locBlock->getClientMaxBodySize()) {
+        _status = 413;
+        _isFullReq = true;
+      }
+      _body += _rawContents;
+      if (_body.size() == conLen)
+        _isFullReq = true;
+      _rawContents.clear();
     }
-    std::getline(ss, line, '\r');
-    _body += line;
-    std::getline(ss, line);
-  }
-  if (_body.size() > _locBlock->getClientMaxBodySize())
-  {
-    _status = 413;
-    _isFullReq = true;
   }
 }
 
@@ -261,7 +221,7 @@ void Request::setAutoindex(std::string &value) { _autoindex = value; }
 void Request::clear()
 {
   _rawContents.clear();
-  addRawContents("");
+  // addRawContents("");
   std::string clientIp = _header["ClientIP"];
   _header.clear();
   _header["ClientIP"] = clientIp;
@@ -272,10 +232,13 @@ void Request::clear()
   _status = 200;
   _isFullReq = false;
   _isChunked = false;
+  _chunkedSize = 0;
   _isFullHeader = false;
 }
 
-void Request::addRawContents(const std::string &raw) { _rawContents += raw; }
+void Request::addRawContents(const char *raw, size_t size) {
+  _rawContents.append(raw, size);
+  }
 
 void Request::setMime()
 {

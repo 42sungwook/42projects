@@ -8,18 +8,18 @@ void Get::makeBody(Response &response, std::ifstream &file) {
   std::stringstream buffer;
 
   buffer << file.rdbuf();
-  if (buffer.good() == false) throw ErrorException(500);
-  response.setBody(buffer.str().c_str());
   file.close();
+  if (buffer.good() == false) throw ErrorException(500);
+  response.setBody(buffer);
   return;
 }
 
 void Get::makeHeader(Request &request, Response &response) {
-  if (response.getBody()[0] != '\0')
+  if (response.getBody() != "")
     if (response.isInHeader("Content-Type") == false) {
       response.setHeaders("Content-Type", request.getMime());
     }
-  response.setHeaders("Content-Length", ftItos(strlen(response.getBody())));
+  response.setHeaders("Content-Length", ftItos(response.getBody().size()));
 }
 
 void Get::makeResponse(Request &request, Response &response,

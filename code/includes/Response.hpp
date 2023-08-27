@@ -16,29 +16,29 @@ class Response {
  private:
   static int _id;  // ToDo : delete
   std::map<std::string, std::string> _headers;
-  char *_body;
+  std::string _body;
   std::string _statusLine;
-
+  char   *_result;
+  size_t _resultSize;
   std::map<int, std::string> _statusCodes;
 
  public:
-  char *_result;
   Response();
   ~Response();
 
   void directoryListing(std::string path);
-  void convertCGI(const char *cgiResult);
+  void convertCGI(const std::string &cgiResult);
   int sendResponse(int clientSocket);
 
   bool isInHeader(const std::string &key);
 
-  const char *getBody() const;
+  const std::string &getBody() const;
   void setRedirectRes(int statusCode);
   void setErrorRes(int statusCode);
   void setResult();
   void setStatusLine(int code);
   void setHeaders(const std::string &key, const std::string &value);
-  void setBody(const char *body);
+  void setBody(std::stringstream &buffer);
 };
 
 #endif
