@@ -149,7 +149,6 @@ void Request::parsing(SPSBList *serverBlockList, LocationMap &locationMap)
           break;
         }
       }
-      std::cout << "chunkedsize: " << _chunkedSize << std::endl;
       if (_body.size() > _locBlock->getClientMaxBodySize()) {
         _status = 413;
         _isFullReq = true;
