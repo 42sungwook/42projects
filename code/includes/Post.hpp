@@ -16,6 +16,7 @@ class Post : public Method {
   void createResource(Response &response, std::string &fileName,
                       std::string &fullUri);
   void appendResource(const std::string &fileName, const Request &request);
+  void coverResource(const std::string &fileName, const Request &request);
 };
 
 #endif

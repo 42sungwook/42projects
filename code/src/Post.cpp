@@ -47,6 +47,13 @@ void Post::appendResource(const std::string &fileName, const Request &request) {
   tempof.close();
 }
 
+void Post::coverResource(const std::string &fileName, const Request &request) {
+  std::ofstream tempof(fileName, std::ios::trunc);
+  _path = fileName;
+  tempof << request.getBody();
+  tempof.close();
+}
+
 void Post::process(Request &request, Response &response) {
   try {
     std::string fullUri = request.getHeaderByKey("RootDir");
@@ -73,11 +80,19 @@ void Post::process(Request &request, Response &response) {
           throw ErrorException(301);
         }
         std::ifstream tempif(fileName);
-        if (tempif.is_open() == false) throw ErrorException(404);
+        if (tempif.is_open() == false) {
+          if (request.getMethod() == "POST")
+            throw ErrorException(404);
+          else if (request.getMethod() == "PUT")
+            response.setStatusLine(201);
+        }
         tempif.close();
         response.setStatusLine(200);
       }
-      appendResource(fileName, request);
+      if (request.getMethod() == "POST")
+        appendResource(fileName, request);
+      else if (request.getMethod() == "PUT")
+        coverResource(fileName, request);
       response.setHeaders("Content-Length", "0");
       response.setHeaders("Content-Type", "application/octet-stream");
       response.setResult();
