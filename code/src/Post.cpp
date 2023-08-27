@@ -56,7 +56,7 @@ void Post::process(Request &request, Response &response) {
     if (isCgi(fullUri, request) == true) {
       Cgi cgi;
       cgi.reqToEnvp(request.getHeaderMap());
-      cgi.excute(request.getBody());
+      cgi.execute(request.getBody());
       response.convertCGI(cgi.getRes());
     } else {
       if (fileName.back() == '/') {

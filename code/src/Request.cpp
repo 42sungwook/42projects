@@ -1,6 +1,7 @@
 #include "../includes/Request.hpp"
 
 #include "../includes/ErrorException.hpp"
+#include "../includes/Utils.hpp"
 
 Request::Request()
     : _mime("text/html"),
@@ -100,10 +101,17 @@ void Request::parsing(SPSBList *serverBlockList, LocationMap &locationMap) {
 
   if (_isFullHeader == true && _isFullReq == false) {
     if (_isChunked) {
-      setChunkedBody(ss);
+      // getline(ss, line);
+      // if (hexToDecimal(line.substr(0, line.size() - 1)) >
+      //     _locBlock->getClientMaxBodySize()) {
+      //   _status = 413;
+      //   _header.erase("Transfer-Encoding");
+      //   _isFullReq = true;
+      // } else
+      setChunkedBody(ss, line);
 
     } else {
-      if ((size_t)ftStoi(_header["Content-Length"]) >=
+      if ((size_t)ftStoi(_header["Content-Length"]) >
           _locBlock->getClientMaxBodySize()) {
         _status = 413;
         _isFullReq = true;
@@ -111,7 +119,7 @@ void Request::parsing(SPSBList *serverBlockList, LocationMap &locationMap) {
 
       setBody(ss);
     }
-    std::cout << "data: " << _body << ".";
+    // std::cout << "data: " << _body << ".";
     _rawContents.clear();
   }
 }
@@ -130,27 +138,31 @@ void Request::setBody(std::stringstream &ss) {
   _isFullReq = true;
 }
 
-void Request::setChunkedBody(std::stringstream &ss) {
+void Request::setChunkedBody(std::stringstream &ss, std::string &line) {
   if (_header["Transfer-Encoding"] != "chunked" ||
       (_header["Method"] != "POST" && _header["Method"] != "PUT")) {
     _status = 405;
     return;
   }
-  std::string line;
+  // if (line == "0\r") {
+  //   _isFullReq = true;
+  //   _header.erase("Transfer-Encoding");
+  //   return;
+  // }
   // std::getline(ss, line);
-  while (std::getline(ss, line)) {  // 한줄읽고
-    int len = hexToDecimal(line.substr(
-        0, line.size() - 1));  // 읽은것중 맨마지막 \r 빼고 hex로 변환
-    std::cout << "chunked len: " << len << std::endl;
-    if (line == "0\r") {  // 0이면 chunked 끝
+  while (std::getline(ss, line)) {
+    if (line == "0\r") {
       _isFullReq = true;
       _header.erase("Transfer-Encoding");
-      break;  // 탈출 ^0^
+      break;
     }
-    std::getline(ss, line, '\r');  // \r전까지읽어서 바디에 저장
+    std::getline(ss, line, '\r');
     _body += line;
-    std::getline(ss, line);  // \n 지워주기
-                             // if (!ss.eof()) _body += '\n';  // 얜 머지?
+    std::getline(ss, line);
+  }
+  if (_body.size() > _locBlock->getClientMaxBodySize()) {
+    _status = 413;
+    _isFullReq = true;
   }
 }
 

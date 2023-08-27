@@ -149,6 +149,12 @@ void ServerOperator::handleWriteEvent(struct kevent *event, Kqueue &kq) {
   Request &req = _clients[event->ident];
   ServerBlock *locBlock = req.getLocBlock();
   // TODO method 확인, 그리고 타임아웃 cgi일때 제한된경로일깨
+  std::map<std::string, std::string> map = req.getHeaderMap();
+  //
+  for (std::map<std::string, std::string>::iterator it = map.begin();
+       it != map.end(); it++) {
+    std::cout << it->first << " : " << it->second << std::endl;
+  }
 
   if (req.getStatus() != 200) {
     res.setErrorRes(req.getStatus());

@@ -1,6 +1,7 @@
 #ifndef RESPONSE_HPP
 #define RESPONSE_HPP
 
+#include <string.h>
 #include <sys/dir.h>
 #include <unistd.h>
 
@@ -13,30 +14,31 @@
 
 class Response {
  private:
+  static int _id;  // ToDo : delete
   std::map<std::string, std::string> _headers;
-  std::string _body;
+  char *_body;
   std::string _statusLine;
 
   std::map<int, std::string> _statusCodes;
 
  public:
-  std::string _result;
+  char *_result;
   Response();
   ~Response();
 
   void directoryListing(std::string path);
-  void convertCGI(const std::string &cgiResult);
+  void convertCGI(const char *cgiResult);
   int sendResponse(int clientSocket);
 
   bool isInHeader(const std::string &key);
 
-  const std::string &getBody() const;
+  const char *getBody() const;
   void setRedirectRes(int statusCode);
   void setErrorRes(int statusCode);
   void setResult();
   void setStatusLine(int code);
   void setHeaders(const std::string &key, const std::string &value);
-  void setBody(const std::string &body);
+  void setBody(const char *body);
 };
 
 #endif

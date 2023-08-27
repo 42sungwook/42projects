@@ -1,8 +1,13 @@
 #include "../includes/Cgi.hpp"
 
-Cgi::Cgi() {}
+#include "../includes/Utils.hpp"
 
-Cgi::~Cgi() {}
+Cgi::Cgi() {
+  _res = new char[200000000];
+  memset(_res, 0, 200000000);
+}
+
+Cgi::~Cgi() { delete[] _res; }
 
 void Cgi::makeEnv(std::map<std::string, std::string> param) {
   _env["AUTH_TYPE"] = param["Authorization"];
@@ -26,6 +31,21 @@ void Cgi::makeEnv(std::map<std::string, std::string> param) {
   _env["SERVER_PORT"] = param["Port"];
   _env["SERVER_PROTOCOL"] = "HTTP/1.1";
   _env["SERVER_SOFTWARE"] = "Webserv/1.0";
+  for (std::map<std::string, std::string>::iterator it = param.begin();
+       it != param.end(); it++) {
+    if (it->first.find("X-") != std::string::npos) {
+      std::string key = "HTTP_";
+      key += it->first;
+      size_t pos = key.find("-");
+      while (pos != std::string::npos) {
+        key.replace(pos, 1, "_");
+        pos = key.find("-");
+      }
+      ftToupper(key);
+      _env[key] = it->second;
+      // std::cout << "x: " << it->first << " : " << it->second << std::endl;
+    }
+  }
 }
 
 void Cgi::reqToEnvp(std::map<std::string, std::string> param) {
@@ -43,56 +63,108 @@ void Cgi::reqToEnvp(std::map<std::string, std::string> param) {
   _envp[i] = NULL;
 }
 
-std::string &Cgi::getRes() { return _res; }
+char *Cgi::getRes() { return _res; }
 
-void Cgi::excute(const std::string &body) {
-  pid_t pid;
+std::string Cgi::mkTemp() {
   int fd[2];
-  int status;
-  char buf[8092];
-  std::string tmp;
+  std::string path;
+  char buffer[100];
+  pid_t childPid;
   size_t len;
 
   if (pipe(fd) < 0) {
     std::cerr << "pipe error" << std::endl;
-    return;
+    return "";
   }
-  if ((pid = fork()) < 0) {
-    std::cerr << "fork error" << std::endl;
-    return;
-  } else if (pid == 0) {
-    int rd[2];
-    if (pipe(rd) < 0) {
-      std::cerr << "pipe error" << std::endl;
-      return;
-    }
-    int totalBodySize = 0;
-    int n = 0;
-    while (totalBodySize < (int)body.size()) {
-      n = write(rd[1], body.c_str(), body.size());
-      if (n != -1) totalBodySize += n;
-      break;
-    }
-    close(rd[1]);
-    dup2(rd[0], 0);
-    close(rd[0]);
+  childPid = fork();
+  if (childPid == 0) {
     close(fd[0]);
     dup2(fd[1], 1);
     close(fd[1]);
+    execve("/usr/bin/mktemp", NULL, NULL);
+    std::cerr << "execve error" << std::endl;
+    exit(1);
+  } else if (childPid == -1) {
+    std::cerr << "fork error" << std::endl;
+    return "";
+  }
+  waitpid(-1, NULL, 0);
+  close(fd[1]);
+  len = read(fd[0], buffer, 100);
+  path.append(buffer, len);
+  close(fd[0]);
+  return path;
+}
+
+void Cgi::execute(const std::string &body) {
+  pid_t childPid;
+  int fileFd;
+
+  std::string path = mkTemp();
+  std::string path2 = mkTemp();
+  if (path.empty()) return;
+
+  childPid = fork();
+  if (childPid == 0) {
+    // 자식 프로세스에서 실행할 로직
+    fileFd = open(path.c_str(), O_CREAT | O_RDWR, 0777);
+    if (fileFd == -1) {
+      std::cerr << "open error" << std::endl;
+      exit(1);
+    }
+    const char *bodyData = body.c_str();
+    ssize_t bodySize = body.size();
+    ssize_t bytesWritten = 0;
+    ssize_t totalBytesWritten = 0;
+    ssize_t chunk = 32768;
+
+    while (totalBytesWritten < bodySize) {
+      if (totalBytesWritten + chunk > bodySize)
+        chunk = bodySize - totalBytesWritten;
+      bytesWritten = write(fileFd, bodyData + totalBytesWritten, chunk);
+      if (bytesWritten == -1) {
+        std::cerr << "write error" << std::endl;
+        close(fileFd);
+        exit(1);
+      }
+      std::cerr << "bytesWritten: " << bytesWritten << std::endl;
+      totalBytesWritten += bytesWritten;
+    }
+    close(fileFd);
+    fileFd = open(path.c_str(), O_RDONLY);
+    dup2(fileFd, 0);
+    close(fileFd);
+    fileFd = open(path2.c_str(), O_CREAT | O_WRONLY, 0777);
+    dup2(fileFd, 1);
+    close(fileFd);
     const char *argv[2] = {_env["PATH_TRANSLATED"].c_str(), NULL};
     execve(_env["PATH_TRANSLATED"].c_str(), const_cast<char **>(argv), _envp);
-    exit(0);
-  } else {
-    close(fd[1]);
-    waitpid(pid, &status, 0);
-    while ((len = read(fd[0], buf, 8091)) > 0) {
-      buf[len] = '\0';
-      tmp += buf;
-      memset(buf, 0, 8092);
-    }
-    _res = tmp;
-    close(fd[0]);
+    std::cerr << "execve error" << std::endl;
+    exit(1);
+  } else if (childPid == -1) {
+    std::cerr << "fork error" << std::endl;
+    return;
   }
+  waitpid(childPid, NULL, 0);
+  std::cerr << "cgi finished" << std::endl;
+  remove(path.c_str());
+  fileFd = open(path2.c_str(), O_RDONLY);
+  char buf[32768];
+  int n;
+  while (true) {
+    n = read(fileFd, buf, sizeof(buf) - 1);
+    if (n == 0) {
+      break;
+    } else if (n == -1) {
+      continue;
+    } else {
+      buf[n] = '\0';
+      strcat(_res, buf);
+      memset(buf, 0, 32768);
+    }
+  }
+  close(fileFd);
+  remove(path2.c_str());
 }
 
 // void Cgi::setCGIPath(const std::string &cgiPath) { _cgiPath = cgiPath; }
