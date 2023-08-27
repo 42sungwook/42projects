@@ -15,8 +15,7 @@ class Post : public Method {
   std::string generateRandomString();
   void createResource(Response &response, std::string &fileName,
                       std::string &fullUri);
-  void appendResource(const std::string &fileName, const Request &request);
-  void coverResource(const std::string &fileName, const Request &request);
+  void appendResource(const std::string &fileName, Request &request);
 };
 
 #endif

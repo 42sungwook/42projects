@@ -40,15 +40,13 @@ void Post::createResource(Response &response, std::string &fileName,
   response.setStatusLine(201);
 }
 
-void Post::appendResource(const std::string &fileName, const Request &request) {
+void Post::appendResource(const std::string &fileName, Request &request) {
+  std::ios::openmode mode;
+  if (request.getMethod() == "POST")
+    mode = std::ios::app;
+  else if (request.getMethod() == "PUT")
+    mode = std::ios::trunc;
   std::ofstream tempof(fileName, std::ios::app);
-  _path = fileName;
-  tempof << request.getBody();
-  tempof.close();
-}
-
-void Post::coverResource(const std::string &fileName, const Request &request) {
-  std::ofstream tempof(fileName, std::ios::trunc);
   _path = fileName;
   tempof << request.getBody();
   tempof.close();
@@ -80,19 +78,12 @@ void Post::process(Request &request, Response &response) {
           throw ErrorException(301);
         }
         std::ifstream tempif(fileName);
-        if (tempif.is_open() == false) {
-          if (request.getMethod() == "POST")
+        if (tempif.is_open() == false && request.getMethod() == "POST")
             throw ErrorException(404);
-          else if (request.getMethod() == "PUT")
-            response.setStatusLine(201);
-        }
         tempif.close();
         response.setStatusLine(200);
       }
-      if (request.getMethod() == "POST")
-        appendResource(fileName, request);
-      else if (request.getMethod() == "PUT")
-        coverResource(fileName, request);
+      appendResource(fileName, request);
       response.setHeaders("Content-Length", "0");
       response.setHeaders("Content-Type", "application/octet-stream");
       response.setResult();
