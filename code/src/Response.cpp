@@ -2,6 +2,8 @@
 
 #include "../includes/Utils.hpp"
 
+int Response::_id = 0;
+
 Response::Response() {
   _result = NULL;
   _statusCodes[200] = " OK";
@@ -108,8 +110,10 @@ void Response::directoryListing(std::string path) {
 }
 
 int Response::sendResponse(int clientSocket) {
-  const char *dataToSend = _result;         // start position
-  ssize_t remainingData = strlen(_result);  // amount of remaining data
+  _id++;  // ToDo : delete
+  std::cout << "완료 갯수 : " << _id << std::endl;
+  const char *dataToSend = _result;         // 시작 위치
+  ssize_t remainingData = strlen(_result);  // 남은 데이터의 크기
   ssize_t chunk = 32768;
 
   while (remainingData > 0) {
@@ -214,8 +218,23 @@ void Response::setStatusLine(int code) {
   _statusLine += ftItos(code);
   _statusLine += _statusCodes[code];
 }
+// std::string getFileExtension(const std::string &fileName) {
+//   size_t dotPos = fileName.rfind('.');
+//   if (dotPos == std::string::npos) return "";
+//   return fileName.substr(dotPos + 1);
+// }
 
 void Response::setHeaders(const std::string &key, const std::string &value) {
+  // std::string contentType = "text/html";  // default
+
+  // if (ext == "css") {
+  //   std::cout << "css file" << std::endl;
+  //   contentType = "text/css";
+  // }
+  // if (ext == "js") {
+  //    << "js file" << std::endl;
+  //   contentType = "text/javascript";
+  // }
   _headers[key] = value;
 }
 

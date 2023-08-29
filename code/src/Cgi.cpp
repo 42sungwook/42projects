@@ -44,6 +44,7 @@ void Cgi::makeEnv(std::map<std::string, std::string> param)
       }
       ftToupper(key);
       _env[key] = it->second;
+      // std::cout << "x: " << it->first << " : " << it->second << std::endl;
     }
   }
 }
@@ -116,6 +117,7 @@ void Cgi::execute(const std::string &body)
   childPid = fork();
   if (childPid == 0)
   {
+    // 자식 프로세스에서 실행할 로직
     fileFd = open(path.c_str(), O_CREAT | O_RDWR, 0777);
     if (fileFd == -1)
     {
@@ -139,6 +141,7 @@ void Cgi::execute(const std::string &body)
         close(fileFd);
         exit(1);
       }
+      // std::cerr << "bytesWritten: " << bytesWritten << std::endl;
       totalBytesWritten += bytesWritten;
     }
     close(fileFd);
@@ -159,6 +162,7 @@ void Cgi::execute(const std::string &body)
     return;
   }
   waitpid(childPid, NULL, 0);
+  std::cerr << "cgi finished" << std::endl;
   remove(path.c_str());
   fileFd = open(path2.c_str(), O_RDONLY);
 
@@ -180,3 +184,7 @@ void Cgi::execute(const std::string &body)
   close(fileFd);
   remove(path2.c_str());
 }
+
+// void Cgi::setCGIPath(const std::string &cgiPath) { _cgiPath = cgiPath; }
+
+// const std::string Cgi::getCGIPath() const { return _cgiPath; }

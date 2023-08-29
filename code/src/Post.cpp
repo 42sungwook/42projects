@@ -33,6 +33,8 @@ void Post::createResource(Response &response, std::string &fileName,
     fileName = fullUri;
     fileName += generateRandomString();
     std::ifstream tempif(fileName);
+    //    tempif = std::ifstream(fileName); // TODO 클러스터 맥에서 대입연산자
+    //    에러
   }
   response.setHeaders("Location", fileName);
   response.setStatusLine(201);
@@ -89,7 +91,7 @@ void Post::process(Request &request, Response &response) {
   } catch (ErrorException &e) {
     if (e.getErrorCode() >= 400) {
       response.setErrorRes(e.getErrorCode());
-    } else {
+    } else {  // TODO 300번대 에러에 대해서 더 알아보기
       response.setRedirectRes(e.getErrorCode());
     }
   }
