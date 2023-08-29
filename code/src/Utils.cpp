@@ -7,7 +7,6 @@ size_t hexToDecimal(const std::string& hex) {
   for (int i = 0; i < len; i++) {
     char c = hex[i];
 
-    // Convert current character to corresponding decimal value
     int val;
     if ('0' <= c && c <= '9') {
       val = c - '0';

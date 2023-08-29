@@ -27,10 +27,6 @@ void Kqueue::changeEvents(uintptr_t ident, int16_t filter, uint16_t flags,
 
 int Kqueue::countEvents() {
   int cnt;
-  // TODO 임시값
-  // struct timespec timeout;
-  // timeout.tv_nsec = 0;
-  // timeout.tv_sec = 10;
   cnt = kevent(_kq, &(*_checkList)[0], _checkList->size(), _eventList,
                MAX_EVENTS, NULL);
   if (cnt == -1) {

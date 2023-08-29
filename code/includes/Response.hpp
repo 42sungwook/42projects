@@ -14,7 +14,6 @@
 
 class Response {
  private:
-  static int _id;  // ToDo : delete
   std::map<std::string, std::string> _headers;
   std::string _body;
   std::string _statusLine;

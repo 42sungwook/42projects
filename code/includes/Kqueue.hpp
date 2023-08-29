@@ -20,15 +20,15 @@
 
 class Server;
 typedef std::map<int, Server *>
-    ServerMap;  // key: socket, value: server class pointer
+    ServerMap;
 
 class Kqueue {
  private:
-  int _kq;                                 // Kqueue FD
-  std::vector<struct kevent> *_checkList;  // kevent vector for changelist
+  int _kq;
+  std::vector<struct kevent> *_checkList;
   struct kevent
-      _eventList[MAX_EVENTS];  // kevent array for saving event infomation
-
+      _eventList[MAX_EVENTS];
+      
  public:
   Kqueue();
   ~Kqueue();

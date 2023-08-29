@@ -37,7 +37,7 @@ private:
   int _status;
   bool _isFullHeader;
   bool _isChunked;
-  size_t  _chunkedSize; // \r\n 포함한 길이
+  size_t  _chunkedSize;
   bool _isFullReq;
   std::map<std::string, std::string> _mimeTypes;
   LocationList *_locList;

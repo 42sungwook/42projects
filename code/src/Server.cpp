@@ -16,7 +16,7 @@ int Server::init()
               << std::string(strerror(errno)) << std::endl;
     return EXIT_FAILURE;
   }
-  // TODO setsockopt 지우기
+
   int opt = 1;
   if (setsockopt(_socket, SOL_SOCKET, SO_REUSEADDR, &opt, sizeof(opt)) == -1)
   {
@@ -24,7 +24,6 @@ int Server::init()
     exit(EXIT_FAILURE);
   }
 
-  // config 세팅
   fcntl(_socket, F_SETFL, O_NONBLOCK);
 
   struct sockaddr_in serverAddr;

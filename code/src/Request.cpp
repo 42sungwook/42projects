@@ -131,7 +131,7 @@ void Request::parsing(SPSBList *serverBlockList, LocationMap &locationMap)
         _rawContents.erase(0, _rawContents.find("\r\n") + 2);
       }
       while (_rawContents.size() >= _chunkedSize) {
-        _body.append(_rawContents.c_str(), _chunkedSize - 2); // CRLF 제외
+        _body.append(_rawContents.c_str(), _chunkedSize - 2);
         _rawContents.erase(0, _chunkedSize);
         if (_chunkedSize == 2) {
           _isFullReq = true;
@@ -167,7 +167,6 @@ void Request::parsing(SPSBList *serverBlockList, LocationMap &locationMap)
   }
 }
 
-// 같은 포트를 공유하는 가상 호스트 리스트
 void Request::setLocBlock(SPSBList *serverBlockList, LocationMap &locationMap)
 {
   std::string requestURI = getHeaderByKey("RawURI");
@@ -185,9 +184,6 @@ void Request::setLocBlock(SPSBList *serverBlockList, LocationMap &locationMap)
   if (sb == NULL)
     sb = *(serverBlockList->begin());
 
-  // 요청 호스트와 일치하는 가상호스트가 있다면 그 가상호스트에 있는
-  // 로케이션블락을 찾아옴, 해당되는 로케이션 블락이 없으면 서버블락
-  // 받아옴
   if (locationMap.find(sb) == locationMap.end())
     _locBlock = sb;
   else
@@ -216,16 +212,13 @@ void Request::setLocBlock(SPSBList *serverBlockList, LocationMap &locationMap)
 
 void Request::setAutoindex(std::string &value) { _autoindex = value; }
 
-void Request::clear()
-{
+void Request::clear() {
   _rawContents.clear();
-  // addRawContents("");
   std::string clientIp = _header["ClientIP"];
   _header.clear();
   _header["ClientIP"] = clientIp;
   _body.clear();
   _host.clear();
-  //_autoindex.clear();
   _mime = "text/html";
   _status = 200;
   _isFullReq = false;
@@ -293,8 +286,7 @@ void Request::setMime()
   }
 }
 
-void Request::addHeader(std::string key, std::string value)
-{
+void Request::addHeader(std::string key, std::string value) {
   _header[key] = value;
 }
 
@@ -320,13 +312,10 @@ bool Request::isFullReq() const { return _isFullReq; }
 
 const std::string &Request::getRawContents() const { return _rawContents; }
 
-// Warning : always check _header[key] exist
-const std::string &Request::getHeaderByKey(std::string key)
-{
+const std::string &Request::getHeaderByKey(std::string key) {
   return _header[key];
 }
 
-std::map<std::string, std::string> Request::getHeaderMap() const
-{
+std::map<std::string, std::string> Request::getHeaderMap() const {
   return _header;
 }

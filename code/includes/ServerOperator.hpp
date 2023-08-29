@@ -11,7 +11,6 @@
 #include <sys/types.h>
 #include <unistd.h>
 
-#include <cerrno>
 #include <cstring>
 #include <iostream>
 #include <list>
