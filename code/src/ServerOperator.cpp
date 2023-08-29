@@ -16,7 +16,6 @@ void ServerOperator::run()
   while (1)
   {
     eventNb = kq.countEvents();
-
     kq.clearCheckList();
 
     for (int i = 0; i < eventNb; ++i)
@@ -28,12 +27,15 @@ void ServerOperator::run()
       }
       else if (currEvent->filter == EVFILT_READ)
       {
+        std::cout << "읽기 시작" << std::endl;
         handleReadEvent(currEvent, kq);
+        std::cout << "읽기 끝" << std::endl;
       }
       else if (currEvent->filter == EVFILT_WRITE)
       {
-        std::cout << "write event" << std::endl;
+        std::cout << "쓰기 시작" << std::endl;
         handleWriteEvent(currEvent, kq);
+        std::cout << "쓰기 끝" << std::endl;
       }
       else if (currEvent->filter == EVFILT_TIMER)
       {
@@ -47,10 +49,10 @@ void ServerOperator::handleEventError(struct kevent *event)
 {
   if (_serverMap.find(event->ident) != _serverMap.end())
   {
-    std::cerr << "server socket error" << std::endl;
+    std::cerr << "server socket error : " << event->ident << std::endl;
     exit(EXIT_FAILURE);
   }
-  std::cerr << "client socket error" << std::endl;
+  std::cerr << "client socket error : " << event->ident << std::endl;
   disconnectClient(event->ident);
 }
 
@@ -78,6 +80,7 @@ void ServerOperator::handleReadEvent(struct kevent *event, Kqueue &kq)
     }
     std::cout << "accept new client: " << clientSocket << std::endl;
     kq.setFdGroup(clientSocket, FD_CLIENT);
+    __uint32_t ip = clientAddr.sin_addr.s_addr;
     char *clientIp = inet_ntoa(clientAddr.sin_addr);
     _clientToServer[clientSocket] = event->ident;
     fcntl(clientSocket, F_SETFL, O_NONBLOCK);
@@ -142,46 +145,31 @@ void ServerOperator::handleReadEvent(struct kevent *event, Kqueue &kq)
     int n;
 
     n = read(event->ident, buf, sizeof(buf) - 1);
-    std::cout << "CGI read event start" << std::endl;
-    if (n == 0) {
-      close(event->ident);
-      std::cout << "없으" << std::endl;
-      return;
-    }
-    else if (n == -1) {
+    std::cout << "CGI read event for " << event->ident << std::endl;
+    if (n == -1) {
       std::cout << "Error" << std::endl;
       return;
     }
     else {
       req->addRawContents(buf, n);
-      if (recv(event->ident, buf, sizeof(int), MSG_PEEK) == -1)
-      {
-        std::cout << "읽을게 없음" << std::endl;
-        if (waitpid(pid, NULL, WNOHANG) != 0) {
-          std::cout << "자식 프로세스 죽었 CGI end" << std::endl;
-          kq.changeEvents(event->ident, EVFILT_TIMER, EV_DELETE, 0, 0, NULL);
-          kq.changeEvents(event->ident, EVFILT_READ, EV_DELETE, 0, 0, NULL);
-          close(event->ident);
-          Response res;
-          res.convertCGI(req->getRawContents());
-          if (res.sendResponse(clientFd) == EXIT_FAILURE)
-          {
-            std::cerr << "client write error!" << std::endl;
-            disconnectClient(clientFd);
-          }
-          else if (req->getStatus() == 413)
-          {
-            disconnectClient(clientFd);
-          }
-          else
-          {
-            std::cout << "CGI end" << std::endl;
-            kq.changeEvents(clientFd, EVFILT_TIMER, EV_ENABLE, 0,
-                            req->getLocBlock()->getKeepAliveTime() * 1000, NULL);
-            req->clear();
-            kq.changeEvents(clientFd, EVFILT_WRITE, EV_DELETE, 0, 0, NULL);
-            kq.changeEvents(clientFd, EVFILT_READ, EV_ADD | EV_ENABLE, 0, 0, NULL);
-          }
+      if (waitpid(pid, NULL, WNOHANG) != 0 && recv(event->ident, buf, sizeof(int), MSG_PEEK) == -1) {
+        std::cout << "자식 프로세스 죽었" << std::endl;
+        kq.eraseFdGroup(event->ident, FD_CGI);
+        close(event->ident);
+        Response res;
+        res.convertCGI(req->getRawContents());
+        if (res.sendResponse(clientFd) == EXIT_FAILURE)
+        {
+          std::cerr << "client write error!" << std::endl;
+          disconnectClient(clientFd);
+        }
+        else
+        {
+          std::cout << "CGI end" << std::endl;
+          kq.changeEvents(clientFd, EVFILT_TIMER, EV_ENABLE, 0,
+                          req->getLocBlock()->getKeepAliveTime() * 1000, NULL);
+          req->clear();
+          kq.changeEvents(clientFd, EVFILT_READ, EV_ADD | EV_ENABLE, 0, 0, NULL);
         }
       }
     }
@@ -191,8 +179,9 @@ void ServerOperator::handleReadEvent(struct kevent *event, Kqueue &kq)
 
 void ServerOperator::handleWriteEvent(struct kevent *event, Kqueue &kq)
 {
+  std::cout << "handleWriteEvent" << std::endl;
   if (kq.getFdGroup(event->ident) == FD_CGI) {
-    std::cout << "CGI write event start" << std::endl;
+    std::cout << "CGI write event start for " << event->ident << std::endl;
     std::vector<int> &udata = *static_cast<std::vector<int> *>(event->udata);
     int clientFd = udata[0];
     Request *req = _clients[clientFd];
@@ -204,81 +193,86 @@ void ServerOperator::handleWriteEvent(struct kevent *event, Kqueue &kq)
 
     if (totalBytesWritten + chunk > bodySize)
       chunk = bodySize - totalBytesWritten;
+    std::cout << "chunk: " << chunk << std::endl;
     bytesWritten = write(event->ident, req->getBody().substr(totalBytesWritten, chunk).c_str(), chunk);
+    // bytesWritten = write(event->ident, req->getBody().c_str(), bodySize);
+    std::cout << "body size: " << bodySize << std::endl;
+    std::cout << "bytesWritten: " << bytesWritten << std::endl;
     if (bytesWritten == -1)
     {
       close(event->ident);
       std::cerr << "임시 에러" << std::endl;
+      return ;
     }
-    
     totalBytesWritten += bytesWritten;
-    std::cout << "현재까지 쓴 글자: " << totalBytesWritten << std::endl;
-//    if (totalBytesWritten == static_cast<int>(req->getBody().size())) {
-      if (totalBytesWritten > 100000) {
+    std::cout << "totalBytesWritten: " << totalBytesWritten << std::endl;  
+
+    if (totalBytesWritten == static_cast<int>(req->getBody().size())) { // 다씀
       std::cout << "CGI write event end" << std::endl;
-      kq.changeEvents(event->ident, EVFILT_WRITE, EV_DELETE, 0, 0, NULL);
-      kq.changeEvents(udata[3], EVFILT_READ, EV_ADD | EV_ENABLE, 0, 0, event->udata);
-    }
-    return;
-  } else { 
-    Response res;
-    Request *req = _clients[event->ident];
-    ServerBlock *locBlock = req->getLocBlock();
-    
-    if (req->getStatus() != 200)
-    {
-      res.setErrorRes(req->getStatus());
-    }
-    else
-    {
-      Method *method;
-      const std::string &limit = locBlock->getLimitExcept();
-
-      if ((req->getMethod() == "GET" || req->getMethod() == "HEAD") && (limit == "GET" || limit == ""))
-        method = new Get();
-      else if ((req->getMethod() == "POST" || req->getMethod() == "PUT") &&
-              (limit == "POST" || limit == ""))
-      {
-        method = new Post(kq, event->ident);
-      }
-      else if (req->getMethod() == "DELETE" &&
-              (limit == "DELETE" ||
-                limit == ""))
-        method = new Delete();
-      else
-      {
-        method = new Method();
-      }
-      method->process(*req, res);
-      std::cout << "method end" << std::endl;
-      delete method;
-    }
-
-    if (res.isInHeader("Content-Type") == false) {// 임시 방어막
-      std::cout << "Cgi를 위한 보호막" << std::endl;
-      kq.changeEvents(event->ident, EVFILT_WRITE, EV_DELETE, 0, 0, NULL);
-      return;
-    }
-
-    if (res.sendResponse(event->ident) == EXIT_FAILURE)
-    {
-      std::cerr << "client write error!" << std::endl;
-      disconnectClient(event->ident);
-    }
-    else if (req->getStatus() == 413)
-    {
-      disconnectClient(event->ident);
-    }
-    else
-    {
-      kq.changeEvents(event->ident, EVFILT_TIMER, EV_ENABLE, 0,
-                      req->getLocBlock()->getKeepAliveTime() * 1000, NULL);
       req->clear();
-      kq.changeEvents(event->ident, EVFILT_WRITE, EV_DELETE, 0, 0, NULL);
-      kq.changeEvents(event->ident, EVFILT_READ, EV_ADD | EV_ENABLE, 0, 0, NULL);
+      
+      std::cout << "event->ident: " << event->ident << "\nudata[3] : " << udata[3] << std::endl;
+      // kq.setFdGroup(udata[3], FD_CGI);
+      // kq.changeEvents(udata[3], EVFILT_READ, EV_ADD | EV_ENABLE, 0, 0, event->udata);
+      kq.eraseFdGroup(event->ident, FD_CGI);
+      close(event->ident);
     }
+    return ;
   }
+  Response res;
+  Request *req = _clients[event->ident];
+  ServerBlock *locBlock = req->getLocBlock();
   
+  if (req->getStatus() != 200)
+  {
+    res.setErrorRes(req->getStatus());
+  }
+  else
+  {
+    Method *method;
+    const std::string &limit = locBlock->getLimitExcept();
+
+    if ((req->getMethod() == "GET" || req->getMethod() == "HEAD") && (limit == "GET" || limit == ""))
+      method = new Get();
+    else if ((req->getMethod() == "POST" || req->getMethod() == "PUT") &&
+            (limit == "POST" || limit == ""))
+    {
+      method = new Post(kq, event->ident);
+    }
+    else if (req->getMethod() == "DELETE" &&
+            (limit == "DELETE" ||
+              limit == ""))
+      method = new Delete();
+    else
+    {
+      method = new Method();
+    }
+    method->process(*req, res);
+    std::cout << "method end" << std::endl;
+    delete method;
+  }
+
+  if (res.isInHeader("Content-Length") == false) {
+    return ;
+  }
+
+  if (res.sendResponse(event->ident) == EXIT_FAILURE)
+  {
+    std::cerr << "client write error!" << std::endl;
+    disconnectClient(event->ident);
+  }
+  else if (req->getStatus() == 413)
+  {
+    disconnectClient(event->ident);
+  }
+  else
+  {
+    kq.changeEvents(event->ident, EVFILT_TIMER, EV_ENABLE, 0,
+                    req->getLocBlock()->getKeepAliveTime() * 1000, NULL);
+    req->clear();
+    kq.changeEvents(event->ident, EVFILT_WRITE, EV_DELETE, 0, 0, NULL);
+    kq.changeEvents(event->ident, EVFILT_READ, EV_ADD | EV_ENABLE, 0, 0, NULL);
+  }
 }
 
 bool ServerOperator::isExistClient(int clientSock)

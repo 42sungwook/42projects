@@ -50,6 +50,7 @@ class Kqueue {
   void clearCheckList();
   struct kevent *getEventList();
   void setFdGroup(int fd, e_fdGroup fdGroup);
+  void eraseFdGroup(int fd, e_fdGroup fdGroup);
   e_fdGroup getFdGroup(int fd);
 };
 

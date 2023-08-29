@@ -58,10 +58,8 @@ void Post::process(Request &request, Response &response) {
 
     if (isCgi(fullUri, request) == true) {
       Cgi cgi;
-      //_kq->udata  = cgi 처리중.....;
-      cgi.reqToEnvp(request.getHeaderMap());
+      cgi.reqToEnvp(request.getHeaderMap(), _clientFd);
       cgi.execute(request.getBody(), _kq, _clientFd);
-      // response.convertCGI(cgi->getRes()); // TODO serveroperator에서
     } else {
       if (fileName.back() == '/') {
         if (request.getMime() != "directory") {

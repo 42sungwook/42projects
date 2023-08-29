@@ -63,6 +63,23 @@ void Kqueue::setFdGroup(int fd, e_fdGroup fdGroup) {
   }
 }
 
+void Kqueue::eraseFdGroup(int fd, e_fdGroup fdGroup) {
+  switch (fdGroup)
+  {
+  case FD_SERVER:
+    FD_CLR(fd, &_fdServer);
+    break;
+  case FD_CLIENT:
+    FD_CLR(fd, &_fdClient);
+    break;
+  case FD_CGI:
+    FD_CLR(fd, &_fdCGI);
+    break;
+  default:
+    break;
+  }
+}
+
 e_fdGroup Kqueue::getFdGroup(int fd) {
   if (FD_ISSET(fd, &_fdServer)) {
     return (FD_SERVER);
