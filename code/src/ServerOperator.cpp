@@ -27,15 +27,11 @@ void ServerOperator::run()
       }
       else if (currEvent->filter == EVFILT_READ)
       {
-        std::cout << "읽기 시작" << std::endl;
         handleReadEvent(currEvent, kq);
-        std::cout << "읽기 끝" << std::endl;
       }
       else if (currEvent->filter == EVFILT_WRITE)
       {
-        std::cout << "쓰기 시작" << std::endl;
         handleWriteEvent(currEvent, kq);
-        std::cout << "쓰기 끝" << std::endl;
       }
       else if (currEvent->filter == EVFILT_TIMER)
       {
@@ -80,10 +76,10 @@ void ServerOperator::handleReadEvent(struct kevent *event, Kqueue &kq)
     }
     std::cout << "accept new client: " << clientSocket << std::endl;
     kq.setFdGroup(clientSocket, FD_CLIENT);
-    __uint32_t ip = clientAddr.sin_addr.s_addr;
-    char *clientIp = inet_ntoa(clientAddr.sin_addr);
+    std::string clientIp = ftInetNtoa(clientAddr.sin_addr);
     _clientToServer[clientSocket] = event->ident;
-    fcntl(clientSocket, F_SETFL, O_NONBLOCK);
+
+    fcntl(clientSocket, F_SETFL, O_NONBLOCK, FD_CLOEXEC);
 
     kq.changeEvents(
         clientSocket, EVFILT_TIMER, EV_ADD | EV_ENABLE, 0,
@@ -145,14 +141,16 @@ void ServerOperator::handleReadEvent(struct kevent *event, Kqueue &kq)
     int n;
 
     n = read(event->ident, buf, sizeof(buf) - 1);
-    std::cout << "CGI read event for " << event->ident << std::endl;
+    std::cout << "CGI read" << std::endl;
     if (n == -1) {
       std::cout << "Error" << std::endl;
       return;
     }
     else {
       req->addRawContents(buf, n);
-      if (waitpid(pid, NULL, WNOHANG) != 0 && recv(event->ident, buf, sizeof(int), MSG_PEEK) == -1) {
+      // if (udata[4] < static_cast<int>(req->getBody().size()))
+      //   return ;
+      if (waitpid(pid, NULL, WNOHANG) == pid && recv(event->ident, buf, sizeof(int), MSG_PEEK) == -1) {
         std::cout << "자식 프로세스 죽었" << std::endl;
         kq.eraseFdGroup(event->ident, FD_CGI);
         close(event->ident);
@@ -174,44 +172,37 @@ void ServerOperator::handleReadEvent(struct kevent *event, Kqueue &kq)
       }
     }
   }
- 
 }
 
 void ServerOperator::handleWriteEvent(struct kevent *event, Kqueue &kq)
 {
-  std::cout << "handleWriteEvent" << std::endl;
   if (kq.getFdGroup(event->ident) == FD_CGI) {
-    std::cout << "CGI write event start for " << event->ident << std::endl;
     std::vector<int> &udata = *static_cast<std::vector<int> *>(event->udata);
     int clientFd = udata[0];
     Request *req = _clients[clientFd];
 
+    const char *tmp = req->getBody().c_str();
     size_t bodySize = req->getBody().size();
     ssize_t bytesWritten = 0;
     int &totalBytesWritten = udata[4];
-    size_t chunk = 32768;
+    size_t chunk = 16384;
 
     if (totalBytesWritten + chunk > bodySize)
       chunk = bodySize - totalBytesWritten;
-    std::cout << "chunk: " << chunk << std::endl;
-    bytesWritten = write(event->ident, req->getBody().substr(totalBytesWritten, chunk).c_str(), chunk);
-    // bytesWritten = write(event->ident, req->getBody().c_str(), bodySize);
-    std::cout << "body size: " << bodySize << std::endl;
-    std::cout << "bytesWritten: " << bytesWritten << std::endl;
+    // bytesWritten = write(event->ident, req->getBody().substr(totalBytesWritten, chunk).c_str(), chunk);
+    bytesWritten = write(event->ident, &tmp[totalBytesWritten], chunk);
+    std::cout << "CGI write" << std::endl;
     if (bytesWritten == -1)
     {
-      close(event->ident);
+      // close(event->ident);
       std::cerr << "임시 에러" << std::endl;
       return ;
     }
     totalBytesWritten += bytesWritten;
-    std::cout << "totalBytesWritten: " << totalBytesWritten << std::endl;  
 
     if (totalBytesWritten == static_cast<int>(req->getBody().size())) { // 다씀
-      std::cout << "CGI write event end" << std::endl;
-      req->clear();
+      // req->clear();
       
-      std::cout << "event->ident: " << event->ident << "\nudata[3] : " << udata[3] << std::endl;
       // kq.setFdGroup(udata[3], FD_CGI);
       // kq.changeEvents(udata[3], EVFILT_READ, EV_ADD | EV_ENABLE, 0, 0, event->udata);
       kq.eraseFdGroup(event->ident, FD_CGI);
@@ -248,7 +239,6 @@ void ServerOperator::handleWriteEvent(struct kevent *event, Kqueue &kq)
       method = new Method();
     }
     method->process(*req, res);
-    std::cout << "method end" << std::endl;
     delete method;
   }
 

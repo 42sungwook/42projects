@@ -92,10 +92,10 @@ void Cgi::execute(const std::string& body, Kqueue &kq, int &clientFd) {
     close(inpipe[1]);
     throw ErrorException(500);
   }
-  fcntl(inpipe[0], F_SETFL, O_NONBLOCK);
-  fcntl(inpipe[1], F_SETFL, O_NONBLOCK);
-  fcntl(outpipe[0], F_SETFL, O_NONBLOCK);
-  fcntl(outpipe[1], F_SETFL, O_NONBLOCK);
+  fcntl(inpipe[0], F_SETFL, O_NONBLOCK, FD_CLOEXEC);
+  fcntl(inpipe[1], F_SETFL, O_NONBLOCK, FD_CLOEXEC);
+  fcntl(outpipe[0], F_SETFL, O_NONBLOCK, FD_CLOEXEC);
+  fcntl(outpipe[1], F_SETFL, O_NONBLOCK, FD_CLOEXEC);
   if ((pid = fork()) == -1) {
     close(inpipe[0]);
     close(inpipe[1]);
@@ -110,13 +110,10 @@ void Cgi::execute(const std::string& body, Kqueue &kq, int &clientFd) {
     dup2(outpipe[1], 1);
     close(inpipe[0]);
     close(outpipe[1]);
-    std::cout << "cgi exec" << std::endl;
     const char *argv[2] = {_env["PATH_TRANSLATED"].c_str(), NULL};
     execve(_env["PATH_TRANSLATED"].c_str(), const_cast<char **>(argv), _envp);
-    std::cerr << "execve error" << std::endl;
     exit(1);
   }
-  std::cout << "???????????" << std::endl;
   close(inpipe[0]);
   close(outpipe[1]);
   std::vector<int> *fdVec = new std::vector<int>;
@@ -126,6 +123,7 @@ void Cgi::execute(const std::string& body, Kqueue &kq, int &clientFd) {
   fdVec->push_back(outpipe[0]);
   fdVec->push_back(0);
   kq.setFdGroup(inpipe[1], FD_CGI);
+  kq.setFdGroup(outpipe[0], FD_CGI);
   kq.changeEvents(clientFd, EVFILT_WRITE, EV_DELETE, 0, 0, NULL);
   kq.changeEvents(inpipe[1], EVFILT_WRITE, EV_ADD | EV_ENABLE, 0, 0, fdVec);
   kq.changeEvents(outpipe[0], EVFILT_READ, EV_ADD | EV_ENABLE, 0, 0, fdVec);

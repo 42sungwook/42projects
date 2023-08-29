@@ -24,7 +24,7 @@ int Server::init()
     exit(EXIT_FAILURE);
   }
 
-  fcntl(_socket, F_SETFL, O_NONBLOCK);
+  fcntl(_socket, F_SETFL, O_NONBLOCK, FD_CLOEXEC);
 
   struct sockaddr_in serverAddr;
   memset(&serverAddr, 0, sizeof(serverAddr));

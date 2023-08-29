@@ -188,6 +188,7 @@ bool Response::isInHeader(const std::string &key) {
 }
 
 void Response::setResult() {
+  _headers["Date"] = getCurrentTime();
   std::string resultHeader;
 
   resultHeader += _statusLine;
