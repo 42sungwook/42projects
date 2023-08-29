@@ -109,8 +109,8 @@ void Response::directoryListing(std::string path) {
 
 int Response::sendResponse(int clientSocket) {
   const char *dataToSend = _result;         // start position
-  ssize_t remainingData = strlen(_result);  // amount of remaining data
-  ssize_t chunk = 32768;
+  size_t remainingData = _resultSize;  // amount of remaining data
+  size_t chunk = 32768;
 
   while (remainingData > 0) {
     if (remainingData < chunk) chunk = remainingData;

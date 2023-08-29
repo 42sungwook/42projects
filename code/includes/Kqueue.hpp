@@ -18,14 +18,24 @@
 
 #define MAX_EVENTS 1000
 
+typedef enum {
+    FD_NONE,
+    FD_SERVER,
+    FD_CLIENT,
+    FD_CGI,
+} e_fdGroup;
+
 class Server;
 typedef std::map<int, Server *>
-    ServerMap;
+    ServerMap; // key: server socket, value: Server class
 
 class Kqueue {
  private:
   int _kq;
   std::vector<struct kevent> *_checkList;
+  struct fd_set _fdServer;
+  struct fd_set _fdClient;
+  struct fd_set _fdCGI;
   struct kevent
       _eventList[MAX_EVENTS];
       
@@ -39,6 +49,8 @@ class Kqueue {
   int countEvents();
   void clearCheckList();
   struct kevent *getEventList();
+  void setFdGroup(int fd, e_fdGroup fdGroup);
+  e_fdGroup getFdGroup(int fd);
 };
 
 #endif

@@ -1,6 +1,11 @@
 #include "../includes/Kqueue.hpp"
 
-Kqueue::Kqueue() { _checkList = new std::vector<struct kevent>; }
+Kqueue::Kqueue() { 
+  _checkList = new std::vector<struct kevent>;
+  FD_ZERO(&_fdServer);
+  FD_ZERO(&_fdClient);
+  FD_ZERO(&_fdCGI);
+   }
 
 Kqueue::~Kqueue() {}
 
@@ -13,6 +18,7 @@ int Kqueue::init(ServerMap serverMap) {
   for (ServerMap::iterator it = serverMap.begin(); it != serverMap.end();
        it++) {
     changeEvents((*it).first, EVFILT_READ, EV_ADD | EV_ENABLE, 0, 0, NULL);
+    FD_SET((*it).first, &_fdServer);
   }
   return EXIT_SUCCESS;
 }
@@ -39,3 +45,31 @@ int Kqueue::countEvents() {
 void Kqueue::clearCheckList() { _checkList->clear(); }
 
 struct kevent *Kqueue::getEventList() { return _eventList; }
+
+void Kqueue::setFdGroup(int fd, e_fdGroup fdGroup) {
+  switch (fdGroup)
+  {
+  case FD_SERVER:
+    FD_SET(fd, &_fdServer);
+    break;
+  case FD_CLIENT:
+    FD_SET(fd, &_fdClient);
+    break;
+  case FD_CGI:
+    FD_SET(fd, &_fdCGI);
+    break;
+  default:
+    break;
+  }
+}
+
+e_fdGroup Kqueue::getFdGroup(int fd) {
+  if (FD_ISSET(fd, &_fdServer)) {
+    return (FD_SERVER);
+  } else if (FD_ISSET(fd, &_fdClient)) {
+    return (FD_CLIENT);
+  } else if (FD_ISSET(fd, &_fdCGI)) {
+    return (FD_CGI);
+  } else
+  return (FD_NONE);
+}
