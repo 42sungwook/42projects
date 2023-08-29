@@ -1,6 +1,5 @@
 #include "../includes/ServerBlock.hpp"
 
-#include <iostream>
 ServerBlock::ServerBlock(RootBlock &rootBlock)
     : RootBlock(rootBlock),
       _listenPort(0),

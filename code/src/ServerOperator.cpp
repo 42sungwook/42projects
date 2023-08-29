@@ -23,7 +23,7 @@ void ServerOperator::run()
       currEvent = &(kq.getEventList())[i];
       if (currEvent->flags & EV_ERROR)
       {
-        handleEventError(currEvent);
+        handleEventError(currEvent, kq);
       }
       else if (currEvent->filter == EVFILT_READ)
       {
@@ -41,7 +41,7 @@ void ServerOperator::run()
   }
 }
 
-void ServerOperator::handleEventError(struct kevent *event)
+void ServerOperator::handleEventError(struct kevent *event, Kqueue &kq)
 {
   if (_serverMap.find(event->ident) != _serverMap.end())
   {
@@ -49,7 +49,7 @@ void ServerOperator::handleEventError(struct kevent *event)
     exit(EXIT_FAILURE);
   }
   std::cerr << "client socket error : " << event->ident << std::endl;
-  disconnectClient(event->ident);
+  disconnectClient(event->ident, kq);
 }
 
 void ServerOperator::handleRequestTimeOut(int clientSock, Kqueue &kq)
@@ -58,7 +58,7 @@ void ServerOperator::handleRequestTimeOut(int clientSock, Kqueue &kq)
   Response res;
   res.setErrorRes(408);
   res.sendResponse(clientSock);
-  disconnectClient(clientSock);
+  disconnectClient(clientSock, kq);
 }
 
 void ServerOperator::handleReadEvent(struct kevent *event, Kqueue &kq)
@@ -98,7 +98,7 @@ void ServerOperator::handleReadEvent(struct kevent *event, Kqueue &kq)
 
     n = read(event->ident, buf, sizeof(buf) - 1);
     if (n == 0) {
-      disconnectClient(event->ident);
+      disconnectClient(event->ident, kq);
       return;
     }
     else if (n == -1) {
@@ -141,17 +141,12 @@ void ServerOperator::handleReadEvent(struct kevent *event, Kqueue &kq)
     int n;
 
     n = read(event->ident, buf, sizeof(buf) - 1);
-    std::cout << "CGI read" << std::endl;
     if (n == -1) {
-      std::cout << "Error" << std::endl;
-      return;
-    }
+	  return;
+	}
     else {
       req->addRawContents(buf, n);
-      // if (udata[4] < static_cast<int>(req->getBody().size()))
-      //   return ;
-      if (waitpid(pid, NULL, WNOHANG) == pid && recv(event->ident, buf, sizeof(int), MSG_PEEK) == -1) {
-        std::cout << "자식 프로세스 죽었" << std::endl;
+      if (waitpid(pid, NULL, WNOHANG) == pid && n == 0) {
         kq.eraseFdGroup(event->ident, FD_CGI);
         close(event->ident);
         Response res;
@@ -159,11 +154,10 @@ void ServerOperator::handleReadEvent(struct kevent *event, Kqueue &kq)
         if (res.sendResponse(clientFd) == EXIT_FAILURE)
         {
           std::cerr << "client write error!" << std::endl;
-          disconnectClient(clientFd);
+          disconnectClient(clientFd, kq);
         }
         else
         {
-          std::cout << "CGI end" << std::endl;
           kq.changeEvents(clientFd, EVFILT_TIMER, EV_ENABLE, 0,
                           req->getLocBlock()->getKeepAliveTime() * 1000, NULL);
           req->clear();
@@ -181,7 +175,6 @@ void ServerOperator::handleWriteEvent(struct kevent *event, Kqueue &kq)
     int clientFd = udata[0];
     Request *req = _clients[clientFd];
 
-    const char *tmp = req->getBody().c_str();
     size_t bodySize = req->getBody().size();
     ssize_t bytesWritten = 0;
     int &totalBytesWritten = udata[4];
@@ -189,9 +182,7 @@ void ServerOperator::handleWriteEvent(struct kevent *event, Kqueue &kq)
 
     if (totalBytesWritten + chunk > bodySize)
       chunk = bodySize - totalBytesWritten;
-    // bytesWritten = write(event->ident, req->getBody().substr(totalBytesWritten, chunk).c_str(), chunk);
-    bytesWritten = write(event->ident, &tmp[totalBytesWritten], chunk);
-    std::cout << "CGI write" << std::endl;
+     bytesWritten = write(event->ident, req->getBody().substr(totalBytesWritten, chunk).c_str(), chunk);
     if (bytesWritten == -1)
     {
       // close(event->ident);
@@ -200,16 +191,14 @@ void ServerOperator::handleWriteEvent(struct kevent *event, Kqueue &kq)
     }
     totalBytesWritten += bytesWritten;
 
-    if (totalBytesWritten == static_cast<int>(req->getBody().size())) { // 다씀
-      // req->clear();
-      
-      // kq.setFdGroup(udata[3], FD_CGI);
-      // kq.changeEvents(udata[3], EVFILT_READ, EV_ADD | EV_ENABLE, 0, 0, event->udata);
+    if (totalBytesWritten == static_cast<int>(req->getBody().size())) {
       kq.eraseFdGroup(event->ident, FD_CGI);
       close(event->ident);
     }
     return ;
   }
+  else if (kq.getFdGroup(event->ident) == FD_CLIENT)
+  {
   Response res;
   Request *req = _clients[event->ident];
   ServerBlock *locBlock = req->getLocBlock();
@@ -243,17 +232,18 @@ void ServerOperator::handleWriteEvent(struct kevent *event, Kqueue &kq)
   }
 
   if (res.isInHeader("Content-Length") == false) {
+	kq.changeEvents(event->ident, EVFILT_WRITE, EV_DELETE, 0, 0, NULL);
     return ;
   }
 
   if (res.sendResponse(event->ident) == EXIT_FAILURE)
   {
     std::cerr << "client write error!" << std::endl;
-    disconnectClient(event->ident);
+    disconnectClient(event->ident, kq);
   }
   else if (req->getStatus() == 413)
   {
-    disconnectClient(event->ident);
+    disconnectClient(event->ident, kq);
   }
   else
   {
@@ -262,6 +252,7 @@ void ServerOperator::handleWriteEvent(struct kevent *event, Kqueue &kq)
     req->clear();
     kq.changeEvents(event->ident, EVFILT_WRITE, EV_DELETE, 0, 0, NULL);
     kq.changeEvents(event->ident, EVFILT_READ, EV_ADD | EV_ENABLE, 0, 0, NULL);
+  	}
   }
 }
 
@@ -272,9 +263,10 @@ bool ServerOperator::isExistClient(int clientSock)
   return true;
 }
 
-void ServerOperator::disconnectClient(int clientSock)
+void ServerOperator::disconnectClient(int clientSock, Kqueue &kq)
 {
   std::cout << "client disconnected: " << clientSock << std::endl;
+  kq.eraseFdGroup(clientSock, FD_CLIENT);
   close(clientSock);
   delete _clients[clientSock];
   _clients.erase(clientSock);

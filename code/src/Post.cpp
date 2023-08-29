@@ -51,7 +51,6 @@ void Post::appendResource(const std::string &fileName, Request &request) {
 }
 
 void Post::process(Request &request, Response &response) {
-  std::cout << "Post process" << std::endl;
   try {
     std::string fullUri = request.getHeaderByKey("RootDir");
     fullUri += request.getHeaderByKey("CuttedURI");

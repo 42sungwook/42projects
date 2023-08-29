@@ -35,11 +35,11 @@ class ServerOperator {
   ServerBlock *getLocationBlock(Request &req, ServerBlock *sb);
   ServerBlock *findLocationBlock(struct kevent *event);
   // void setKeepAlive(int &fd, Server *server); //TCP 연결 관리
-  void handleEventError(struct kevent *event);
+  void handleEventError(struct kevent *event, Kqueue &kq);
   void handleReadEvent(struct kevent *event, Kqueue &kq);
   void handleWriteEvent(struct kevent *event, Kqueue &kq);
   void handleRequestTimeOut(int clientSock, Kqueue &kq);
-  void disconnectClient(int clientSock);
+  void disconnectClient(int clientSock, Kqueue &kq);
 
  public:
   ServerOperator(ServerMap &serverMap, LocationMap &locationMap);
