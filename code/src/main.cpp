@@ -1,4 +1,4 @@
-#include <cerrno>
+
 
 #include "../includes/ConfigParser.hpp"
 #include "../includes/Kqueue.hpp"
@@ -31,7 +31,7 @@ int main(int ac, char **av) {
     ServerOperator op(serverMap, parser.getSortedLocationMap());
     op.run();
   } catch (std::exception &e) {
-      e.what();
+    e.what();
   }
 
   return (0);

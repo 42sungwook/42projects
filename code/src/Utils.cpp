@@ -7,7 +7,6 @@ size_t hexToDecimal(const std::string& hex) {
   for (int i = 0; i < len; i++) {
     char c = hex[i];
 
-    // Convert current character to corresponding decimal value
     int val;
     if ('0' <= c && c <= '9') {
       val = c - '0';
@@ -105,18 +104,18 @@ size_t convertByteUnits(std::string value) {
 }
 
 std::string ftInetNtoa(struct in_addr addr) {
-    __uint32_t ip = htonl(addr.s_addr);
-    unsigned char bytes[4];
-    bytes[0] = (ip >> 24) & 0xFF;
-    bytes[1] = (ip >> 16) & 0xFF;
-    bytes[2] = (ip >> 8) & 0xFF;
-    bytes[3] = ip & 0xFF;
+  __uint32_t ip = htonl(addr.s_addr);
+  unsigned char bytes[4];
+  bytes[0] = (ip >> 24) & 0xFF;
+  bytes[1] = (ip >> 16) & 0xFF;
+  bytes[2] = (ip >> 8) & 0xFF;
+  bytes[3] = ip & 0xFF;
 
-    std::stringstream ss;
-    ss << static_cast<int>(bytes[0]) << "." << static_cast<int>(bytes[1]) << "."
-       << static_cast<int>(bytes[2]) << "." << static_cast<int>(bytes[3]);
+  std::stringstream ss;
+  ss << static_cast<int>(bytes[0]) << "." << static_cast<int>(bytes[1]) << "."
+     << static_cast<int>(bytes[2]) << "." << static_cast<int>(bytes[3]);
 
-    return ss.str();
+  return ss.str();
 }
 
 std::string getCurrentTime() {

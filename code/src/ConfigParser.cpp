@@ -2,8 +2,7 @@
 
 ConfigParser::ConfigParser(const char *path) : _pos(0), _start(0) {
   readConfig(path);
-  if (_line.empty()) 
-    throw std::runtime_error("Empty config file!\n");
+  if (_line.empty()) throw std::runtime_error("Empty config file!\n");
 }
 
 ConfigParser::~ConfigParser() {}
@@ -11,7 +10,7 @@ ConfigParser::~ConfigParser() {}
 void ConfigParser::readConfig(const char *path) {
   std::ifstream filestream(path);
   if (!filestream.is_open()) {
-    std::cerr << "Path Error" << std::endl;
+    std::cerr << "Path error" << std::endl;
     return;
   }
   std::stringstream buffer;

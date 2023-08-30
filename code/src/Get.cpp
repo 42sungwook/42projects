@@ -75,7 +75,7 @@ void Get::process(Request &request, Response &response) {
   } catch (ErrorException &e) {
     if (e.getErrorCode() >= 400) {
       response.setErrorRes(e.getErrorCode());
-    } else { 
+    } else {
       response.setRedirectRes(e.getErrorCode());
     }
   }

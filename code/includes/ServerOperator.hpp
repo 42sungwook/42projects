@@ -11,7 +11,6 @@
 #include <sys/types.h>
 #include <unistd.h>
 
-#include <cerrno>
 #include <cstring>
 #include <iostream>
 #include <list>
@@ -27,9 +26,9 @@
 
 class ServerOperator {
  private:
-  ServerMap &_serverMap; // key: server socket, value: Server class
+  ServerMap &_serverMap;  // key: server socket, value: Server class
   LocationMap &_locationMap;
-  std::map<int, Request *> _clients; // key: client socket, value: Request
+  std::map<int, Request *> _clients;  // key: client socket, value: Request
   std::map<int, int>
       _clientToServer;  // key: client socket, value: server socket
   bool isExistClient(int clientSock);

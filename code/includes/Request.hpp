@@ -9,26 +9,16 @@
 #include <sstream>
 #include <string>
 
-#include "LocationBlock.hpp"
-#include "ErrorException.hpp"
 #include "ConfigParser.hpp"
+#include "ErrorException.hpp"
+#include "LocationBlock.hpp"
 #include "Utils.hpp"
 
-enum METHOD
-{
-  GET,
-  POST,
-  DELETE
-};
-enum PROCESS
-{
-  CGI,
-  NORMAL
-};
+enum METHOD { GET, POST, DELETE };
+enum PROCESS { CGI, NORMAL };
 
-class Request
-{
-private:
+class Request {
+ private:
   std::string _rawContents;
   std::map<std::string, std::string> _header;
   std::string _body;
@@ -38,7 +28,7 @@ private:
   int _status;
   bool _isFullHeader;
   bool _isChunked;
-  size_t  _chunkedSize; // \r\n included length
+  size_t _chunkedSize;
   bool _isFullReq;
   std::map<std::string, std::string> _mimeTypes;
   LocationList *_locList;
@@ -46,7 +36,7 @@ private:
 
   void parseUrl();
 
-public:
+ public:
   Request();
   ~Request();
   void parsing(SPSBList *serverBlockList, LocationMap &locationMap);

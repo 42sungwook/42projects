@@ -96,4 +96,4 @@ const size_t &RootBlock::getClientMaxBodySize() const {
   return _clientMaxBodySize;
 }
 
-const size_t &RootBlock::getKeepAliveTime() const {return _keepAliveTime; }
+const size_t &RootBlock::getKeepAliveTime() const { return _keepAliveTime; }
