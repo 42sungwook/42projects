@@ -184,53 +184,57 @@ void ServerOperator::handleWriteEvent(struct kevent *event, Kqueue &kq) {
 
             if (res->isFullWrite() == true) {
                 delete res;
+                std::cout << "detele res" << res << std::endl;
                 if (req->getStatus() == 413)
                     disconnectClient(event->ident, kq);
                 else {
-                kq.changeEvents(event->ident, EVFILT_TIMER, EV_ENABLE, 0,
-                                req->getLocBlock()->getKeepAliveTime() * 1000,
-                                NULL);
-                req->clear();
-                kq.changeEvents(event->ident, EVFILT_WRITE, EV_DELETE, 0, 0, NULL);
-                kq.changeEvents(event->ident, EVFILT_READ, EV_ADD | EV_ENABLE, 0, 0,
-                                NULL);
+                    kq.changeEvents(event->ident, EVFILT_TIMER, EV_ENABLE, 0,
+                                    req->getLocBlock()->getKeepAliveTime() * 1000,
+                                    NULL);
+                    req->clear();
+                    kq.changeEvents(event->ident, EVFILT_WRITE, EV_DELETE, 0, 0, NULL);
+                    kq.changeEvents(event->ident, EVFILT_READ, EV_ADD | EV_ENABLE, 0, 0,
+                                    NULL);
                 } 
             }
             return;
-        }
-        Response *res = new Response();
-        ServerBlock *locBlock = req->getLocBlock();
-
-        if (req->getStatus() != 200) {
-            res->setErrorRes(req->getStatus());
         } else {
-            Method *method;
-            const std::string &limit = locBlock->getLimitExcept();
 
-            if ((req->getMethod() == "GET" || req->getMethod() == "HEAD") &&
-                (limit == "GET" || limit == ""))
-                method = new Get();
-            else if ((req->getMethod() == "POST" ||
-                      req->getMethod() == "PUT") &&
-                     (limit == "POST" || limit == "")) {
-                method = new Post(kq, event->ident);
-            } else if (req->getMethod() == "DELETE" &&
-                       (limit == "DELETE" || limit == ""))
-                method = new Delete();
-            else {
-                method = new Method();
+            Response *res = new Response();
+            ServerBlock *locBlock = req->getLocBlock();
+
+            if (req->getStatus() != 200) {
+                res->setErrorRes(req->getStatus());
+            } else {
+                Method *method;
+                const std::string &limit = locBlock->getLimitExcept();
+
+                if ((req->getMethod() == "GET" || req->getMethod() == "HEAD") &&
+                    (limit == "GET" || limit == ""))
+                    method = new Get();
+                else if ((req->getMethod() == "POST" ||
+                        req->getMethod() == "PUT") &&
+                        (limit == "POST" || limit == "")) {
+                    method = new Post(kq, event->ident);
+                } else if (req->getMethod() == "DELETE" &&
+                        (limit == "DELETE" || limit == ""))
+                    method = new Delete();
+                else {
+                    method = new Method();
+                }
+                method->process(*req, *res);
+                delete method;
             }
-            method->process(*req, *res);
-            delete method;
-        }
 
-        if (res->isInHeader("Content-Length") == false) {
+            if (res->isInHeader("Content-Length") == false) {
+                kq.changeEvents(event->ident, EVFILT_WRITE, EV_DELETE, 0, 0, NULL);
+                delete res;
+                return;
+            }
             kq.changeEvents(event->ident, EVFILT_WRITE, EV_DELETE, 0, 0, NULL);
-            return;
-        }
-        kq.changeEvents(event->ident, EVFILT_WRITE, EV_DELETE, 0, 0, NULL);
-        kq.changeEvents(event->ident, EVFILT_WRITE, EV_ADD | EV_ENABLE, 0, 0, res);
+            kq.changeEvents(event->ident, EVFILT_WRITE, EV_ADD | EV_ENABLE, 0, 0, res);
 
+        }
     }
 }
 

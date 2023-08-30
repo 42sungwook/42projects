@@ -63,7 +63,6 @@ void Post::process(Request &request, Response &response) {
         } else {
             if (fileName.back() == '/') {
                 if (request.getMime() != "directory") {
-                    std::cout <<"여기지롱" <<std::endl;
                     throw ErrorException(400);
                 }
                 createResource(response, fileName, fullUri);
