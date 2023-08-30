@@ -33,7 +33,7 @@
             var fileContent = event.target.result;
 
             var xhr = new XMLHttpRequest();
-            xhr.open('PUT', `http://localhost:8082/input/${fileName}`, true);
+            xhr.open('PUT', `${window.location.origin}/input/${fileName}`, true);
             xhr.setRequestHeader('Content-Type', 'application/octet-stream');
             xhr.onload = function() {
                 if(xhr.status === 200) {
