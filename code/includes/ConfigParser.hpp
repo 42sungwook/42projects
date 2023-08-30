@@ -2,7 +2,7 @@
 #define CONFIGPARSER_HPP
 
 #include <string.h>
-
+#include <exception>
 #include <algorithm>
 #include <fstream>
 #include <iostream>

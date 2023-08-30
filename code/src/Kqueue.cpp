@@ -13,7 +13,7 @@ int Kqueue::init(ServerMap serverMap) {
   if ((_kq = kqueue()) == -1) {
     std::cout << "kqueue() error\n"
               << std::string(strerror(errno)) << std::endl;
-    exit(EXIT_FAILURE);
+    return EXIT_FAILURE;
   }
   for (ServerMap::iterator it = serverMap.begin(); it != serverMap.end();
        it++) {

@@ -7,7 +7,8 @@ ServerOperator::~ServerOperator() {}
 
 void ServerOperator::run() {
     Kqueue kq;
-    kq.init(_serverMap);
+    if (kq.init(_serverMap) == EXIT_FAILURE)
+        return;
 
     struct kevent *currEvent;
     int eventNb;
@@ -123,7 +124,7 @@ void ServerOperator::handleReadEvent(struct kevent *event, Kqueue &kq) {
         int clientFd = udata[0];
         pid_t pid = udata[1];
         Request *req = _clients[clientFd];
-        static char buf[8092];
+        static char buf[32768];
         int n;
 
         n = read(event->ident, buf, sizeof(buf) - 1);
@@ -132,6 +133,7 @@ void ServerOperator::handleReadEvent(struct kevent *event, Kqueue &kq) {
         } else {
             req->addRawContents(buf, n);
             if (waitpid(pid, NULL, WNOHANG) == pid && n == 0) {
+                std::cerr << "CGI process terminated" << std::endl;
                 kq.eraseFdGroup(event->ident, FD_CGI);
                 close(event->ident);
                 Response res;
@@ -163,7 +165,7 @@ void ServerOperator::handleWriteEvent(struct kevent *event, Kqueue &kq) {
         size_t bodySize = req->getBody().size();
         ssize_t bytesWritten = 0;
         int &totalBytesWritten = udata[4];
-        size_t chunk = 16384;
+        size_t chunk = 32768;
 
         if (totalBytesWritten + chunk > bodySize)
             chunk = bodySize - totalBytesWritten;

@@ -62,7 +62,7 @@ void Cgi::reqToEnvp(std::map<std::string, std::string> param, int &clientFd) {
     _envp[i] = NULL;
 }
 
-void Cgi::execute(const std::string &body, Kqueue &kq, int &clientFd) {
+int Cgi::execute(const std::string &body, Kqueue &kq, int &clientFd) {
     pid_t pid;
     int inpipe[2];
     int outpipe[2];
@@ -96,9 +96,7 @@ void Cgi::execute(const std::string &body, Kqueue &kq, int &clientFd) {
         const char *argv[2] = {_env["PATH_TRANSLATED"].c_str(), NULL};
         execve(_env["PATH_TRANSLATED"].c_str(), const_cast<char **>(argv),
                _envp);
-        exit(1);
-    }
-    close(inpipe[0]);
+    }     close(inpipe[0]);
     close(outpipe[1]);
     std::vector<int> *fdVec = new std::vector<int>;
     fdVec->push_back(clientFd);
@@ -110,4 +108,5 @@ void Cgi::execute(const std::string &body, Kqueue &kq, int &clientFd) {
     kq.setFdGroup(outpipe[0], FD_CGI);
     kq.changeEvents(inpipe[1], EVFILT_WRITE, EV_ADD | EV_ENABLE, 0, 0, fdVec);
     kq.changeEvents(outpipe[0], EVFILT_READ, EV_ADD | EV_ENABLE, 0, 0, fdVec);
+    return EXIT_SUCCESS;
 }
