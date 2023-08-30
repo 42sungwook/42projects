@@ -1,6 +1,6 @@
 #include "../includes/Post.hpp"
 
-Post::Post() {}
+Post::Post(Kqueue &kq, int clientFd) : _kq(kq), _clientFd(clientFd) {}
 
 Post::~Post() {}
 
@@ -41,12 +41,12 @@ void Post::createResource(Response &response, std::string &fileName,
 }
 
 void Post::appendResource(const std::string &fileName, Request &request) {
-  std::ios::openmode mode;
+  std::ios::openmode mode = 0;
   if (request.getMethod() == "POST")
     mode = std::ios::app;
-  else if (request.getMethod() == "PUT")
+  else
     mode = std::ios::trunc;
-  std::ofstream tempof(fileName, std::ios::app);
+  std::ofstream tempof(fileName, mode);
   _path = fileName;
   tempof << request.getBody();
   tempof.close();
@@ -59,11 +59,9 @@ void Post::process(Request &request, Response &response) {
     std::string fileName = fullUri;
 
     if (isCgi(fullUri, request) == true) {
-      Cgi *cgi = new Cgi();
-      cgi->reqToEnvp(request.getHeaderMap());
-      cgi->execute(request.getBody());
-      response.convertCGI(cgi->getRes());
-      delete cgi;
+      Cgi cgi;
+      cgi.reqToEnvp(request.getHeaderMap(), _clientFd);
+      cgi.execute(request.getBody(), _kq, _clientFd);
     } else {
       if (fileName.back() == '/') {
         if (request.getMime() != "directory") {

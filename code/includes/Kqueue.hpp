@@ -18,27 +18,40 @@
 
 #define MAX_EVENTS 1000
 
+typedef enum {
+    FD_NONE,
+    FD_SERVER,
+    FD_CLIENT,
+    FD_CGI,
+} e_fdGroup;
+
 class Server;
 typedef std::map<int, Server *>
-    ServerMap;  // key: socket, value: server class pointer
+    ServerMap; // key: server socket, value: Server class
 
 class Kqueue {
- private:
-  int _kq;                                 // Kqueue FD
-  std::vector<struct kevent> *_checkList;  // kevent vector for changelist
-  struct kevent
-      _eventList[MAX_EVENTS];  // kevent array for saving event infomation
+  private:
+    int _kq;
+    std::vector<struct kevent> *_checkList;
+    struct fd_set _fdServer;
+    struct fd_set _fdClient;
+    struct fd_set _fdCGI;
+    struct kevent
+        _eventList[MAX_EVENTS]; // kevent array for saving event infomation
 
- public:
-  Kqueue();
-  ~Kqueue();
+  public:
+    Kqueue();
+    ~Kqueue();
 
-  int init(ServerMap serverMap);
-  void changeEvents(uintptr_t ident, int16_t filter, uint16_t flags,
-                    uint32_t fflags, intptr_t data, void *udata);
-  int countEvents();
-  void clearCheckList();
-  struct kevent *getEventList();
+    int init(ServerMap serverMap);
+    void changeEvents(uintptr_t ident, int16_t filter, uint16_t flags,
+                      uint32_t fflags, intptr_t data, void *udata);
+    int countEvents();
+    void clearCheckList();
+    struct kevent *getEventList();
+    void setFdGroup(int fd, e_fdGroup fdGroup);
+    void eraseFdGroup(int fd, e_fdGroup fdGroup);
+    e_fdGroup getFdGroup(int fd);
 };
 
 #endif

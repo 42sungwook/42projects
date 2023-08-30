@@ -5,218 +5,220 @@
 int Response::_id = 0;
 
 Response::Response() {
-  _result = NULL;
-  _statusCodes[200] = " OK";
-  _statusCodes[201] = " Created";
-  _statusCodes[202] = " Accepted";
-  _statusCodes[204] = " No Content";
-  _statusCodes[300] = " Multiple Choice";
-  _statusCodes[301] = " Moved Permanently";
-  _statusCodes[303] = " See Other";
-  _statusCodes[304] = " Not Modified";
-  _statusCodes[307] = " Temporary Redirect";
-  _statusCodes[400] = " Bad Request";
-  _statusCodes[401] = " Unauthorized";
-  _statusCodes[403] = " Forbidden";
-  _statusCodes[404] = " Not Found";
-  _statusCodes[405] = " Method Not Allowed";
-  _statusCodes[406] = " Not Acceptable";
-  _statusCodes[408] = " Request Timeout";
-  _statusCodes[409] = " Conflict";
-  _statusCodes[410] = " Gone";
-  _statusCodes[412] = " Precondition Failed";
-  _statusCodes[413] = " Request Entity Too Large";
-  _statusCodes[414] = " URI Too Long";
-  _statusCodes[415] = " Unsupported Media Type";
-  _statusCodes[500] = " Server Error";
+    _result = NULL;
+    _statusCodes[200] = " OK";
+    _statusCodes[201] = " Created";
+    _statusCodes[202] = " Accepted";
+    _statusCodes[204] = " No Content";
+    _statusCodes[300] = " Multiple Choice";
+    _statusCodes[301] = " Moved Permanently";
+    _statusCodes[303] = " See Other";
+    _statusCodes[304] = " Not Modified";
+    _statusCodes[307] = " Temporary Redirect";
+    _statusCodes[400] = " Bad Request";
+    _statusCodes[401] = " Unauthorized";
+    _statusCodes[403] = " Forbidden";
+    _statusCodes[404] = " Not Found";
+    _statusCodes[405] = " Method Not Allowed";
+    _statusCodes[406] = " Not Acceptable";
+    _statusCodes[408] = " Request Timeout";
+    _statusCodes[409] = " Conflict";
+    _statusCodes[410] = " Gone";
+    _statusCodes[412] = " Precondition Failed";
+    _statusCodes[413] = " Request Entity Too Large";
+    _statusCodes[414] = " URI Too Long";
+    _statusCodes[415] = " Unsupported Media Type";
+    _statusCodes[500] = " Server Error";
 }
 
 Response::~Response() {
-  if (_result != NULL)
-    delete[] _result;
+    if (_result != NULL)
+        delete[] _result;
 }
 
 void Response::convertCGI(const std::string &cgiResult) {
-  size_t bodystart = cgiResult.find("\r\n\r\n");
-  if (bodystart == std::string::npos) {
-    std::cerr << "CGI result error" << std::endl;
-    setStatusLine(500);
-  } else {
-    bodystart += 4;
-  }
-
-  std::stringstream headerStream(cgiResult.substr(0, bodystart));
-  std::string line;
-
-  _headers.clear();
-  _statusLine.clear();
-  while (std::getline(headerStream, line, '\r') && line != "\n") {
-    if (line.find("HTTP/1.1") != std::string::npos) {
-      _statusLine += line;
+    size_t bodystart = cgiResult.find("\r\n\r\n");
+    if (bodystart == std::string::npos) {
+        std::cerr << "CGI result error" << std::endl;
+        setStatusLine(500);
     } else {
-      size_t pos = line.find(":");
-      if (pos == line.npos) break;
-      size_t valueStartPos = line.find_first_not_of(" ", pos + 1);
-      size_t keyStartPos = line.find_first_not_of("\n", 0);
-      _headers[line.substr(keyStartPos, pos - keyStartPos)] =
-          line.substr(valueStartPos);
+        bodystart += 4;
     }
-  }
-  _body = cgiResult.substr(bodystart);
 
-  if (_statusLine == "") {
-    if (_headers.find("Status") != _headers.end()) {
-      _statusLine += "HTTP/1.1 ";
-      _statusLine += _headers["Status"];
-      _headers.erase("Status");
-    } else {
-      setStatusLine(200);
+    std::stringstream headerStream(cgiResult.substr(0, bodystart));
+    std::string line;
+
+    _headers.clear();
+    _statusLine.clear();
+    while (std::getline(headerStream, line, '\r') && line != "\n") {
+        if (line.find("HTTP/1.1") != std::string::npos) {
+            _statusLine += line;
+        } else {
+            size_t pos = line.find(":");
+            if (pos == line.npos)
+                break;
+            size_t valueStartPos = line.find_first_not_of(" ", pos + 1);
+            size_t keyStartPos = line.find_first_not_of("\n", 0);
+            _headers[line.substr(keyStartPos, pos - keyStartPos)] =
+                line.substr(valueStartPos);
+        }
     }
-  }
-  if (_headers.find("Content-Length") == _headers.end()) {
-    setHeaders("Content-Length", ftItos(_body.size()));
-  }
-  setResult();
+    _body = cgiResult.substr(bodystart);
+
+    if (_statusLine == "") {
+        if (_headers.find("Status") != _headers.end()) {
+            _statusLine += "HTTP/1.1 ";
+            _statusLine += _headers["Status"];
+            _headers.erase("Status");
+        } else {
+            setStatusLine(200);
+        }
+    }
+    if (_headers.find("Content-Length") == _headers.end()) {
+        setHeaders("Content-Length", ftItos(_body.size()));
+    }
+    setResult();
 }
 
 void Response::directoryListing(std::string path) {
-  DIR *dir;
-  struct dirent *ent;
+    DIR *dir;
+    struct dirent *ent;
 
-  if ((dir = opendir(path.c_str())) != NULL) {
-    /* print all the files and directories within directory */
-    while ((ent = readdir(dir)) != NULL) {
-      _body += "<a href=\"";
-      _body += ent->d_name;
-      if (ent->d_type == DT_DIR)
-        _body += "/\">";
-      else if (std::string(&ent->d_name[ent->d_namlen - 5]) != ".html")
-        _body += "\" download>";
-      else
-        _body += "\">";
-      _body += ent->d_name;
-      _body += "</a><br>";
+    if ((dir = opendir(path.c_str())) != NULL) {
+        /* print all the files and directories within directory */
+        while ((ent = readdir(dir)) != NULL) {
+            _body += "<a href=\"";
+            _body += ent->d_name;
+            if (ent->d_type == DT_DIR)
+                _body += "/\">";
+            else if (std::string(&ent->d_name[ent->d_namlen - 5]) != ".html")
+                _body += "\" download>";
+            else
+                _body += "\">";
+            _body += ent->d_name;
+            _body += "</a><br>";
+        }
+        closedir(dir);
+    } else {
+        std::cout << "directory error : " << path.c_str() << std::endl;
+        /* could not open directory */
+        return;
     }
-    closedir(dir);
-  } else {
-    std::cout << "directory error : " << path.c_str() << std::endl;
-    /* could not open directory */
-    return;
-  }
-  _headers["Content-Type"] = "text/html";
-  _headers["Content-Length"] = ftItos(_body.size());
-  setStatusLine(200);
-  setResult();
+    _headers["Content-Type"] = "text/html";
+    _headers["Content-Length"] = ftItos(_body.size());
+    setStatusLine(200);
+    setResult();
 }
 
 int Response::sendResponse(int clientSocket) {
-  _id++;  // ToDo : delete
-  std::cout << "완료 갯수 : " << _id << std::endl;
-  const char *dataToSend = _result;         // 시작 위치
-  ssize_t remainingData = strlen(_result);  // 남은 데이터의 크기
-  ssize_t chunk = 32768;
+    const char *dataToSend = _result;   // start position
+    size_t remainingData = _resultSize; // amount of remaining data
+    size_t chunk = 32768;
 
-  while (remainingData > 0) {
-    if (remainingData < chunk) chunk = remainingData;
-    ssize_t bytesWritten = write(clientSocket, dataToSend, chunk);
+    while (remainingData > 0) {
+        if (remainingData < chunk)
+            chunk = remainingData;
+        ssize_t bytesWritten = write(clientSocket, dataToSend, chunk);
 
-    if (bytesWritten == -1) {
-      continue;
+        if (bytesWritten == -1) {
+            continue;
+        }
+        dataToSend += bytesWritten;
+        remainingData -= bytesWritten;
     }
-    dataToSend += bytesWritten;
-    remainingData -= bytesWritten;
-  }
 
-  return 0;
+    return 0;
 }
 
 const std::string &Response::getBody() const { return _body; }
 
 void Response::setRedirectRes(int statusCode) {
-  std::string location = _headers["Location"];
-  _statusLine.clear();
-  _headers.clear();
-  _body.clear();
+    std::string location = _headers["Location"];
+    _statusLine.clear();
+    _headers.clear();
+    _body.clear();
 
-  _statusLine += "HTTP/1.1 ";
-  _statusLine += ftItos(statusCode).c_str();
-  _statusLine += _statusCodes[statusCode];
-  _headers["Content-Type"] = "text/html";
-  _headers["Location"] = location;
-  _body += "<html>\n<head><title>";
-  _body += ftItos(statusCode);
-  _body += _statusCodes[statusCode];
-  _body += "</title></head>\n<body>\n<center><h1>";
-  _body += ftItos(statusCode);
-  _body += _statusCodes[statusCode];
-  _body +=
-      "</h1></center>\n<hr><center>webserver/1.0.0</center>\n</body>\n</html>";
-  _headers["Content-Length"] = ftItos(_body.size());
-  setResult();
+    _statusLine += "HTTP/1.1 ";
+    _statusLine += ftItos(statusCode).c_str();
+    _statusLine += _statusCodes[statusCode];
+    _headers["Content-Type"] = "text/html";
+    _headers["Location"] = location;
+    _body += "<html>\n<head><title>";
+    _body += ftItos(statusCode);
+    _body += _statusCodes[statusCode];
+    _body += "</title></head>\n<body>\n<center><h1>";
+    _body += ftItos(statusCode);
+    _body += _statusCodes[statusCode];
+    _body += "</h1></center>\n<hr><center>webserver/1.0.0</center>\n</body>\n</"
+             "html>";
+    _headers["Content-Length"] = ftItos(_body.size());
+    setResult();
 }
 
 void Response::setErrorRes(int statusCode) {
-  std::ifstream tmp("./error.html");
-  std::stringstream ss;
+    std::ifstream tmp("./error.html");
+    std::stringstream ss;
 
-  _statusLine.clear();
-  _headers.clear();
-  _body.clear();
+    _statusLine.clear();
+    _headers.clear();
+    _body.clear();
 
-  _statusLine += "HTTP/1.1 ";
-  _statusLine += ftItos(statusCode);
-  _statusLine += _statusCodes[statusCode];
-  _headers["Content-Type"] = "text/html";
-  if (tmp.is_open() == false) {
-    std::cout << "handle error 500" << std::endl;
-    _headers["Content-Type"] = "text/plain";
-    statusCode = 500;
-  }
-  if (tmp.is_open()) {
-    ss << tmp.rdbuf();
-    setBody(ss);
-  } else {
-    _body += _statusCodes[statusCode];
-    _body += ": Error";
-  }
-  if (statusCode == 408) {
-    _headers["Connection"] = "close";
-  }
-  _headers["Content-Length"] = ftItos(_body.size());
-  setResult();
+    _statusLine += "HTTP/1.1 ";
+    _statusLine += ftItos(statusCode);
+    _statusLine += _statusCodes[statusCode];
+    _headers["Content-Type"] = "text/html";
+    if (tmp.is_open() == false) {
+        std::cout << "handle error 500" << std::endl;
+        _headers["Content-Type"] = "text/plain";
+        statusCode = 500;
+    }
+    if (tmp.is_open()) {
+        ss << tmp.rdbuf();
+        setBody(ss);
+    } else {
+        _body += _statusCodes[statusCode];
+        _body += ": Error";
+    }
+    if (statusCode == 408) {
+        _headers["Connection"] = "close";
+    }
+    _headers["Content-Length"] = ftItos(_body.size());
+    setResult();
 }
 
 bool Response::isInHeader(const std::string &key) {
-  if (_headers.find(key) == _headers.end()) return false;
-  return true;
+    if (_headers.find(key) == _headers.end())
+        return false;
+    return true;
 }
 
 void Response::setResult() {
-  std::string resultHeader;
+    _headers["Date"] = getCurrentTime();
+    std::string resultHeader;
 
-  resultHeader += _statusLine;
-  resultHeader += "\r\n";
-
-  std::map<std::string, std::string>::iterator it;
-  for (it = _headers.begin(); _headers.end() != it; it++) {
-    resultHeader += it->first;
-    resultHeader += ": ";
-    resultHeader += it->second;
+    resultHeader += _statusLine;
     resultHeader += "\r\n";
-  }
-  resultHeader += "\r\n";
 
-  _resultSize = resultHeader.size() + _body.size();
-  _result = new char[_resultSize + 1];
-  memcpy(_result, resultHeader.c_str(), resultHeader.size());
-  memcpy(_result + resultHeader.size(), _body.c_str(), _body.size());
-  _result[_resultSize] = '\0';
+    std::map<std::string, std::string>::iterator it;
+    for (it = _headers.begin(); _headers.end() != it; it++) {
+        resultHeader += it->first;
+        resultHeader += ": ";
+        resultHeader += it->second;
+        resultHeader += "\r\n";
+    }
+    resultHeader += "\r\n";
+
+    _resultSize = resultHeader.size() + _body.size();
+    _result = new char[_resultSize + 1];
+    memcpy(_result, resultHeader.c_str(), resultHeader.size());
+    memcpy(_result + resultHeader.size(), _body.c_str(), _body.size());
+    _result[_resultSize] = '\0';
 }
 
 void Response::setStatusLine(int code) {
-  _statusLine += "HTTP/1.1 ";
-  _statusLine += ftItos(code);
-  _statusLine += _statusCodes[code];
+    _statusLine += "HTTP/1.1 ";
+    _statusLine += ftItos(code);
+    _statusLine += _statusCodes[code];
 }
 // std::string getFileExtension(const std::string &fileName) {
 //   size_t dotPos = fileName.rfind('.');
@@ -225,19 +227,17 @@ void Response::setStatusLine(int code) {
 // }
 
 void Response::setHeaders(const std::string &key, const std::string &value) {
-  // std::string contentType = "text/html";  // default
+    // std::string contentType = "text/html";  // default
 
-  // if (ext == "css") {
-  //   std::cout << "css file" << std::endl;
-  //   contentType = "text/css";
-  // }
-  // if (ext == "js") {
-  //    << "js file" << std::endl;
-  //   contentType = "text/javascript";
-  // }
-  _headers[key] = value;
+    // if (ext == "css") {
+    //   std::cout << "css file" << std::endl;
+    //   contentType = "text/css";
+    // }
+    // if (ext == "js") {
+    //    << "js file" << std::endl;
+    //   contentType = "text/javascript";
+    // }
+    _headers[key] = value;
 }
 
-void Response::setBody(std::stringstream &buffer) {
-  _body = buffer.str();
-  }
+void Response::setBody(std::stringstream &buffer) { _body = buffer.str(); }

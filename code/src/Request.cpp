@@ -302,7 +302,7 @@ const std::string &Request::getUri() { return _header["URI"]; }
 
 const std::string &Request::getHost() { return _host; }
 
-const std::string &Request::getBody() const { return _body; }
+std::string &Request::getBody() { return _body; }
 
 ServerBlock *Request::getLocBlock() const { return _locBlock; }
 

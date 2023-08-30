@@ -57,7 +57,7 @@ public:
   void clear();
   const std::string &getHost();
   const std::string &getUri();
-  const std::string &getBody() const;
+  std::string &getBody();
   const int &getStatus() const;
   ServerBlock *getLocBlock() const;
   const std::string &getAutoindex() const;

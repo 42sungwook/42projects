@@ -103,3 +103,30 @@ size_t convertByteUnits(std::string value) {
 
   return (num * std::pow(1024, index));
 }
+
+std::string ftInetNtoa(struct in_addr addr) {
+    __uint32_t ip = htonl(addr.s_addr);
+    unsigned char bytes[4];
+    bytes[0] = (ip >> 24) & 0xFF;
+    bytes[1] = (ip >> 16) & 0xFF;
+    bytes[2] = (ip >> 8) & 0xFF;
+    bytes[3] = ip & 0xFF;
+
+    std::stringstream ss;
+    ss << static_cast<int>(bytes[0]) << "." << static_cast<int>(bytes[1]) << "."
+       << static_cast<int>(bytes[2]) << "." << static_cast<int>(bytes[3]);
+
+    return ss.str();
+}
+
+std::string getCurrentTime() {
+  std::time_t t = std::time(NULL);
+  /*시간을 tm구조로 변환해 줌*/
+  std::tm* timePtr = std::gmtime(&t);
+
+  char buffer[1000];
+  /*날짜/시간을 문자열로 변환*/
+  std::strftime(buffer, sizeof(buffer), "%a, %d %b %Y %H:%M:%S GMT", timePtr);
+
+  return (std::string(buffer));
+}

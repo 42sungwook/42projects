@@ -2,13 +2,16 @@
 #define POST_HPP
 
 #include "Method.hpp"
+#include "Kqueue.hpp"
 
 class Post : public Method {
  private:
+  Kqueue &_kq;
+  int _clientFd;
   bool isCgi(const std::string &fullUri, Request &request);
 
  public:
-  Post();
+  Post(Kqueue &kq, int clientFd);
   ~Post();
 
   void process(Request &request, Response &response);
