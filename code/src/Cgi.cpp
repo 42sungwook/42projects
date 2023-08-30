@@ -2,7 +2,11 @@
 
 Cgi::Cgi() {}
 
-Cgi::~Cgi() {}
+Cgi::~Cgi() {
+    for (int i = 0; _envp[i]; i++)
+        delete _envp[i];
+    delete _envp;
+}
 
 void Cgi::makeEnv(std::map<std::string, std::string> param, int &clientFd) {
     (void)clientFd;

@@ -1,7 +1,5 @@
 #include "../includes/Response.hpp"
 
-#include "../includes/Utils.hpp"
-
 Response::Response() {
     _result = NULL;
     _statusCodes[200] = " OK";

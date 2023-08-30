@@ -1,4 +1,4 @@
-#include "Method.hpp"
+#include "../includes/Method.hpp"
 
 Method::~Method() {}
 

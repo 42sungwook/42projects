@@ -1,8 +1,5 @@
 #include "../includes/Request.hpp"
 
-#include "../includes/ErrorException.hpp"
-#include "../includes/Utils.hpp"
-
 Request::Request()
     : _mime("text/html"),
       _status(200),

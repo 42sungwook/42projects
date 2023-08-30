@@ -10,6 +10,7 @@
 #include <string>
 
 #include "LocationBlock.hpp"
+#include "ErrorException.hpp"
 #include "ConfigParser.hpp"
 #include "Utils.hpp"
 

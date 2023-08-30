@@ -1,4 +1,4 @@
-#include "ErrorException.hpp"
+#include "../includes/ErrorException.hpp"
 
 ErrorException::ErrorException(int error) : _error(error) {}
 

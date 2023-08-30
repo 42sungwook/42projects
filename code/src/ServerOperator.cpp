@@ -136,6 +136,7 @@ void ServerOperator::handleReadEvent(struct kevent *event, Kqueue &kq) {
                 close(event->ident);
                 Response res;
                 res.convertCGI(req->getRawContents());
+                delete static_cast<std::vector<int> *>(event->udata);
                 if (res.sendResponse(clientFd) == EXIT_FAILURE) {
                     std::cerr << "client write error!" << std::endl;
                     disconnectClient(clientFd, kq);
