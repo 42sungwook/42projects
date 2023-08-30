@@ -85,10 +85,10 @@ void ServerOperator::handleReadEvent(struct kevent *event, Kqueue &kq) {
     } else if (kq.getFdGroup(event->ident) == FD_CLIENT) {
         Request *req = _clients[event->ident];
         /* read data from client */
-        static char buf[8092]; // reuse for every request
+        static char buf[32768]; // reuse for every request
         int n;
 
-        n = read(event->ident, buf, sizeof(buf) - 1);
+        n = read(event->ident, buf, sizeof(buf));
         if (n == 0) {
             disconnectClient(event->ident, kq);
             return;
@@ -97,12 +97,7 @@ void ServerOperator::handleReadEvent(struct kevent *event, Kqueue &kq) {
         } else {
             req->addRawContents(
                 buf, n); 
-            if (n < (int)sizeof(buf) - 1 ||
-                recv(event->ident, buf, sizeof(int), MSG_PEEK) == -1) {
-                req->parsing(
-                    _serverMap[_clientToServer[event->ident]]->getSPSBList(),
-                    _locationMap);
-            }
+            req->parsing(_serverMap[_clientToServer[event->ident]]->getSPSBList(), _locationMap);
 
             if (req->isFullReq()) {
                 kq.changeEvents(event->ident, EVFILT_TIMER, EV_ENABLE, 0,
@@ -127,7 +122,7 @@ void ServerOperator::handleReadEvent(struct kevent *event, Kqueue &kq) {
         static char buf[32768];
         int n;
 
-        n = read(event->ident, buf, sizeof(buf) - 1);
+        n = read(event->ident, buf, sizeof(buf));
         if (n == -1) {
             return;
         } else {
