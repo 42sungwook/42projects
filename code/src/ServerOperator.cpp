@@ -7,8 +7,7 @@ ServerOperator::~ServerOperator() {}
 
 void ServerOperator::run() {
     Kqueue kq;
-    if (kq.init(_serverMap) == EXIT_FAILURE)
-        exit(EXIT_FAILURE);
+    kq.init(_serverMap);
 
     struct kevent *currEvent;
     int eventNb;
@@ -34,7 +33,11 @@ void ServerOperator::run() {
 void ServerOperator::handleEventError(struct kevent *event, Kqueue &kq) {
     if (_serverMap.find(event->ident) != _serverMap.end()) {
         std::cerr << "server socket error : " << event->ident << std::endl;
-        exit(EXIT_FAILURE);
+        close(event->ident);
+        Server *newserver = new Server(_serverMap[event->ident]->getListenPort(), _serverMap[event->ident]->getSPSBList());
+        delete _serverMap[event->ident];
+        _serverMap.erase(event->ident);
+        _serverMap[newserver->getSocket()] = newserver;
     }
     std::cerr << "client socket error : " << event->ident << std::endl;
     disconnectClient(event->ident, kq);
@@ -48,34 +51,6 @@ void ServerOperator::handleRequestTimeOut(int clientSock, Kqueue &kq) {
     disconnectClient(clientSock, kq);
 }
 
-// TODO TCP 연결 관리
-// void ServerOperator::setKeepAlive(int &fd, Server *server) {
-//   int optVal = 1;
-
-//   if (setsockopt(fd, SOL_SOCKET, SO_KEEPALIVE, &optVal, sizeof(optVal)) ==
-//   -1) {
-//     std::cerr << "Setsockopt SO_KEEPALIVE failed: " << strerror(errno)
-//               << std::endl;
-//     close(fd);
-//   } else {
-//     int keepAliveTime = server->getkeepAliveTime();
-//     keepAliveTime = 20;
-//     int interval = 11;
-//     int max_probes = 3;
-
-//     if (setsockopt(fd, IPPROTO_TCP, TCP_KEEPALIVE, &keepAliveTime,
-//                    sizeof(keepAliveTime)) == -1 ||
-//         setsockopt(fd, IPPROTO_TCP, TCP_KEEPINTVL, &interval, sizeof(int)) <
-//             0 ||
-//         setsockopt(fd, IPPROTO_TCP, TCP_KEEPCNT, &max_probes, sizeof(int)) <
-//             0) {
-//       std::cerr << "Setsockopt TCP_KEEPALIVE failed: " << strerror(errno)
-//                 << std::endl;
-//       close(fd);
-//     }
-//   }
-// }
-
 void ServerOperator::handleReadEvent(struct kevent *event, Kqueue &kq) {
     if (kq.getFdGroup(event->ident) == FD_SERVER) {
         int clientSocket;
@@ -84,8 +59,8 @@ void ServerOperator::handleReadEvent(struct kevent *event, Kqueue &kq) {
         socklen_t clientAddrLen = sizeof(clientAddr);
         if ((clientSocket = accept(event->ident, (struct sockaddr *)&clientAddr,
                                    &clientAddrLen)) == -1) {
-            std::cerr << "accept() error\n";
-            exit(EXIT_FAILURE);
+            std::cerr << "Accept() Error" << std::endl;
+            return;
         }
         std::cout << "accept new client: " << clientSocket << std::endl;
         kq.setFdGroup(clientSocket, FD_CLIENT);
@@ -104,7 +79,6 @@ void ServerOperator::handleReadEvent(struct kevent *event, Kqueue &kq) {
                         NULL);
         kq.changeEvents(clientSocket, EVFILT_READ, EV_ADD | EV_ENABLE, 0, 0,
                         NULL);
-        // _clients[clientSocket].addRawContents("");
         _clients[clientSocket] = new Request();
         _clients[clientSocket]->addHeader("ClientIP", clientIp);
     } else if (kq.getFdGroup(event->ident) == FD_CLIENT) {
@@ -120,11 +94,8 @@ void ServerOperator::handleReadEvent(struct kevent *event, Kqueue &kq) {
         } else if (n == -1) {
             return;
         } else {
-            // buf[n] = '\0'; char * buffer have to be null terminated 이긴한데,
-            // addRawContents에서 n 명시적 추가했음
             req->addRawContents(
-                buf, n); // buf가 binary('\0'포함 일수 있으니, n 명시적 추가)
-            // memset(buf, 0, sizeof(buf)); 재활용 안하는듯?
+                buf, n); 
             if (n < (int)sizeof(buf) - 1 ||
                 recv(event->ident, buf, sizeof(int), MSG_PEEK) == -1) {
                 req->parsing(

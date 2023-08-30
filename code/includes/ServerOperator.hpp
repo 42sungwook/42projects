@@ -27,7 +27,7 @@
 
 class ServerOperator {
  private:
-  ServerMap &_serverMap;
+  ServerMap &_serverMap; // key: server socket, value: Server class
   LocationMap &_locationMap;
   std::map<int, Request *> _clients; // key: client socket, value: Request
   std::map<int, int>

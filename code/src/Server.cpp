@@ -13,13 +13,6 @@ int Server::init() {
                   << std::string(strerror(errno)) << std::endl;
         return EXIT_FAILURE;
     }
-    // TODO setsockopt 지우기
-    int opt = 1;
-    if (setsockopt(_socket, SOL_SOCKET, SO_REUSEADDR, &opt, sizeof(opt)) ==
-        -1) {
-        perror("setsockopt");
-        exit(EXIT_FAILURE);
-    }
 
     fcntl(_socket, F_SETFL, O_NONBLOCK, FD_CLOEXEC);
 
@@ -28,7 +21,7 @@ int Server::init() {
     serverAddr.sin_family = AF_INET;
     serverAddr.sin_addr.s_addr = htonl(INADDR_ANY);
     serverAddr.sin_port = htons(this->_listenPort);
-    std::cout << "listen: " << this->_listenPort << std::endl;
+    std::cout << "listen port: " << this->_listenPort << std::endl;
 
     if (bind(_socket, (struct sockaddr *)&serverAddr, sizeof(serverAddr)) ==
         -1) {
@@ -38,7 +31,7 @@ int Server::init() {
     }
 
     if (listen(_socket, 1024) == -1) {
-        std::cout << "listen() error\n"
+        std::cerr << "listen() error\n"
                   << std::string(strerror(errno)) << std::endl;
         return EXIT_FAILURE;
     }

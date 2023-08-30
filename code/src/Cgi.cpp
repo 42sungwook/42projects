@@ -39,8 +39,6 @@ void Cgi::makeEnv(std::map<std::string, std::string> param, int &clientFd) {
             }
             ftToupper(key);
             _env[key] = it->second;
-            // std::cout << "x: " << it->first << " : " << it->second <<
-            // std::endl;
         }
     }
 }
@@ -59,8 +57,6 @@ void Cgi::reqToEnvp(std::map<std::string, std::string> param, int &clientFd) {
     }
     _envp[i] = NULL;
 }
-
-const std::string &Cgi::getRes() const { return _res; }
 
 void Cgi::execute(const std::string &body, Kqueue &kq, int &clientFd) {
     pid_t pid;

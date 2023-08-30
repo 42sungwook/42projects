@@ -26,8 +26,8 @@ typedef enum {
 } e_fdGroup;
 
 class Server;
-typedef std::map<int, Server *>
-    ServerMap; // key: server socket, value: Server class
+// key: server socket, value: Server class
+typedef std::map<int, Server *> ServerMap;
 
 class Kqueue {
   private:

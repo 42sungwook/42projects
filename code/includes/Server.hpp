@@ -21,6 +21,7 @@
 #include "Response.hpp"
 #include "RootBlock.hpp"
 #include "ServerBlock.hpp"
+
 class Server {
  private:
   int _socket;

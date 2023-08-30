@@ -75,7 +75,7 @@ void Get::process(Request &request, Response &response) {
   } catch (ErrorException &e) {
     if (e.getErrorCode() >= 400) {
       response.setErrorRes(e.getErrorCode());
-    } else {  // TODO 300번대 에러에 대해서 더 알아보기
+    } else { 
       response.setRedirectRes(e.getErrorCode());
     }
   }

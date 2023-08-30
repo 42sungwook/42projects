@@ -10,7 +10,6 @@ class Delete : public Method {
   ~Delete();
 
   void process(Request &request, Response &response);
-
   void makeStatusLine(Request &request, Response &response);
 };
 

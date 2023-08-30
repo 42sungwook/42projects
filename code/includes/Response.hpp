@@ -9,12 +9,11 @@
 #include <iostream>
 #include <map>
 
-#include "../includes/Request.hpp"
-#include "../includes/Utils.hpp"
+#include "Request.hpp"
+#include "Utils.hpp"
 
 class Response {
  private:
-  static int _id;  // ToDo : delete
   std::map<std::string, std::string> _headers;
   std::string _body;
   std::string _statusLine;

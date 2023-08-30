@@ -2,8 +2,6 @@
 
 #include "../includes/Utils.hpp"
 
-int Response::_id = 0;
-
 Response::Response() {
     _result = NULL;
     _statusCodes[200] = " OK";
@@ -220,23 +218,9 @@ void Response::setStatusLine(int code) {
     _statusLine += ftItos(code);
     _statusLine += _statusCodes[code];
 }
-// std::string getFileExtension(const std::string &fileName) {
-//   size_t dotPos = fileName.rfind('.');
-//   if (dotPos == std::string::npos) return "";
-//   return fileName.substr(dotPos + 1);
-// }
+
 
 void Response::setHeaders(const std::string &key, const std::string &value) {
-    // std::string contentType = "text/html";  // default
-
-    // if (ext == "css") {
-    //   std::cout << "css file" << std::endl;
-    //   contentType = "text/css";
-    // }
-    // if (ext == "js") {
-    //    << "js file" << std::endl;
-    //   contentType = "text/javascript";
-    // }
     _headers[key] = value;
 }
 
