@@ -1,7 +1,6 @@
 #include "../includes/Response.hpp"
 
-Response::Response() {
-    _result = NULL;
+Response::Response() : _result(NULL) , _resultSize(0), _sendCnt(0) {
     _statusCodes[200] = " OK";
     _statusCodes[201] = " Created";
     _statusCodes[202] = " Accepted";
@@ -107,23 +106,19 @@ void Response::directoryListing(std::string path) {
 }
 
 int Response::sendResponse(int clientSocket) {
-    const char *dataToSend = _result;   // start position
-    size_t remainingData = _resultSize; // amount of remaining data
+
     size_t chunk = 32768;
 
-    while (remainingData > 0) {
-        if (remainingData < chunk)
-            chunk = remainingData;
-        ssize_t bytesWritten = write(clientSocket, dataToSend, chunk);
-
-        if (bytesWritten == -1) {
-            continue;
-        }
-        dataToSend += bytesWritten;
-        remainingData -= bytesWritten;
+    if (_resultSize < chunk + _sendCnt)
+        chunk = _resultSize - _sendCnt;
+    ssize_t bytesWritten = write(clientSocket, _result + _sendCnt, chunk);
+    if (bytesWritten == -1) {
+        std::cerr << "client write error!" << std::endl;
+        return EXIT_FAILURE;
     }
+    _sendCnt += bytesWritten;
 
-    return 0;
+    return EXIT_SUCCESS;
 }
 
 const std::string &Response::getBody() const { return _body; }
@@ -223,3 +218,9 @@ void Response::setHeaders(const std::string &key, const std::string &value) {
 }
 
 void Response::setBody(std::stringstream &buffer) { _body = buffer.str(); }
+
+bool Response::isFullWrite() const {
+    if (_sendCnt == _resultSize)
+        return true;
+    return false;
+}

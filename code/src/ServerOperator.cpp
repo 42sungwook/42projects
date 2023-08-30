@@ -131,20 +131,11 @@ void ServerOperator::handleReadEvent(struct kevent *event, Kqueue &kq) {
                 std::cerr << "CGI process terminated" << std::endl;
                 kq.eraseFdGroup(event->ident, FD_CGI);
                 close(event->ident);
-                Response res;
-                res.convertCGI(req->getRawContents());
+                Response *res = new Response();
+                res->convertCGI(req->getRawContents());
                 delete static_cast<std::vector<int> *>(event->udata);
-                if (res.sendResponse(clientFd) == EXIT_FAILURE) {
-                    std::cerr << "client write error!" << std::endl;
-                    disconnectClient(clientFd, kq);
-                } else {
-                    kq.changeEvents(
-                        clientFd, EVFILT_TIMER, EV_ENABLE, 0,
-                        req->getLocBlock()->getKeepAliveTime() * 1000, NULL);
-                    req->clear();
-                    kq.changeEvents(clientFd, EVFILT_READ, EV_ADD | EV_ENABLE,
-                                    0, 0, NULL);
-                }
+                kq.changeEvents(clientFd, EVFILT_TIMER, EV_ENABLE, 0, req->getLocBlock()->getKeepAliveTime() * 1000, res);
+                kq.changeEvents(clientFd, EVFILT_WRITE, EV_ADD | EV_ENABLE, 0, 0, res);
             }
         }
     }
@@ -180,12 +171,38 @@ void ServerOperator::handleWriteEvent(struct kevent *event, Kqueue &kq) {
         }
         return;
     } else if (kq.getFdGroup(event->ident) == FD_CLIENT) {
-        Response res;
         Request *req = _clients[event->ident];
+
+        if (event->udata) {
+            Response *res = static_cast<Response *>(event->udata);
+
+            if (res->sendResponse(event->ident) == EXIT_FAILURE) {
+                std::cerr << "client write error!" << std::endl;
+                delete res;
+                disconnectClient(event->ident, kq);
+            }
+
+            if (res->isFullWrite() == true) {
+                delete res;
+                if (req->getStatus() == 413)
+                    disconnectClient(event->ident, kq);
+                else {
+                kq.changeEvents(event->ident, EVFILT_TIMER, EV_ENABLE, 0,
+                                req->getLocBlock()->getKeepAliveTime() * 1000,
+                                NULL);
+                req->clear();
+                kq.changeEvents(event->ident, EVFILT_WRITE, EV_DELETE, 0, 0, NULL);
+                kq.changeEvents(event->ident, EVFILT_READ, EV_ADD | EV_ENABLE, 0, 0,
+                                NULL);
+                } 
+            }
+            return;
+        }
+        Response *res = new Response();
         ServerBlock *locBlock = req->getLocBlock();
 
         if (req->getStatus() != 200) {
-            res.setErrorRes(req->getStatus());
+            res->setErrorRes(req->getStatus());
         } else {
             Method *method;
             const std::string &limit = locBlock->getLimitExcept();
@@ -203,29 +220,17 @@ void ServerOperator::handleWriteEvent(struct kevent *event, Kqueue &kq) {
             else {
                 method = new Method();
             }
-            method->process(*req, res);
+            method->process(*req, *res);
             delete method;
         }
 
-        if (res.isInHeader("Content-Length") == false) {
+        if (res->isInHeader("Content-Length") == false) {
             kq.changeEvents(event->ident, EVFILT_WRITE, EV_DELETE, 0, 0, NULL);
             return;
         }
+        kq.changeEvents(event->ident, EVFILT_WRITE, EV_DELETE, 0, 0, NULL);
+        kq.changeEvents(event->ident, EVFILT_WRITE, EV_ADD | EV_ENABLE, 0, 0, res);
 
-        if (res.sendResponse(event->ident) == EXIT_FAILURE) {
-            std::cerr << "client write error!" << std::endl;
-            disconnectClient(event->ident, kq);
-        } else if (req->getStatus() == 413) {
-            disconnectClient(event->ident, kq);
-        } else {
-            kq.changeEvents(event->ident, EVFILT_TIMER, EV_ENABLE, 0,
-                            req->getLocBlock()->getKeepAliveTime() * 1000,
-                            NULL);
-            req->clear();
-            kq.changeEvents(event->ident, EVFILT_WRITE, EV_DELETE, 0, 0, NULL);
-            kq.changeEvents(event->ident, EVFILT_READ, EV_ADD | EV_ENABLE, 0, 0,
-                            NULL);
-        }
     }
 }
 

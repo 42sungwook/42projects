@@ -19,6 +19,7 @@ class Response {
   std::string _statusLine;
   char   *_result;
   size_t _resultSize;
+  size_t _sendCnt;
   std::map<int, std::string> _statusCodes;
 
  public:
@@ -38,6 +39,7 @@ class Response {
   void setStatusLine(int code);
   void setHeaders(const std::string &key, const std::string &value);
   void setBody(std::stringstream &buffer);
+  bool isFullWrite() const;
 };
 
 #endif
