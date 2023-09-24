@@ -16,7 +16,6 @@ if (param()) {
     $dataWithoutSpaces =~ s/\s+//g;
 
     print "<h1>Remove Spaces from Data</h1>";
-    print "<p>Original Data: $data</p>";
     print "<p>Data without Spaces: $dataWithoutSpaces</p>";
 } else {
     print "<h1>Remove Spaces from Data</h1>";
