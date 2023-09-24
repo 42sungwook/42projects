@@ -33,10 +33,10 @@
             var fileContent = event.target.result;
 
             var xhr = new XMLHttpRequest();
-            xhr.open('PUT', `${window.location.origin}/input/${fileName}`, true);
+            xhr.open('POST', `${window.location.origin}/input/`, true);
             xhr.setRequestHeader('Content-Type', 'application/octet-stream');
             xhr.onload = function() {
-                if(xhr.status === 200) {
+                if(xhr.status === 200 || xhr.status === 201) {
                     alert('업로드 성공!');
                 } else {
                     alert('업로드 실패: ' + xhr.responseText);
