@@ -1,61 +1,66 @@
 <!DOCTYPE html>
-<html lang="ko">
-
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>파일 업로드</title>
+    <title>File Upload</title>
 </head>
-
 <body>
+    <form id="uploadForm" enctype="multipart/form-data">
+        <input type="file" id="fileInput" name="file">
+        <button type="button" id="uploadButton" onclick="uploadFile()">Upload File</button>
+    </form>
+    <div id="progressDiv" style="display: none;">
+        Uploading... <progress id="progressBar" value="0" max="100"></progress>
+    </div>
 
-<form enctype="multipart/form-data" id="uploadForm">
-    <label for="file">파일 선택:</label>
-    <input type="file" name="file" id="file" onchange="updateFileName()">
-    <input type="hidden" name="filename" id="filename">
-    <input type="button" value="업로드" onclick="uploadFile()" name="submit">
-</form>
+    <script>
+        function uploadFile() {
+            // Disable the upload button to prevent multiple submissions
+            document.getElementById("uploadButton").disabled = true;
 
-<script>
-    function uploadFile() {
-        const fileInput = document.getElementById('file');
-        if (fileInput.files.length === 0) {
-            alert('파일을 선택해주세요.');
-            return;
-        }
+            // Display the progress bar
+            document.getElementById("progressDiv").style.display = "block";
 
-        const fileName = document.getElementById('filename').value;
+            // Get the file input element
+            var fileInput = document.getElementById("fileInput");
 
-        var file = fileInput.files[0];
-        var reader = new FileReader();
+            // Create a FormData object to send the file
+            var formData = new FormData();
+            formData.append("file", fileInput.files[0]);
 
-        reader.onload = function (event) {
-            var fileContent = event.target.result;
-
+            // Create an XMLHttpRequest object to send the file
             var xhr = new XMLHttpRequest();
-            xhr.open('POST', `${window.location.origin}/input/`, true);
-            xhr.setRequestHeader('Content-Type', 'application/octet-stream');
-            xhr.onload = function() {
-                if(xhr.status === 200 || xhr.status === 201) {
-                    alert('업로드 성공!');
-                } else {
-                    alert('업로드 실패: ' + xhr.responseText);
+
+            // Configure the request
+            xhr.open("POST", `${window.location.origin}/input/`, true);
+
+            // Update progress bar
+            xhr.upload.onprogress = function (e) {
+                if (e.lengthComputable) {
+                    var percentComplete = (e.loaded / e.total) * 100;
+                    document.getElementById("progressBar").value = percentComplete;
                 }
             };
-            xhr.send(fileContent);
-        };
 
-        reader.readAsArrayBuffer(file);
-    }
+            // Handle the response when the upload is complete
+            xhr.onload = function () {
+                if (xhr.status === 200 || xhr.status === 201) {
+                    // Successful upload
+                    alert("File uploaded successfully!");
+                } else {
+                    // Failed upload
+                    alert("File upload failed!");
+                }
 
-    function updateFileName() {
-        const fileInput = document.getElementById('file');
-        if (fileInput.files.length > 0) {
-            const fileName = fileInput.files[0].name;
-            document.getElementById('filename').value = fileName;
+                // Re-enable the upload button
+                document.getElementById("uploadButton").disabled = false;
+
+                // Hide the progress bar
+                document.getElementById("progressDiv").style.display = "none";
+            };
+
+            // Send the FormData
+            xhr.send(formData);
         }
-    }
-</script>
-
+    </script>
 </body>
 </html>
