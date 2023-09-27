@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Signup/Withdrawal Page</title>
+</head>
+<body>
+    <h1>Signup/Withdrawal Page</h1>
+    <p id="status"></p>
+    <div id="buttons">
+        <button id="signupButton">Sign Up as Temporary Member</button>
+        <button id="withdrawalButton">Withdrawal as Temporary Member</button>
+    </div>
+
+    <script>
+        // Function to make a POST request to the server and handle the response
+        function makePostRequest(url, data, callback) {
+            const xhr = new XMLHttpRequest();
+            xhr.open("POST", url, true);
+            xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+            xhr.onreadystatechange = function() {
+                if (xhr.readyState === 4 && xhr.status === 200) {
+                    callback(xhr.responseText);
+                }
+            };
+            xhr.send(data);
+        }
+
+        // Function to check login status and update the page
+        function checkLoginStatus() {
+            makePostRequest("/python-cgi/log_check.py", "", function(response) {
+                if (response === "null") {
+                    document.getElementById("status").innerHTML = "Please sign up as a temporary member.";
+                    document.getElementById("buttons").style.display = "block";
+                    document.getElementById("signupButton").style.display = "block";
+                    document.getElementById("withdrawalButton").style.display = "none";
+                } else {
+                    document.getElementById("status").innerHTML = "Welcome " + response + ".";
+                    document.getElementById("buttons").style.display = "block";
+                    document.getElementById("signupButton").style.display = "none";
+                    document.getElementById("withdrawalButton").style.display = "block";
+                }
+            });
+        }
+
+        // Function to handle sign-up button click
+        document.getElementById("signupButton").addEventListener("click", function() {
+            makePostRequest("/python-cgi/signup.py", "", function(response) {
+                // Handle the response as needed
+                checkLoginStatus();
+            });
+        });
+
+        // Function to handle logout button click
+        document.getElementById("withdrawalButton").addEventListener("click", function() {
+            makePostRequest("/python-cgi/withdrawal.py", "", function(response) {
+                // Handle the response as needed
+                checkLoginStatus();
+            });
+        });
+
+        // Initially check the login status when the page loads
+        window.onload = function () {
+            checkLoginStatus();
+        };
+    </script>
+</body>
+</html>
