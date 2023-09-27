@@ -18,7 +18,7 @@
             xhr.open("POST", url, true);
             xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
             xhr.onreadystatechange = function() {
-                if (xhr.readyState === 4 && xhr.status === 200) {
+                if (xhr.readyState === 4 && (xhr.status === 200 || xhr.status === 201)) {
                     callback(xhr.responseText);
                 }
             };
@@ -27,7 +27,16 @@
 
         // Function to check login status and update the page
         function checkLoginStatus() {
-            makePostRequest("/python-cgi/log_check.py", "", function(response) {
+            // Check if a "loggedIn" cookie already exists
+            const existingCookie = getCookie("loggedIn");
+            if (existingCookie === null) {
+                // If the "loggedIn" cookie doesn't exist, create it
+                const newCookie = generateRandomCookie();
+                setCookie("loggedIn", newCookie);
+            }
+            
+            // Send a POST request to the server with the existing or new cookie
+            makePostRequest("/python-cgi/log_check.py", `cookie=${existingCookie || newCookie}`, function(response) {
                 if (response === "null") {
                     document.getElementById("status").innerHTML = "Please sign up as a temporary member.";
                     document.getElementById("buttons").style.display = "block";
@@ -40,6 +49,34 @@
                     document.getElementById("withdrawalButton").style.display = "block";
                 }
             });
+        }
+
+        // Function to get a cookie by name
+        function getCookie(name) {
+            const cookies = document.cookie.split('; ');
+            for (const cookie of cookies) {
+                const [cookieName, cookieValue] = cookie.split('=');
+                if (cookieName === name) {
+                    return cookieValue;
+                }
+            }
+            return null;
+        }
+
+        // Function to set a cookie
+        function setCookie(name, value) {
+            const cookieString = `${name}=${value}`;
+            document.cookie = cookieString;
+        }
+
+        // Function to generate a random cookie
+        function generateRandomCookie() {
+            const cookieCharacters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+            let cookie = "";
+            for (let i = 0; i < 16; i++) {
+                cookie += cookieCharacters.charAt(Math.floor(Math.random() * cookieCharacters.length));
+            }
+            return cookie;
         }
 
         // Function to handle sign-up button click

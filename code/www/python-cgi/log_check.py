@@ -1,22 +1,16 @@
 #!/usr/bin/env python3
 
-import cgi
 import os
 import http.cookies
 import pickle
-import random
-import string
+import sys
+import urllib.parse
 
 # Get the directory where the script is located
 script_directory = os.path.dirname(os.path.abspath(__file__))
 
 # Set the working directory to the script's directory
 os.chdir(script_directory)
-
-# Function to generate a random cookie
-def generate_random_cookie():
-    cookie_characters = string.ascii_letters + string.digits
-    return ''.join(random.choice(cookie_characters) for _ in range(16))
 
 # Function to load the session dictionary from a file
 def load_session():
@@ -31,10 +25,11 @@ def save_session(session_dict):
     with open('./session.pickle', 'wb') as f:
         pickle.dump(session_dict, f)
 
-# Create a CGIFieldStorage instance to parse the POST data
-form = cgi.FieldStorage()
+# Read POST data from stdin
+post_data = sys.stdin.read()
+parsed_data = urllib.parse.parse_qs(post_data)
 
-# Get the "loggedIn" cookie from the client
+# Get the received cookie from the client
 cookie = http.cookies.SimpleCookie()
 
 # Check if the "HTTP_COOKIE" header is present in the request
@@ -44,30 +39,22 @@ if "HTTP_COOKIE" in os.environ:
 # Load the session dictionary from the file
 session_dict = load_session()
 
-# Get the value of the "loggedIn" cookie (assuming that's the name of the cookie)
-logged_in_status = cookie.get("loggedIn")
+# Get the value of the received cookie
+received_cookie = parsed_data.get("cookie", [None])[0]
 
 # Set the response content type to plain text
 print("Content-type: text/plain\r")
 
-if logged_in_status is not None:
-    # The user has a valid cookie, check if it exists in the session dictionary
-    username = session_dict.get(logged_in_status.value, "null")
-    print("\r")
-    print(username, end="")
-else:
-    # Generate a random cookie
-    new_cookie = generate_random_cookie()
-    
-    # Set the "loggedIn" cookie in the response header
-    print(f"Set-Cookie: loggedIn={new_cookie}\r")
-    
-    # Add the new cookie to the session dictionary with a null value
-    session_dict[new_cookie] = "null"
-    
-    # Save the updated session dictionary to the file
-    save_session(session_dict)
-    
-    # Return "null" as the response
-    print("\r")
-    print("null", end="")
+if received_cookie is not None:
+    # The user has sent a cookie, check if it exists in the session dictionary
+    username = session_dict.get(received_cookie)
+    if username is not None:
+        # If the cookie exists in the dictionary, return the username
+        print("\r")
+        print(username, end="")
+    else:
+        # If the cookie doesn't exist in the dictionary, add it with a null value
+        session_dict[received_cookie] = "null"
+        save_session(session_dict)
+        print("\r")
+        print("null", end="")
