@@ -7,10 +7,14 @@
     <h1>Signup/Withdrawal Page</h1>
     <p id="status"></p>
     <div id="buttons">
+        <!-- Change the button text based on login status -->
         <button id="signupButton">Sign Up as Temporary Member</button>
         <button id="withdrawalButton">Withdrawal as Temporary Member</button>
     </div>
 
+    <!-- Add an input field for the username -->
+    <input type="text" id="usernameInput" placeholder="Enter your username">
+    
     <script>
         // Function to make a POST request to the server and handle the response
         function makePostRequest(url, data, callback) {
@@ -42,11 +46,13 @@
                     document.getElementById("buttons").style.display = "block";
                     document.getElementById("signupButton").style.display = "block";
                     document.getElementById("withdrawalButton").style.display = "none";
+                    document.getElementById("usernameInput").style.display = "block"; // Show the input field
                 } else {
-                    document.getElementById("status").innerHTML = "Welcome " + response + ".";
+                    document.getElementById("status").innerHTML = "Welcome " + response;
                     document.getElementById("buttons").style.display = "block";
                     document.getElementById("signupButton").style.display = "none";
                     document.getElementById("withdrawalButton").style.display = "block";
+                    document.getElementById("usernameInput").style.display = "none"; // Hide the input field
                 }
             });
         }
@@ -81,15 +87,36 @@
 
         // Function to handle sign-up button click
         document.getElementById("signupButton").addEventListener("click", function() {
-            makePostRequest("/python-cgi/signup.py", "", function(response) {
-                // Handle the response as needed
-                checkLoginStatus();
-            });
+            // Check if the username input field is visible
+            const usernameInput = document.getElementById("usernameInput");
+            if (usernameInput.style.display === "block") {
+                // Get the username from the input field
+                const username = usernameInput.value;
+                
+                // Check if a username is entered
+                if (username) {
+                    // Get "loggedIn" cookie
+                    const existingCookie = getCookie("loggedIn");
+                    // Send the username in the POST data
+                    makePostRequest("/python-cgi/signup.py", `username=${username}&cookie=${existingCookie}`, function(response) {
+                        // Handle the response as needed
+                        checkLoginStatus();
+                    });
+                } else {
+                    // Handle the case when no username is entered
+                    alert("Please enter a username.");
+                }
+            } else {
+                // Hide the input field when "Sign Up" is clicked again
+                usernameInput.style.display = "block";
+            }
         });
 
         // Function to handle logout button click
         document.getElementById("withdrawalButton").addEventListener("click", function() {
-            makePostRequest("/python-cgi/withdrawal.py", "", function(response) {
+            // Get "loggedIn" cookie
+            const existingCookie = getCookie("loggedIn");
+            makePostRequest("/python-cgi/withdrawal.py", `cookie=${existingCookie}`, function(response) {
                 // Handle the response as needed
                 checkLoginStatus();
             });
