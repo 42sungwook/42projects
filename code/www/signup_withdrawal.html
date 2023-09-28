@@ -32,15 +32,15 @@
         // Function to check login status and update the page
         function checkLoginStatus() {
             // Check if a "loggedIn" cookie already exists
-            const existingCookie = getCookie("loggedIn");
+            existingCookie = getCookie("loggedIn");
             if (existingCookie === null) {
                 // If the "loggedIn" cookie doesn't exist, create it
-                const newCookie = generateRandomCookie();
-                setCookie("loggedIn", newCookie);
+                existingCookie = generateRandomCookie();
+                setCookie("loggedIn", existingCookie, 600);
             }
             
             // Send a POST request to the server with the existing or new cookie
-            makePostRequest("/python-cgi/log_check.py", `cookie=${existingCookie || newCookie}`, function(response) {
+            makePostRequest("/python-cgi/log_check.py", `cookie=${existingCookie}`, function(response) {
                 if (response === "null") {
                     document.getElementById("status").innerHTML = "Please sign up as a temporary member.";
                     document.getElementById("buttons").style.display = "block";
@@ -70,8 +70,10 @@
         }
 
         // Function to set a cookie
-        function setCookie(name, value) {
-            const cookieString = `${name}=${value}`;
+        function setCookie(name, value, expireseconds) {
+            let todayDate = new Date();
+            todayDate.setTime(todayDate.getTime() + (expireseconds * 1000));
+            const cookieString = `${name}=${value}; expires=` + todayDate.toGMTString() + ";";
             document.cookie = cookieString;
         }
 
@@ -122,10 +124,10 @@
             });
         });
 
-        // Initially check the login status when the page loads
-        window.onload = function () {
+        // Initially check the login status when the DOM content is loaded
+        document.addEventListener("DOMContentLoaded", function () {
             checkLoginStatus();
-        };
+        });
     </script>
 </body>
 </html>

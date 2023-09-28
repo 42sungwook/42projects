@@ -13,14 +13,14 @@ os.chdir(script_directory)
 # Function to load the session dictionary from a file
 def load_session():
     try:
-        with open('./session.pickle', 'rb') as f:
+        with open('session.pickle', 'rb') as f:
             return pickle.load(f)
     except FileNotFoundError:
         return {}
 
 # Function to save the session dictionary to a file
 def save_session(session_dict):
-    with open('./session.pickle', 'wb') as f:
+    with open('session.pickle', 'wb') as f:
         pickle.dump(session_dict, f)
 
 # Read POST data from stdin

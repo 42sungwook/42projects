@@ -58,3 +58,11 @@ if received_cookie is not None:
         save_session(session_dict)
         print("\r")
         print("null", end="")
+else:
+    # The user hasn't sent a cookie, generate a new one
+    new_cookie = os.urandom(16).hex()
+    session_dict[new_cookie] = "null"
+    save_session(session_dict)
+    print("Set-Cookie: cookie=" + new_cookie + "; path=/;\r")
+    print("\r")
+    print("null", end="")
