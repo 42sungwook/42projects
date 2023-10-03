@@ -216,7 +216,8 @@ void ServerOperator::handleWriteEvent(struct kevent *event, Kqueue &kq) {
         delete method;
       }
 
-      if (res->isInHeader("Content-Length") == false) {
+      if (res->isInHeader("Content-Length") == false &&
+          req->getMethod() != "DELETE") {
         kq.changeEvents(event->ident, EVFILT_WRITE, EV_DELETE, 0, 0, NULL);
         delete res;
         return;
