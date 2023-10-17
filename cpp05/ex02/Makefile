@@ -2,8 +2,8 @@
 # ProgramName && Files                                                         #
 # **************************************************************************** #
 NAME		=	ex01
-INC_FILES	=	Bureaucrat.hpp Form.hpp
-SRC_FILES	=	main.cpp Bureaucrat.cpp Form.cpp
+INC_FILES	=	Bureaucrat.hpp AForm.hpp
+SRC_FILES	=	main.cpp Bureaucrat.cpp AForm.cpp
 # **************************************************************************** #
 # Directories && Paths                                                         #
 # **************************************************************************** #
