@@ -1,11 +1,13 @@
 # **************************************************************************** #
 # ProgramName && Files                                                         #
 # **************************************************************************** #
-NAME		=	ex02
+NAME		=	ex03
 INC_FILES	=	Bureaucrat.hpp AForm.hpp PresidentialPardonForm.hpp \
-				RobotomyRequestForm.hpp ShrubberyCreationForm.hpp
+				RobotomyRequestForm.hpp ShrubberyCreationForm.hpp \
+				Intern.hpp
 SRC_FILES	=	main.cpp Bureaucrat.cpp AForm.cpp PresidentialPardonForm.cpp \
-				RobotomyRequestForm.cpp ShrubberyCreationForm.cpp
+				RobotomyRequestForm.cpp ShrubberyCreationForm.cpp \
+				Intern.cpp
 # **************************************************************************** #
 # Directories && Paths                                                         #
 # **************************************************************************** #
