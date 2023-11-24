@@ -200,10 +200,9 @@ void ServerOperator::handleWriteEvent(struct kevent *event, Kqueue &kq) {
         Method *method;
         const std::string &limit = locBlock->getLimitExcept();
 
-        if ((req->getMethod() == "GET" || req->getMethod() == "HEAD") &&
-            (limit == "GET" || limit == ""))
+        if ((req->getMethod() == "GET") && (limit == "GET" || limit == ""))
           method = new Get();
-        else if ((req->getMethod() == "POST" || req->getMethod() == "PUT") &&
+        else if ((req->getMethod() == "POST") &&
                  (limit == "POST" || limit == "")) {
           method = new Post(kq, event->ident);
         } else if (req->getMethod() == "DELETE" &&

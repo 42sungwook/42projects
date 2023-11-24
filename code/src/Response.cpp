@@ -155,11 +155,6 @@ void Response::setErrorRes(int statusCode) {
   _statusLine += ftItos(statusCode);
   _statusLine += _statusCodes[statusCode];
   _headers["Content-Type"] = "text/html";
-  if (tmp.is_open() == false) {
-    std::cout << "handle error 500" << std::endl;
-    _headers["Content-Type"] = "text/plain";
-    statusCode = 500;
-  }
   if (statusCode == 404) {
     tmp.open("./error404.html");
   } else if (statusCode == 405) {
@@ -179,6 +174,12 @@ void Response::setErrorRes(int statusCode) {
     ss << tmp.rdbuf();
     setBody(ss);
   } else {
+    _statusLine.clear();
+    statusCode = 500;
+    _statusLine += "HTTP/1.1 ";
+    _statusLine += ftItos(statusCode);
+    _statusLine += _statusCodes[statusCode];
+    _headers["Content-Type"] = "text/plain";
     _body += _statusCodes[statusCode];
     _body += ": Error";
   }
