@@ -18,6 +18,20 @@ int main(int ac, char **av) {
     ServerMap serverMap;
 
     for (ServerBlockMap::iterator it = sbMap.begin(); it != sbMap.end(); it++) {
+      std::set<std::string> temp;
+      bool defalutServerName = false;
+      for (SPSBList::iterator spIt = (*(*it).second).begin();
+           spIt != (*(*it).second).end(); spIt++) {
+        if ((*spIt)->getServerName() == "") {
+          if (defalutServerName == false)
+            defalutServerName = true;
+          else
+            throw std::runtime_error("Duplicate Server Name");
+        } else if (temp.find((*spIt)->getServerName()) == temp.end())
+          temp.insert((*spIt)->getServerName());
+        else
+          throw std::runtime_error("Duplicate Server Name");
+      }
       Server *newserver = new Server((*it).first, ((*it).second));
       if (newserver->init() == EXIT_FAILURE) {
         std::cout << "server init error" << std::endl;
@@ -29,7 +43,7 @@ int main(int ac, char **av) {
     ServerOperator op(serverMap, parser.getSortedLocationMap());
     op.run();
   } catch (std::exception &e) {
-    e.what();
+    std::cerr << e.what() << std::endl;
   }
 
   return (0);
