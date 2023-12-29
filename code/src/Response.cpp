@@ -109,7 +109,7 @@ int Response::sendResponse(int clientSocket) {
   if (_resultSize < chunk + _sendCnt) chunk = _resultSize - _sendCnt;
   ssize_t bytesWritten = write(clientSocket, _result + _sendCnt, chunk);
   if (bytesWritten == -1) {
-    std::cerr << "client write error!" << std::endl;
+    // std::cerr << "client write error!" << std::endl;
     return EXIT_FAILURE;
   }
   _sendCnt += bytesWritten;

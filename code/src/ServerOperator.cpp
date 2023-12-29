@@ -32,7 +32,7 @@ void ServerOperator::run() {
 
 void ServerOperator::handleEventError(struct kevent *event, Kqueue &kq) {
   if (_serverMap.find(event->ident) != _serverMap.end()) {
-    std::cerr << "server socket error : " << event->ident << std::endl;
+    // std::cerr << "server socket error : " << event->ident << std::endl;
     close(event->ident);
     Server *newserver = new Server(_serverMap[event->ident]->getListenPort(),
                                    _serverMap[event->ident]->getSPSBList());
@@ -40,7 +40,7 @@ void ServerOperator::handleEventError(struct kevent *event, Kqueue &kq) {
     _serverMap.erase(event->ident);
     _serverMap[newserver->getSocket()] = newserver;
   }
-  std::cerr << "client socket error : " << event->ident << std::endl;
+  // std::cerr << "client socket error : " << event->ident << std::endl;
   disconnectClient(event->ident, kq);
 }
 
@@ -154,7 +154,7 @@ void ServerOperator::handleWriteEvent(struct kevent *event, Kqueue &kq) {
         write(event->ident,
               req->getBody().substr(totalBytesWritten, chunk).c_str(), chunk);
     if (bytesWritten == -1) {
-      std::cerr << "write error" << std::endl;
+      // std::cerr << "write error" << std::endl;
       return;
     }
     totalBytesWritten += bytesWritten;
@@ -171,7 +171,7 @@ void ServerOperator::handleWriteEvent(struct kevent *event, Kqueue &kq) {
       Response *res = static_cast<Response *>(event->udata);
 
       if (res->sendResponse(event->ident) == EXIT_FAILURE) {
-        std::cerr << "client write error!" << std::endl;
+        // std::cerr << "client write error!" << std::endl;
         delete res;
         disconnectClient(event->ident, kq);
       }
