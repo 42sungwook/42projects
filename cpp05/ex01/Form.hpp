@@ -17,7 +17,6 @@ class Form {
   Form(std::string const &name, int gradeReqToSign, int gradeReqToExec);
   Form(Form const &other);
   ~Form();
-
   Form &operator=(Form const &other);
 
   std::string getName() const;

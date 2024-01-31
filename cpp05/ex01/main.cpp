@@ -27,6 +27,7 @@ int main() {
   }
 
   Bureaucrat bureaucrat("sungwook", 1);
+  Bureaucrat intern("intern", 120);
   Form form("42seoul", 1, 1);
 
   std::cout << bureaucrat << std::endl;
@@ -34,6 +35,8 @@ int main() {
 
   bureaucrat.signForm(form);
   std::cout << form << std::endl;
+
+  intern.signForm(form);
 
   return 0;
 }

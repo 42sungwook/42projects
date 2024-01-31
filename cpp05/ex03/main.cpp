@@ -5,39 +5,48 @@
 #include "ShrubberyCreationForm.hpp"
 
 int main() {
-  Intern someRandomIntern;
-  AForm *rrf;
-  AForm *scf;
-  AForm *ppf;
-  AForm *unknown;
+  try {
+    Intern someRandomIntern;
+    AForm *rrf;
+    AForm *scf;
+    AForm *ppf;
+    AForm *unknown;
 
-  rrf = someRandomIntern.makeForm("robotomy request", "Bender");
-  scf = someRandomIntern.makeForm("shrubbery creation", "Bender");
-  ppf = someRandomIntern.makeForm("presidential pardon", "Bender");
-  unknown = someRandomIntern.makeForm("unknown", "Bender");
+    rrf = someRandomIntern.makeForm("robotomy request", "Bender");
+    scf = someRandomIntern.makeForm("shrubbery creation", "Bender");
+    ppf = someRandomIntern.makeForm("presidential pardon", "Bender");
+    unknown = someRandomIntern.makeForm("unknown", "Bender");
 
-  std::cout << std::endl;
+    std::cout << std::endl;
 
-  Bureaucrat bender("Bender", 1);
+    Bureaucrat bender("Bender", 1);
 
-  bender.signForm(*rrf);
-  bender.executeForm(*rrf);
+    bender.signForm(*rrf);
+    bender.executeForm(*rrf);
 
-  std::cout << std::endl;
+    std::cout << std::endl;
 
-  bender.signForm(*scf);
-  bender.executeForm(*scf);
+    bender.signForm(*scf);
+    bender.executeForm(*scf);
 
-  std::cout << std::endl;
+    std::cout << std::endl;
 
-  bender.signForm(*ppf);
-  bender.executeForm(*ppf);
+    bender.signForm(*ppf);
+    bender.executeForm(*ppf);
 
-  std::cout << std::endl;
+    std::cout << std::endl;
 
-  delete rrf;
-  delete scf;
-  delete ppf;
+    Bureaucrat vender("Vender", 110);
+
+    rrf->execute(vender);
+
+    delete rrf;
+    delete scf;
+    delete ppf;
+
+  } catch (std::exception &e) {
+    std::cout << e.what() << std::endl;
+  }
 
   return 0;
 }
