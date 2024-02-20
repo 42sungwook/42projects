@@ -5,8 +5,9 @@
 #include <cmath>
 #include <iomanip>
 #include <iostream>
-#include <limits>
+#include <climits>
 #include <sstream>
+#include <stdlib.h>
 class ScalarConverter {
  public:
   static void convert(std::string input);
