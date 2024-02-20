@@ -1,9 +1,11 @@
 #ifndef BASE_HPP
 #define BASE_HPP
 
-#include <iostream>
+#include <stdlib.h>
 
-// orthodox canonical class form 지킬필요 x
+#include <iostream>
+#include <typeinfo>
+
 class Base {
  public:
   virtual ~Base() {}
