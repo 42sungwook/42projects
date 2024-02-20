@@ -2,8 +2,8 @@
 # ProgramName && Files                                                         #
 # **************************************************************************** #
 NAME		=	identify
-INC_FILES	=	Base.hpp A.hpp, B.hpp, C.hpp
-SRC_FILES	=	main.cpp Base.cpp A.cpp B.cpp C.cpp
+INC_FILES	=	Class.hpp
+SRC_FILES	=	main.cpp Class.cpp
 # **************************************************************************** #
 # Directories && Paths                                                         #
 # **************************************************************************** #
