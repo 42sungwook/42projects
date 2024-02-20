@@ -1,16 +1,21 @@
 #ifndef SCALARCONVERTER_HPP
 #define SCALARCONVERTER_HPP
 
-#include <stdio.h>
-
-template<typename T>
-
+#include <cctype>
+#include <cmath>
+#include <iomanip>
+#include <iostream>
+#include <limits>
+#include <sstream>
 class ScalarConverter {
-	private:
-	T 
-	public:
+ public:
+  static void convert(std::string input);
 
-	
+ private:
+  ScalarConverter();
+  ~ScalarConverter();
+  ScalarConverter(ScalarConverter &src);
+  ScalarConverter &operator=(ScalarConverter &src);
 };
 
 #endif
