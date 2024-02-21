@@ -17,8 +17,8 @@ class Array {
       if (_array != NULL) {
         delete[] _array;
       }
-      _array = new T[rhs._size];
       _size = rhs._size;
+      _array = new T[_size];
 
       for (unsigned int i = 0; i < _size; i++) {
         _array[i] = rhs._array[i];
@@ -27,7 +27,7 @@ class Array {
     return *this;
   }
 
-  T &operator[](unsigned int i) {
+  T &operator[](unsigned int i) const {
     if (i >= _size) {
       throw std::out_of_range("Index out of range");
     }
