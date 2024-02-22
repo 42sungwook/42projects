@@ -1,10 +1,7 @@
 #include "Span.hpp"
 
-#define BLUE_TEXT "\x1b[34m"
-#define RESET_TEXT "\x1b[0m"
-
 int main() {
-  std::cout << BLUE_TEXT << "Test 과제 main.cpp" << RESET_TEXT << std::endl;
+  std::cout << "===== Test 과제 main.cpp =====" << std::endl;
   try {
     Span sp = Span(5);
     sp.addNumber(5);
@@ -19,8 +16,7 @@ int main() {
     std::cout << e.what() << std::endl;
   }
 
-  std::cout << BLUE_TEXT << "Test 30000 numbers + 중복 숫자" << RESET_TEXT
-            << std::endl;
+  std::cout << "===== Test 30000 numbers + 중복 숫자 =====" << std::endl;
   try {
     Span sp = Span(30000);
     sp.addNumber(1, 15000);
@@ -34,8 +30,7 @@ int main() {
     std::cout << e.what() << std::endl;
   }
 
-  std::cout << BLUE_TEXT << "Test 숫자 1개일 때 shortestSpan" << RESET_TEXT
-            << std::endl;
+  std::cout << "===== Test 숫자 1개일 때 shortestSpan =====" << std::endl;
   try {
     Span sp = Span(10000);
     sp.addNumber(1);
@@ -44,8 +39,7 @@ int main() {
     std::cout << e.what() << std::endl;
   }
 
-  std::cout << BLUE_TEXT << "Test 숫자 1개일 때 longestSpan" << RESET_TEXT
-            << std::endl;
+  std::cout << "===== Test 숫자 1개일 때 longestSpan =====" << std::endl;
   try {
     Span sp = Span(10000);
     sp.addNumber(1);
