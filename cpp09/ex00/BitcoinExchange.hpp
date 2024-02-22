@@ -1,8 +1,10 @@
 #ifndef BITCOINEXCHANGE_HPP
 #define BITCOINEXCHANGE_HPP
 
+#include <fstream>
 #include <iostream>
 #include <map>
+#include <string>
 
 class BitcoinExchange {
  public:
@@ -16,6 +18,9 @@ class BitcoinExchange {
 
  private:
   std::map<std::string, float> _data;
+  std::map<std::string, float> _csvData;
 };
+
+bool checkDate(const std::string& date);
 
 #endif
