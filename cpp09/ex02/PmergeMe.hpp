@@ -12,11 +12,14 @@ class PmergeMe {
   PmergeMe(const PmergeMe& other);
   PmergeMe& operator=(const PmergeMe& other);
 
-  void mergeDeque();
-  void mergeVector();
+  void PmergeMe::mergeDeque(std::deque<int>& left, std::deque<int>& right,
+                            std::deque<int>& result);
+  void mergeVector(std::vector<int>& arr, int left, int middle, int right);
+  void mergeSort(std::deque<int>& arr);
+  void mergeSort(std::vector<int>& arr, int left, int right);
+
   std::deque<int> getD() const { return _d; }
   std::vector<int> getV() const { return _v; }
-
   double getDTime() const { return _dTime; }
   double getVTime() const { return _vTime; }
 
