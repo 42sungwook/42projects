@@ -1,10 +1,11 @@
 #ifndef BITCOINEXCHANGE_HPP
 #define BITCOINEXCHANGE_HPP
 
+#include <cctype>
 #include <fstream>
 #include <iostream>
 #include <map>
-#include <string>
+#include <stdexcept>
 
 class BitcoinExchange {
  public:
@@ -13,8 +14,7 @@ class BitcoinExchange {
   BitcoinExchange(const BitcoinExchange& other);
   BitcoinExchange& operator=(const BitcoinExchange& other);
 
-  void fileRead(const char* filename);
-  void fileWrite(const char* filename);
+  void exchange(const char* filename);
 
  private:
   std::map<std::string, float> _data;
@@ -22,5 +22,6 @@ class BitcoinExchange {
 };
 
 bool checkDate(const std::string& date);
+std::string split(std::string str, char Delimiter);
 
 #endif
