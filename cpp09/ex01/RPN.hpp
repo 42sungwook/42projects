@@ -13,7 +13,7 @@ class RPN {
   void calculate();
 
  private:
-  std::stack<char> _stack;
+  std::stack<int> _stack;
   char* _str;
 };
 
