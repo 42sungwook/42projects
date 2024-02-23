@@ -17,8 +17,8 @@ BitcoinExchange::BitcoinExchange() {
 
   while (std::getline(csvFile, line)) {
     date = line.substr(0, line.find(','));
-    value = std::stof(line.substr(line.find(',') + 1));
-    if (checkDate(date) == false) {
+    value = std::atof(line.substr(line.find(',') + 1).c_str());
+    if (!checkDate(date)) {
       throw std::runtime_error("Error: Invalid csv file format2");
     }
     _csvData[date] = value;
@@ -28,11 +28,13 @@ BitcoinExchange::BitcoinExchange() {
 BitcoinExchange::~BitcoinExchange() {}
 
 BitcoinExchange::BitcoinExchange(const BitcoinExchange& other) {
-  _data = other._data;
+  _csvData = other._csvData;
 }
 
 BitcoinExchange& BitcoinExchange::operator=(const BitcoinExchange& other) {
-  _data = other._data;
+  if (this != &other) {
+    _csvData = other._csvData;
+  }
   return *this;
 }
 
@@ -55,7 +57,7 @@ void BitcoinExchange::exchange(const char* filename) {
     removeSpaceLine.erase(std::remove_if(removeSpaceLine.begin(),
                                          removeSpaceLine.end(), ::isspace),
                           removeSpaceLine.end());
-    if (removeSpaceLine.find_first_of('|') != 10) {
+    if (removeSpaceLine.find('|') != 10) {
       std::cout << "Error: bad input => " << line << std::endl;
       continue;
     }
@@ -64,7 +66,7 @@ void BitcoinExchange::exchange(const char* filename) {
       std::cout << "Error: bad input => " << date << std::endl;
       continue;
     }
-    float value = std::stof(removeSpaceLine.substr(11));
+    float value = std::atof(removeSpaceLine.substr(11).c_str());
     if (value < 0) {
       std::cout << "Error: not a positive number" << std::endl;
       continue;
@@ -76,14 +78,14 @@ void BitcoinExchange::exchange(const char* filename) {
 
     std::cout << date << " => " << value << " = ";
     std::map<std::string, float>::iterator it = _csvData.lower_bound(date);
-    std::cout << value * it->second << std::endl;
+    if (it != _csvData.end()) std::cout << value * it->second << std::endl;
   }
   inputFile.close();
 }
 
-bool checkDate(const std::string& date) {
+bool BitcoinExchange::checkDate(const std::string& date) {
   // Year-Month-Day 포맷 확인
-  for (int i = 0; i < 10; i++) {
+  for (size_t i = 0; i < 10; i++) {
     if (i == 4 || i == 7) {
       if (date[i] != '-') {
         return false;
@@ -94,9 +96,9 @@ bool checkDate(const std::string& date) {
       }
     }
   }
-  unsigned int year = std::stoi(date.substr(0, 4));
-  unsigned int month = std::stoi(date.substr(5, 2));
-  unsigned int day = std::stoi(date.substr(8, 2));
+  unsigned int year = std::atoi(date.substr(0, 4).c_str());
+  unsigned int month = std::atoi(date.substr(5, 2).c_str());
+  unsigned int day = std::atoi(date.substr(8, 2).c_str());
 
   if (year > 9999 || month > 12 || day > 31 || month == 0 || day == 0) {
     return false;
