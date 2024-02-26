@@ -12,11 +12,8 @@ class PmergeMe {
   PmergeMe(const PmergeMe& other);
   PmergeMe& operator=(const PmergeMe& other);
 
-  void PmergeMe::mergeDeque(std::deque<int>& left, std::deque<int>& right,
-                            std::deque<int>& result);
-  void mergeVector(std::vector<int>& arr, int left, int middle, int right);
-  void mergeSort(std::deque<int>& arr);
-  void mergeSort(std::vector<int>& arr, int left, int right);
+  void mergeDeque();
+  void mergeVector();
 
   std::deque<int> getD() const { return _d; }
   std::vector<int> getV() const { return _v; }
@@ -29,5 +26,8 @@ class PmergeMe {
   double _dTime;
   double _vTime;
 };
+
+size_t rearrangePairs(std::deque<int>& dq, size_t gap);
+size_t rearrangePairs(std::vector<int>& vc, size_t gap);
 
 #endif
