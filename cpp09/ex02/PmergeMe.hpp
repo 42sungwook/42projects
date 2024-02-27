@@ -27,7 +27,9 @@ class PmergeMe {
   double _vTime;
 };
 
-size_t rearrangePairs(std::deque<int>& dq, size_t gap);
-size_t rearrangePairs(std::vector<int>& vc, size_t gap);
+void rearrangePairs(std::deque<int>& dq, size_t gap);
+void rearrangePairs(std::vector<int>& vc, size_t gap);
+unsigned int jacobsthalNumberAtIndex(unsigned int index, unsigned int size);
+int binarySearch(std::vector<int>& vc, int target, int start, int end, int gap);
 
 #endif

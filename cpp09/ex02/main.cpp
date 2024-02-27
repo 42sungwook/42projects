@@ -31,3 +31,9 @@ int main(int ac, char** av) {
 
   return 0;
 }
+
+// int main() {
+//   for (int i = 0; i < 16; i++) {
+//     std::cout << jacobsthalNumberAtIndex(i, 16) << std::endl;
+//   }
+// }
