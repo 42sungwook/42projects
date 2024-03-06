@@ -1,158 +1,106 @@
 #include "PmergeMe.hpp"
 
-PmergeMe::PmergeMe(std::deque<int> d, std::vector<int> v) {
-  _d = d;
-  _v = v;
+PmergeMe::PmergeMe(std::deque<int> d, std::vector<int> v) : _d(d), _v(v) {
+  _dTime = 0;
+  _vTime = 0;
 }
 
 PmergeMe::~PmergeMe() {}
 
-PmergeMe::PmergeMe(const PmergeMe& other) {
+PmergeMe::PmergeMe(const PmergeMe &other) {
   _d = other._d;
   _v = other._v;
+  _dTime = other._dTime;
+  _vTime = other._vTime;
 }
 
-PmergeMe& PmergeMe::operator=(const PmergeMe& other) {
+PmergeMe &PmergeMe::operator=(const PmergeMe &other) {
   _d = other._d;
   _v = other._v;
+  _dTime = other._dTime;
+  _vTime = other._vTime;
   return *this;
 }
 
-void PmergeMe::mergeDeque() {
-  rearrangePairs(_d, 1);
+void PmergeMe::makeChain(int num, int size, std::vector<int> &main,
+                         std::vector<int> &sub) {
+  std::vector<int>::iterator it = _v.begin();
 
-  std::cout << "Deque: ";
-  for (std::deque<int>::iterator it = _d.begin(); it != _d.end(); ++it) {
-    std::cout << *it << " ";
+  for (int i = 0; i < num; ++i) {
+    if (i == num - 1 || i % 2 == 1)
+      sub.insert(sub.end(), it + i * size, it + (i + 1) * size);
+    else if (i % 2 == 0)
+      main.insert(main.end(), it + i * size, it + (i + 1) * size);
   }
-  std::cout << std::endl;
 }
 
-void PmergeMe::mergeVector() {
-  rearrangePairs(_v, 1);
-
-  std::cout << "Vector: ";
-  for (std::vector<int>::iterator it = _v.begin(); it != _v.end(); ++it) {
-    std::cout << *it << " ";
+void PmergeMe::binarySearchInsert(std::vector<int> &mainChain,
+                                  std::vector<int> &subChain, size_t idx,
+                                  size_t size) {
+  int left = 0;
+  int right = idx + numOfInsert_;
+  std::vector<int>::iterator subIt = subChain.begin() + idx * size;
+  std::vector<int>::iterator mainIt = mainChain.begin();
+  if (idx == 0) {
+    mainChain.insert(mainIt, subIt, subIt + size);
+    return;
   }
-  std::cout << std::endl;
-}
 
-void rearrangePairs(std::deque<int>& dq, size_t gap) {
-  if (gap < 0 || gap * 2 > dq.size()) return;
-
-  int tmp;
-
-  for (size_t i = 0; i < dq.size() - gap; i += gap * 2) {
-    if (dq[i] > dq[i + gap]) continue;
-    for (size_t j = 0; j < gap; j++) {
-      tmp = dq[i + j];
-      dq[i + j] = dq[i + gap + j];
-      dq[i + gap + j] = tmp;
+  while (left <= right) {
+    int mid = left + (right - left) / 2;
+    if (mainChain[mid * size] < *subIt) {
+      left = mid + 1;
+    } else {
+      right = mid - 1;
     }
   }
 
-  rearrangePairs(dq, gap * 2);
-
-  // gap을 크기로 덩어리를 나눠서 짝수는 main 덩어리, 홀수는 sub 덩어리로 나눠서
-  // 정렬 mainchain에 subchain을 넣어서 정렬 (Jacobsthal number사용) erase,
-  // insert 사용
+  mainChain.insert(mainIt + left * size, subIt, subIt + size);
+  ++numOfInsert_;
 }
 
-void rearrangePairs(std::vector<int>& vc, size_t gap) {
-  if (gap < 0 || gap * 2 > vc.size()) return;
-
-  int tmp;
-
-  for (size_t i = 0; i < vc.size() - gap; i += gap * 2) {
-    if (vc[i] > vc[i + gap]) continue;
-    for (size_t j = 0; j < gap; j++) {
-      tmp = vc[i + j];
-      vc[i + j] = vc[i + gap + j];
-      vc[i + gap + j] = tmp;
-    }
+void PmergeMe::insertion(int size, int gap, std::vector<int> &main,
+                         std::vector<int> &sub) {
+  int idx = 0;
+  jacobsthalIndex_ = 0;
+  numOfInsert_ = 0;
+  int subChainNum = size / 2 + size % 2;
+  makeChain(size, gap, main, sub);
+  for (int i = 0; i < subChainNum; ++i) {
+    idx = getNextIndex(idx);
+    if (idx >= subChainNum) idx = subChainNum;
+    binarySearchInsert(main, sub, idx - 1, gap);
   }
-
-  rearrangePairs(vc, gap * 2);
-
-  std::vector<int> sub_vc;
-
-  // subchain 생성
-  for (size_t i = 0; i < vc.size(); i += gap * 2) {
-    // 홀수만 sub_vc에 insert로 넣기
-    sub_vc.insert(sub_vc.end(), vc.begin() + i + gap, vc.begin() + i + gap * 2);
-
-    // mainchain에서 subchain을 erase로 제거
-    vc.erase(vc.begin() + i + gap, vc.begin() + i + gap * 2);
-  }
-
-  for (size_t i = 0; i < sub_vc.size() / gap; i++) {
-    std::cout << "index: " << i << std::endl;
-    unsigned int index = jacobsthalNumberAtIndex(i, sub_vc.size() / gap);
-
-    vc.insert(vc.begin() + binarySearch(vc, sub_vc[index * gap], 0,
-                                        (index + i) * gap, gap),
-              sub_vc.begin() + index * gap, sub_vc.begin() + index * gap + gap);
+  for (size_t i = 0; i < main.size(); ++i) {
+    _v[i] = main[i];
   }
 }
 
-int binarySearch(std::vector<int>& vc, int target, int start, int end,
-                 int gap) {
-  if (start > end) return -1;
+void PmergeMe::comparePair(int size, int gap) {
+  std::vector<int>::iterator it = _v.begin();
 
-  int mid = (start + end) / 2;
-
-  if (vc[mid] == target)
-    return mid;
-  else if (vc[mid] > target)
-    return binarySearch(vc, target, start, mid - gap, gap);
-  else
-    return binarySearch(vc, target, mid + gap, end, gap);
-}
-
-unsigned int jacobsthal(unsigned int n) {
-  if (n == 0) return 0;
-  if (n == 1) return 1;
-  return jacobsthal(n - 1) + 2 * jacobsthal(n - 2);
-}
-
-bool checkJacobsthal(unsigned int n) {
-  unsigned int i = 0;
-
-  while (jacobsthal(i) < n) {
-    i++;
+  for (int i = 0; i < size - 1; i += 2) {
+    std::vector<int>::iterator first = it + i * gap;
+    std::vector<int>::iterator second = it + (i + 1) * gap;
+    if (*first < *second) std::swap_ranges(first, second, second);
   }
-
-  return jacobsthal(i) == n;
 }
 
-unsigned int nextJacobsthal(unsigned int n) {
-  unsigned int i = 0;
-
-  while (jacobsthal(i) < n) {
-    i++;
-  }
-
-  return jacobsthal(i);
+void PmergeMe::recursive(int size, int gap) {
+  if (size == 1) return;
+  std::vector<int> mainChain;
+  std::vector<int> subChain;
+  comparePair(size, gap);
+  recursive(size / 2, gap * 2);
+  insertion(size, gap, mainChain, subChain);
 }
 
-unsigned int jacobsthalNumberAtIndex(unsigned int index, unsigned int size) {
-  unsigned int result = 0;
+void PmergeMe::sortVector() { recursive(_v.size(), 1); }
 
-  if (index == 0) return 0;
-  if (index == 1) return 1;
-
-  if (checkJacobsthal(index - 1)) {
-    result = nextJacobsthal(index);
-    if (result > size) return index;
-    return result;
-  };
-
-  if (nextJacobsthal(index) > size) {
-    result = index;
-  } else {
-    result = index - 1;
-  }
-
-  return result;
+void PmergeMe::sortDeque() {
+  std::chrono::system_clock::time_point start =
+      std::chrono::system_clock::now();
+  std::sort(_d.begin(), _d.end());
+  std::chrono::system_clock::time_point end = std::chrono::system_clock::now();
+  _dTime = std::chrono::duration<double>(end - start).count();
 }

@@ -12,8 +12,18 @@ class PmergeMe {
   PmergeMe(const PmergeMe& other);
   PmergeMe& operator=(const PmergeMe& other);
 
-  void mergeDeque();
-  void mergeVector();
+  void sortVector();
+  void comparePair(int size, int gap);
+  void recursive(int size, int gap);
+  void insertion(int size, int gap, std::vector<int>& main,
+                 std::vector<int>& sub);
+  void makeChain(int size, int gap, std::vector<int>& main,
+                 std::vector<int>& sub);
+  int getNextIndex(int idx);
+  void binarySearchInsert(std::vector<int>& mainChain,
+                          std::vector<int>& subChain, size_t idx, size_t size);
+
+  void sortDeque();
 
   std::deque<int> getD() const { return _d; }
   std::vector<int> getV() const { return _v; }
@@ -25,6 +35,9 @@ class PmergeMe {
   std::vector<int> _v;
   double _dTime;
   double _vTime;
+  int jacobsthalIndex_;
+  int jacobsthalNum_[30];
+  int numOfInsert_;
 };
 
 void rearrangePairs(std::deque<int>& dq, size_t gap);
