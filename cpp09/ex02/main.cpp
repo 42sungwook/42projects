@@ -1,5 +1,3 @@
-// vector, deque
-
 #include "PmergeMe.hpp"
 
 int main(int ac, char** av) {
@@ -8,32 +6,5 @@ int main(int ac, char** av) {
     return 1;
   }
 
-  std::deque<int> d;
-  std::vector<int> v;
-  int tmp;
-
-  for (int i = 1; i < ac; i++) {
-    tmp = atoi(av[i]);
-
-    if (tmp == 0 && av[i][0] != '0') {
-      std::cout << "Error" << std::endl;
-      return 1;
-    }
-
-    d.push_back(tmp);
-    v.push_back(tmp);
-  }
-
-  PmergeMe p(d, v);
-
-  p.mergeDeque();
-  p.mergeVector();
-
   return 0;
 }
-
-// int main() {
-//   for (int i = 0; i < 16; i++) {
-//     std::cout << jacobsthalNumberAtIndex(i, 16) << std::endl;
-//   }
-// }
