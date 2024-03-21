@@ -56,6 +56,9 @@ void RPN::calculate() {
           _stack.push(a * b);
           break;
         case '/':
+          if (b == 0) {
+            throw std::runtime_error("Error");
+          }
           _stack.push(a / b);
           break;
       }
