@@ -57,6 +57,11 @@ void PmergeMe::sortVector() {
     std::cout << _v[i] << " ";
   }
   std::cout << std::endl;
+  if (std::is_sorted(_v.begin(), _v.end())) {
+    std::cout << "Sorted" << std::endl;
+  } else {
+    std::cout << "Not sorted" << std::endl;
+  }
 }
 
 void PmergeMe::pairSortVector(int size, int pair) {
@@ -78,9 +83,9 @@ void PmergeMe::pairSortVector(int size, int pair) {
 void PmergeMe::mergeSortVector(int size, int pair) {
   std::vector<int> subchain;
   std::vector<int>::iterator it = _v.begin();
-  int index = 1;
+  int index = 2;
   int jacobsthal = 1;
-  int square = 2;
+  int square = 3;
 
   for (int i = 1; i < size; i += 2) {
     it += pair;
@@ -96,21 +101,24 @@ void PmergeMe::mergeSortVector(int size, int pair) {
   _v.insert(_v.begin(), subchain.begin(), subchain.begin() + pair);
 
   for (size_t i = pair; i < subchain.size(); i += pair) {
-    if (index == jacobsthal &&
-        std::pow(2, square) - index <= subchain.size() / pair) {
-      jacobsthal = std::pow(2, square) - index;
+    if (static_cast<int>(i) == pair && subchain.size() / pair >= 3) {
+      binaryInsertVector(2, subchain[2 * pair], pair, 2, subchain);
+      index = 3;
+    } else if (index == jacobsthal &&
+               std::pow(2, square) - std::pow(2, square - 1) <=
+                   subchain.size() / pair) {
+      jacobsthal = std::pow(2, square) - std::pow(2, square - 1) + 1;
+      index = jacobsthal;
       binaryInsertVector(i / pair + jacobsthal - 2,
                          subchain[(jacobsthal - 1) * pair], pair,
                          jacobsthal - 1, subchain);
+      jacobsthal = std::pow(2, square - 1) - std::pow(2, square - 2) + 1;
       square++;
     } else {
-      if (index == jacobsthal) {
-        index++;
-      }
       binaryInsertVector(i / pair + index - 2, subchain[(index - 1) * pair],
                          pair, index - 1, subchain);
     }
-    index++;
+    index--;
   }
 }
 
@@ -162,6 +170,11 @@ void PmergeMe::sortDeque() {
     std::cout << _d[i] << " ";
   }
   std::cout << std::endl;
+  if (std::is_sorted(_d.begin(), _d.end())) {
+    std::cout << "Sorted" << std::endl;
+  } else {
+    std::cout << "Not sorted" << std::endl;
+  }
 }
 
 void PmergeMe::pairSortDeque(int size, int pair) {
@@ -183,9 +196,9 @@ void PmergeMe::pairSortDeque(int size, int pair) {
 void PmergeMe::mergeSortDeque(int size, int pair) {
   std::deque<int> subchain;
   std::deque<int>::iterator it = _d.begin();
-  int index = 1;
+  int index = 2;
   int jacobsthal = 1;
-  int square = 2;
+  int square = 3;
 
   for (int i = 1; i < size; i += 2) {
     it += pair;
@@ -201,21 +214,24 @@ void PmergeMe::mergeSortDeque(int size, int pair) {
   _d.insert(_d.begin(), subchain.begin(), subchain.begin() + pair);
 
   for (size_t i = pair; i < subchain.size(); i += pair) {
-    if (index == jacobsthal &&
-        std::pow(2, square) - index <= subchain.size() / pair) {
-      jacobsthal = std::pow(2, square) - index;
+    if (static_cast<int>(i) == pair && subchain.size() / pair >= 3) {
+      binaryInsertDeque(2, subchain[2 * pair], pair, 2, subchain);
+      index = 3;
+    } else if (index == jacobsthal &&
+               std::pow(2, square) - std::pow(2, square - 1) <=
+                   subchain.size() / pair) {
+      jacobsthal = std::pow(2, square) - std::pow(2, square - 1) + 1;
+      index = jacobsthal;
       binaryInsertDeque(i / pair + jacobsthal - 2,
                         subchain[(jacobsthal - 1) * pair], pair, jacobsthal - 1,
                         subchain);
+      jacobsthal = std::pow(2, square - 1) - std::pow(2, square - 2) + 1;
       square++;
     } else {
-      if (index == jacobsthal) {
-        index++;
-      }
       binaryInsertDeque(i / pair + index - 2, subchain[(index - 1) * pair],
                         pair, index - 1, subchain);
     }
-    index++;
+    index--;
   }
 }
 
