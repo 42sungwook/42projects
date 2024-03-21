@@ -78,16 +78,12 @@ void BitcoinExchange::exchange(const char* filename) {
 
     std::cout << date << " => " << value << " = ";
     std::map<std::string, float>::iterator it = _csvData.lower_bound(date);
-    if (it != _csvData.end()) {
-      if (it->first == date) {
-        std::cout << value * it->second << std::endl;
-      } else {
-        std::map<std::string, float>::iterator prev = std::prev(it);
-        if (prev != _csvData.end()) {
-          std::cout << value * prev->second << std::endl;
-        }
+    if (it == _csvData.end()) {
+      if (it->first != date) {
+        it--;
       }
     }
+    std::cout << value * it->second << std::endl;
   }
   inputFile.close();
 }
