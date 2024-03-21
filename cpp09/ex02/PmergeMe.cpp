@@ -36,18 +36,27 @@ void PmergeMe::sortVector() {
     std::istringstream iss(str);
 
     iss >> num;
-
     if (num < 1 || iss.fail()) {
       std::cout << "Error" << std::endl;
       exit(1);
     }
-
     _v.push_back(num);
   }
 
-  pairSortVector(_ac - 1, 1);
+  std::cout << "Before (Vector): ";
+  for (size_t i = 0; i < _v.size(); i++) {
+    std::cout << _v[i] << " ";
+  }
+  std::cout << std::endl;
 
+  pairSortVector(_ac - 1, 1);
   _vTime = clock() - start;
+
+  std::cout << "After (Vector): ";
+  for (size_t i = 0; i < _v.size(); i++) {
+    std::cout << _v[i] << " ";
+  }
+  std::cout << std::endl;
 }
 
 void PmergeMe::pairSortVector(int size, int pair) {
@@ -120,3 +129,107 @@ void PmergeMe::binaryInsertVector(int range, int num, int pair, int subIndex,
             subchain.begin() + (subIndex + 1) * pair);
 }
 
+void PmergeMe::sortDeque() {
+  int num;
+  clock_t start = clock();
+
+  for (int i = 1; i < _ac; i++) {
+    std::string str(_av[i]);
+    std::istringstream iss(str);
+
+    iss >> num;
+
+    if (num < 1 || iss.fail()) {
+      std::cout << "Error" << std::endl;
+      exit(1);
+    }
+
+    _d.push_back(num);
+  }
+
+  std::cout << "Before (Deque): ";
+  for (size_t i = 0; i < _d.size(); i++) {
+    std::cout << _d[i] << " ";
+  }
+  std::cout << std::endl;
+
+  pairSortDeque(_ac - 1, 1);
+
+  _dTime = clock() - start;
+
+  std::cout << "After (Deque): ";
+  for (size_t i = 0; i < _d.size(); i++) {
+    std::cout << _d[i] << " ";
+  }
+  std::cout << std::endl;
+}
+
+void PmergeMe::pairSortDeque(int size, int pair) {
+  if (size < 2) {
+    return;
+  }
+
+  for (int i = 0; i < size - 1; i += 2) {
+    if (_d[i * pair] < _d[(i + 1) * pair]) {
+      std::deque<int>::iterator start = _d.begin() + i * pair;
+      std::deque<int>::iterator end = start + pair;
+      std::swap_ranges(start, end, end);
+    }
+  }
+  pairSortDeque(size / 2, pair * 2);
+  mergeSortDeque(size, pair);
+}
+
+void PmergeMe::mergeSortDeque(int size, int pair) {
+  std::deque<int> subchain;
+  std::deque<int>::iterator it = _d.begin();
+  int index = 1;
+  int jacobsthal = 1;
+  int square = 2;
+
+  for (int i = 1; i < size; i += 2) {
+    it += pair;
+    subchain.insert(subchain.end(), it, it + pair);
+    it = _d.erase(it, it + pair);  // vector deque 차이
+  }
+
+  if (size % 2) {
+    subchain.insert(subchain.end(), it, it + pair);
+    _d.erase(it, it + pair);
+  }
+
+  _d.insert(_d.begin(), subchain.begin(), subchain.begin() + pair);
+
+  for (size_t i = pair; i < subchain.size(); i += pair) {
+    if (index == jacobsthal &&
+        std::pow(2, square) - index <= subchain.size() / pair) {
+      jacobsthal = std::pow(2, square) - index;
+      binaryInsertDeque(i / pair + jacobsthal - 2,
+                        subchain[(jacobsthal - 1) * pair], pair, jacobsthal - 1,
+                        subchain);
+      square++;
+    } else {
+      if (index == jacobsthal) {
+        index++;
+      }
+      binaryInsertDeque(i / pair + index - 2, subchain[(index - 1) * pair],
+                        pair, index - 1, subchain);
+    }
+    index++;
+  }
+}
+
+void PmergeMe::binaryInsertDeque(int range, int num, int pair, int subIndex,
+                                 std::deque<int> subchain) {
+  std::deque<int> temp;
+  std::deque<int>::iterator it = _d.begin();
+
+  for (int i = 0; i <= range; i++) {
+    temp.push_back(*it);
+    it += pair;
+  }
+  int index = std::lower_bound(temp.begin(), temp.end(), num) - temp.begin();
+
+  _d.insert(_d.begin() + index * pair, subchain.begin() + subIndex * pair,
+            subchain.begin() + (subIndex + 1) * pair);
+}

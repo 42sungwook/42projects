@@ -9,10 +9,16 @@ int main(int ac, char** av) {
   PmergeMe pm(ac, av);
 
   pm.sortVector();
+  pm.sortDeque();
 
-  time_t v = pm.getVTime();
+  time_t vTime = pm.getVTime();
+  time_t dTime = pm.getDTime();
+  std::vector<int> v = pm.getV();
+  std::deque<int> d = pm.getD();
 
-  std::cout << v << std::endl;
-
+  std::cout << "Time to process a range of " << v.size()
+            << " elements with std::vector: " << vTime << " ms" << std::endl;
+  std::cout << "Time to process a range of " << d.size()
+            << " elements with std::deque: " << dTime << " ms" << std::endl;
   return 0;
 }
