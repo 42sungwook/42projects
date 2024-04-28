@@ -5,8 +5,8 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: sungwook <sungwook@student.42seoul.kr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/01/02 16:00:37 by chanson           #+#    #+#             */
-/*   Updated: 2023/01/03 15:36:42 by sungwook         ###   ########.fr       */
+/*   Created: 2023/01/03 15:58:19 by sungwook          #+#    #+#             */
+/*   Updated: 2023/01/04 19:07:14 by sungwook         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -73,10 +73,7 @@ void	case_enter_escape(t_game *g)
 		game_next_start(g);
 	}
 	else
-	{
-		printf("put image to win\n");
 		mlx_put_image_to_window(g->mlx, g->win, g->end_img, 0, 0);
-	}
 }
 
 void	case_check(t_game *g)

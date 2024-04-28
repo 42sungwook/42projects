@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   draw_user_move_bonus.c                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: chanson <chanson@student.42.fr>            +#+  +:+       +#+        */
+/*   By: sungwook <sungwook@student.42seoul.kr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/01/02 16:00:13 by chanson           #+#    #+#             */
-/*   Updated: 2023/01/02 16:16:30 by chanson          ###   ########.fr       */
+/*   Created: 2023/01/03 15:59:22 by sungwook          #+#    #+#             */
+/*   Updated: 2023/01/03 15:59:24 by sungwook         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 

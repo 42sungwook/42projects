@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   draw_enemy_bonus.c                                 :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: chanson <chanson@student.42.fr>            +#+  +:+       +#+        */
+/*   By: sungwook <sungwook@student.42seoul.kr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/01/02 15:59:56 by chanson           #+#    #+#             */
-/*   Updated: 2023/01/02 21:10:42 by chanson          ###   ########.fr       */
+/*   Created: 2023/01/03 15:58:46 by sungwook          #+#    #+#             */
+/*   Updated: 2023/01/05 11:18:14 by sungwook         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -119,7 +119,7 @@ void	draw_enemy(t_game *g)
 		{
 			i++;
 			put_image_to_window(g, temp->x * 64, temp->y * 64, g->custom.enemy);
-			if (time % 20 == 0)
+			if (time % 50 == 0)
 			{
 				make_enemy_dir(temp);
 				move_enemy(g, temp);

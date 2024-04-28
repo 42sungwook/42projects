@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   map_check.c                                        :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: sungwook <sungwook@student.42seoul.kr>     +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2023/01/03 16:00:44 by sungwook          #+#    #+#             */
+/*   Updated: 2023/01/04 19:09:04 by sungwook         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "../so_long.h"
 
 static int	map_check_frame(t_game *g, char *line, int idx)
@@ -24,21 +36,24 @@ static int	map_check_frame(t_game *g, char *line, int idx)
 	return (1);
 }
 
-static void	map_check_cpe(t_game *g, char *line)
+static int	map_check_cpe(t_game *g, char *line)
 {
 	int		i;
 
 	i = 0;
-	while (line[i])
+	while (line[i] != '\n' && line[i] != 0)
 	{
 		if (line[i] == 'C')
 			g->map_v.c++;
-		if (line[i] == 'P')
+		else if (line[i] == 'P')
 			g->map_v.p++;
-		if (line[i] == 'E')
+		else if (line[i] == 'E')
 			g->map_v.e++;
+		else if (line[i] != '0' && line[i] != '1')
+			return (1);
 		i++;
 	}
+	return (0);
 }
 
 int	map_check(t_game *g)
@@ -50,7 +65,8 @@ int	map_check(t_game *g)
 	while ((g->map)[i])
 	{
 		j = 0;
-		map_check_cpe(g, (g->map)[i]);
+		if (map_check_cpe(g, (g->map)[i]))
+			return (0);
 		while ((g->map)[i][j] != '\n' && (g->map)[i][j] != 0)
 			j++;
 		if (g->map_v.x_size == 0 && i == 0)
