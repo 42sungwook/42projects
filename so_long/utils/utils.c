@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   utils.c                                            :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: sungwook <sungwook@student.42seoul.kr>     +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2023/01/03 16:01:10 by sungwook          #+#    #+#             */
+/*   Updated: 2023/01/03 16:01:11 by sungwook         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "../so_long.h"
 
 void	ft_free(int **arr, t_game *g)
@@ -26,9 +38,8 @@ int	**make_int_map(t_game *g, size_t i, size_t j)
 		j = 0;
 		while ((g->map)[i][j] != '\n' && (g->map)[i][j] != 0)
 		{
-			if ((g->map)[i][j] >= '0' && \
-				(g->map)[i][j] < '9' && (g->map)[i][j] != '1')
-				arr[i][j] = (g->map)[i][j] - '0';
+			if ((g->map)[i][j] == '0')
+				arr[i][j] = 0;
 			else if ((g->map)[i][j] == 'C')
 				arr[i][j] = -2;
 			else if ((g->map)[i][j] == 'E')

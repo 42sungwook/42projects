@@ -20,7 +20,7 @@ OBJS_B = $(SRCS_B:.c=.o)
 
 NAME = so_long
 
-CC		=	gcc -g
+CC		=	cc
 CFLAGS	=	-Wall -Werror -Wextra
 CLIB	=	-L./mlx -lmlx -framework OpenGL -framework Appkit
 
